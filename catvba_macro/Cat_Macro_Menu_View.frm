@@ -28,48 +28,48 @@ Attribute VB_Exposed = False
 'Attribute VB_Creatable = False
 'Attribute VB_PredeclaredId = True
 'Attribute VB_Exposed = False
-' VBA CATIA V5 详细使用方法（版本）说明  by Kantoku
+' VBA CATIA V5 ?????÷??????汾?????  by Kantoku
 ' Cat_Macro_Menu_View.frm
-' 该文件用于实现菜单的UI界面
+' ????????????????UI????
 
-' 窗体边距
-Private FrmMargin As Variant ' 上, 右, 下, 左 窗体边距调整值
+' ??????
+Private FrmMargin As Variant ' ??, ??, ??, ?? ??????????
 
-' 窗体宽度调整值
+' ???????????
 Private Const ADJUST_F_W = 10
-' 窗体高度调整值
+' ??????????
 Private Const ADJUST_F_H = 10
 
-' 多页控件调整
-Private Const ADJUST_M_W = 240 ' 多页控件宽度调整值
-Private Const ADJUST_M_H = 60 ' 多页控件高度调整值
-Private Const Tab_W = 40 ' Tab固定宽度
-Private Const Tab_H = 16 ' TAB高度
+' ??????????
+Private Const ADJUST_M_W = 240 ' ??????????????
+Private Const ADJUST_M_H = 60 ' ?????????????
+Private Const Tab_W = 40 ' Tab???????
+Private Const Tab_H = 16 ' TAB???
 Private Const Tab_frontsize = 8
 
 
-' 按钮尺寸
-Private Const BTN_W = 60 ' 按钮的固定宽度
-Private Const BTN_H = 20 ' 单个按钮的高度
+' ??????
+Private Const BTN_W = 60 ' ???????????
+Private Const BTN_H = 20 ' ???????????
 
 Private Const BTN_frontsize = 10
 
 
 
-Private mBtns As Object ' 按钮事件集合
+Private mBtns As Object ' ??????????
 
 Option Explicit
 
-' 设置窗体信息
+' ??????????
 Sub Set_FormInfo(ByVal InfoLst As Object, _
                  ByVal PageMap As Object, _
                  ByVal FormTitle As String, _
                  ByVal CloseType As Boolean)
                  
-    ' 初始化窗体边距
-    FrmMargin = Array(10, 10, 10, 0) ' 上, 右, 下, 左 窗体边距调整值
+    ' ???????????
+    FrmMargin = Array(10, 10, 10, 0) ' ??, ??, ??, ?? ??????????
     
-    ' 创建多页控件
+    ' ??????????
     Dim MPgs As MultiPage
     Set MPgs = Me.Controls.Add("Forms.MultiPage.1", 1, True)
     
@@ -104,7 +104,7 @@ Continue:
     Call Set_Form(MPgs, FormTitle)
 End Sub
 
-' 设置窗体属性
+' ???????????
 Private Sub Set_Form(ByVal MPgs As MultiPage, ByVal Cap As String)
     With Me
         .Height = MPgs.Height + ADJUST_F_H
@@ -113,16 +113,16 @@ Private Sub Set_Form(ByVal MPgs As MultiPage, ByVal Cap As String)
     End With
 End Sub
 
-' 设置多页控件属性
+' ?????????????
 Private Sub Set_MPage(ByVal MPgs As MultiPage)
 
     MPgs.Width = (FrmMargin(1) + BTN_W + FrmMargin(3) + ADJUST_M_W)
     With MPgs
-        .TabFixedHeight = Tab_H  ' 标签高度（单位：磅）
-        .TabFixedWidth = Tab_W ' 标签宽度
+        .TabFixedHeight = Tab_H  ' ?????????λ??????
+        .TabFixedWidth = Tab_W ' ???????
         .Font.Name = "Arial"
         .Font.Size = Tab_frontsize
-'        .Style = fmTabStyleButtons  ' 切换为按钮样式
+'        .Style = fmTabStyleButtons  ' ?л????????
     
      End With
     
@@ -140,11 +140,11 @@ Private Sub Set_MPage(ByVal MPgs As MultiPage)
     
     MPgs.Height = (FrmMargin(0) + (BTN_H * MaxBtnCnt) + FrmMargin(2) + ADJUST_M_H) * 1.2
     
-    ' 设置多页控件背景颜色
+    ' ????????????????
 
 End Sub
 
-' 初始化按钮
+' ????????
 Private Function Init_Button(ByVal Ctls As Controls, _
                              ByVal Idx As Long, _
                              ByVal BtnInfo As Variant) As MSForms.CommandButton
@@ -161,17 +161,17 @@ Private Function Init_Button(ByVal Ctls As Controls, _
         .Left = FrmMargin(2)
         .Height = BTN_H
         .Width = BTN_W
-        ' 设置按钮字体
+        ' ??????????
         .Font.Name = "Arial"
         .Font.Size = BTN_frontsize
-        ' 设置按钮背景颜色
+        ' ?????????????
        ' .BackColor = RGB(220, 220, 220)
     End With
     
     Set Init_Button = Btn
 End Function
 
-' 尝试设置控件属性
+' ??????????????
 Private Sub Try_SetProperty(ByVal Ctrl As Object, _
                             ByVal PptyName As String, _
                             ByVal Value As Variant)
@@ -181,7 +181,7 @@ Private Sub Try_SetProperty(ByVal Ctrl As Object, _
         Dim tmp As Variant
         tmp = CallByName(Ctrl, PptyName, VbGet)
         If Not Err.Number = 0 Then
-            Debug.Print PptyName & ": 获取属性失败(" & Err.Number & ")"
+            Debug.Print PptyName & ": ??????????(" & Err.Number & ")"
             Exit Sub
         End If
         
@@ -196,18 +196,18 @@ Private Sub Try_SetProperty(ByVal Ctrl As Object, _
                 Value = CCur(Value)
         End Select
         If Not Err.Number = 0 Then
-            Debug.Print Value & ": 类型转换失败(" & Err.Number & ")"
+            Debug.Print Value & ": ??????????(" & Err.Number & ")"
             Exit Sub
         End If
         
         Call CallByName(Ctrl, PptyName, VbLet, Value)
         If Not Err.Number = 0 Then
-            Debug.Print Value & ": 设置属性失败(" & Err.Number & ")"
+            Debug.Print Value & ": ???????????(" & Err.Number & ")"
             Exit Sub
         End If
     On Error GoTo 0
 End Sub
-' 获取页面 - 若不存在则创建
+' ?????? - ???????????
 Private Function Get_Page(ByVal Pgs As Pages, ByVal Name As String) As Page
     Dim Pg As Page
     On Error Resume Next
