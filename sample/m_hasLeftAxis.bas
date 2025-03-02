@@ -1,14 +1,15 @@
+Attribute VB_Name = "m_hasLeftAxis"
 'Attribute VB_Name = "sample_IsExists_LeftAxis"
 
-' æ£€æŸ¥é›¶ä»¶æ–‡æ¡£ä¸­æ˜¯å¦å­˜åœ¨å·¦æ‰‹åæ ‡ç³»
+' ¼ì²éÁã¼şÎÄµµÖĞÊÇ·ñ´æÔÚ×óÊÖ×ø±êÏµ
 '{Gp:1}
 '{Ep:LeftHand}
 '{Caption:LeftHandAxis}
-'{ControlTipText:æ£€æŸ¥æ˜¯å¦æœ‰å·¦æ‰‹åæ ‡ç³»}
+'{ControlTipText:¼ì²éÊÇ·ñÓĞ×óÊÖ×ø±êÏµ}
 '{BackColor:33023}
 Option Explicit
 Sub LeftHand()
-    ' æ£€æŸ¥æ˜¯å¦å¯ä»¥æ‰§è¡Œ
+    ' ¼ì²éÊÇ·ñ¿ÉÒÔÖ´ĞĞ
     If Not CanExecute("PartDocument") Then Exit Sub
     Dim Doc As PartDocument: Set Doc = CATIA.ActiveDocument
     Dim Axs As AxisSystems: Set Axs = Doc.Part.AxisSystems
@@ -20,27 +21,30 @@ Sub LeftHand()
         End If
     Next
     If Msg = vbNullString Then
-        MsgBox "æœªæ‰¾åˆ°å·¦æ‰‹åæ ‡ç³»ã€‚"
+        MsgBox "Î´ÕÒµ½×óÊÖ×ø±êÏµ¡£"
     Else
-        MsgBox "å·²æ‰¾åˆ°å·¦æ‰‹åæ ‡ç³»ï¼š" & vbNewLine & Msg
+        MsgBox "ÒÑÕÒµ½×óÊÖ×ø±êÏµ£º" & vbNewLine & Msg
     End If
 End Sub
 
 Private Function IsLeft(ByVal Ax As Variant) As Boolean
-    ' å®šä¹‰å‘é‡
+    ' ¶¨ÒåÏòÁ¿
     Dim VecX(2), VecY(2), VecZ(2)
     Ax.GetXAxis VecX
     Ax.GetYAxis VecY
     Ax.GetZAxis VecZ
     
-    ' è®¡ç®— X è½´å’Œ Y è½´çš„å‰ç§¯
+    ' ¼ÆËã X ÖáºÍ Y ÖáµÄ²æ»ı
     Dim Outer(2) As Double
     Outer(0) = VecX(1) * VecY(2) - VecX(2) * VecY(1)
     Outer(1) = VecX(2) * VecY(0) - VecX(0) * VecY(2)
     Outer(2) = VecX(0) * VecY(1) - VecX(1) * VecY(0)
     
-    ' è®¡ç®—å‰ç§¯ç»“æœä¸ Z è½´çš„ç‚¹ç§¯ï¼Œå¹¶åˆ¤æ–­æ˜¯å¦å°äº 0
+    ' ¼ÆËã²æ»ı½á¹ûÓë Z ÖáµÄµã»ı£¬²¢ÅĞ¶ÏÊÇ·ñĞ¡ÓÚ 0
     IsLeft = _
         VecZ(0) * Outer(0) + VecZ(1) * Outer(1) + VecZ(2) * Outer(2) < 0
 End Function
 
+ BaseScene As Variant: BaseScene = GetScene3D(GetViewPnt3D())
+    Dim TopDoc As ProductDocument: Set TopDoc = CATIA.Documents.Add("Product")
+    Call ToProdu

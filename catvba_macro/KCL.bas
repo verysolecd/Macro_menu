@@ -1,9 +1,10 @@
+Attribute VB_Name = "KCL"
 'Attribute VB_Name = "KCL"
 'vba Kantoku_CATVBA_Library ver0.1.0
-'KCL.bas - è‡ªå®šä¹‰VBAåº“
+'KCL.bas - ×Ô¶¨ÒåVBA¿â
 Option Explicit
 
-Private mSW& ' ç§’è¡¨å¼€å§‹æ—¶é—´
+Private mSW& ' Ãë±í¿ªÊ¼Ê±¼ä
 
 #If VBA7 And Win64 Then
     Private Declare PtrSafe Function timeGetTime Lib "winmm.dll" () As Long
@@ -11,27 +12,27 @@ Private mSW& ' ç§’è¡¨å¼€å§‹æ—¶é—´
     Private Declare Function timeGetTime Lib "winmm.dll" () As Long
 #End If
 
-' ä¸»ç¨‹åºå…¥å£ - å¾ªç¯é€‰æ‹©é¡¹ç›®
+' Ö÷³ÌĞòÈë¿Ú - Ñ­»·Ñ¡ÔñÏîÄ¿
 Sub CATMain()
-    Dim msg$: msg = "è¯·é€‰æ‹©é¡¹ç›® : æŒ‰ESCé”®é€€å‡º"
+    Dim Msg$: Msg = "ÇëÑ¡ÔñÏîÄ¿ : °´ESC¼üÍË³ö"
     Dim SI As AnyObject
-    Dim doc As Document: Set doc = CATIA.ActiveDocument
+    Dim Doc As Document: Set Doc = CATIA.ActiveDocument
     Do
-        Set SI = SelectItem(msg)
+        Set SI = SelectItem(Msg)
         If IsNothing(SI) Then Exit Do
         Stop
     Loop
 End Sub
 
-'*****CATIAç›¸å…³å‡½æ•°*****
-' æ£€æŸ¥æ˜¯å¦å¯ä»¥æ‰§è¡Œæ“ä½œ
-''' @param:DocTypes-array(string),string æŒ‡å®šå¯æ‰§è¡Œæ“ä½œçš„æ–‡æ¡£ç±»å‹
+'*****CATIAÏà¹Øº¯Êı*****
+' ¼ì²éÊÇ·ñ¿ÉÒÔÖ´ĞĞ²Ù×÷
+''' @param:DocTypes-array(string),string Ö¸¶¨¿ÉÖ´ĞĞ²Ù×÷µÄÎÄµµÀàĞÍ
 ''' @return:Boolean
 Function CanExecute(ByVal docTypes As Variant) As Boolean
     CanExecute = False
     
-    If CATIA.Windows.count < 1 Then
-        MsgBox "æ²¡æœ‰æ‰“å¼€çš„çª—å£"
+    If CATIA.Windows.Count < 1 Then
+        MsgBox "Ã»ÓĞ´ò¿ªµÄ´°¿Ú"
         Exit Function
     End If
     
@@ -39,7 +40,7 @@ Function CanExecute(ByVal docTypes As Variant) As Boolean
     If Not IsFilterType(docTypes) Then Exit Function
     
     Dim ErrMsg As String
-    ErrMsg = "ä¸æ”¯æŒå½“å‰æ´»åŠ¨æ–‡æ¡£ç±»å‹ã€‚" + vbNewLine + "(" + Join(docTypes, ",") + " ç±»å‹é™¤å¤–)"
+    ErrMsg = "²»Ö§³Öµ±Ç°»î¶¯ÎÄµµÀàĞÍ¡£" + vbNewLine + "(" + Join(docTypes, ",") + " ÀàĞÍ³ıÍâ)"
     
     Dim ActDoc As Document
     On Error Resume Next
@@ -50,7 +51,7 @@ Function CanExecute(ByVal docTypes As Variant) As Boolean
         Exit Function
     End If
     
-    If UBound(filter(docTypes, TypeName(ActDoc))) < 0 Then
+    If UBound(Filter(docTypes, TypeName(ActDoc))) < 0 Then
         MsgBox ErrMsg, vbExclamation + vbOKOnly
         Exit Function
     End If
@@ -58,15 +59,15 @@ Function CanExecute(ByVal docTypes As Variant) As Boolean
     CanExecute = True
 End Function
 
-' é€‰æ‹©é¡¹ç›®
-''' @param:Msg-æç¤ºä¿¡æ¯
-''' @param:Filter-array(string),string é€‰æ‹©è¿‡æ»¤å™¨(é»˜è®¤ä¸ºAnyObject)
+' Ñ¡ÔñÏîÄ¿
+''' @param:Msg-ÌáÊ¾ĞÅÏ¢
+''' @param:Filter-array(string),string Ñ¡Ôñ¹ıÂËÆ÷(Ä¬ÈÏÎªAnyObject)
 ''' @return:AnyObject
-Function SelectItem(ByVal msg$, _
-                           Optional ByVal filter As Variant = Empty) _
+Function SelectItem(ByVal Msg$, _
+                           Optional ByVal Filter As Variant = Empty) _
                            As AnyObject
     Dim SE As SelectedElement
-    Set SE = SelectElement(msg, filter)
+    Set SE = SelectElement(Msg, Filter)
     
     If IsNothing(SE) Then
         Set SelectItem = SE
@@ -75,28 +76,28 @@ Function SelectItem(ByVal msg$, _
     End If
 End Function
 
-' é€‰æ‹©å…ƒç´ 
-''' @param:Msg-æç¤ºä¿¡æ¯
-''' @param:Filter-array(string),string é€‰æ‹©è¿‡æ»¤å™¨(é»˜è®¤ä¸ºAnyObject)
+' Ñ¡ÔñÔªËØ
+''' @param:Msg-ÌáÊ¾ĞÅÏ¢
+''' @param:Filter-array(string),string Ñ¡Ôñ¹ıÂËÆ÷(Ä¬ÈÏÎªAnyObject)
 ''' @return:SelectedElement
-Function SelectElement(ByVal msg$, _
-                           Optional ByVal filter As Variant = Empty) _
+Function SelectElement(ByVal Msg$, _
+                           Optional ByVal Filter As Variant = Empty) _
                            As SelectedElement
-    If IsEmpty(filter) Then filter = Array("AnyObject")
-    If VarType(filter) = vbString Then filter = ToStrVriAry(filter)
-    If Not IsFilterType(filter) Then Exit Function
+    If IsEmpty(Filter) Then Filter = Array("AnyObject")
+    If VarType(Filter) = vbString Then Filter = ToStrVriAry(Filter)
+    If Not IsFilterType(Filter) Then Exit Function
     
-    Dim sel As Variant: Set sel = CATIA.ActiveDocument.selection
-    sel.Clear
-    Select Case sel.SelectElement2(filter, msg, False)
+    Dim Sel As Variant: Set Sel = CATIA.ActiveDocument.Selection
+    Sel.Clear
+    Select Case Sel.SelectElement2(Filter, Msg, False)
         Case "Cancel", "Undo", "Redo"
             Exit Function
     End Select
-    Set SelectElement = sel.Item(1)
-    sel.Clear
+    Set SelectElement = Sel.Item(1)
+    Sel.Clear
 End Function
 
-' è·å–å†…éƒ¨åç§°
+' »ñÈ¡ÄÚ²¿Ãû³Æ
 ''' @param:AOj-AnyObject
 ''' @return:String
 Function GetInternalName$(ByVal aoj As AnyObject)
@@ -106,34 +107,33 @@ Function GetInternalName$(ByVal aoj As AnyObject)
     GetInternalName = aoj.GetItem("ModelElement").InternalName
 End Function
 
-' è·å–æŒ‡å®šç±»å‹çš„çˆ¶å¯¹è±¡
-''' @param:AOj-AnyObject
+' »ñÈ¡Ö¸¶¨ÀàĞÍµÄ¸¸¶ÔÏó
+''' @param:anyObj-AnyObject
 ''' @param:T-String
 ''' @return:AnyObject
 Function GetParent_Of_T( _
-    ByVal aoj As AnyObject, _
+    ByVal anyObj As AnyObject, _
     ByVal T As String) _
     As AnyObject
     
-    
-    Dim aojName As String
+    Dim anyObjName As String
     Dim parentName As String
     
     On Error Resume Next
-        Set aoj = asDisp(aoj)
-        aojName = aoj.Name
-        parentName = aoj.Parent.Name
+        Set anyObj = asDisp(anyObj)
+        anyObjName = anyObj.Name
+        parentName = anyObj.Parent.Name
     On Error GoTo 0
 
-    If TypeName(aoj) = TypeName(aoj.Parent) And _
-       aojName = parentName Then
+    If TypeName(anyObj) = TypeName(anyObj.Parent) And _
+       anyObjName = parentName Then
         Set GetParent_Of_T = Nothing
         Exit Function
     End If
-    If TypeName(aoj) = T Then
-        Set GetParent_Of_T = aoj
+    If TypeName(anyObj) = T Then
+        Set GetParent_Of_T = anyObj
     Else
-        Set GetParent_Of_T = GetParent_Of_T(aoj.Parent, T)
+        Set GetParent_Of_T = GetParent_Of_T(anyObj.Parent, T)
     End If
 End Function
 
@@ -141,7 +141,7 @@ Private Function asDisp(o As INFITF.CATBaseDispatch) As INFITF.CATBaseDispatch
     Set asDisp = o
 End Function
 
-' è·å–Brepåç§°
+' »ñÈ¡BrepÃû³Æ
 ''' @param:MyBRepName-String
 ''' @return:String
 Function GetBrepName(MyBRepName As String) As String
@@ -151,58 +151,58 @@ Function GetBrepName(MyBRepName As String) As String
     GetBrepName = MyBRepName
 End Function
 
-' è·å–è¯­è¨€
+' »ñÈ¡ÓïÑÔ
 'return-ISO 639-1 code
 'https://ja.wikipedia.org/wiki/ISO_639-1%E3%82%B3%E3%83%BC%E3%83%89%E4%B8%80%E8%A6%A7
 Function GetLanguage() As String
     GetLanguage = "non"
-    If CATIA.Windows.count < 1 Then Exit Function
+    If CATIA.Windows.Count < 1 Then Exit Function
     GetLanguage = "other"
-    CATIA.ActiveDocument.selection.Clear
+    CATIA.ActiveDocument.Selection.Clear
     Dim st As String: st = CATIA.StatusBar
     Select Case True
         Case ExistsKey(st, "object")
-            ' è‹±æ–‡-Select an object or a command
+            ' Ó¢ÎÄ-Select an object or a command
             GetLanguage = "en"
         Case ExistsKey(st, "objet")
-            ' æ³•è¯­-é€‰æ‹©ä¸€ä¸ªå¯¹è±¡æˆ–å‘½ä»¤
+            ' ·¨Óï-Ñ¡ÔñÒ»¸ö¶ÔÏó»òÃüÁî
             GetLanguage = "fr"
         Case ExistsKey(st, "Objekt")
-            ' å¾·è¯­-é€‰æ‹©ä¸€ä¸ªå¯¹è±¡æˆ–å‘½ä»¤
+            ' µÂÓï-Ñ¡ÔñÒ»¸ö¶ÔÏó»òÃüÁî
             GetLanguage = "de"
         Case ExistsKey(st, "oggetto")
-            ' æ„å¤§åˆ©è¯­-é€‰æ‹©ä¸€ä¸ªå¯¹è±¡æˆ–å‘½ä»¤
+            ' Òâ´óÀûÓï-Ñ¡ÔñÒ»¸ö¶ÔÏó»òÃüÁî
             GetLanguage = "it"
-        Case ExistsKey(st, "å‘½ä»¤")
-            ' æ—¥è¯­-é€‰æ‹©ä¸€ä¸ªå‘½ä»¤æˆ–å¯¹è±¡
+        Case ExistsKey(st, "ÃüÁî")
+            ' ÈÕÓï-Ñ¡ÔñÒ»¸öÃüÁî»ò¶ÔÏó
             GetLanguage = "ja"
-        Case ExistsKey(st, "Ğ¾Ğ±ÑŠĞµĞºÑ‚")
-            ' ä¿„è¯­-é€‰æ‹©ä¸€ä¸ªå¯¹è±¡æˆ–å‘½ä»¤
+        Case ExistsKey(st, "§à§Ò§ì§Ö§Ü§ä")
+            ' ¶íÓï-Ñ¡ÔñÒ»¸ö¶ÔÏó»òÃüÁî
             GetLanguage = "ru"
-        Case ExistsKey(st, "å¯¹è±¡")
-            ' ä¸­æ–‡-é€‰æ‹©ä¸€ä¸ªå¯¹è±¡æˆ–å‘½ä»¤
+        Case ExistsKey(st, "¶ÔÏó")
+            ' ÖĞÎÄ-Ñ¡ÔñÒ»¸ö¶ÔÏó»òÃüÁî
             GetLanguage = "zh"
         Case Else
             Select Case Len(st)
                 Case 13
-                    ' éŸ©è¯­-???? ?? ?? ??@unicodeç¼–ç ç¤ºä¾‹
+                    ' º«Óï-???? ?? ?? ??@unicode±àÂëÊ¾Àı
                     GetLanguage = "ko"
                 Case 23
-                    ' æ—¥è¯­-æ—¥è¯­é•¿æç¤ºç¤ºä¾‹
+                    ' ÈÕÓï-ÈÕÓï³¤ÌáÊ¾Ê¾Àı
                     GetLanguage = "ja"
                 Case Else
-                    ' å…¶ä»–æƒ…å†µ
+                    ' ÆäËûÇé¿ö
             End Select
     End Select
 End Function
 
-' æ£€æŸ¥å­—ç¬¦ä¸²ä¸­æ˜¯å¦åŒ…å«æŒ‡å®šå…³é”®å­—
-' å¿½ç•¥å¤§å°å†™è¿›è¡Œæ£€æŸ¥
-Private Function ExistsKey(ByVal txt As String, ByVal key As String) As Boolean
-    ExistsKey = IIf(InStr(LCase(txt), LCase(key)) > 0, True, False)
+' ¼ì²é×Ö·û´®ÖĞÊÇ·ñ°üº¬Ö¸¶¨¹Ø¼ü×Ö
+' ºöÂÔ´óĞ¡Ğ´½øĞĞ¼ì²é
+Private Function ExistsKey(ByVal txt As String, ByVal Key As String) As Boolean
+    ExistsKey = IIf(InStr(LCase(txt), LCase(Key)) > 0, True, False)
 End Function
 
-' æ£€æŸ¥æ˜¯å¦ä¸ºå­—ç¬¦ä¸²æ•°ç»„
+' ¼ì²éÊÇ·ñÎª×Ö·û´®Êı×é
 Private Function IsStringAry(ByVal ary As Variant) As Boolean
     IsStringAry = False
     
@@ -215,12 +215,12 @@ Private Function IsStringAry(ByVal ary As Variant) As Boolean
     IsStringAry = True
 End Function
 
-' æ£€æŸ¥è¿‡æ»¤å™¨ç±»å‹æ˜¯å¦æœ‰æ•ˆ
+' ¼ì²é¹ıÂËÆ÷ÀàĞÍÊÇ·ñÓĞĞ§
 Private Function IsFilterType(ByVal ary As Variant) As Boolean
     IsFilterType = False
-    Dim ErrMsg$: ErrMsg = "è¿‡æ»¤å™¨ç±»å‹æ— æ•ˆ" + vbNewLine + _
-                          "éœ€è¦ä¸ºVariant(String)ç±»å‹çš„æ•°ç»„" + vbNewLine + _
-                          "(å…·ä½“è¯·å‚è€ƒæ–‡æ¡£)"
+    Dim ErrMsg$: ErrMsg = "¹ıÂËÆ÷ÀàĞÍÎŞĞ§" + vbNewLine + _
+                          "ĞèÒªÎªVariant(String)ÀàĞÍµÄÊı×é" + vbNewLine + _
+                          "(¾ßÌåÇë²Î¿¼ÎÄµµ)"
     
     If Not IsStringAry(ary) Then
         MsgBox ErrMsg
@@ -230,7 +230,7 @@ Private Function IsFilterType(ByVal ary As Variant) As Boolean
     IsFilterType = True
 End Function
 
-' å°†å­—ç¬¦ä¸²è½¬æ¢ä¸ºå˜ä½“æ•°ç»„
+' ½«×Ö·û´®×ª»»Îª±äÌåÊı×é
 Private Function ToStrVriAry(ByVal s$) As Variant
     Dim ary As Variant: ary = Split(s, ",")
     Dim vriary() As Variant: ReDim vriary(UBound(ary))
@@ -241,31 +241,31 @@ Private Function ToStrVriAry(ByVal s$) As Variant
     ToStrVriAry = vriary
 End Function
 
-'*****é€šç”¨ç›¸å…³å‡½æ•°*****
-' æ£€æŸ¥å¯¹è±¡æ˜¯å¦ä¸ºNothing
+'*****Í¨ÓÃÏà¹Øº¯Êı*****
+' ¼ì²é¶ÔÏóÊÇ·ñÎªNothing
 ''' @param:OJ-Variant(Of Object)
 ''' @return:Boolean
 Function IsNothing(ByVal oj As Variant) As Boolean
     IsNothing = oj Is Nothing
 End Function
 
-' åˆ›å»ºScripting.Dictionaryå¯¹è±¡
+' ´´½¨Scripting.Dictionary¶ÔÏó
 ''' @param:CompareMode-Long
 ''' @return:Object(Of Dictionary)
 Function InitDic(Optional CompareMode As Long = vbBinaryCompare) As Object
-    Dim dic As Object
-    Set dic = CreateObject("Scripting.Dictionary")
-    dic.CompareMode = CompareMode
-    Set InitDic = dic
+    Dim Dic As Object
+    Set Dic = CreateObject("Scripting.Dictionary")
+    Dic.CompareMode = CompareMode
+    Set InitDic = Dic
 End Function
 
-' åˆ›å»ºArrayListå¯¹è±¡
+' ´´½¨ArrayList¶ÔÏó
 ''' @return:Object(Of ArrayList)Public
 Function InitLst() As Object
     Set InitLst = CreateObject("System.Collections.ArrayList")
 End Function
 
-' æ£€æŸ¥å¯¹è±¡æ˜¯å¦ä¸ºæŒ‡å®šç±»å‹
+' ¼ì²é¶ÔÏóÊÇ·ñÎªÖ¸¶¨ÀàĞÍ
 ''' @param:OJ-Object
 ''' @param:T-String
 ''' @return:Boolean
@@ -274,8 +274,8 @@ Function IsType_Of_T(ByVal oj As Object, ByVal T$) As Boolean
 End Function
 
 
-'*****æ•°ç»„ç›¸å…³å‡½æ•°*****
-' åˆå¹¶ä¸¤ä¸ªæ•°ç»„
+'*****Êı×éÏà¹Øº¯Êı*****
+' ºÏ²¢Á½¸öÊı×é
 ''' @param:Ary1-Variant(Of Array)
 ''' @param:Ary2-Variant(Of Array)
 ''' @return:Variant(Of Array)
@@ -303,7 +303,7 @@ Function JoinAry(ByVal Ary1 As Variant, ByVal Ary2 As Variant)
     JoinAry = Ary1
 End Function
 
-' è·å–æ•°ç»„æŒ‡å®šèŒƒå›´çš„å…ƒç´ 
+' »ñÈ¡Êı×éÖ¸¶¨·¶Î§µÄÔªËØ
 ''' @param:Ary-Variant(Of Array)
 ''' @param:StartIdx-Long
 ''' @param:EndIdx-Long
@@ -322,7 +322,7 @@ Function GetRangeAry(ByVal ary As Variant, ByVal StartIdx&, ByVal EndIdx&) As Va
     GetRangeAry = RngAry
 End Function
 
-' å…‹éš†æ•°ç»„
+' ¿ËÂ¡Êı×é
 ''' @param:Ary-Variant(Of Array)
 ''' @return:Variant(Of Array)
 Function CloneAry(ByVal ary As Variant) As Variant
@@ -330,7 +330,7 @@ Function CloneAry(ByVal ary As Variant) As Variant
     CloneAry = GetRangeAry(ary, 0, UBound(ary))
 End Function
 
-' æ£€æŸ¥ä¸¤ä¸ªæ•°ç»„æ˜¯å¦ç›¸ç­‰
+' ¼ì²éÁ½¸öÊı×éÊÇ·ñÏàµÈ
 ''' @param:Ary1-Variant(Of Array)
 ''' @param:Ary2-Variant(Of Array)
 ''' @return:Boolean
@@ -346,16 +346,16 @@ Function IsAryEqual(ByVal Ary1 As Variant, ByVal Ary2 As Variant) As Boolean
 End Function
 
 
-'*****IOç›¸å…³å‡½æ•°*****
-' è·å–FileSystemObjectå¯¹è±¡
+'*****IOÏà¹Øº¯Êı*****
+' »ñÈ¡FileSystemObject¶ÔÏó
 ''' @return:Object(Of FileSystemObject)
 Function GetFSO() As Object
     Set GetFSO = CreateObject("Scripting.FileSystemObject")
 End Function
 
-' åˆ†å‰²è·¯å¾„å
-''' @param:FullPath-å®Œæ•´è·¯å¾„
-''' @return:Variant(Of Array(Of String)) (0-è·¯å¾„ 1-æ–‡ä»¶å 2-æ‰©å±•å)
+' ·Ö¸îÂ·¾¶Ãû
+''' @param:FullPath-ÍêÕûÂ·¾¶
+''' @return:Variant(Of Array(Of String)) (0-Â·¾¶ 1-ÎÄ¼şÃû 2-À©Õ¹Ãû)
 Function SplitPathName(ByVal FullPath$) As Variant
     Dim path(2) As String
     With GetFSO
@@ -366,32 +366,32 @@ Function SplitPathName(ByVal FullPath$) As Variant
     SplitPathName = path
 End Function
 
-' åˆå¹¶è·¯å¾„å
-''' @param:Path-Variant(Of Array(Of String)) (0-è·¯å¾„ 1-æ–‡ä»¶å 2-æ‰©å±•å)
-''' @return:å®Œæ•´è·¯å¾„
+' ºÏ²¢Â·¾¶Ãû
+''' @param:Path-Variant(Of Array(Of String)) (0-Â·¾¶ 1-ÎÄ¼şÃû 2-À©Õ¹Ãû)
+''' @return:ÍêÕûÂ·¾¶
 Function JoinPathName$(ByVal path As Variant)
-    If Not IsArray(path) Then Stop ' è¾“å…¥é”™è¯¯
-    If Not UBound(path) = 2 Then Stop ' è¾“å…¥é”™è¯¯
+    If Not IsArray(path) Then Stop ' ÊäÈë´íÎó
+    If Not UBound(path) = 2 Then Stop ' ÊäÈë´íÎó
     JoinPathName = path(0) + "\" + path(1) + "." + path(2)
 End Function
 
-' æ£€æŸ¥è·¯å¾„æ˜¯å¦å­˜åœ¨
-''' @param:Path-è·¯å¾„
+' ¼ì²éÂ·¾¶ÊÇ·ñ´æÔÚ
+''' @param:Path-Â·¾¶
 ''' @return:Boolean
 Function IsExists(ByVal path$) As Boolean
     IsExists = False
     Dim FSO As Object: Set FSO = GetFSO
     If FSO.FileExists(path) Then
-        IsExists = True: Exit Function ' æ–‡ä»¶
+        IsExists = True: Exit Function ' ÎÄ¼ş
     ElseIf FSO.FolderExists(path) Then
-        IsExists = True: Exit Function ' æ–‡ä»¶å¤¹
+        IsExists = True: Exit Function ' ÎÄ¼ş¼Ğ
     End If
     Set FSO = Nothing
 End Function
 
-' è·å–æ–°æ–‡ä»¶å
-''' @param:Path-å®Œæ•´è·¯å¾„
-''' @return:æ–°çš„å®Œæ•´è·¯å¾„
+' »ñÈ¡ĞÂÎÄ¼şÃû
+''' @param:Path-ÍêÕûÂ·¾¶
+''' @return:ĞÂµÄÍêÕûÂ·¾¶
 Function GetNewName$(ByVal oldPath$)
     Dim path As Variant
     path = SplitPathName(oldPath)
@@ -412,8 +412,8 @@ Function GetNewName$(ByVal oldPath$)
     Loop
 End Function
 
-' å†™å…¥æ–‡ä»¶
-''' @param:Path-å®Œæ•´è·¯å¾„
+' Ğ´ÈëÎÄ¼ş
+''' @param:Path-ÍêÕûÂ·¾¶
 ''' @param:Txt-String
 Sub WriteFile(ByVal path$, ByVal txt) '$)
     On Error Resume Next
@@ -421,8 +421,8 @@ Sub WriteFile(ByVal path$, ByVal txt) '$)
     On Error GoTo 0
 End Sub
 
-' è¯»å–æ–‡ä»¶
-''' @param:Path-å®Œæ•´è·¯å¾„
+' ¶ÁÈ¡ÎÄ¼ş
+''' @param:Path-ÍêÕûÂ·¾¶
 ''' @return:Variant(Of Array(Of String))
 Function ReadFile(ByVal path$) As Variant
     On Error Resume Next
@@ -434,16 +434,17 @@ Function ReadFile(ByVal path$) As Variant
 End Function
 
 
-'*****è®¡æ—¶ç›¸å…³å‡½æ•°*****
-' å¯åŠ¨ç§’è¡¨
+'*****¼ÆÊ±Ïà¹Øº¯Êı*****
+' Æô¶¯Ãë±í
 Sub SW_Start()
     mSW = timeGetTime
 End Sub
 
-' è·å–è®¡æ—¶æ—¶é—´
+' »ñÈ¡¼ÆÊ±Ê±¼ä
 ''' @return:Double(Unit:s)
 Function SW_GetTime#()
     SW_GetTime = IIf(mSW = 0, -1, (timeGetTime - mSW) * 0.001)
 End Function
 
 
+                                       ÖÆµÄ                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    

@@ -1,3 +1,18 @@
+VERSION 5.00
+Begin {C62A69F0-16DC-11CE-9E98-00AA00574A4F} Cat_Macro_Menu_View 
+   Caption         =   "UserForm1"
+   ClientHeight    =   7990
+   ClientLeft      =   120
+   ClientTop       =   450
+   ClientWidth     =   11590
+   OleObjectBlob   =   "Cat_Macro_Menu_View.frx":0000
+   StartUpPosition =   1  'CenterOwner
+End
+Attribute VB_Name = "Cat_Macro_Menu_View"
+Attribute VB_GlobalNameSpace = False
+Attribute VB_Creatable = False
+Attribute VB_PredeclaredId = True
+Attribute VB_Exposed = False
 'Version 5#
 'Begin {C62A69F0-16DC-11CE-9E98-00AA00574A4F} Cat_Macro_Menu_View
 '   Caption = "UserForm1"
@@ -13,52 +28,54 @@
 'Attribute VB_Creatable = False
 'Attribute VB_PredeclaredId = True
 'Attribute VB_Exposed = False
-' VBA CATIA V5 è¯¦ç»†ä½¿ç”¨æ–¹æ³•ï¼ˆç‰ˆæœ¬ï¼‰è¯´æ˜  by Kantoku
+' VBA CATIA V5 ÏêÏ¸Ê¹ÓÃ·½·¨£¨°æ±¾£©ËµÃ÷  by Kantoku
 ' Cat_Macro_Menu_View.frm
-' è¯¥æ–‡ä»¶ç”¨äºå®ç°èœå•çš„UIç•Œé¢
+' ¸ÃÎÄ¼şÓÃÓÚÊµÏÖ²Ëµ¥µÄUI½çÃæ
 
-' çª—ä½“è¾¹è·
-Private FrmMargin As Variant ' ä¸Š, å³, ä¸‹, å·¦ çª—ä½“è¾¹è·è°ƒæ•´å€¼
+' ´°Ìå±ß¾à
+Private FrmMargin As Variant ' ÉÏ, ÓÒ, ÏÂ, ×ó ´°Ìå±ß¾àµ÷ÕûÖµ
 
-' çª—ä½“å®½åº¦è°ƒæ•´å€¼
+' ´°Ìå¿í¶Èµ÷ÕûÖµ
 Private Const ADJUST_F_W = 10
-' çª—ä½“é«˜åº¦è°ƒæ•´å€¼
+' ´°Ìå¸ß¶Èµ÷ÕûÖµ
 Private Const ADJUST_F_H = 10
 
-' å¤šé¡µæ§ä»¶è°ƒæ•´
-Private Const ADJUST_M_W = 240 ' å¤šé¡µæ§ä»¶å®½åº¦è°ƒæ•´å€¼
-Private Const ADJUST_M_H = 60 ' å¤šé¡µæ§ä»¶é«˜åº¦è°ƒæ•´å€¼
-
-Private Const Tab_W = 50 ' æŒ‰é’®çš„å›ºå®šå®½åº¦
-Private Const Tab_H = 20 ' å•ä¸ªæŒ‰é’®çš„é«˜åº¦
-
-
-' æŒ‰é’®å°ºå¯¸
-Private Const BTN_W = 50 ' æŒ‰é’®çš„å›ºå®šå®½åº¦
-Private Const BTN_H = 30 ' å•ä¸ªæŒ‰é’®çš„é«˜åº¦
+' ¶àÒ³¿Ø¼şµ÷Õû
+Private Const ADJUST_M_W = 240 ' ¶àÒ³¿Ø¼ş¿í¶Èµ÷ÕûÖµ
+Private Const ADJUST_M_H = 60 ' ¶àÒ³¿Ø¼ş¸ß¶Èµ÷ÕûÖµ
+Private Const Tab_W = 40 ' Tab¹Ì¶¨¿í¶È
+Private Const Tab_H = 16 ' TAB¸ß¶È
+Private Const Tab_frontsize = 8
 
 
+' °´Å¥³ß´ç
+Private Const BTN_W = 60 ' °´Å¥µÄ¹Ì¶¨¿í¶È
+Private Const BTN_H = 20 ' µ¥¸ö°´Å¥µÄ¸ß¶È
 
-Private mBtns As Object ' æŒ‰é’®äº‹ä»¶é›†åˆ
+Private Const BTN_frontsize = 10
+
+
+
+Private mBtns As Object ' °´Å¥ÊÂ¼ş¼¯ºÏ
 
 Option Explicit
 
-' è®¾ç½®çª—ä½“ä¿¡æ¯
+' ÉèÖÃ´°ÌåĞÅÏ¢
 Sub Set_FormInfo(ByVal InfoLst As Object, _
                  ByVal PageMap As Object, _
                  ByVal FormTitle As String, _
                  ByVal CloseType As Boolean)
                  
-    ' åˆå§‹åŒ–çª—ä½“è¾¹è·
-    FrmMargin = Array(10, 10, 10, 0) ' ä¸Š, å³, ä¸‹, å·¦ çª—ä½“è¾¹è·è°ƒæ•´å€¼
+    ' ³õÊ¼»¯´°Ìå±ß¾à
+    FrmMargin = Array(10, 10, 10, 0) ' ÉÏ, ÓÒ, ÏÂ, ×ó ´°Ìå±ß¾àµ÷ÕûÖµ
     
-    ' åˆ›å»ºå¤šé¡µæ§ä»¶
+    ' ´´½¨¶àÒ³¿Ø¼ş
     Dim MPgs As MultiPage
     Set MPgs = Me.Controls.Add("Forms.MultiPage.1", 1, True)
     
     Dim Pgs As Pages
-    Set Pgs = MPgs.Pages
-    Pgs.Clear
+     Set Pgs = MPgs.Pages
+     Pgs.Clear
     
     Dim Key As Long, KeyStr As Variant
     Dim Pg As Page, PName As String
@@ -68,16 +85,10 @@ Sub Set_FormInfo(ByVal InfoLst As Object, _
     Dim BtnEvt As Button_Evt
     
     For Each KeyStr In InfoLst
-    
-        ' è·å–é”®å€¼
         Key = CLng(KeyStr)
         If Not PageMap.Exists(Key) Then GoTo Continue
-        
         PName = PageMap(Key)
         Set Pg = Get_Page(Pgs, PName)
-        
-        
-        ' åˆå§‹åŒ–æŒ‰é’®
         Set BtnInfos = InfoLst(KeyStr)
         For Each Info In BtnInfos
             Set Btn = Init_Button(Pg.Controls, Key, Info)
@@ -88,17 +99,12 @@ Sub Set_FormInfo(ByVal InfoLst As Object, _
 Continue:
     Next
     
-    ' ä¿å­˜æŒ‰é’®äº‹ä»¶é›†åˆ
     Set mBtns = Btns
-    
-    ' è®¾ç½®å¤šé¡µæ§ä»¶
     Call Set_MPage(MPgs)
-    
-    ' è®¾ç½®çª—ä½“
     Call Set_Form(MPgs, FormTitle)
 End Sub
 
-' è®¾ç½®çª—ä½“å±æ€§
+' ÉèÖÃ´°ÌåÊôĞÔ
 Private Sub Set_Form(ByVal MPgs As MultiPage, ByVal Cap As String)
     With Me
         .Height = MPgs.Height + ADJUST_F_H
@@ -107,17 +113,16 @@ Private Sub Set_Form(ByVal MPgs As MultiPage, ByVal Cap As String)
     End With
 End Sub
 
-' è®¾ç½®å¤šé¡µæ§ä»¶å±æ€§
+' ÉèÖÃ¶àÒ³¿Ø¼şÊôĞÔ
 Private Sub Set_MPage(ByVal MPgs As MultiPage)
 
-
-    MPgs.Width = (FrmMargin(1) + BTN_W + FrmMargin(3) + ADJUST_M_W) * 1.4
+    MPgs.Width = (FrmMargin(1) + BTN_W + FrmMargin(3) + ADJUST_M_W)
     With MPgs
-        .TabFixedHeight = Tab_H  ' æ ‡ç­¾é«˜åº¦ï¼ˆå•ä½ï¼šç£…ï¼‰
-        .TabFixedWidth = Tab_W ' æ ‡ç­¾å®½åº¦
+        .TabFixedHeight = Tab_H  ' ±êÇ©¸ß¶È£¨µ¥Î»£º°õ£©
+        .TabFixedWidth = Tab_W ' ±êÇ©¿í¶È
         .Font.Name = "Arial"
-        .Font.Size = 10
-'        .Style = fmTabStyleButtons  ' åˆ‡æ¢ä¸ºæŒ‰é’®æ ·å¼
+        .Font.Size = Tab_frontsize
+'        .Style = fmTabStyleButtons  ' ÇĞ»»Îª°´Å¥ÑùÊ½
     
      End With
     
@@ -135,11 +140,11 @@ Private Sub Set_MPage(ByVal MPgs As MultiPage)
     
     MPgs.Height = (FrmMargin(0) + (BTN_H * MaxBtnCnt) + FrmMargin(2) + ADJUST_M_H) * 1.2
     
-    ' è®¾ç½®å¤šé¡µæ§ä»¶èƒŒæ™¯é¢œè‰²
+    ' ÉèÖÃ¶àÒ³¿Ø¼ş±³¾°ÑÕÉ«
 
 End Sub
 
-' åˆå§‹åŒ–æŒ‰é’®
+' ³õÊ¼»¯°´Å¥
 Private Function Init_Button(ByVal Ctls As Controls, _
                              ByVal Idx As Long, _
                              ByVal BtnInfo As Variant) As MSForms.CommandButton
@@ -156,17 +161,17 @@ Private Function Init_Button(ByVal Ctls As Controls, _
         .Left = FrmMargin(2)
         .Height = BTN_H
         .Width = BTN_W
-        ' è®¾ç½®æŒ‰é’®å­—ä½“
+        ' ÉèÖÃ°´Å¥×ÖÌå
         .Font.Name = "Arial"
-        .Font.Size = 10
-        ' è®¾ç½®æŒ‰é’®èƒŒæ™¯é¢œè‰²
+        .Font.Size = BTN_frontsize
+        ' ÉèÖÃ°´Å¥±³¾°ÑÕÉ«
        ' .BackColor = RGB(220, 220, 220)
     End With
     
     Set Init_Button = Btn
 End Function
 
-' å°è¯•è®¾ç½®æ§ä»¶å±æ€§
+' ³¢ÊÔÉèÖÃ¿Ø¼şÊôĞÔ
 Private Sub Try_SetProperty(ByVal Ctrl As Object, _
                             ByVal PptyName As String, _
                             ByVal Value As Variant)
@@ -176,7 +181,7 @@ Private Sub Try_SetProperty(ByVal Ctrl As Object, _
         Dim tmp As Variant
         tmp = CallByName(Ctrl, PptyName, VbGet)
         If Not Err.Number = 0 Then
-            Debug.Print PptyName & ": è·å–å±æ€§å¤±è´¥(" & Err.Number & ")"
+            Debug.Print PptyName & ": »ñÈ¡ÊôĞÔÊ§°Ü(" & Err.Number & ")"
             Exit Sub
         End If
         
@@ -191,18 +196,18 @@ Private Sub Try_SetProperty(ByVal Ctrl As Object, _
                 Value = CCur(Value)
         End Select
         If Not Err.Number = 0 Then
-            Debug.Print Value & ": ç±»å‹è½¬æ¢å¤±è´¥(" & Err.Number & ")"
+            Debug.Print Value & ": ÀàĞÍ×ª»»Ê§°Ü(" & Err.Number & ")"
             Exit Sub
         End If
         
         Call CallByName(Ctrl, PptyName, VbLet, Value)
         If Not Err.Number = 0 Then
-            Debug.Print Value & ": è®¾ç½®å±æ€§å¤±è´¥(" & Err.Number & ")"
+            Debug.Print Value & ": ÉèÖÃÊôĞÔÊ§°Ü(" & Err.Number & ")"
             Exit Sub
         End If
     On Error GoTo 0
 End Sub
-' è·å–é¡µé¢ - è‹¥ä¸å­˜åœ¨åˆ™åˆ›å»º
+' »ñÈ¡Ò³Ãæ - Èô²»´æÔÚÔò´´½¨
 Private Function Get_Page(ByVal Pgs As Pages, ByVal Name As String) As Page
     Dim Pg As Page
     On Error Resume Next
@@ -214,5 +219,17 @@ Private Function Get_Page(ByVal Pgs As Pages, ByVal Name As String) As Page
     Set Get_Page = Pg
 End Function
 
+
+Private Sub TabStrip1_Change()
+
+End Sub
+
+Private Sub MultiPage1_Change()
+
+End Sub
+
+Private Sub UserForm_Click()
+
+End Sub
 
 
