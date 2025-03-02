@@ -1,8 +1,8 @@
 'Attribute VB_Name = "sample_ReOrder_Product"
 
 '{GP:11}
-'{Caption:²úÆ·ÅÅÐò}
-'{ControlTipText:²úÆ·ÅÅÐò}
+'{Caption:ï¿½ï¿½Æ·ï¿½ï¿½ï¿½ï¿½}
+'{ControlTipText:ï¿½ï¿½Æ·ï¿½ï¿½ï¿½ï¿½}
 '{BackColor:16744703}
 
 Option Explicit
