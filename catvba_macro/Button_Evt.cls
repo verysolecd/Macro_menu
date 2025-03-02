@@ -10,6 +10,7 @@ Attribute VB_Exposed = False
 ' Button_Evt.cls
 ' 此代码用于处理按钮事件
 Option Explicit
+
 Private WithEvents mBtn As MSForms.CommandButton
 Attribute mBtn.VB_VarHelpID = -1
 Private mInfo As Object

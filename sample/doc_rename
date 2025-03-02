@@ -1,0 +1,120 @@
+' 强制显式声明所有变量
+
+
+
+
+
+
+Option Explicit
+Dim CatiaSelection As Selection
+Dim SelectedDocument As Product
+Dim RenamingDocument As Object
+Dim fileSystem
+Dim DocumentFolderPath As String
+Dim DocumentFolder
+Dim documentList
+Dim MainProduct
+Dim TrashBinPath As String
+Dim TrashBinIncluded As Boolean
+Public OldFileName As String
+Public NewFileName As String
+Dim RenamedFileIncluded As Boolean
+Dim FilesCount As Integer
+Public IsRenamingInitializationOK As Boolean
+Dim i, j, k, l, m
+Dim ErrorMessage
+
+' 主程序入口
+Public Sub CATMain()
+    Set documentList = CATIA.Documents
+    Set CatiaSelection = CATIA.ActiveDocument.Selection
+    ' 如果选择的文档数量超过1个
+    If CatiaSelection.Count > 1 Then
+        MsgBox "Je zvolen vice nez jeden dokument ve strome!", vbOKOnly, "Error"
+        Exit Sub
+    ' 如果没有选择任何文档
+    ElseIf CatiaSelection.Count < 1 Then
+        MsgBox "Neni zvolen zadny dokument pro prejmenovani!", vbOKOnly, "Error"
+        Exit Sub
+    End If
+    ' 检查当前活动文档是否为.CATProduct文件
+    If (InStr(CATIA.ActiveDocument.Name, ".CATProduct") <> 0) Then
+        Set MainProduct = CATIA.ActiveDocument
+    Else
+        MsgBox "Dokument pro prejmenovani musi byt zvolen v .CATProduct", vbOKOnly, "Error"
+        Exit Sub
+    End If
+    Set SelectedDocument = CatiaSelection.Item(1).LeafProduct
+    ' 检查所选文档的参考产品的父文档是否为.CATProduct或.CATPart文件
+    If (InStr(SelectedDocument.ReferenceProduct.Parent.Name, ".CATProduct") <> 0 Or _
+        InStr(SelectedDocument.ReferenceProduct.Parent.Name, ".CATPart") <> 0) Then
+        ' 如果父文档名称中不包含所选文档的部件编号
+        If InStr(SelectedDocument.ReferenceProduct.Parent.Name, SelectedDocument.PartNumber) = 0 Then
+            MsgBox "Upozorneni - nazev souboru a nazev v Catia se lisi!", vbOKOnly, "Error"
+        End If
+        Set RenamingDocument = SelectedDocument.ReferenceProduct.Parent
+        DocumentFolderPath = SelectedDocument.ReferenceProduct.Parent.Path
+        OldFileName = SelectedDocument.ReferenceProduct.Parent.Name
+    Else
+        MsgBox "! Tento vyber neni mozno prejmenovat !", vbOKOnly, "Error"
+        Exit Sub
+    End If
+    ' 如果发生错误（错误号不为0）
+    If Err.Number <> 0 Then 
+        MsgBox "!Chyba nacteni dilu z Catia!", 16, "Error"
+        Exit Sub
+    End If
+    On Error GoTo 0
+    Call Document_renaming_Form.Show
+    ' 如果重命名初始化未成功
+    If IsRenamingInitializationOK = False Then
+        Exit Sub
+    End If
+    NewFileName = UCase(NewFileName)
+    NewFileName = NewFileName + Right(OldFileName, Len(OldFileName) - InStrRev(OldFileName, ".") + 1)
+    ' 如果新文件名和旧文件名相同
+    If NewFileName = OldFileName Then
+        MsgBox "Puvodni a novy nazev jsou totozne opakujte!", vbOKOnly, "Error"
+        Exit Sub
+    End If
+    Set fileSystem = CATIA.fileSystem
+    ' 检查新文件名的文件是否已经存在
+    If fileSystem.FileExists(DocumentFolderPath + "\" + NewFileName) Then
+        MsgBox "Dil pod timto jmenem jiz existuje!", vbOKOnly, "Error"
+        Exit Sub
+    End If
+    ' 如果文档所在的文件夹路径为空
+    If DocumentFolderPath = "" Then
+        MsgBox "Cesta k souboru nenalezena", vbOKOnly, "Error"
+        Exit Sub
+    ' 如果文档所在的文件夹路径不存在
+    ElseIf fileSystem.FolderExists(DocumentFolderPath) = False Then
+        MsgBox "Cesta k souboru neexistuje", vbOKOnly, "Error"
+        Exit Sub
+    End If
+    Set DocumentFolder = fileSystem.GetFolder(DocumentFolderPath)
+    TrashBinPath = DocumentFolderPath + "\Kos"
+    ' 检查回收站文件夹是否存在
+    If fileSystem.FolderExists(TrashBinPath) = False Then
+        fileSystem.CreateFolder (TrashBinPath)
+        ' 检查回收站文件夹是否创建成功
+        If Not fileSystem.FolderExists(TrashBinPath) Then
+            MsgBox "Doslo k chybe pri vytvoreni kose!", vbOKOnly, "Error"
+            Exit Sub
+        End If
+    End If
+    RenamingDocument.SaveAs DocumentFolderPath + "\" + NewFileName
+    RenamingDocument.Product.PartNumber = Left(NewFileName, InStrRev(NewFileName, ".") - 1)
+    ' 检查新文件名的文件是否保存成功
+    If Not fileSystem.FileExists(DocumentFolderPath + "\" + NewFileName) Then
+        MsgBox "Nedoslo k vytvoreni dilu pod novym jmenem!", vbOKOnly, "Error"
+        Exit Sub
+    End If
+    fileSystem.CopyFile DocumentFolderPath + "\" + OldFileName, TrashBinPath + "\" + OldFileName, True
+    ' 检查旧文件是否成功复制到回收站
+    If Not fileSystem.FileExists(TrashBinPath + "\" + OldFileName) Then
+        MsgBox "Nedoslo k presunuti dilu do Kose!", vbOKOnly, "Error"
+        Exit Sub
+    End If
+    fileSystem.DeleteFile DocumentFolderPath + "\" + OldFileName
+End Sub

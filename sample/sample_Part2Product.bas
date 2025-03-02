@@ -1,33 +1,29 @@
-Attribute VB_Name = "sample_Part2Product"
-' VBA 示例：将零件转换为产品 版本 0.0.3，使用 'KCL0.0.12'，作者：Kantoku
-' 将零件转换为产品
-' 此程序可将零件文档中的元素转换为产品文档
-' （特定应用场景）
-'{GP:1}
-'{标题: 零件转产品}
-'{控件提示文本: 可将零件转换为产品}
+'Attribute VB_Name = "sample_Part2Product"
+'{Gp:1}
+'{Ep:CATMain}
+'{Caption:零件转产品}
+'{ControlTipText:此按钮将多实体零件转化为产品}
+'{BackColor:33023}
+
 Option Explicit
 
 Sub CATMain()
-    ' 检查是否可执行
     If Not CanExecute("PartDocument") Then Exit Sub
-    ' 零件
     Dim BaseDoc As PartDocument: Set BaseDoc = CATIA.ActiveDocument
     Dim BasePath As Variant: BasePath = Array(BaseDoc.FullName)
     Dim Pt As Part: Set Pt = BaseDoc.Part
     Dim LeafItems As Collection: Set LeafItems = Get_LeafItemLst(Pt.Bodies)
     Dim Msg As String
     If LeafItems Is Nothing Then
-        Msg = "未找到有效的叶子项目！"
+        Msg = "没有可复制的元素！"
         MsgBox Msg, vbOKOnly + vbExclamation
         Exit Sub
     End If
-    ' 消息
-    Msg = LeafItems.Count & " 个叶子项目已找到。" & vbNewLine & _
-          "请选择要执行的操作：" & vbNewLine & vbNewLine & _
-          "是 : 作为结果并保持链接(As Result With Link)" & vbNewLine & _
+    Msg = LeafItems.Count & " 个可复制的元素。" & vbNewLine & _
+          "请指定粘贴的类型" & vbNewLine & vbNewLine & _
+          "是 : 带链接的结果(As Result With Link)" & vbNewLine & _
           "否 : 作为结果(As Result)" & vbNewLine & _
-          "取消 : 取消操作"
+          "取消 : 宏中止"
     Dim PasteType As String
     Select Case MsgBox(Msg, vbQuestion + vbYesNoCancel)
         Case vbYes
@@ -39,16 +35,14 @@ Sub CATMain()
     End Select
     KCL.SW_Start
     Dim BaseScene As Variant: BaseScene = GetScene3D(GetViewPnt3D())
-    ' 装配
     Dim TopDoc As ProductDocument: Set TopDoc = CATIA.Documents.Add("Product")
     Call ToProduct(TopDoc, LeafItems, PasteType)
     Call UpdateScene(BaseScene)
     TopDoc.Product.Update
-    Debug.Print "时间: " & KCL.SW_GetTime & " 秒"
+    Debug.Print "时间:" & KCL.SW_GetTime & "s"
     MsgBox "完成"
 End Sub
 
-' 向产品中添加元素
 Private Sub ToProduct(ByVal TopDoc As ProductDocument, _
                       ByVal LeafItems As Collection, _
                       ByVal PasteType As String)
@@ -75,6 +69,7 @@ Private Sub ToProduct(ByVal TopDoc As ProductDocument, _
             .Clear
         End With
         With TopSel
+            .Clear
             .Add TgtDoc.Part
             .PasteSpecial PasteType
         End With
@@ -84,14 +79,12 @@ Private Sub ToProduct(ByVal TopDoc As ProductDocument, _
     CATIA.HSOSynchronized = True
 End Sub
 
-' 准备复制操作
 Private Sub Preparing_Copy(ByVal Sel As Selection, ByVal Itm As AnyObject)
     Sel.Clear
-    ' 实体
     If TypeName(Itm) = "Body" Then
         Sel.Add Itm
+        Exit Sub
     End If
-    ' 混合实体
     Dim ShpsLst As Collection: Set ShpsLst = New Collection
     ShpsLst.Add Itm.HybridShapes
     Select Case TypeName(Itm)
@@ -108,8 +101,6 @@ Private Sub Preparing_Copy(ByVal Sel As Selection, ByVal Itm As AnyObject)
     Next
 End Sub
 
-' 获取有序几何集的所有混合形状
-' 递归获取子集合中的混合形状
 Private Function Get_All_OdrGeoSetShapes(ByVal OdrGeoSet As OrderedGeometricalSet, _
                                          ByVal Lst As Collection) As Collection
     Dim Child As OrderedGeometricalSet
@@ -122,11 +113,11 @@ Private Function Get_All_OdrGeoSetShapes(ByVal OdrGeoSet As OrderedGeometricalSe
     Set Get_All_OdrGeoSetShapes = Lst
 End Function
 
-' 获取混合实体的所有混合形状
 Private Function Get_All_HbShapes(ByVal Hbdy As HybridBody, _
                                   ByVal Lst As Collection) As Collection
     Dim Child As HybridBody
     For Each Child In Hbdy.hybridBodies
+        Lst.Add Child.HybridShapes
         If Child.hybridBodies.Count > 0 Then
             Set Lst = Get_All_HbShapes(Child, Lst)
         End If
@@ -134,7 +125,6 @@ Private Function Get_All_HbShapes(ByVal Hbdy As HybridBody, _
     Set Get_All_HbShapes = Lst
 End Function
 
-' 获取叶子项目列表
 Private Function Get_LeafItemLst(ByVal Pt As Part) As Collection
     Set Get_LeafItemLst = Nothing
     Dim Sel As Selection: Set Sel = Pt.Parent.Selection
@@ -144,6 +134,7 @@ Private Function Get_LeafItemLst(ByVal Pt As Part) As Collection
     Filter = "(CATPrtSearch.BodyFeature.Visibility=Shown " & _
             "+ CATPrtSearch.OpenBodyFeature.Visibility=Shown" & _
             "+ CATPrtSearch.MMOrderedGeometricalSet.Visibility=Shown),sel"
+    CATIA.HSOSynchronized = False
     With Sel
         .Clear
         .Add Pt
@@ -151,22 +142,25 @@ Private Function Get_LeafItemLst(ByVal Pt As Part) As Collection
         For i = 1 To .Count2
             TmpLst.Add .Item(i).Value
         Next
+        .Clear
     End With
+    CATIA.HSOSynchronized = True
     If TmpLst.Count < 1 Then Exit Function
     Dim LeafHBdys As Object: Set LeafHBdys = KCL.InitDic()
-    Dim Hbdy As AnyObject ' 混合实体和有序几何集
+    Dim Hbdy As AnyObject
     For Each Hbdy In Pt.hybridBodies
         LeafHBdys.Add Hbdy, 0
     Next
     For Each Hbdy In Pt.OrderedGeometricalSets
         LeafHBdys.Add Hbdy, 0
     Next
+    Dim Itm As AnyObject
     Dim Lst As Collection: Set Lst = New Collection
     For Each Itm In TmpLst
         Select Case TypeName(Itm)
             Case "Body"
                 If Is_LeafBody(Itm) Then Lst.Add Itm
-            Case Else ' 混合实体和有序几何集
+            Case Else
                 If Is_LeafHybridBody(Itm, LeafHBdys) Then Lst.Add Itm
         End Select
     Next
@@ -174,29 +168,29 @@ Private Function Get_LeafItemLst(ByVal Pt As Part) As Collection
     Set Get_LeafItemLst = Lst
 End Function
 
-' 判断是否为叶子实体
 Private Function Is_LeafBody(ByVal Bdy As Body) As Boolean
     Is_LeafBody = Bdy.InBooleanOperation = False And Bdy.Shapes.Count > 0
 End Function
 
-' 判断是否为叶子混合实体
-' 参数: Hbdy - 混合实体和有序几何集
 Private Function Is_LeafHybridBody(ByVal Hbdy As AnyObject, _
                                    ByVal Dic As Object) As Boolean
     Is_LeafHybridBody = False
     If Not Dic.Exists(Hbdy) Then Exit Function
+    CATIA.HSOSynchronized = False
     Dim Sel As Selection
     Set Sel = KCL.GetParent_Of_T(Hbdy, "PartDocument").Selection
     Dim Cnt As Long
     With Sel
+        .Clear
         .Add Hbdy
         .Search "Visibility=Shown,sel"
         Cnt = .Count2
+        .Clear
     End With
+    CATIA.HSOSynchronized = True
     If Cnt > 1 Then Is_LeafHybridBody = True
 End Function
 
-' 初始化零件
 Private Function Init_Part(ByVal Prods As Variant, _
                            ByVal PtNum As String) As PartDocument
     Dim Prod As Product
@@ -206,11 +200,9 @@ Private Function Init_Part(ByVal Prods As Variant, _
     Set Init_Part = Prods.Item(Prods.Count).ReferenceProduct.Parent
 End Function
 
-'*** 相机 ***
-' 更新场景
 Private Sub UpdateScene(ByVal Scene As Variant)
     Dim Viewer As Viewer3D: Set Viewer = CATIA.ActiveWindow.ActiveViewer
-    Dim VPnt3D As Variant ' 3D 视点
+    Dim VPnt3D As Variant
     Set VPnt3D = Viewer.Viewpoint3D
     Dim ary As Variant
     ary = GetRangeAry(Scene, 0, 2)
@@ -224,7 +216,6 @@ Private Sub UpdateScene(ByVal Scene As Variant)
     Call Viewer.Update
 End Sub
 
-' 获取 3D 视点的场景信息
 Private Function GetScene3D(ViewPnt3D As Viewpoint3D) As Variant
     Dim vp As Variant: Set vp = ViewPnt3D
     Dim origin(2) As Variant: Call vp.GetOrigin(origin)
@@ -238,7 +229,8 @@ Private Function GetScene3D(ViewPnt3D As Viewpoint3D) As Variant
     GetScene3D = KCL.JoinAry(GetScene3D, FocusDist)
 End Function
 
-' 获取视点
 Private Function GetViewPnt3D() As Viewpoint3D
     Set GetViewPnt3D = CATIA.ActiveWindow.ActiveViewer.Viewpoint3D
 End Function
+
+

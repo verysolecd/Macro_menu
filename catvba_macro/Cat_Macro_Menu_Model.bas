@@ -16,7 +16,8 @@ Private Const GROUP_NUMBER_CAPTION = _
             "{ 1 : Part }" & _
             "{11 : Assy }" & _
             "{21 : Draw }" & _
-            "{51 : Other }"
+            "{51 : Other }" & _            
+            "{61 : Other }"
 '-----------------------------------------------------------------
 Option Explicit
 '----- 配置参数 请勿修改除非必要 -----------------------
@@ -143,11 +144,11 @@ End Function
 ' 返回值: Dict
 Private Function Push_Dic(ByVal Dic As Object, _
                           ByVal Key As Variant, _
-                          ByVal Val As Variant) As Object
+                          ByVal Item As Variant) As Object
     If Dic.Exists(Key) Then
-        Dic(Key) = Val
+        Dic(Key) = Item
     Else
-        Dic.Add Key, Val
+        Dic.Add Key,  Val
     End If
     Set Push_Dic = Dic
 End Function

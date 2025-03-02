@@ -1,31 +1,30 @@
-'Attribute VB_Name = "sample_IsExists_LeftAxis"
-
-' 检查零件文档中是否存在左手坐标系
+Attribute VB_Name = "macro_sample"
 '{Gp:1}
 '{Ep:LeftHand}
-'{Caption:LeftHandAxis}
-'{ControlTipText:检查是否有左手坐标系}
-'{BackColor:33023}
+'{Caption: 我是标题}
+'{ControlTipText: 检查零件文档中是否存在左手坐标系}
+'{背景颜色: 33023}
 Option Explicit
 Sub LeftHand()
     ' 检查是否可以执行
-    If Not CanExecute("PartDocument") Then Exit Sub
+    If Not CanExecute("PartDocument") Then Exit Sub    
     Dim Doc As PartDocument: Set Doc = CATIA.ActiveDocument
-    Dim Axs As AxisSystems: Set Axs = Doc.Part.AxisSystems
+    Dim Axs As AxisSystems: Set Axs = Doc.Part.AxisSystems    
     Dim Ax As AxisSystem
     Dim Msg As String: Msg = vbNullString
     For Each Ax In Axs
         If IsLeft(Ax) Then
             Msg = Msg & Ax.Name & vbNewLine
         End If
-    Next
+    Next    
     If Msg = vbNullString Then
         MsgBox "未找到左手坐标系。"
     Else
         MsgBox "已找到左手坐标系：" & vbNewLine & Msg
     End If
 End Sub
-
+' 判断是否为左手坐标系
+' Ax As AxisSystem 不能这样定义
 Private Function IsLeft(ByVal Ax As Variant) As Boolean
     ' 定义向量
     Dim VecX(2), VecY(2), VecZ(2)
@@ -43,4 +42,3 @@ Private Function IsLeft(ByVal Ax As Variant) As Boolean
     IsLeft = _
         VecZ(0) * Outer(0) + VecZ(1) * Outer(1) + VecZ(2) * Outer(2) < 0
 End Function
-
