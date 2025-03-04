@@ -1,8 +1,8 @@
-Attribute VB_Name = "m4_readPrd"
+Attribute VB_Name = "m43_readPrd"
 'Attribute VB_Name = "selPrd"
 '{gp:4}
 '{Ep:readPrd}
-'{Caption:读取产品属性}
+'{Caption:读取属性}
 '{ControlTipText:选择要被读取或修改的产品}
 '{BackColor:16744703}
 
@@ -17,19 +17,8 @@ Sub readPrd()
     Set ws = xlm.ws
     
     Dim data
-    data = pdm.infoPrd(pdm.rootPrd)
+    data = pdm.infoPrd(rootPrd)
     xlm.inject_data 1, data, "rv"
-        
-
-
-
-Call selPrd
 
 End Sub
 
-Function selPrd()
-
-MsgBox "选择成功"
-
-
-End Function
