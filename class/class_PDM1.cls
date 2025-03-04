@@ -2,7 +2,7 @@ VERSION 1.0 CLASS
 BEGIN
   MultiUse = -1  'True
 END
-Attribute VB_Name = "class_PDM"
+Attribute VB_Name = "class_PDM1"
 Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
@@ -10,16 +10,7 @@ Attribute VB_Exposed = False
 'version 2025.0303
 ' Class module for product operations
 ' Public Class Product_Module
-' #Folder:class 我现在希望class PDM类，实现以下多个功能：
-
-' 1  初始化方法， 获取g_rootPrd为catia当前打开的根产品
-' 2  catSel1方法  带提示让用户选择单个产品\part
-' 3  catSelx方法 带提示让用户选择多个产品\part
-' 4  infoPrd方法 获取传递的oPrd的一系列属性
-' 5  getAtt方法  获取 属性或属性值，不存在时返回nothing 和“__”
-' 6  meQty 方法  获取产品在当前子总成下的数量
-' 7  recurPrd方法  调用infoPrd方法获取根产品及所有子产品的属性，返回为数组，数组第一列为编号，数组第二列为装配层级
-
+'策划功能：
 
 Option Explicit
 Public Prd2wt
@@ -32,24 +23,16 @@ Private imsg
 Private att(10)
 Private aType(10)
 Sub init()
-    iniarr
-   On Error GoTo ErrHandler        
-        If catia.Documents.Count = 0 Then
-            Err.Raise 1001, , "未检测到打开的CATIA文档"
-        End If        
-        If Not TypeName(catia.ActiveDocument) = "ProductDocument" Then
-            Err.Raise 1002, , "当前文档不是产品文档（.CATProduct）"
-        End If    
+    On Error Resume Next
         Set rootPrd = catia.ActiveDocument.Product
-        Set oSel = catia.ActiveDocument.Selection:oSel.Clear    
-    Exit Sub    
-ErrHandler:
-    MsgBox "初始化失败：" & Err.Description, vbCritical
-    Exit Sub
-   
-End Sub
-sub iniarr()
-
+        Set oSel = catia.ActiveDocument.Selection
+        oSel.Clear
+        If Err.Number <> 0 Then
+            MsgBox "请打开产品文档", vbCritical
+            Exit Sub
+        End If
+    On Error GoTo 0
+    ' 初始化属性定义
     att(1) = "iMaterial"
     att(2) = "iDensity"
     att(3) = "iMass"
@@ -58,13 +41,12 @@ sub iniarr()
     aType(2) = "Density"
     aType(3) = "Mass"
     aType(4) = "Length"
-
 End Sub
-
 Public Function catSel1(prompt As String) As Object
     oSel.Clear
     Dim iType(0)
     iType(0) = "Product"
+    MsgBox prompt
     If oSel.SelectElement2(iType, prompt, False) = "Normal" Then
         If oSel.Count = 1 Then
             Set catSel1 = oSel.Item(1).LeafProduct
@@ -72,7 +54,6 @@ Public Function catSel1(prompt As String) As Object
     End If
     oSel.Clear
 End Function
-
 Public Function catSelx(prompt As String) As collection
     Set catSelx = New collection
     oSel.Clear
@@ -126,6 +107,7 @@ Public Function selPrd()
         Exit Function
     End If
 End Function
+
     ' Calculate the total mass of a product and its sub-products
     Public Function Assmass(oPrd)
         Dim i
