@@ -10,15 +10,19 @@ Attribute VB_Exposed = False
 'version 2025.0303
 ' Class module for excel operations
 ' Public Class XLm
+
+
 Option Explicit
 ' 定义私有变量来存储 Excel 应用程序对象和工作表对象
 Public xlApp, wb, ws
-Private head_bom As Variant
-Private head_rv As Variant
-Private inject_cols As Variant
-Private extract_cols As Variant
-Private bom_cols As Variant
-Private startRow As Variant
+Private startRow
+
+Private header_bom(1 To 12)
+Private header_rv(15)
+Private inject_cols
+Private extract_cols
+Private bom_cols
+
 ' 初始化类的方法
 Public Sub init()
    On Error Resume Next
@@ -35,25 +39,39 @@ Public Sub init()
         Err.Clear
     End If
     On Error GoTo 0
-    head_rv = Array("Part Number", "Description", "Quantity", "Level")
+    
     inject_cols = Array(2, 4, 6, 12, 12, 8, 13, 10)
     extract_cols = Array(1, 3, 5, 7, 9, 11)
     bom_cols = Array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15)
-    
-    head_bom = Array( _
-    "No." & Chr(10) & "编号", _
-    "Layout" & Chr(10) & "层级", _
-    "PN" & Chr(10) & "零件号", _
-    "Nomenclature" & Chr(10) & "英文名称", _
-    "Definition" & Chr(10) & "中文名称", _
-    "Picture" & Chr(10) & "图像", _
-    "Quantity" & Chr(10) & "数量(PCS)", _
-    "Weight" & Chr(10) & "单质量", _
-    "Material" & Chr(10) & "材料", _
-    "Thickness" & Chr(10) & "厚度(mm)", _
-    "Density" & Chr(10) & "密度" _
-        )
-    startRow = 2
+ 
+header_bom(1) = "No." & Chr(10) & "编号"
+header_bom(2) = "Layout" & Chr(10) & "层级"
+header_bom(3) = "PN" & Chr(10) & "零件号"
+header_bom(4) = "Nomenclature" & Chr(10) & "英文名称"
+header_bom(5) = "Definition" & Chr(10) & "中文名称"
+header_bom(6) = "Picture" & Chr(10) & "图像"
+header_bom(7) = "Quantity" & Chr(10) & "数量(PCS)"
+header_bom(8) = "Weight" & Chr(10) & "单质量"
+header_bom(9) = "Material" & Chr(10) & "材料"
+header_bom(10) = "Thickness" & Chr(10) & "厚度(mm)"
+header_bom(11) = "Density" & Chr(10) & "密度"
+
+header_rv(1) = "零件号" & Chr(10) & "Partnumber"
+header_rv(2) = "更改" & Chr(10) & "件号"
+header_rv(3) = "英文名称" & Chr(10) & "Nomenclature"
+header_rv(4) = "更改" & Chr(10) & "英文名"
+header_rv(5) = "中文名称" & Chr(10) & "Definition"
+header_rv(6) = "更改" & Chr(10) & "中文名"
+header_rv(7) = "实例名" & Chr(10) & "InstanceName"
+header_rv(8) = "更改" & Chr(10) & "实例名"
+header_rv(9) = "材料" & Chr(10) & "material"
+header_rv(10) = "定义" & Chr(10) & "材料"
+header_rv(11) = "密度" & Chr(10) & "Density"
+header_rv(12) = "更改" & Chr(10) & "密度"
+header_rv(13) = "质量" & Chr(10) & "Mass"
+header_rv(14) = "厚度" & Chr(10) & "Thickness"
+
+     startRow = 2
 End Sub
 Public Sub clear_table()
     ws.UsedRange.ClearContents
@@ -67,10 +85,10 @@ Public Sub inject_data(rowNumber, data, iType)
     Select Case iType
         Case "bom"
             iCols = bom_cols
-            iHeader = head_bom
+            iHeader = header_bom
         Case "rv"
             iCols = inject_cols
-            iHeader = head_rv
+            iHeader = header_rv
         Case Else
             Exit Sub
     End Select
@@ -81,7 +99,7 @@ Public Sub inject_data(rowNumber, data, iType)
     ReDim outputArr(1 To 1, 1 To maxCol)  '转义数组，一行多列，其中列数由 iCols 数组的最大值决定
     ' 检查 data 数组长度是否足够
     Dim dataLength As Long
-    dataLength = UBound(data) - LBound(data) + 1
+     dataLength = UBound(data) - LBound(data) + 1
     Dim maxIndex As Long
     maxIndex = xlApp.Min(dataLength, UBound(iCols) - LBound(iCols) + 1)
     For i = 1 To maxIndex
@@ -132,3 +150,5 @@ Public Sub lvmg()
         End If
     Next
 End Sub
+
+
