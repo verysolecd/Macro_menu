@@ -1,0 +1,20 @@
+Sub intersel()
+Dim xlsht, rng, RC(0 To 1), oArry()
+Set xlApp = GetObject(, "Excel.Application") '获取excel程序
+Set xlsht = xlApp.ActiveSheet: xlsht.Columns(2).NumberFormatLocal = "0.000"
+Dim iPrd, rootPrd, oPrd, children
+Dim i, oRowNb
+ RC(0) = 3: RC(1) = 3
+   On Error Resume Next
+   Set CATIA = GetObject(, "CATIA.Application") '获取catia程序
+   Dim oDoc: Set oDoc = CATIA.Activedocument
+   Set rootPrd = CATIA.Activedocument.product
+        If Err.Number <> 0 Then
+           MsgBox "请打开CATIA并打开你的产品，再运行本程序": Err.Clear
+           Exit Sub
+        End If
+   On Error GoTo 0
+ Dim colls
+ Set colls = oDoc.part.relations
+Dim oSet
+Set oSet = colls.CreateSetOfRelations(oDoc.part)

@@ -65,6 +65,7 @@ Public Function catSel1(prompt As String) As Object
     oSel.Clear
     Dim iType(0)
     iType(0) = "Product"
+        MsgBox prompt
     If oSel.SelectElement2(iType, prompt, False) = "Normal" Then
         If oSel.Count = 1 Then
             Set catSel1 = oSel.Item(1).LeafProduct
