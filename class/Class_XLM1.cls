@@ -11,10 +11,28 @@ Attribute VB_Exposed = False
 ' Class module for excel operations
 ' Public Class XLm
 
+Public  wb As Workbook, ws As Worksheet
+Private xlApp As Excel.Application
+Private Static mInstanceCount As Integer
 
-Option Explicit
-' 定义私有变量来存储 Excel 应用程序对象和工作表对象
-Public  wb, ws
+' 在类初始化时检查实例
+Private Sub Class_Initialize()
+    If mInstanceCount > 0 Then
+        Err.Raise 513, , "已有实例运行，禁止重复创建"
+    End If
+    mInstanceCount = mInstanceCount + 1
+    
+    If gblXLApp Is Nothing Then
+        Set gblXLApp = New Excel.Application
+        gblXLApp.Visible = True
+        Set gblWB = gblXLApp.Workbooks.Add
+        Set gblWS = gblWB.ActiveSheet
+    Else
+        Set xlApp = gblXLApp
+        Set wb = gblWB
+        Set ws = gblWS
+    End If
+End Sub
 Private startRow
 
 Private header_bom(1 To 12)
@@ -30,9 +48,12 @@ Attribute xlApp.VB_VarHelpID = -1
 ' 新增事件处理程序
 Private Sub xlApp_WorkbookBeforeClose(ByVal Wb As Workbook, Cancel As Boolean)
     If Wb Is wb Then
-        Cancel = True ' 阻止默认关闭行为
+        Cancel = True
         ReleaseResources
-        Wb.Close SaveChanges:=False ' 强制关闭
+        On Error Resume Next
+        gblXLApp.Quit
+        Set gblXLApp = Nothing
+        Err.Raise 999, , "用户中断操作，程序终止"
     End If
 End Sub
 
@@ -58,29 +79,6 @@ Private Sub Class_Terminate()
         Set xlApp = Nothing
     End If
 End Sub
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 Public Sub init()
