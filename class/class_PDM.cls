@@ -31,7 +31,8 @@ Private oSel
 Private imsg
 Private att(10)
 Private aType(10)
-Sub init()
+
+Private Sub Class_Initialize()
     iniarr
    On Error GoTo ErrHandler        
         If catia.Documents.Count = 0 Then
@@ -49,7 +50,6 @@ ErrHandler:
    
 End Sub
 sub iniarr()
-
     att(1) = "iMaterial"
     att(2) = "iDensity"
     att(3) = "iMass"
@@ -58,7 +58,6 @@ sub iniarr()
     aType(2) = "Density"
     aType(3) = "Mass"
     aType(4) = "Length"
-
 End Sub
 
 Public Function catSel1(prompt As String) As Object

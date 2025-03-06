@@ -1,4 +1,4 @@
-VERSION 1.0 CLASS
+VERSION 1.01 CLASS
 BEGIN
   MultiUse = -1  'True
 END
@@ -7,14 +7,8 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
-'version 2025.0303
-' Class module for excel operations
-' Public Class XLm
 
-
-Option Explicit
-' 定义私有变量来存储 Excel 应用程序对象和工作表对象
-Public xlApp, wb, ws
+private wb, ws 
 Private startRow
 
 Private header_bom(1 To 12)
@@ -23,59 +17,84 @@ Private inject_cols
 Private extract_cols
 Private bom_cols
 
-' 初始化类的方法
-Public Sub init()
-   On Error Resume Next
-    If xlApp Is Nothing Then
+
+' 在类初始化时检查实例
+Private Sub Class_Initialize()
+on error resume next
+    If gws = nothing  then
         Set xlApp = CreateObject("Excel.Application")
-        xlApp.Visible = True
-    End If
-    If wb Is Nothing Then
-        Set wb = xlApp.Workbooks.Add
-    End If
-        Set ws = wb.ActiveSheet  ' 获取sheet1
+        Set gwb = xlApp.Workbooks.Add
+        Set gws = wb.ActiveSheet 
+        set wb=gwb
+        set ws=gws
         ws.Name = "bom"
-    If Err.Number <> 0 Then
-        Err.Clear
+    else
+        set wb=gwb
+        set ws=gws        
+    End If 
+if error.number <>0 then
+    MsgBox "excel sheet 错误"
+    Exit Sub
+End If
+
+iniarr()
+
+End Sub
+
+' 修改Terminate事件
+Private Sub Class_Terminate()
+    ReleaseResources
+    If Not xlApp Is Nothing Then
+        xlApp.Quit
+        Set xlApp = Nothing
     End If
-    On Error GoTo 0
-    
+End Sub
+
+
+private Sub iniarr()
     inject_cols = Array(2, 4, 6, 12, 12, 8, 13, 10)
     extract_cols = Array(1, 3, 5, 7, 9, 11)
-    bom_cols = Array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15)
- 
-header_bom(1) = "No." & Chr(10) & "编号"
-header_bom(2) = "Layout" & Chr(10) & "层级"
-header_bom(3) = "PN" & Chr(10) & "零件号"
-header_bom(4) = "Nomenclature" & Chr(10) & "英文名称"
-header_bom(5) = "Definition" & Chr(10) & "中文名称"
-header_bom(6) = "Picture" & Chr(10) & "图像"
-header_bom(7) = "Quantity" & Chr(10) & "数量(PCS)"
-header_bom(8) = "Weight" & Chr(10) & "单质量"
-header_bom(9) = "Material" & Chr(10) & "材料"
-header_bom(10) = "Thickness" & Chr(10) & "厚度(mm)"
-header_bom(11) = "Density" & Chr(10) & "密度"
+    bom_cols = Array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15) 
+    
+    header_bom(1) = "No." & Chr(10) & "编号"
+    header_bom(2) = "Layout" & Chr(10) & "层级"
+    header_bom(3) = "PN" & Chr(10) & "零件号"
+    header_bom(4) = "Nomenclature" & Chr(10) & "英文名称"
+    header_bom(5) = "Definition" & Chr(10) & "中文名称"
+    header_bom(6) = "Picture" & Chr(10) & "图像"
+    header_bom(7) = "Quantity" & Chr(10) & "数量(PCS)"
+    header_bom(8) = "Weight" & Chr(10) & "单质量"
+    header_bom(9) = "Material" & Chr(10) & "材料"
+    header_bom(10) = "Thickness" & Chr(10) & "厚度(mm)"
+    header_bom(11) = "Density" & Chr(10) & "密度"
 
-header_rv(1) = "零件号" & Chr(10) & "Partnumber"
-header_rv(2) = "更改" & Chr(10) & "件号"
-header_rv(3) = "英文名称" & Chr(10) & "Nomenclature"
-header_rv(4) = "更改" & Chr(10) & "英文名"
-header_rv(5) = "中文名称" & Chr(10) & "Definition"
-header_rv(6) = "更改" & Chr(10) & "中文名"
-header_rv(7) = "实例名" & Chr(10) & "InstanceName"
-header_rv(8) = "更改" & Chr(10) & "实例名"
-header_rv(9) = "材料" & Chr(10) & "material"
-header_rv(10) = "定义" & Chr(10) & "材料"
-header_rv(11) = "密度" & Chr(10) & "Density"
-header_rv(12) = "更改" & Chr(10) & "密度"
-header_rv(13) = "质量" & Chr(10) & "Mass"
-header_rv(14) = "厚度" & Chr(10) & "Thickness"
-
-     startRow = 2
+    header_rv(1) = "零件号" & Chr(10) & "Partnumber"
+    header_rv(2) = "更改" & Chr(10) & "件号"
+    header_rv(3) = "英文名称" & Chr(10) & "Nomenclature"
+    header_rv(4) = "更改" & Chr(10) & "英文名"
+    header_rv(5) = "中文名称" & Chr(10) & "Definition"
+    header_rv(6) = "更改" & Chr(10) & "中文名"
+    header_rv(7) = "实例名" & Chr(10) & "InstanceName"
+    header_rv(8) = "更改" & Chr(10) & "实例名"
+    header_rv(9) = "材料" & Chr(10) & "material"
+    header_rv(10) = "定义" & Chr(10) & "材料"
+    header_rv(11) = "密度" & Chr(10) & "Density"
+    header_rv(12) = "更改" & Chr(10) & "密度"
+    header_rv(13) = "质量" & Chr(10) & "Mass"
+    header_rv(14) = "厚度" & Chr(10) & "Thickness"
+end sub
+private  Sub set_Header(header)
+    Dim lastCol
+    lastCol = UBound(header) - LBound(header) + 1
+    With ws
+    .Range(.Cells(1, 1), .Cells(1, lastCol)).Value = header
+    End With
 End Sub
+
 Public Sub clear_table()
     ws.UsedRange.ClearContents
 End Sub
+
 Public Sub inject_data(rowNumber, data, iType)
     Dim maxCol As Long
     Dim outputArr As Variant
@@ -107,13 +126,7 @@ Public Sub inject_data(rowNumber, data, iType)
     Next i
     ws.Range(ws.Cells(rowNumber, 1), ws.Cells(rowNumber, maxCol)).Value = outputArr
 End Sub
-Sub set_Header(header)
-    Dim lastCol
-    lastCol = UBound(header) - LBound(header) + 1
-    With ws
-    .Range(.Cells(1, 1), .Cells(1, lastCol)).Value = header
-    End With
-End Sub
+ 
 Public Function extract_data(row As Long)
     Dim iCols
     iCols = extract_cols
@@ -125,6 +138,8 @@ Public Function extract_data(row As Long)
     Next j
     extract_data = outputArr ' 返回提取的数据
 End Function
+
+
 Public Sub lvmg()
     Const xlUp = -4162
     Const xlLeft = -4131
