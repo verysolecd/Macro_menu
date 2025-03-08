@@ -173,18 +173,33 @@ End Function
                 arr(8) = "__"
             End If
         On Error GoTo 0
-                arr(9) = meQty(oPrd)
+                arr(9) = count_me(oPrd)
         infoPrd = arr()
     End Function
     
-Private Sub liPrd(oPrd, LV)
-
- Dim arr(1 To 10)
-     arr1=()
-
-
-
-End Sub
+Private Function count_me(oPrd)  '获取兄弟字典
+     Dim i, oDict, QTy, pn
+         QTy = 1
+     On Error Resume Next
+     If TypeOf oPrd.Parent Is Products Then    '若有父级产品'获取兄弟字典
+               Dim oParent: Set oParent = oPrd.Parent.Parent
+         
+              Set oDict = CreateObject("Scripting.Dictionary")
+              For i = 1 To oParent.Products.Count
+                     pn = oParent.Products.Item(i).PartNumber
+                     If oDict.Exists(pn) = True Then
+                         oDict(pn) = oDict(pn) + 1
+                     Else
+                         oDict(pn) = 1
+                     End If
+                 Next
+        QTy = oDict(oPrd.PartNumber)       '获取oprd数量
+     End If
+     If Error.Number <> 0 Then
+          QTy = 1
+     End If
+    count_me = QTy
+End Function
     
     
     
@@ -202,11 +217,11 @@ Private Function getAtt(itemName, collection)
 End Function
 Function meQty(oPrd)
     Dim parentPrd, oDict
-    Dim i, pn, Qty
+    Dim i, pn, QTy
     On Error Resume Next      ' 检查 oPrd 是否为根产品
         Set parentPrd = oPrd.Parent.Parent
         If (parentPrd Is Nothing) Or (TypeName(parentPrd) = "ProductDocument") Then
-            Qty = 1 ' 是根产品，数量设为 1
+            QTy = 1 ' 是根产品，数量设为 1
         Else
             Set oDict = CreateObject("Scripting.Dictionary")        ' 不是根产品，获取兄弟字典
             For i = 1 To parentPrd.Products.Count
@@ -217,28 +232,27 @@ Function meQty(oPrd)
                     oDict(pn) = 1
                 End If
             Next
-            Qty = oDict(oPrd.PartNumber) ' 从兄弟字典中获取 oPrd 的数量
+            QTy = oDict(oPrd.PartNumber) ' 从兄弟字典中获取 oPrd 的数量
         End If
     On Error GoTo 0
-    meQty = Qty
+    meQty = QTy
 End Function
 ' 全局变量声明
 Public Function recurPrd(oPrd, LV)
-     If IsEmpty(bomdata) Then
-        ReDim bomdata(1 To 1, 1 To 11) ' 扩展为11列：2列原有数据 + 9列产品属性
-        counter = 0
+
+     If counter = 0 Then
+          ReDim bomdata(1 To 1000, 1 To 11) ' 扩展为11列：2列原有数据 + 9列产品属性
+     '     If IsEmpty(bomdata) Then
     End If
     counter = counter + 1
-    ReDim Preserve bomdata(1 To counter, 1 To 11) ' 保持11列
     bomdata(counter, 1) = counter
     bomdata(counter, 2) = LV
     
-    Dim prdInfo
-    prdInfo = infoPrd(oPrd)
-    Dim j As Integer
-    For j = 1 To 9
-        bomdata(counter, j + 2) = prdInfo(j)
-    Next j
+    Dim prdInfo, j
+     prdInfo = infoPrd(oPrd)
+     For j = 1 To 9
+         bomdata(counter, j + 2) = prdInfo(j)
+     Next j
     
     Dim children As Products
     Set children = oPrd.Products
@@ -248,6 +262,10 @@ Public Function recurPrd(oPrd, LV)
             recurPrd children.Item(i), LV + 1
         Next
     End If
-    recurPrd = bomdata
+      If counter > 0 Then
+        Dim finalData() As Variant
+        ReDim finalData(1 To counter, 1 To 11)
+        finalData = Application.Index(bomdata, Application.Evaluate("ROW(1:" & counter & ")"), Application.Evaluate("ROW(1:11)"))
+        recurPrd = finalData
+    End If
 End Function
-gram_option GL_NV_fragment_program2 GL_NV_fragment_shader_interlock GL_NV_framebuffer_mixed_samples GL_NV_framebuffer_multisample_coverage GL_NV_geometry_shader4 GL_NV_geometry_shader_passthrough GL_NV_gpu_program4 GL_NV_internalformat_sample_query GL_NV_gpu_program4_1 GL_NV_gpu_program5 GL_NV_gpu_program5_mem_extended GL_NV_gpu_program_fp64 GL_NV_gpu_program_multiview GL_NV_gpu_shader5 GL_NV_half_float GL_NV_light_max_exponent GL_NV_memory_attachment GL_NV_multisample_coverage GL_NV_multisample_filter_hint
