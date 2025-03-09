@@ -31,30 +31,29 @@ Private oSel
 Private imsg
 Private att(10)
 Private aType(10)
-
 Private Sub Class_Initialize()
     iniarr
-
     On Error GoTo ErrorHandler
         If CATIA.Documents.Count = 0 Then
             Err.Raise 1001, , "未检测到打开的CATIA文档"
+            Exit Sub
         End If
         Set rootPrd = CATIA.ActiveDocument.Product
+        
+        On Error GoTo 0
         If Not rootPrd Is Nothing Then
          rootPrd.ApplyWorkMode (3)
-     End If
+          End If
         Set oSel = CATIA.ActiveDocument.Selection: oSel.Clear
     Exit Sub
     
-  ErrorHandler:
+ErrorHandler:
     If Err.Number <> 0 Then
         MsgBox "初始化失败：" & Err.Description, vbCritical
         Err.Clear
-        exit sub
-    End If   
+        Exit Sub
+    End If
 End Sub
-
-
 Sub iniarr()
     att(1) = "iMaterial"
     att(2) = "iDensity"
@@ -92,24 +91,32 @@ Public Function catSelx(prompt As String) As collection
     End If
     oSel.Clear
 End Function
-Public Function catchPrd()    '获取要读取或修改的  全局变量 Prd2wt 定义
+Public Function catchgPrd()    '获取要读取或修改的  全局变量 Prd2wt 定义
      imsg = MsgBox("“是”选择产品，“否”读取根产品，“取消退出”", vbYesNoCancel + vbDefaultButton2, "请选择产品")
+     Dim oPrd
         Select Case imsg
-            Case 7: Set catchPrd = rootPrd '===选择“否”====
+            Case 7: Set oPrd = rootPrd '===选择“否”====
             Case 2: Exit Function '===选择“取消”====
             Case 6  '===选择“是”,进行产品选择====
                 On Error Resume Next
-                    Set catchPrd = selPrd()
+                    Set rootPrd = CATIA.ActiveDocument.Product
+                    Set oPrd = selPrd()
                 If Err.Number <> 0 Then
                     Err.Clear
                     Exit Function
                 End If
         End Select
-        If Not catchPrd Is Nothing Then
-           imsg = "你选择的产品是" & catchPrd.PartNumber & "是否继续"
+        If Not oPrd Is Nothing Then
+           imsg = "你选择的产品是" & oPrd.PartNumber & "是否继续"
           MsgBox imsg
         End If
+        Set gprd = oPrd
+        Set oPrd = Nothing
 End Function
+
+Public Sub freePrd()
+     Set gprd = Nothing
+End Sub
 Public Function selPrd()
    Dim status, iType(0)
 '   catia.ActiveWindow.WindowState = 0
@@ -163,7 +170,7 @@ End Function
                 arr(6) = getAtt("iMaterial", usrp)(1)
                 arr(7) = getAtt("iThickness", usrp)(1)
         On Error Resume Next
-           Set usrp = oPrd.ReferenceProduct.Parent.part.parameters.RootParameterSet.ParameterSets.Item("cm").DirectParameters
+           Set usrp = oPrd.ReferenceProduct.Parent.Part.Parameters.RootParameterSet.ParameterSets.Item("cm").DirectParameters
                 arr(8) = getAtt("iDensity", usrp)(1)
             If Error.Number <> 0 Then
                 arr(8) = "__"
@@ -211,28 +218,7 @@ Private Function getAtt(itemName, collection)
         End If
     On Error GoTo 0
 End Function
-Function meQty(oPrd)
-    Dim parentPrd, oDict
-    Dim i, pn, QTy
-    On Error Resume Next      ' 检查 oPrd 是否为根产品
-        Set parentPrd = oPrd.Parent.Parent
-        If (parentPrd Is Nothing) Or (TypeName(parentPrd) = "ProductDocument") Then
-            QTy = 1 ' 是根产品，数量设为 1
-        Else
-            Set oDict = CreateObject("Scripting.Dictionary")        ' 不是根产品，获取兄弟字典
-            For i = 1 To parentPrd.Products.Count
-                pn = parentPrd.Products.Item(i).PartNumber
-                If oDict.Exists(pn) Then
-                    oDict(pn) = oDict(pn) + 1
-                Else
-                    oDict(pn) = 1
-                End If
-            Next
-            QTy = oDict(oPrd.PartNumber) ' 从兄弟字典中获取 oPrd 的数量
-        End If
-    On Error GoTo 0
-    meQty = QTy
-End Function
+
 ' 全局变量声明
 Public Function recurPrd(oPrd, LV)
 
@@ -258,10 +244,6 @@ Public Function recurPrd(oPrd, LV)
             recurPrd children.Item(i), LV + 1
         Next
     End If
-      If counter > 0 Then
-        Dim finalData() As Variant
-        ReDim finalData(1 To counter, 1 To 11)
-        finalData = Application.Index(bomdata, Application.Evaluate("ROW(1:" & counter & ")"), Application.Evaluate("ROW(1:11)"))
-        recurPrd = finalData
-    End If
+    recurPrd = bomdata
+
 End Function

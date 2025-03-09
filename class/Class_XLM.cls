@@ -9,7 +9,6 @@ Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
 
 Public wb, ws
-Private startRow
 
 Private header_bom(1 To 12)
 Private header_rv(1 To 14)
@@ -17,14 +16,12 @@ Private inject_cols
 Private extract_cols
 Private bom_cols
 
-
 ' 在类初始化时检查实例
 Private Sub Class_Initialize()
 iniarr
 On Error Resume Next
     If gws Is Nothing Then
         Set xlApp = CreateObject("Excel.Application")
-       
         Set gwb = xlApp.Workbooks.Add
         Set gws = gwb.ActiveSheet
         Set wb = gwb
@@ -95,22 +92,14 @@ Public Sub clear_table()
     ws.UsedRange.ClearContents
 End Sub
 
-Public Sub inject_data(rowNumber, data, iType)
+Public Sub inject_data(rowNumber, data)
     Dim maxCol As Long
     Dim outputArr As Variant
     Dim i As Long
     Dim iCols As Variant
     Dim iHeader As Variant
-    Select Case iType
-        Case "bom"
-            iCols = bom_cols
-            iHeader = header_bom
-        Case "rv"
-            iCols = inject_cols
-            iHeader = header_rv
-        Case Else
-            Exit Sub
-    End Select
+     iCols = inject_cols
+     iHeader = header_rv
     If ws.Cells(1, 1).Value = "" Then
         Call set_Header(iHeader)
     End If
@@ -126,6 +115,23 @@ Public Sub inject_data(rowNumber, data, iType)
     Next i
     ws.Range(ws.Cells(rowNumber, 1), ws.Cells(rowNumber, maxCol)).Value = outputArr
 End Sub
+
+Sub inject_bom(data)
+     Dim fn
+    startrow = 2
+    lastrow = counter + startrow
+    With ws
+    ws.Range(.Cells(startrow, 1), .Cells(lastrow, 11)).Value = data
+  End With
+End Sub
+    xlApp.Visible = True
+    
+    counter = 0
+
+
+
+
+End Sub
  
 Public Function extract_data(row As Long)
     Dim iCols
@@ -138,7 +144,6 @@ Public Function extract_data(row As Long)
     Next j
     extract_data = outputArr ' 返回提取的数据
 End Function
-
 
 Public Sub lvmg()
     Const xlUp = -4162

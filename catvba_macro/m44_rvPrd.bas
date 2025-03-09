@@ -1,4 +1,4 @@
-Attribute VB_Name = "m4_rvPrd"
+Attribute VB_Name = "m44_rvPrd"
 'Attribute VB_Name = "selPrd"
 '{GP:4}
 '{Ep:osel}
