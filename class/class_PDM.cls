@@ -34,7 +34,8 @@ Private aType(10)
 
 Private Sub Class_Initialize()
     iniarr
-   On Error Resume Next
+
+    On Error GoTo ErrorHandler
         If CATIA.Documents.Count = 0 Then
             Err.Raise 1001, , "未检测到打开的CATIA文档"
         End If
@@ -45,19 +46,14 @@ Private Sub Class_Initialize()
         Set oSel = CATIA.ActiveDocument.Selection: oSel.Clear
     Exit Sub
     
+  ErrorHandler:
     If Err.Number <> 0 Then
-    MsgBox "初始化失败：" & Err.Description, vbCritical
-    Err.Clear
-
-    End If
-   
+        MsgBox "初始化失败：" & Err.Description, vbCritical
+        Err.Clear
+        exit sub
+    End If   
 End Sub
 
-'Public Sub setmode(oprd)
-'
-'oprd.ApplyWorkMode (3)
-'
-'End Sub
 
 Sub iniarr()
     att(1) = "iMaterial"
