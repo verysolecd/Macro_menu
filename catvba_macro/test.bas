@@ -28,8 +28,7 @@ Sub test()
             MsgBox "请打开CATIA并打开你的产品，再运行本程序": Err.Clear
             Exit Sub
          End If
-    On Error GoTo 0
-    
+    On Error GoTo 0 
   
    CATIA.ActiveWindow.WindowState = 0
    CATIA.Visible = True

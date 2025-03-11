@@ -18,7 +18,7 @@ Sub cBom()
      xlm.inject_bom pdm.recurPrd(iPrd, 0)
    End If
 
-Set iPrd = Nothing
+    Set iPrd = Nothing
      End Sub
       
 
