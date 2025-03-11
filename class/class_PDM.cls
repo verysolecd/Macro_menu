@@ -202,9 +202,7 @@ Private Function count_me(oPrd)  '获取兄弟字典
           QTy = 1
      End If
     count_me = QTy
-End Function
-    
-    
+End Function 
     
 Private Function getAtt(itemName, collection)
     Dim arr(1) ' 正确声明数组
@@ -221,21 +219,18 @@ End Function
 
 ' 全局变量声明
 Public Function recurPrd(oPrd, LV)
-
      If counter = 0 Then
           ReDim bomdata(1 To 1000, 1 To 11) ' 扩展为11列：2列原有数据 + 9列产品属性
      '     If IsEmpty(bomdata) Then
     End If
     counter = counter + 1
     bomdata(counter, 1) = counter
-    bomdata(counter, 2) = LV
-    
+    bomdata(counter, 2) = LV    
     Dim prdInfo, j
      prdInfo = infoPrd(oPrd)
      For j = 1 To 9
          bomdata(counter, j + 2) = prdInfo(j)
-     Next j
-    
+     Next j    
     Dim children As Products
     Set children = oPrd.Products
     If children.Count > 0 Then
@@ -245,5 +240,4 @@ Public Function recurPrd(oPrd, LV)
         Next
     End If
     recurPrd = bomdata
-
 End Function

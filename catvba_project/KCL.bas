@@ -113,17 +113,14 @@ End Function
 Function GetParent_Of_T( _
     ByVal anyObj As AnyObject, _
     ByVal T As String) _
-    As AnyObject
-    
+    As AnyObject    
     Dim anyObjName As String
-    Dim parentName As String
-    
+    Dim parentName As String    
     On Error Resume Next
         Set anyObj = asDisp(anyObj)
         anyObjName = anyObj.Name
         parentName = anyObj.Parent.Name
     On Error GoTo 0
-
     If TypeName(anyObj) = TypeName(anyObj.Parent) And _
        anyObjName = parentName Then
         Set GetParent_Of_T = Nothing
@@ -135,11 +132,9 @@ Function GetParent_Of_T( _
         Set GetParent_Of_T = GetParent_Of_T(anyObj.Parent, T)
     End If
 End Function
-
 Private Function asDisp(o As INFITF.CATBaseDispatch) As INFITF.CATBaseDispatch
     Set asDisp = o
 End Function
-
 ' 获取Brep名称
 ''' @param:MyBRepName-String
 ''' @return:String
@@ -149,7 +144,6 @@ Function GetBrepName(MyBRepName As String) As String
     MyBRepName = MyBRepName + ");WithPermanentBody;WithoutBuildError;WithSelectingFeatureSupport;MFBRepVersion_CXR15)"
     GetBrepName = MyBRepName
 End Function
-
 ' 获取语言
 'return-ISO 639-1 code
 'https://ja.wikipedia.org/wiki/ISO_639-1%E3%82%B3%E3%83%BC%E3%83%89%E4%B8%80%E8%A6%A7
@@ -194,41 +188,33 @@ Function GetLanguage() As String
             End Select
     End Select
 End Function
-
 ' 检查字符串中是否包含指定关键字
 ' 忽略大小写进行检查
 Private Function ExistsKey(ByVal txt As String, ByVal Key As String) As Boolean
     ExistsKey = IIf(InStr(LCase(txt), LCase(Key)) > 0, True, False)
 End Function
-
 ' 检查是否为字符串数组
 Private Function IsStringAry(ByVal ary As Variant) As Boolean
-    IsStringAry = False
-    
+    IsStringAry = False    
     If Not IsArray(ary) Then Exit Function
     Dim i&
     For i = 0 To UBound(ary)
         If Not VarType(ary(i)) = vbString Then Exit Function
-    Next
-    
+    Next    
     IsStringAry = True
 End Function
-
 ' 检查过滤器类型是否有效
 Private Function IsFilterType(ByVal ary As Variant) As Boolean
     IsFilterType = False
     Dim ErrMsg$: ErrMsg = "过滤器类型无效" + vbNewLine + _
                           "需要为Variant(String)类型的数组" + vbNewLine + _
-                          "(具体请参考文档)"
-    
+                          "(具体请参考文档)"    
     If Not IsStringAry(ary) Then
         MsgBox ErrMsg
         Exit Function
-    End If
-    
+    End If    
     IsFilterType = True
 End Function
-
 ' 将字符串转换为变体数组
 Private Function ToStrVriAry(ByVal s$) As Variant
     Dim ary As Variant: ary = Split(s, ",")
@@ -239,7 +225,6 @@ Private Function ToStrVriAry(ByVal s$) As Variant
     Next
     ToStrVriAry = vriary
 End Function
-
 '*****通用相关函数*****
 ' 检查对象是否为Nothing
 ''' @param:OJ-Variant(Of Object)
@@ -247,7 +232,6 @@ End Function
 Function IsNothing(ByVal oj As Variant) As Boolean
     IsNothing = oj Is Nothing
 End Function
-
 ' 创建Scripting.Dictionary对象
 ''' @param:CompareMode-Long
 ''' @return:Object(Of Dictionary)
@@ -257,13 +241,11 @@ Function InitDic(Optional CompareMode As Long = vbBinaryCompare) As Object
     Dic.CompareMode = CompareMode
     Set InitDic = Dic
 End Function
-
 ' 创建ArrayList对象
 ''' @return:Object(Of ArrayList)Public
 Function InitLst() As Object
     Set InitLst = CreateObject("System.Collections.ArrayList")
 End Function
-
 ' 检查对象是否为指定类型
 ''' @param:OJ-Object
 ''' @param:T-String
@@ -271,8 +253,6 @@ End Function
 Function IsType_Of_T(ByVal oj As Object, ByVal T$) As Boolean
     IsType_Of_T = IIf(TypeName(oj) = T, True, False)
 End Function
-
-
 '*****数组相关函数*****
 ' 合并两个数组
 ''' @param:Ary1-Variant(Of Array)
@@ -301,7 +281,6 @@ Function JoinAry(ByVal Ary1 As Variant, ByVal Ary2 As Variant)
     End If
     JoinAry = Ary1
 End Function
-
 ' 获取数组指定范围的元素
 ''' @param:Ary-Variant(Of Array)
 ''' @param:StartIdx-Long
@@ -311,8 +290,7 @@ Function GetRangeAry(ByVal ary As Variant, ByVal StartIdx&, ByVal EndIdx&) As Va
     If Not IsArray(ary) Then Exit Function
     If EndIdx - StartIdx < 0 Then Exit Function
     If StartIdx < 0 Then Exit Function
-    If EndIdx > UBound(ary) Then Exit Function
-    
+    If EndIdx > UBound(ary) Then Exit Function    
     Dim RngAry() As Variant: ReDim RngAry(EndIdx - StartIdx)
     Dim i&
     For i = StartIdx To EndIdx
@@ -320,7 +298,6 @@ Function GetRangeAry(ByVal ary As Variant, ByVal StartIdx&, ByVal EndIdx&) As Va
     Next
     GetRangeAry = RngAry
 End Function
-
 ' 克隆数组
 ''' @param:Ary-Variant(Of Array)
 ''' @return:Variant(Of Array)
@@ -328,7 +305,6 @@ Function CloneAry(ByVal ary As Variant) As Variant
     If Not IsArray(ary) Then Exit Function
     CloneAry = GetRangeAry(ary, 0, UBound(ary))
 End Function
-
 ' 检查两个数组是否相等
 ''' @param:Ary1-Variant(Of Array)
 ''' @param:Ary2-Variant(Of Array)
@@ -343,15 +319,12 @@ Function IsAryEqual(ByVal Ary1 As Variant, ByVal Ary2 As Variant) As Boolean
     Next
     IsAryEqual = True
 End Function
-
-
 '*****IO相关函数*****
 ' 获取FileSystemObject对象
 ''' @return:Object(Of FileSystemObject)
 Function GetFSO() As Object
     Set GetFSO = CreateObject("Scripting.FileSystemObject")
 End Function
-
 ' 分割路径名
 ''' @param:FullPath-完整路径
 ''' @return:Variant(Of Array(Of String)) (0-路径 1-文件名 2-扩展名)
@@ -364,7 +337,6 @@ Function SplitPathName(ByVal FullPath$) As Variant
     End With
     SplitPathName = path
 End Function
-
 ' 合并路径名
 ''' @param:Path-Variant(Of Array(Of String)) (0-路径 1-文件名 2-扩展名)
 ''' @return:完整路径
@@ -373,7 +345,6 @@ Function JoinPathName$(ByVal path As Variant)
     If Not UBound(path) = 2 Then Stop ' 输入错误
     JoinPathName = path(0) + "\" + path(1) + "." + path(2)
 End Function
-
 ' 检查路径是否存在
 ''' @param:Path-路径
 ''' @return:Boolean
@@ -387,7 +358,6 @@ Function IsExists(ByVal path$) As Boolean
     End If
     Set FSO = Nothing
 End Function
-
 ' 获取新文件名
 ''' @param:Path-完整路径
 ''' @return:新的完整路径
@@ -410,7 +380,6 @@ Function GetNewName$(ByVal oldPath$)
         End If
     Loop
 End Function
-
 ' 写入文件
 ''' @param:Path-完整路径
 ''' @param:Txt-String
@@ -419,7 +388,6 @@ Sub WriteFile(ByVal path$, ByVal txt) '$)
         Call GetFSO.OpenTextFile(path, 2, True).Write(txt)
     On Error GoTo 0
 End Sub
-
 ' 读取文件
 ''' @param:Path-完整路径
 ''' @return:Variant(Of Array(Of String))
@@ -431,14 +399,11 @@ Function ReadFile(ByVal path$) As Variant
     End With
     On Error GoTo 0
 End Function
-
-
 '*****计时相关函数*****
 ' 启动秒表
 Sub SW_Start()
     mSW = timeGetTime
 End Sub
-
 ' 获取计时时间
 ''' @return:Double(Unit:s)
 Function SW_GetTime#()
