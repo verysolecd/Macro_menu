@@ -34,27 +34,20 @@ Private Const TAG_ENTRYPNT = "ep"           ' 入口点标签
 Private Const TAG_ENTRY_DEF = "CATMain"     ' 入口点默认值
 Private Const TAG_PJTPATH = "pjt_path"      ' 项目路径标签
 Private Const TAG_MDLNAME = "mdl_name"      ' 模块名称标签
-
 '-----------------------------------------------------------------
 ' 菜单入口点
 Sub CATMain()
-    
-    ' 初始化菜单分组映射表
     Set PageMap = Get_KeyValue(groupName, True)
-    
-    ' 获取按钮配置信息
     Dim ButtonInfos As Object
     Set ButtonInfos = Get_ButtonInfo()
     If ButtonInfos Is Nothing Then
         MsgBox "未找到可用的宏信息", vbExclamation + vbOKOnly
         Exit Sub
     End If
-    
     ' 对按钮信息进行排序
     Dim SoLst As Object
     Set SoLst = To_SortedList(ButtonInfos)
     If SoLst Is Nothing Then Exit Sub
-    
     ' 显示菜单界面
     Dim Menu
     Set Menu = New Cat_Macro_Menu_View
@@ -124,13 +117,13 @@ Try_TAG_ENTRY_DEF:
             End If
         End If
         If CanExecMethod = vbNullString Then GoTo Continue
-        Set MdlInfo = Push_Dic(MdlInfo, TAG_ENTRYPNT, CanExecMethod)        
+        Set MdlInfo = Push_Dic(MdlInfo, TAG_ENTRYPNT, CanExecMethod)
         Set MdlInfo = Push_Dic(MdlInfo, TAG_PJTPATH, PjtPath)
-        Set MdlInfo = Push_Dic(MdlInfo, TAG_MDLNAME, Mdl.Name)        
+        Set MdlInfo = Push_Dic(MdlInfo, TAG_MDLNAME, Mdl.Name)
         BtnInfos.Add MdlInfo
 Continue:
-    Next    
-    If BtnInfos.Count < 1 Then Exit Function    
+    Next
+    If BtnInfos.Count < 1 Then Exit Function
     Set Get_ButtonInfo = BtnInfos
 End Function
 ' 向字典中添加或更新键值对

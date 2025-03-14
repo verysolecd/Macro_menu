@@ -1,4 +1,4 @@
-Attribute VB_Name = "m2_hasLeftAxis"
+Attribute VB_Name = "m22_hasLeftAxis"
 'Attribute VB_Name = "m2_hasLeftAxis"
 
 ' 检查零件文档中是否存在左手坐标系
@@ -11,7 +11,7 @@ Option Explicit
 Sub LeftHand()
     ' 检查是否可以执行
     If Not CanExecute("PartDocument") Then Exit Sub
-    Dim Doc As PartDocument: Set Doc = CATIA.ActiveDocument
+    Dim Doc As PartDocument: Set Doc = CATIA.Activedocument
     Dim Axs As AxisSystems: Set Axs = Doc.part.AxisSystems
     Dim Ax As AxisSystem
     Dim Msg As String: Msg = vbNullString

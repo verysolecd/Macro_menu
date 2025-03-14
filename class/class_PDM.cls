@@ -38,13 +38,13 @@ Private Sub Class_Initialize()
             Err.Raise 1001, , "未检测到打开的CATIA文档"
             Exit Sub
         End If
-        Set rootPrd = CATIA.ActiveDocument.Product
+        Set rootPrd = CATIA.Activedocument.product
         
         On Error GoTo 0
         If Not rootPrd Is Nothing Then
          rootPrd.ApplyWorkMode (3)
           End If
-        Set oSel = CATIA.ActiveDocument.Selection: oSel.Clear
+        Set oSel = CATIA.Activedocument.Selection: oSel.Clear
     Exit Sub
     
 ErrorHandler:
@@ -91,15 +91,17 @@ Public Function catSelx(prompt As String) As collection
     End If
     oSel.Clear
 End Function
-Public Function catchgPrd()    '获取要读取或修改的  全局变量 Prd2wt 定义
+Public Function defgprd()    '获取要读取或修改的  全局变量 Prd2wt 定义
      imsg = MsgBox("“是”选择产品，“否”读取根产品，“取消退出”", vbYesNoCancel + vbDefaultButton2, "请选择产品")
      Dim oPrd
         Select Case imsg
-            Case 7: Set oPrd = rootPrd '===选择“否”====
+            Case 7 '===选择“否”====
+            Set rootPrd = CATIA.Activedocument.product
+            Set oPrd = rootPrd
+            
             Case 2: Exit Function '===选择“取消”====
             Case 6  '===选择“是”,进行产品选择====
                 On Error Resume Next
-                    Set rootPrd = CATIA.ActiveDocument.Product
                     Set oPrd = selPrd()
                 If Err.Number <> 0 Then
                     Err.Clear
@@ -110,8 +112,7 @@ Public Function catchgPrd()    '获取要读取或修改的  全局变量 Prd2wt 定义
            imsg = "你选择的产品是" & oPrd.PartNumber & "是否继续"
           MsgBox imsg
         End If
-        Set gprd = oPrd
-        Set oPrd = Nothing
+        Set defgprd = oPrd
 End Function
 
 Public Sub freePrd()
@@ -170,7 +171,7 @@ End Function
                 arr(6) = getAtt("iMaterial", usrp)(1)
                 arr(7) = getAtt("iThickness", usrp)(1)
         On Error Resume Next
-           Set usrp = oPrd.ReferenceProduct.Parent.Part.Parameters.RootParameterSet.ParameterSets.Item("cm").DirectParameters
+           Set usrp = oPrd.ReferenceProduct.Parent.part.Parameters.RootParameterSet.ParameterSets.Item("cm").DirectParameters
                 arr(8) = getAtt("iDensity", usrp)(1)
             If Error.Number <> 0 Then
                 arr(8) = "__"
@@ -202,8 +203,8 @@ Private Function count_me(oPrd)  '获取兄弟字典
           QTy = 1
      End If
     count_me = QTy
-End Function 
-    
+End Function
+
 Private Function getAtt(itemName, collection)
     Dim arr(1) ' 正确声明数组
     On Error Resume Next
@@ -219,18 +220,21 @@ End Function
 
 ' 全局变量声明
 Public Function recurPrd(oPrd, LV)
+
      If counter = 0 Then
           ReDim bomdata(1 To 1000, 1 To 11) ' 扩展为11列：2列原有数据 + 9列产品属性
      '     If IsEmpty(bomdata) Then
     End If
     counter = counter + 1
     bomdata(counter, 1) = counter
-    bomdata(counter, 2) = LV    
+    bomdata(counter, 2) = LV
+    
     Dim prdInfo, j
      prdInfo = infoPrd(oPrd)
      For j = 1 To 9
          bomdata(counter, j + 2) = prdInfo(j)
-     Next j    
+     Next j
+    
     Dim children As Products
     Set children = oPrd.Products
     If children.Count > 0 Then
@@ -240,4 +244,5 @@ Public Function recurPrd(oPrd, LV)
         Next
     End If
     recurPrd = bomdata
+
 End Function

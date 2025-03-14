@@ -10,7 +10,7 @@ Sub cBom()
      Dim pdm As New class_PDM
      Dim bPrd
      If gprd Is Nothing Then
-          pdm.catchgPrd
+          pdm.defgprd
      Else
           Set iPrd = gprd
           xlm.inject_bom pdm.recurPrd(iPrd, 0)

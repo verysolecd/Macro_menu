@@ -1,9 +1,5 @@
 Attribute VB_Name = "KCL"
-'Attribute VB_Name = "KCL"
-'vba Kantoku_CATVBA_Library ver0.1.0
-'KCL.bas - 自定义VBA库
 Option Explicit
-
 Private mSW& ' 秒表开始时间
 
 #If VBA7 And Win64 Then
@@ -33,14 +29,11 @@ Function CanExecute(ByVal docTypes As Variant) As Boolean
     If catia.Windows.Count < 1 Then
         MsgBox "没有打开的窗口"
         Exit Function
-    End If
-    
+    End If    
     If VarType(docTypes) = vbString Then docTypes = Split(docTypes, ",")
-    If Not IsFilterType(docTypes) Then Exit Function
-    
+    If Not IsFilterType(docTypes) Then Exit Function    
     Dim ErrMsg As String
     ErrMsg = "不支持当前活动文档类型。" + vbNewLine + "(" + Join(docTypes, ",") + " 类型除外)"
-    
     Dim ActDoc As Document
     On Error Resume Next
         Set ActDoc = catia.ActiveDocument
@@ -48,13 +41,11 @@ Function CanExecute(ByVal docTypes As Variant) As Boolean
     If ActDoc Is Nothing Then
         MsgBox ErrMsg, vbExclamation + vbOKOnly
         Exit Function
-    End If
-    
+    End If    
     If UBound(Filter(docTypes, TypeName(ActDoc))) < 0 Then
         MsgBox ErrMsg, vbExclamation + vbOKOnly
         Exit Function
-    End If
-    
+    End If    
     CanExecute = True
 End Function
 
@@ -236,8 +227,7 @@ End Function
 ''' @param:CompareMode-Long
 ''' @return:Object(Of Dictionary)
 Function InitDic(Optional CompareMode As Long = vbBinaryCompare) As Object
-    Dim Dic As Object
-    Set Dic = CreateObject("Scripting.Dictionary")
+    Dim Dic As Object: Set Dic = CreateObject("Scripting.Dictionary")
     Dic.CompareMode = CompareMode
     Set InitDic = Dic
 End Function

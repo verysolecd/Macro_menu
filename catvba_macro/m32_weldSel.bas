@@ -1,4 +1,4 @@
-Attribute VB_Name = "m3_weldSel"
+Attribute VB_Name = "m32_weldSel"
 'Attribute VB_Name = "weldSel"
 '{GP:3}
 '{Ep:CATMain}
@@ -7,8 +7,8 @@ Attribute VB_Name = "m3_weldSel"
 '{BackColor:16744703}
 
 Sub CATMain()
-Set Doc = CATIA.ActiveDocument
-Set rootPrd = Doc.Product
+Set Doc = CATIA.Activedocument
+Set rootPrd = Doc.product
 Set sPrd = rootPrd.Products
 Set iPrd = sPrd.Item("µ„∫∏–≈œ¢")
 Set oSel = Doc.Selection

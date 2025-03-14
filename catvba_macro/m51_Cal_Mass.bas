@@ -1,4 +1,4 @@
-Attribute VB_Name = "m5_Cal_Mass"
+Attribute VB_Name = "m51_Cal_Mass"
 'Attribute VB_Name = "selPrd"
 '{GP:5}
 '{Ep:Cal_Mass}
@@ -10,13 +10,8 @@ Attribute VB_Name = "m5_Cal_Mass"
 Sub Cal_Mass()
 
 
-Call selPrd
+MsgBox "m51"
 
 End Sub
 
-Function selPrd()
 
-MsgBox "Ñ¡Ôñ³É¹¦"
-
-
-End Function

@@ -28,19 +28,19 @@ On Error Resume Next
         Set ws = gws
         ws.Name = "bom"
     Else
-'        Set xlApp = GetObject("Excel.Application")
+        Set xlApp = GetObject("Excel.Application")
         Set wb = gwb
         Set ws = gws
-    End If    
+    End If
      If Error.Number <> 0 Then
-     Err.Clear     
+        Err.Clear
 '         MsgBox "excel sheet ´íÎó"
 '     '    Exit Sub
      End If
-On Error GoTo 0
-iniarr
+     xlApp.Visible = True
+     xlApp.Hide
+    On Error GoTo 0
 End Sub
-
 Private Sub iniarr()
     inject_cols = Array(1, 3, 5, 7, 13, 9, 14, 11)
     extract_cols = Array(1, 3, 5, 7, 9, 11)
@@ -110,14 +110,20 @@ Public Sub inject_data(rowNumber, data)
 End Sub
 
 Sub inject_bom(data)
+     Dim fn
     startrow = 2
     lastrow = counter + startrow
     With ws
     ws.Range(.Cells(startrow, 1), .Cells(lastrow, 11)).Value = data
   End With
 End Sub
-    xlApp.Visible = True    
+    xlApp.Visible = True
+    
     counter = 0
+
+
+
+
 End Sub
  
 Public Function extract_data(row As Long)

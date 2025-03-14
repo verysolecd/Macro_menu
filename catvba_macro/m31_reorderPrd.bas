@@ -1,4 +1,4 @@
-Attribute VB_Name = "m3_reorderPrd"
+Attribute VB_Name = "m31_reorderPrd"
 'Attribute VB_Name = "sample_ReOrder_Product"
 
 '{GP:3}
@@ -14,8 +14,8 @@ Sub CATMain()
     If Not CanExecute("ProductDocument") Then Exit Sub
     
 
-    Dim ProDoc As ProductDocument: Set ProDoc = CATIA.ActiveDocument
-    Dim Pros As Products: Set Pros = ProDoc.Product.Products
+    Dim ProDoc As ProductDocument: Set ProDoc = CATIA.Activedocument
+    Dim Pros As Products: Set Pros = ProDoc.product.Products
     If Pros.Count < 2 Then Exit Sub
     
 
@@ -54,14 +54,14 @@ Sub CATMain()
     
 
     AssyMode.PasteComponentMode = OriginalMode
-    ProDoc.Product.Update
+    ProDoc.product.Update
 End Sub
 
 Private Function Get_SortedNames(ByVal Pros As Products) As Object
     Dim Lst As Object
     Set Lst = KCL.InitLst()
     
-    Dim Pro As Product
+    Dim Pro As product
     For Each Pro In Pros
         Lst.Add Pro.Name
     Next

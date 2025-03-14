@@ -20,31 +20,20 @@ Sub test()
      Dim xlsht, startrow, startcol, currRow, LV, rng
      Dim propertyArry()
      Dim i
-    On Error Resume Next
-    Set CATIA = GetObject(, "CATIA.Application") '获取catia程序
-           Set oDoc = CATIA.ActiveDocument
-    Set rootPrd = CATIA.ActiveDocument.Product
-         If Err.Number <> 0 Then
-            MsgBox "请打开CATIA并打开你的产品，再运行本程序": Err.Clear
-            Exit Sub
-         End If
-    On Error GoTo 0
+
     
+    Dim att(1 To 4)
+    att(1) = "iMaterial"
+    att(2) = "iDensity"
+    att(3) = "iMass"
+    att(4) = "iThickness"
+    
+Dim xlm, pdm
+Set xlm = New Class_XLM
+Set pdm = New class_PDM
+
+xlm.inject_data 1, att
   
-   CATIA.ActiveWindow.WindowState = 0
-   CATIA.Visible = True
-       Set xlApp = GetObject(, "Excel.Application")
-    Set xlsht = xlApp.ActiveSheet
-   iniarr
-   
-   Dim arry
-   arry = recurPrd(rootPrd, 0)
-   
-    Dim fn
-    fn = counter
-    With xlsht
-    xlsht.Range(.Cells(2, 1), .Cells(fn + 1, 11)).Value = arry
-  End With
 End Sub
  
 

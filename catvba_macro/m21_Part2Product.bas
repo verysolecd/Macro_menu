@@ -1,23 +1,20 @@
-Attribute VB_Name = "m2_Part2Product"
+Attribute VB_Name = "m21_Part2Product"
 'Attribute VB_Name = "m2_Part2Product"
-
 '{控件提示文本: 可将零件转换为产品}
-
 ' 检查零件文档中是否存在左手坐标系
 '{Gp:2}
 '{Ep:CATMain}
 '{Caption:零件转产品}
 '{ControlTipText:此按钮将多实体零件转化为产品}
 '{BackColor:33023}
-
 Option Explicit
 
 Sub CATMain()
     If Not CanExecute("PartDocument") Then Exit Sub
-    Dim BaseDoc As PartDocument: Set BaseDoc = CATIA.ActiveDocument
+    Dim BaseDoc As PartDocument: Set BaseDoc = CATIA.Activedocument
     Dim BasePath As Variant: BasePath = Array(BaseDoc.FullName)
-    Dim Pt As Part: Set Pt = BaseDoc.Part
-    Dim LeafItems As Collection: Set LeafItems = Get_LeafItemLst(Pt.Bodies)
+    Dim Pt As part: Set Pt = BaseDoc.part
+    Dim LeafItems As collection: Set LeafItems = Get_LeafItemLst(Pt.Bodies)
     Dim Msg As String
     If LeafItems Is Nothing Then
         Msg = "没有可复制的元素！"
@@ -43,20 +40,20 @@ Sub CATMain()
     Dim TopDoc As ProductDocument: Set TopDoc = CATIA.Documents.Add("Product")
     Call ToProduct(TopDoc, LeafItems, PasteType)
     Call UpdateScene(BaseScene)
-    TopDoc.Product.Update
+    TopDoc.product.Update
     Debug.Print "时间:" & KCL.SW_GetTime & "s"
     MsgBox "完成"
 End Sub
 
 Private Sub ToProduct(ByVal TopDoc As ProductDocument, _
-                      ByVal LeafItems As Collection, _
+                      ByVal LeafItems As collection, _
                       ByVal PasteType As String)
     Dim TopSel As Selection
     Set TopSel = TopDoc.Selection
     Dim BaseSel As Selection
     Set BaseSel = KCL.GetParent_Of_T(LeafItems(1), "PartDocument").Selection
     Dim Prods As Products
-    Set Prods = TopDoc.Product.Products
+    Set Prods = TopDoc.product.Products
     Dim Itm As AnyObject
     Dim TgtDoc As PartDocument
     Dim ProdsNameDic As Object: Set ProdsNameDic = KCL.InitDic()
@@ -75,7 +72,7 @@ Private Sub ToProduct(ByVal TopDoc As ProductDocument, _
         End With
         With TopSel
             .Clear
-            .Add TgtDoc.Part
+            .Add TgtDoc.part
             .PasteSpecial PasteType
         End With
     Next
@@ -90,7 +87,7 @@ Private Sub Preparing_Copy(ByVal Sel As Selection, ByVal Itm As AnyObject)
         Sel.Add Itm
         Exit Sub
     End If
-    Dim ShpsLst As Collection: Set ShpsLst = New Collection
+    Dim ShpsLst As collection: Set ShpsLst = New collection
     ShpsLst.Add Itm.HybridShapes
     Select Case TypeName(Itm)
         Case "HybridBody"
@@ -107,33 +104,33 @@ Private Sub Preparing_Copy(ByVal Sel As Selection, ByVal Itm As AnyObject)
 End Sub
 
 Private Function Get_All_OdrGeoSetShapes(ByVal OdrGeoSet As OrderedGeometricalSet, _
-                                         ByVal Lst As Collection) As Collection
-    Dim Child As OrderedGeometricalSet
-    For Each Child In OdrGeoSet.OrderedGeometricalSets
-        Lst.Add Child.HybridShapes
-        If Child.OrderedGeometricalSets.Count > 0 Then
-            Set Lst = Get_All_OdrGeoSetShapes(Child, Lst)
+                                         ByVal Lst As collection) As collection
+    Dim child As OrderedGeometricalSet
+    For Each child In OdrGeoSet.OrderedGeometricalSets
+        Lst.Add child.HybridShapes
+        If child.OrderedGeometricalSets.Count > 0 Then
+            Set Lst = Get_All_OdrGeoSetShapes(child, Lst)
         End If
     Next
     Set Get_All_OdrGeoSetShapes = Lst
 End Function
 
 Private Function Get_All_HbShapes(ByVal Hbdy As HybridBody, _
-                                  ByVal Lst As Collection) As Collection
-    Dim Child As HybridBody
-    For Each Child In Hbdy.hybridBodies
-        Lst.Add Child.HybridShapes
-        If Child.hybridBodies.Count > 0 Then
-            Set Lst = Get_All_HbShapes(Child, Lst)
+                                  ByVal Lst As collection) As collection
+    Dim child As HybridBody
+    For Each child In Hbdy.hybridBodies
+        Lst.Add child.HybridShapes
+        If child.hybridBodies.Count > 0 Then
+            Set Lst = Get_All_HbShapes(child, Lst)
         End If
     Next
     Set Get_All_HbShapes = Lst
 End Function
 
-Private Function Get_LeafItemLst(ByVal Pt As Part) As Collection
+Private Function Get_LeafItemLst(ByVal Pt As part) As collection
     Set Get_LeafItemLst = Nothing
     Dim Sel As Selection: Set Sel = Pt.Parent.Selection
-    Dim TmpLst As Collection: Set TmpLst = New Collection
+    Dim TmpLst As collection: Set TmpLst = New collection
     Dim i As Long
     Dim Filter As String
     Filter = "(CATPrtSearch.BodyFeature.Visibility=Shown " & _
@@ -160,7 +157,7 @@ Private Function Get_LeafItemLst(ByVal Pt As Part) As Collection
         LeafHBdys.Add Hbdy, 0
     Next
     Dim Itm As AnyObject
-    Dim Lst As Collection: Set Lst = New Collection
+    Dim Lst As collection: Set Lst = New collection
     For Each Itm In TmpLst
         Select Case TypeName(Itm)
             Case "Body"
@@ -198,7 +195,7 @@ End Function
 
 Private Function Init_Part(ByVal Prods As Variant, _
                            ByVal PtNum As String) As PartDocument
-    Dim Prod As Product
+    Dim Prod As product
     On Error Resume Next
         Set Prod = Prods.AddNewComponent("Part", PtNum)
     On Error GoTo 0
