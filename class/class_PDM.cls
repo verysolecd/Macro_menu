@@ -279,9 +279,9 @@ public sub initprd(oprd)
     for i = 1 to 3
         if getAtt(att(i),colls)(0) is nothing then                
     select case
-        case 1,2,3        
-            
-                set attobj = colls.add(att(i),aType(i))
+        case 1,3,4
+        
+             set attObj = colls.CreateDimension(att(i),aType(i))       
             end if
                 colls.item(att).value = oData(i)
 
