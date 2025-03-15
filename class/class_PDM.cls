@@ -29,8 +29,14 @@ Private i  As Integer
 Private bdict  As Object
 Private oSel
 Private imsg
-Private att(10)
-Private aType(10)
+Private att(1 to 10)
+Private aType(1 to 10)
+
+
+
+
+
+
 Private Sub Class_Initialize()
     iniarr
     On Error GoTo ErrorHandler
@@ -55,14 +61,16 @@ ErrorHandler:
     End If
 End Sub
 Sub iniarr()
-    att(1) = "iMaterial"
-    att(2) = "iDensity"
-    att(3) = "iMass"
-    att(4) = "iThickness"
-    aType(1) = "String"
-    aType(2) = "Density"
-    aType(3) = "Mass"
-    aType(4) = "Length"
+   
+    att(1) = "iMass"
+    att(2) = "iMaterial"
+    att(3) = "iThickness"
+    att(4) = "iDensity"
+
+    aType(1) = "Mass"
+    aType(2) = "String"    
+    aType(3) = "Length"
+    aType(4) = "Density"
 End Sub
 
 Public Function catSel1(prompt As String) As Object
@@ -165,14 +173,14 @@ End Function
                 arr(3) = .Definition
                 arr(4) = oPrd.Name
             End With
-        Dim usrp
-           Set usrp = oPrd.ReferenceProduct.UserRefProperties
-                arr(5) = getAtt("iMass", usrp)(1)
-                arr(6) = getAtt("iMaterial", usrp)(1)
-                arr(7) = getAtt("iThickness", usrp)(1)
+        Dim colls
+           Set colls = oPrd.ReferenceProduct.UserRefProperties
+                arr(5) = getAtt("iMass", colls)(1)
+                arr(6) = getAtt("iMaterial", colls)(1)
+                arr(7) = getAtt("iThickness", colls)(1)
         On Error Resume Next
-           Set usrp = oPrd.ReferenceProduct.Parent.part.Parameters.RootParameterSet.ParameterSets.Item("cm").DirectParameters
-                arr(8) = getAtt("iDensity", usrp)(1)
+           Set colls = oPrd.ReferenceProduct.Parent.part.Parameters.RootParameterSet.ParameterSets.Item("cm").DirectParameters
+                arr(8) = getAtt("iDensity", colls)(1)
             If Error.Number <> 0 Then
                 arr(8) = "__"
             End If
@@ -220,21 +228,18 @@ End Function
 
 ' 全局变量声明
 Public Function recurPrd(oPrd, LV)
-
      If counter = 0 Then
           ReDim bomdata(1 To 1000, 1 To 11) ' 扩展为11列：2列原有数据 + 9列产品属性
      '     If IsEmpty(bomdata) Then
     End If
     counter = counter + 1
     bomdata(counter, 1) = counter
-    bomdata(counter, 2) = LV
-    
+    bomdata(counter, 2) = LV    
     Dim prdInfo, j
      prdInfo = infoPrd(oPrd)
      For j = 1 To 9
          bomdata(counter, j + 2) = prdInfo(j)
-     Next j
-    
+     Next j    
     Dim children As Products
     Set children = oPrd.Products
     If children.Count > 0 Then
@@ -244,5 +249,50 @@ Public Function recurPrd(oPrd, LV)
         Next
     End If
     recurPrd = bomdata
-
 End Function
+
+public modatt(oprd, oData)
+    dim refprd : set refprd = oprd.referenceproduct
+    dim colls
+    dim currAtt(1 to 9)
+    set currAtt() =infoPrd(oprd)
+    for i=1 to 8
+        if oData(i) <> "" and arr(i) <> currAtt(i) then
+            on error resume next
+            select case 
+                case 1: refprd.partnumber=oData(i)
+                case 2: refprd.nomenclature=oData(i)
+                case 3: refprd.definition=oData(i)
+                case 4: oprd.name=oData(i)                
+                case 5 to 7
+                    set colls= refprd.userrefproperties
+                    colls.item(att(i-4)).value = oData(i)
+                case 8
+                    Set colls = refprd.Parent.Part.Parameters.RootParameterSet.ParameterSets.Item("part_info").DirectParameters
+                    colls.item(att(i-4)).value = oData(i)                
+            end select
+            on error go to 0
+        end if
+    next
+end sub
+
+public sub initprd(oprd)
+    dim refprd : set refprd = oprd.referenceproduct
+
+private sub initprt(oprd)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

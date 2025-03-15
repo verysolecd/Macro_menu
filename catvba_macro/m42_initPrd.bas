@@ -11,6 +11,11 @@ MsgBox "Äã°´ÁËm42"
 
 dim pdm: set pdm=new Class_PDM
 
+Set allpn = KCL.InitDic(vbTextCompare)
+
+
+
+
 if not gprd is not nothing then
     pdm.initPrd gprd
 else
