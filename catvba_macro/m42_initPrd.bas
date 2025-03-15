@@ -9,7 +9,7 @@ Sub initme()
     MsgBox "Äã°´ÁËm42"
     Set allpn = KCL.InitDic(vbTextCompare)
 
-    dim pdm: set pdm=new Class_PDM
+    set pdm=new Class_PDM
     if not gprd is nothing then
         ini(oprd,pdm)        
         else
@@ -19,13 +19,13 @@ Sub initme()
 End Sub
 
 
-sub ini(oprd,pdm)
+sub ini(oprd)
     If allpn.exists(oPrd.PartNumber)=false Then
         allPN(oPrd.PartNumber) = 1
         Call initprd(oPrd)
     End If
     For Each product In oPrd.Products
-        Call iniPrd(product, oDict)
+        Call iniPrd(product)
     Next 
     allPN.RemoveAll
 end sub

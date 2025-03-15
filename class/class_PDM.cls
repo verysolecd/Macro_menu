@@ -32,11 +32,6 @@ Private imsg
 Private att(1 to 10)
 Private aType(1 to 10)
 
-
-
-
-
-
 Private Sub Class_Initialize()
     iniarr
     On Error GoTo ErrorHandler
@@ -278,6 +273,17 @@ end sub
 
 public sub initprd(oprd)
     dim refprd : set refprd = oprd.referenceproduct
+    dim colls
+    dim att
+    set colls = refprd.userrefproperties
+    for i = 1 to 3
+        if getAtt(att(i),colls)(0) is nothing then                
+    select case
+        case 1,2,3        
+            
+                set attobj = colls.add(att(i),aType(i))
+            end if
+                colls.item(att).value = oData(i)
 
 private sub initprt(oprd)
 
