@@ -66,6 +66,7 @@ Sub iniarr()
     aType(2) = "String"    
     aType(3) = "Length"
     aType(4) = "Density"
+    iset="part_info"
 End Sub
 
 Public Function catSel1(prompt As String) As Object
@@ -274,22 +275,62 @@ end sub
 public sub initprd(oprd)
     dim refprd : set refprd = oprd.referenceproduct
     dim colls
-    dim att
+    dim attObj(1 to 4)
     set colls = refprd.userrefproperties
-    for i = 1 to 3
+    for i = 1 to 4
         if getAtt(att(i),colls)(0) is nothing then                
-    select case
-        case 1,3,4
+            select case
+                case 1,3        
+                    set attObj = colls.CreateDimension(att(i),aType(i),0#)       
+                Case 2
+                    set attobj(i)=colls.createstring(att(i),"tbd")
+            end select
+        else
+            set attObj(i)=getAtt(att(i),colls)(0)
+    Next
+     Set colls = Nothing
+    '=================进行发布======================
+    Dim oprt 
+    On Error Resume Next
+        Set oPrt = refprd.Parent.Part
+        Err.Clear
+    On Error GoTo 0
+
+     If Not oPrt Is Nothing Then
+        Call iniPrt(oPrd, att_usp_Names())
+    Else   
         
-             set attObj = colls.CreateDimension(att(i),aType(i))       
-            end if
-                colls.item(att).value = oData(i)
+        Set colls = refprd.Publications
+       
+        If getAtt(att(i),colls)(0) is nothing Then
+        Dim oref, oPub
+        i = 1
+            Set oref = refprd.CreateReferenceFromName(attObj(i).Name)
+            Set oPub = colls.Add(att(i)) ' 添加发布元素名称
+            colls.SetDirect att(i), oref ' 设置发布元素参考
+            Set colls = Nothing
+        End If
+    End If
+    On Error GoTo 0
+    Set colls = Nothing
+End Sub
+
 
 private sub initprt(oprd)
 
+Dim refprd：Set refprd = oPrd.ReferenceProduct, 
+
+dim oPrt：Set oPrt = refprd.Parent.Part
 
 
-
+ On Error Resume Next
+                Set colls = oPrt.Parameters.RootParameterSet.ParameterSets.Item("part_info").DirectParameters
+        If Err.Number <> 0 Then
+                Err.Clear
+                Set colls = oPrt.Parameters.RootParameterSet.ParameterSets.CreateSet("cm")
+                Set colls = oPrt.Parameters.RootParameterSet.ParameterSets.Item("cm").DirectParameters
+        End If
+    On Error GoTo 0
 
 
 
