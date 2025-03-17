@@ -293,7 +293,7 @@ public sub initprd(oprd)
     On Error GoTo 0
     If Not oPrt Is Nothing Then
         Call iniPrt(oPrd, att_usp_Names())
-    Else         
+    Else
         Set colls = refprd.Publications       
         If getAtt(att(i),colls)(0) is nothing Then
             Dim oref, oPub
@@ -311,7 +311,7 @@ End Sub
 private sub initprt(oprd)
     Dim refprd：Set refprd = oPrd.ReferenceProduct
     dim oPrt：Set oPrt = refprd.Parent.Part
- '============创建参数集合=================
+'============创建参数集合=================
     Dim colls
     On Error Resume Next
         Set colls = oPrt.Parameters.RootParameterSet.ParameterSets.Item(iset).DirectParameters
@@ -321,7 +321,7 @@ private sub initprt(oprd)
             Set colls = oPrt.Parameters.RootParameterSet.ParameterSets.Item(iset).DirectParameters
         End If
     On Error GoTo 0
-    '创建list，将mainbody加入list
+'创建list，将mainbody加入list
     if gettAtt("ibodys",colls)(0) is nothing then
         Dim lst
         Set lst = colls.CreateList("ibodys")
@@ -332,7 +332,7 @@ private sub initprt(oprd)
             lst.valuelist.Add oprt.mainbody
         end if
         set lst = nothing
-    '============创建参数和发布=================
+'============创建参数和发布=================
     dim attObj
     For i = 1 to 4
         if i<>2 Then
@@ -343,21 +343,21 @@ private sub initprt(oprd)
             end if
         end if 
     next
-        '=================进行发布======================    
-        Dim Pubs
-        Set pubs = refprd.Publications
-            for i=1 to 4
-                if getAtt(att(i),pubs)(0) is nothing then
-                    Dim oref, oPub
-                    Select Case i             
-                        Case 2
-                            Set attObj(i) = refprd.UserRefProperties.Item(att(i))                    
-                    End Select
-                Set oref = refprd.CreateReferenceFromName(attObj(i).Name)
-                    Set oPub = pubs.Add(att(i)) ' 添加发布
-                    pubs.SetDirect att(i), oref ' 设置发布元素
-                End If
-            next
+ '=================进行发布======================    
+    Dim Pubs
+    Set pubs = refprd.Publications
+        for i=1 to 4
+            if getAtt(att(i),pubs)(0) is nothing then
+                Dim oref, oPub
+                Select Case i             
+                    Case 2
+                        Set attObj(i) = refprd.UserRefProperties.Item(att(i))                    
+                End Select
+            Set oref = refprd.CreateReferenceFromName(attObj(i).Name)
+                Set oPub = pubs.Add(att(i)) ' 添加发布
+                pubs.SetDirect att(i), oref ' 设置发布元素
+            End If
+        next
     '================创建ekl==================== 
    set colls = oPrt.Parameters.RootParameterSet.ParameterSets.Item(iset).DirectParameters
     if gettAtt("eklname",colls)(0) is nothing then
@@ -371,4 +371,15 @@ private sub initprt(oprd)
         if  gettAtt("ekl",colls)(1)<>eklstr then
             gettAtt("ekl",colls)(0).modify eklstr
         end if
+    end if
+   '================创建关系==================== 
+    objName="cal_volume"
+    objtarget=refprd.UserRefProperties.Item("iVolume")
+    objsource="part_info\mass"
+    if getAtt(cal_volume,oPrt.relations)(0) is nothing then
+       set obj=oPrt.relations.CreateRelation(objName,objtarget,objsource)
+    else 
+        set obj=getAtt(cal_volume,oPrt.relations)(0)
+            if obj.value<>objsource="part_info\mass" then
+                obj.modify objName,objtarget,objsource
     end if
