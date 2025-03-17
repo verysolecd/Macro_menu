@@ -309,14 +309,11 @@ public sub initprd(oprd)
     Set colls = Nothing
 End Sub
 
-
 private sub initprt(oprd)
     Dim refprd：Set refprd = oPrd.ReferenceProduct
     dim oPrt：Set oPrt = refprd.Parent.Part
-
  '============创建参数集合=================
     Dim colls
-
     On Error Resume Next
         Set colls = oPrt.Parameters.RootParameterSet.ParameterSets.Item(iset).DirectParameters
         If colls is nothing then
@@ -325,7 +322,6 @@ private sub initprt(oprd)
             Set colls = oPrt.Parameters.RootParameterSet.ParameterSets.Item(iset).DirectParameters
         End If
     On Error GoTo 0
-
     '创建list，将mainbody加入list
     if gettAtt("ibodys",colls)(0) is nothing then
         Dim lst
@@ -348,7 +344,6 @@ private sub initprt(oprd)
             end if
         end if 
     next
-
         '=================进行发布======================    
         Dim Pubs
         Set pubs = refprd.Publications
@@ -378,7 +373,3 @@ private sub initprt(oprd)
             gettAtt("ekl",colls)(0).modify eklstr
         end if
     end if
-
-
-
-
