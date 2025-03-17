@@ -291,7 +291,6 @@ public sub initprd(oprd)
         Set oPrt = refprd.Parent.Part
         Err.Clear
     On Error GoTo 0
-
     If Not oPrt Is Nothing Then
         Call iniPrt(oPrd, att_usp_Names())
     Else         
