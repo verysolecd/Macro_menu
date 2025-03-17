@@ -5,9 +5,6 @@ Attribute VB_Name = "m53_shot"
 '{Caption:截图}
 '{ControlTipText:选择要被读取或修改的产品}
 '{BackColor:16744703}
-
-
-
 Sub shot()
  Dim iPrd, rootPrd, oPrd, children
  Dim xlsht, rng, RC(0 To 1), oArry()
@@ -24,7 +21,6 @@ Sub shot()
     On Error GoTo 0
     Set xlApp = GetObject(, "Excel.Application") '获取excel程序
     Set xlsht = xlApp.ActiveSheet: xlsht.Columns(2).NumberFormatLocal = "0.000"
-
 Dim oWindow, oViewer
 Dim file_type As String
 Set oWindow = CATIA.ActiveWindow
