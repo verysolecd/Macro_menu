@@ -7,15 +7,12 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
-
 Public wb, ws
-
 Private header_bom(1 To 12)
 Private header_rv(1 To 14)
 Private inject_cols
 Private extract_cols
 Private bom_cols
-
 ' 在类初始化时检查实例
 Private Sub Class_Initialize()
 iniarr
