@@ -20,7 +20,6 @@ Attribute VB_Exposed = False
 ' 6  meQty 方法  获取产品在当前子总成下的数量
 ' 7  recurPrd方法  调用infoPrd方法获取根产品及所有子产品的属性，返回为数组，数组第一列为编号，数组第二列为装配层级
 
-
 Option Explicit
 Public Prd2wt
 Public bomdata As Variant
@@ -46,8 +45,7 @@ Private Sub Class_Initialize()
          rootPrd.ApplyWorkMode (3)
           End If
         Set oSel = CATIA.Activedocument.Selection: oSel.Clear
-    Exit Sub
-    
+    Exit Sub    
 ErrorHandler:
     If Err.Number <> 0 Then
         MsgBox "初始化失败：" & Err.Description, vbCritical
@@ -55,18 +53,17 @@ ErrorHandler:
         Exit Sub
     End If
 End Sub
-Sub iniarr()
-   
+Sub iniarr()   
     att(1) = "iMass"
     att(2) = "iMaterial"
     att(3) = "iThickness"
     att(4) = "iDensity"
-
     aType(1) = "Mass"
     aType(2) = "String"    
     aType(3) = "Length"
     aType(4) = "Density"
     iset="part_info"
+    eklstr="let lst(list) set lst=part_info\iBodys  let V (Volume) V=0 let i(integer) i=1 for i while i<=lst.Size() {V=V+smartVolume(lst.GetItem(i))  i=i+1}"
 End Sub
 
 Public Function catSel1(prompt As String) As Object
@@ -101,8 +98,7 @@ Public Function defgprd()    '获取要读取或修改的  全局变量 Prd2wt 定义
         Select Case imsg
             Case 7 '===选择“否”====
             Set rootPrd = CATIA.Activedocument.product
-            Set oPrd = rootPrd
-            
+            Set oPrd = rootPrd            
             Case 2: Exit Function '===选择“取消”====
             Case 6  '===选择“是”,进行产品选择====
                 On Error Resume Next
@@ -296,15 +292,13 @@ public sub initprd(oprd)
         Err.Clear
     On Error GoTo 0
 
-     If Not oPrt Is Nothing Then
+    If Not oPrt Is Nothing Then
         Call iniPrt(oPrd, att_usp_Names())
-    Else   
-        
-        Set colls = refprd.Publications
-       
+    Else         
+        Set colls = refprd.Publications       
         If getAtt(att(i),colls)(0) is nothing Then
-        Dim oref, oPub
-        i = 1
+            Dim oref, oPub
+            i = 1
             Set oref = refprd.CreateReferenceFromName(attObj(i).Name)
             Set oPub = colls.Add(att(i)) ' 添加发布元素名称
             colls.SetDirect att(i), oref ' 设置发布元素参考
@@ -317,28 +311,73 @@ End Sub
 
 
 private sub initprt(oprd)
+    Dim refprd：Set refprd = oPrd.ReferenceProduct
+    dim oPrt：Set oPrt = refprd.Parent.Part
 
-Dim refprd：Set refprd = oPrd.ReferenceProduct, 
+ '============创建参数集合=================
+    Dim colls
 
-dim oPrt：Set oPrt = refprd.Parent.Part
-
-
- On Error Resume Next
-                Set colls = oPrt.Parameters.RootParameterSet.ParameterSets.Item("part_info").DirectParameters
-        If Err.Number <> 0 Then
-                Err.Clear
-                Set colls = oPrt.Parameters.RootParameterSet.ParameterSets.CreateSet("cm")
-                Set colls = oPrt.Parameters.RootParameterSet.ParameterSets.Item("cm").DirectParameters
+    On Error Resume Next
+        Set colls = oPrt.Parameters.RootParameterSet.ParameterSets.Item(iset).DirectParameters
+        If colls is nothing then
+            Err.Clear
+            Set colls = oPrt.Parameters.RootParameterSet.ParameterSets.CreateSet(iset)
+            Set colls = oPrt.Parameters.RootParameterSet.ParameterSets.Item(iset).DirectParameters
         End If
     On Error GoTo 0
 
+    '创建list，将mainbody加入list
+    if gettAtt("ibodys",colls)(0) is nothing then
+        Dim lst
+        Set lst = colls.CreateList("ibodys")
+    else
+        Set lst = gettAtt("ibodys",colls)(0)
+    end if
+        if getAtt(oprt.mainbody.name,lst.valuelist)(0) is nothing then
+            lst.valuelist.Add oprt.mainbody
+        end if
+        set lst = nothing
+    '============创建参数和发布=================
+    dim attObj
+    For i = 1 to 4
+        if i<>2 Then
+            if getAtt(att(i),colls)(0) is nothing then     
+                set attObj = colls.CreateDimension(att(i),aType(i),0#)       
+            else          
+                set attObj(i)=getAtt(att(i),colls)(0)         
+            end if
+        end if 
+    next
 
-
-
-
-
-
-
+        '=================进行发布======================    
+        Dim Pubs
+        Set pubs = refprd.Publications
+            for i=1 to 4
+                if getAtt(att(i),pubs)(0) is nothing then
+                    Dim oref, oPub
+                    Select Case i             
+                        Case 2
+                            Set attObj(i) = refprd.UserRefProperties.Item(att(i))                    
+                    End Select
+                Set oref = refprd.CreateReferenceFromName(attObj(i).Name)
+                    Set oPub = pubs.Add(att(i)) ' 添加发布
+                    pubs.SetDirect att(i), oref ' 设置发布元素
+                End If
+            next
+    '================创建ekl==================== 
+   set colls = oPrt.Parameters.RootParameterSet.ParameterSets.Item(iset).DirectParameters
+    if gettAtt("eklname",colls)(0) is nothing then
+        Dim oRule
+        dim oRL:set oRL=oprt.relations
+        dim eklname, ekldesc
+        eklname="cal_volume"
+        ekldesc="calculate volume"
+        Set oRule =oRL.CreateProgram(eklname, ekldesc, eklstr)
+    else
+        if  gettAtt("ekl",colls)(1)<>eklstr then
+            gettAtt("ekl",colls)(0).modify eklstr
+        end if
+    end if
 
 
 

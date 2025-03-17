@@ -8,3 +8,7 @@ Public gws
 public allpn
 public pdm
 public iparas
+public eklstr
+public eklname
+public ekls
+
