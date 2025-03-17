@@ -381,5 +381,7 @@ private sub initprt(oprd)
     else 
         set obj=getAtt(cal_volume,oPrt.relations)(0)
             if obj.value<>objstr then
-                obj.modify objName,objtarget,objstr
+                obj.modify objstr
+            end if
     end if
+ End Sub
