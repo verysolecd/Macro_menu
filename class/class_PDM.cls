@@ -375,11 +375,11 @@ private sub initprt(oprd)
    '================创建关系==================== 
     objName="cal_volume"
     objtarget=refprd.UserRefProperties.Item("iVolume")
-    objsource="part_info\mass"
+    objstr="part_info\mass"
     if getAtt(cal_volume,oPrt.relations)(0) is nothing then
-       set obj=oPrt.relations.CreateRelation(objName,objtarget,objsource)
+       set obj=oPrt.relations.CreateRelation(objName,objtarget,objstr)
     else 
         set obj=getAtt(cal_volume,oPrt.relations)(0)
-            if obj.value<>objsource="part_info\mass" then
-                obj.modify objName,objtarget,objsource
+            if obj.value<>objstr then
+                obj.modify objName,objtarget,objstr
     end if
