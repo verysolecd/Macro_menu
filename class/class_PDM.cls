@@ -32,7 +32,6 @@ Private oSel
 Private imsg
 Private att(1 to 10)
 Private aType(1 to 10)
-
 Private Sub Class_Initialize()
     iniarr
     On Error GoTo ErrorHandler
@@ -67,7 +66,6 @@ Sub iniarr()
     iset="Part_info"
     eklstr="let lst(list) set lst=Part_info\iBodys  let V (Volume) V=0 let i(integer) i=1 for i while i<=lst.Size() {V=V+smartVolume(lst.GetItem(i))  i=i+1}"
 End Sub
-
 Public Function catSel1(prompt As String) As Object
     oSel.Clear
     Dim iType(0)
@@ -80,7 +78,6 @@ Public Function catSel1(prompt As String) As Object
     End If
     oSel.Clear
 End Function
-
 Public Function catSelx(prompt As String) As collection
     Set catSelx = New collection
     oSel.Clear
