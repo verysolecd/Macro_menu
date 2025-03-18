@@ -13,12 +13,14 @@ Attribute VB_Exposed = False
 ' #Folder:class 我现在希望class PDM类，实现以下多个功能：
 
 ' 1  初始化方法， 获取g_rootPrd为catia当前打开的根产品
-' 2  catSel1方法  带提示让用户选择单个产品\part
-' 3  catSelx方法 带提示让用户选择多个产品\part
+' 2  catSel1方法  带提示让用户选择单个产品\Part
+' 3  catSelx方法 带提示让用户选择多个产品\Part
 ' 4  infoPrd方法 获取传递的oPrd的一系列属性
 ' 5  getAtt方法  获取 属性或属性值，不存在时返回nothing 和“__”
 ' 6  meQty 方法  获取产品在当前子总成下的数量
 ' 7  recurPrd方法  调用infoPrd方法获取根产品及所有子产品的属性，返回为数组，数组第一列为编号，数组第二列为装配层级
+' 对于产品发布谁？  质量mass来自usrp
+' 对于零件发布谁？ usrp.mass part_info.thickness part_info.density usrp.material
 
 Option Explicit
 Public Prd2wt
@@ -62,8 +64,8 @@ Sub iniarr()
     aType(2) = "String"    
     aType(3) = "Length"
     aType(4) = "Density"
-    iset="part_info"
-    eklstr="let lst(list) set lst=part_info\iBodys  let V (Volume) V=0 let i(integer) i=1 for i while i<=lst.Size() {V=V+smartVolume(lst.GetItem(i))  i=i+1}"
+    iset="Part_info"
+    eklstr="let lst(list) set lst=Part_info\iBodys  let V (Volume) V=0 let i(integer) i=1 for i while i<=lst.Size() {V=V+smartVolume(lst.GetItem(i))  i=i+1}"
 End Sub
 
 Public Function catSel1(prompt As String) As Object
@@ -171,7 +173,7 @@ End Function
                 arr(6) = getAtt("iMaterial", colls)(1)
                 arr(7) = getAtt("iThickness", colls)(1)
         On Error Resume Next
-           Set colls = oPrd.ReferenceProduct.Parent.part.Parameters.RootParameterSet.ParameterSets.Item("cm").DirectParameters
+           Set colls = oPrd.ReferenceProduct.Parent.Part.Parameters.RootParameterSet.ParameterSets.Item("cm").DirectParameters
                 arr(8) = getAtt("iDensity", colls)(1)
             If Error.Number <> 0 Then
                 arr(8) = "__"
@@ -252,7 +254,7 @@ public modatt(oprd, oData)
         if oData(i) <> "" and arr(i) <> currAtt(i) then
             on error resume next
             select case 
-                case 1: refprd.partnumber=oData(i)
+                case 1: refprd.Partnumber=oData(i)
                 case 2: refprd.nomenclature=oData(i)
                 case 3: refprd.definition=oData(i)
                 case 4: oprd.name=oData(i)                
@@ -260,7 +262,7 @@ public modatt(oprd, oData)
                     set colls= refprd.userrefproperties
                     colls.item(att(i-4)).value = oData(i)
                 case 8
-                    Set colls = refprd.Parent.Part.Parameters.RootParameterSet.ParameterSets.Item("part_info").DirectParameters
+                    Set colls = refprd.Parent.Part.Parameters.RootParameterSet.ParameterSets.Item("Part_info").DirectParameters
                     colls.item(att(i-4)).value = oData(i)                
             end select
             on error go to 0
@@ -358,30 +360,53 @@ private sub initprt(oprd)
                 pubs.SetDirect att(i), oref ' 设置发布元素
             End If
         next
-    '================创建ekl==================== 
-   set colls = oPrt.Parameters.RootParameterSet.ParameterSets.Item(iset).DirectParameters
+    '================创建ekl====================    
+   private sub 
+   
+   
+   sub qcEK(oprt)
+   Sert colls=oprt.relations
     if gettAtt("eklname",colls)(0) is nothing then
-        Dim oRule
-        dim oRL:set oRL=oprt.relations
-        dim eklname, ekldesc
-        eklname="cal_volume"
-        ekldesc="calculate volume"
-        Set oRule =oRL.CreateProgram(eklname, ekldesc, eklstr)
+        Dim eklobj, eklname, ekldesc
+        eklname="sumVol"
+        ekldesc="sum of vol of bodylist"
+        eklstr="let lst(list) set lst=Part_info\ibodys  let V (Volume) V=0 let i(integer) i=1 for i while i<=lst.Size() {V=V+smartVolume(lst.GetItem(i)) i=i+1} Part_info\sumVol=V"
+        Set eklobj =colls.CreateProgram(eklname, ekldesc, eklstr)
     else
         if  gettAtt("ekl",colls)(1)<>eklstr then
             gettAtt("ekl",colls)(0).modify eklstr
         end if
     end if
+    end sub 
    '================创建关系==================== 
-    objName="cal_volume"
-    objtarget=refprd.UserRefProperties.Item("iVolume")
-    objstr="part_info\mass"
-    if getAtt(cal_volume,oPrt.relations)(0) is nothing then
-       set obj=oPrt.relations.CreateRelation(objName,objtarget,objstr)
+
+ sub qcFormula(oprd,item)    ' item="thickness"  
+    '===质量关系===
+    dim refprd,oprt,colls
+    Dim objName, objtarget, objstr, obj
+    Set refprd = oPrd.ReferenceProduct
+    Set oPrt = refprd.Parent.Part    
+    set colls=oprt.relations
+    select case item
+    case "thickness"    
+        objstr="Part_info\thickness"
+        objName="Calthickness"
+    case "mass"
+        objstr="Part_info\density*Part_info\sumVol"
+        objName="Calmass"
+    end if
+    objtarget=refprd.UserRefProperties.Item(item)
+    
+    if getAtt(objName,colls)(0) is nothing then
+       set obj=colls.CreateRelation(objName,"",objtarget,objstr)
     else 
-        set obj=getAtt(cal_volume,oPrt.relations)(0)
+        set obj=getAtt(objname,colls)(0)
             if obj.value<>objstr then
                 obj.modify objstr
             end if
     end if
  End Sub
+
+
+
+ 
