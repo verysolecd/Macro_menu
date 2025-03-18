@@ -11,7 +11,6 @@ Attribute VB_Exposed = False
 ' Class module for product operations
 ' Public Class Product_Module
 ' #Folder:class 我现在希望class PDM类，实现以下多个功能：
-
 ' 1  初始化方法， 获取g_rootPrd为catia当前打开的根产品
 ' 2  catSel1方法  带提示让用户选择单个产品\Part
 ' 3  catSelx方法 带提示让用户选择多个产品\Part
@@ -403,7 +402,3 @@ private sub initprt(oprd)
             end if
     end if
  End Sub
-
-
-
- 
