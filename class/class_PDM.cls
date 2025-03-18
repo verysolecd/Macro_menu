@@ -169,7 +169,7 @@ End Function
                 arr(6) = getAtt("iMaterial", colls)(1)
                 arr(7) = getAtt("iThickness", colls)(1)
         On Error Resume Next
-           Set colls = oPrd.ReferenceProduct.Parent.Part.Parameters.RootParameterSet.ParameterSets.Item("cm").DirectParameters
+           Set colls = oPrd.ReferenceProduct.Parent.Part.Parameters.RootParameterSet.ParameterSets.Item("part_info").DirectParameters
                 arr(8) = getAtt("iDensity", colls)(1)
             If Error.Number <> 0 Then
                 arr(8) = "__"
