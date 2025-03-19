@@ -1,5 +1,4 @@
 Attribute VB_Name = "m52_Cbom"
-'Attribute VB_Name = "m5_Cbom"
 '{GP:5}
 '{Ep:cBom}
 '{Caption:Ñ¡Ôñ²úÆ·}

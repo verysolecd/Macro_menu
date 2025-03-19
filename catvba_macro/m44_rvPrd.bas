@@ -1,16 +1,16 @@
 Attribute VB_Name = "m44_rvPrd"
-'Attribute VB_Name = "selPrd"
+'Attribute VB_Name = "rvPrd"
 '{GP:4}
 '{Ep:rvme}
 '{Caption:选择产品}
 '{ControlTipText:选择要被读取或修改的产品}
 '{BackColor:16744703}
-Sub rvme()   
+Sub rvme()
      If Not gprd Is Nothing Then
         gprd.ApplyWorkMode (3)
         Dim currRow: currRow = 2
 '---------遍历修改产品及子产品
-        Dim oprd: Set oprd = gprd
+        Dim oPrd: Set oPrd = gprd
         xlm.extract_data currRow, pdm.infoPrd(Prd2Read)
         Dim children
         Set children = Prd2Read.Products
