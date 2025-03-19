@@ -391,8 +391,7 @@ private sub initprt(oprd)
         objstr="Part_info\density*Part_info\sumVol"
         objName="Calmass"
     end if
-    objtarget=refprd.UserRefProperties.Item(item)
-    
+    objtarget=refprd.UserRefProperties.Item(item)    
     if getAtt(objName,colls)(0) is nothing then
        set obj=colls.CreateRelation(objName,"",objtarget,objstr)
     else 

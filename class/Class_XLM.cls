@@ -118,9 +118,6 @@ End Sub
     
     counter = 0
 
-
-
-
 End Sub
  
 Public Function extract_data(row As Long)

@@ -10,12 +10,14 @@ Sub initme()
     Set allpn = KCL.InitDic(vbTextCompare)
     set pdm=new Class_PDM
     if not gprd is nothing then
+        dim oPrd
+        set oPrd=gprd
         If allpn.exists(oPrd.PartNumber)=false Then
             allPN(oPrd.PartNumber) = 1
-            Call initprd(oPrd)
+            Call pdm.initprd(oPrd)
         end if
             For Each product In oPrd.Products
-                Call iniPrd(product)        
+                Call pdm.iniPrd(product)        
         Next 
             allPN.RemoveAll     
     else

@@ -31,8 +31,6 @@ Sub setgprd()
 
 Dim xlm, pdm
 Set pdm = New class_PDM
-
-
      Set gprd = pdm.defgprd()
      MsgBox "°´Å¥m40"
 End Sub

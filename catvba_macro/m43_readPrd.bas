@@ -13,8 +13,7 @@ Dim xlm, pdm
 Set xlm = New Class_XLM
 Set pdm = New class_PDM
 '---------获取待修改产品
-On Error Resume Next
-   
+On Error Resume Next   
      If Not gprd Is Nothing Then
         gprd.ApplyWorkMode (3)
         Dim currRow: currRow = 2
