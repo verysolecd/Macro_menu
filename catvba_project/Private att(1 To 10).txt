@@ -1,0 +1,114 @@
+Private att(1 To 10)
+Private aType(1 To 10)
+Private Const xx = "测试成功"
+Private Const xy = "测试失败"
+Private Const iset = "Part_info"
+Private Const eklname = "sumVol"
+Private Const ekldesc = "sum of vol of bodylist"
+Private Const eklstr = "let lst(list) set lst=Part_info\ibodys  let V (Volume) V=0 let i(integer) i=1 for i while i<=lst.Size() {V=V+smartVolume(lst.GetItem(i)) i=i+1} Part_info\sumVol=V"  '使用Const关键字定义常量
+
+
+Sub CATMain()
+    Set oPrd = CATIA.ActiveDocument.Product
+    Dim refprd: Set refprd = oPrd.ReferenceProduct
+    Dim oprt: Set oprt = refprd.Parent.Part
+  '============创建参数=================
+'    Dim colls
+'    Set colls = refprd.UserRefProperties'
+'    Dim attObj(1 To 4)'
+'    For i = 1 To 4
+'        If getAtt(att(i), colls)(0) Is Nothing Then
+'            Select Case i
+'                Case 1, 3
+'                    Set attObj(i) = colls.CreateDimension(att(i), aType(i), 0#)
+'                Case 2
+'                    Set attObj(i) = colls.createstring(att(i), "tbd")
+'            End Select
+'        Else
+'            Set attObj(i) = getAtt(att(i), colls)(0)
+'        End If
+'    Next
+'     Set colls = Nothing
+
+    Dim usrp(1 To 4)
+    For i = 1 To 4
+        Set usrp(i) = New Class_para
+    Next
+    
+        usrp(1).SetNT "Mass", "Mass"
+        usrp(2).SetNT "Material", "String"
+        usrp(3).SetNT "Thickness", "Length"
+        usrp(4).SetNT "Density", "Density"
+    
+    Set colls = refprd.UserRefProperties
+        For i = 1 To 4
+            paraDef usrp(i), colls
+        Next
+    
+    
+'============创建参数集合=================
+
+        Set infoset = New Class_para
+        infoset.SetNT "Part_info", "ParameterSet"
+        Set colls = oprt.Parameters.RootParameterSet.ParameterSets
+        paraDef infoset, colls
+        Set colls = infoset.obj.DirectParameters
+        
+'============创建参数集合=================
+
+
+
+    
+    Dim iBodys
+    Set iBodys = New Class_para
+    iBodys.SetNT "iBodys", "list"
+    
+    
+    paraDef iBodys, colls
+    
+    If paraGetSelf(oprt.mainbody, iBodys.obj.valuelist)(0) Is Nothing Then
+            iBodys.obj.valuelist.Add oprt.mainbody
+        End If
+    MsgBox iBodys.obj.Name
+    
+    
+  End Sub
+ Function paraDef(thispara, colls)
+    If Not paraGetSelf(thispara, colls)(0) Is Nothing Then GoTo continue
+        Debug.Print "需要创建" & thispara.Name
+        paraCreatobj thispara, colls
+        MsgBox "已经创建" & thispara.obj.Name
+continue:
+       Set thispara.obj = paraGetSelf(thispara, colls)(0)
+       Debug.Print "不需要创建" & thispara.obj.Name
+End Function
+ Function paraGetSelf(item, collection)
+    Dim arr(1) ' 正确声明数组
+    On Error Resume Next
+        Set arr(0) = collection.item(item.Name)
+        If Err.Number = 0 Then ' 检查是否成功获取对象
+            arr(1) = arr(0).Value
+            paraGetSelf = arr
+        Else
+            paraGetSelf = Array(Nothing, "__")
+        End If
+    On Error GoTo 0
+End Function
+Function paraCreatobj(para, colls)
+        Select Case para.iType
+            Case "ParameterSet"
+                Set para.obj = colls.CreateSet(para.Name)
+            Case "list"
+                Set para.obj = colls.CreateList(para.Name)
+            Case "Mass", "Density", "Length"  '所有dimension参数
+                Set para.obj = colls.CreateDimension(para.Name, para.iType, para.str)
+            Case "String"
+                Set para.obj = colls.createstring(para.Name, para.str)
+            Case "Relation"
+                Set para.obj = colls.CreateRelation(para.Name, para.desc, para.Target, para.str)
+            Case "Program"
+                Set para.obj = colls.CreateProgram(para.Name, para.desc, para.str)
+                
+    End Select
+End Function
+
