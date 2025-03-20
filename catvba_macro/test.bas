@@ -16,26 +16,33 @@ Public att(1 To 4)
 Public aType(1 To 4)
 
 Sub test()
- Dim oDoc, iPrd, rootPrd, oPrd, children, oPrt, refprd
-     Dim xlsht, startrow, startcol, currRow, LV, rng
-     Dim propertyArry()
-     Dim i
 
-    
-    Dim att(1 To 4)
-    att(1) = "iMaterial"
-    att(2) = "iDensity"
-    att(3) = "iMass"
-    att(4) = "iThickness"
-    
-Dim xlm, pdm
-Set xlm = New Class_XLM
-Set pdm = New class_PDM
+Dim me As New Class_para
 
-xlm.inject_data 1, att
-  
-End Sub
+    Set pdm = New class_PDM
+     
+
+'    att(1) = "iMass"
+'    att(2) = "iMaterial"
+'    att(3) = "iThickness"
+'    att(4) = "iDensity"
+'    aType(1) = "Mass"
+'    aType(2) = "String"
+'    aType(3) = "Length"
+'    aType(4) = "Density"
+
+ Dim i
  
+ i = 1
+    att(i).Name = "Mass"
+    att(i).iType = "Mass"
+    att(i).Value = 0#
+   Set att(i).Target = rootPrd
+    
+MsgBox att(i).Name & att(i).iType & att(i).Value & att(i).Target.Name
+
+
+End Sub
 
 
     
