@@ -10,13 +10,23 @@ Attribute VB_Exposed = False
 '我是一个对参数对象赋予属性的类
 Private pName As String
 Private pType As String
-Private pValue As Variant
+Private pStr As Variant
 Private pTarget As Object
 Private pobj As Object
 
 Private Sub Class_Initialize()
   
 End Sub
+
+Public Sub Reset()
+    Me.Name = ""
+    Me.iType = ""
+    Me.str = ""
+    Me.desc = ""
+    Set Me.obj = Nothing
+    Set Me.Target = Nothing
+End Sub
+
 ' 定义属性的 Get 和 Let 方法
 Public Property Get Name() As String
     Name = pName
@@ -24,18 +34,21 @@ End Property
 Public Property Let Name(ByVal Value As String)
     pName = Value
 End Property
+
 Public Property Get iType() As String
     iType = pType
 End Property
 Public Property Let iType(ByVal Value As String)
     pType = Value
 End Property
+
 Public Property Get str() As Variant
-    str = pValue
+    str = pStr
 End Property
 Public Property Let str(ByVal Value As Variant)
-    pValue = Value
+    pStr = Value
 End Property
+
 Public Property Get Target()
    Set Target = pTarget
 End Property
@@ -49,8 +62,8 @@ End Property
 Public Property Set obj(Value)
    Set pobj = Value
 End Property
-Public Sub SetNT(ByVal newName As String, ByVal newType As String)
-    Name = newName
-    iType = newType
-End Sub
 
+Public Sub SetNT(ByVal newName As String, ByVal newType As String)
+    Me.Name = newName
+    Me.iType = newType
+End Sub

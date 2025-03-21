@@ -56,24 +56,62 @@ Sub CATMain()
     Next
     
 '============创建Relation参数=================
+
+Set colls = oPrt.relations
 Dim oRule
 Set oRule = New Class_para
+
+        ’---创建EKL
 oRule.SetNT "sum_all_Vol", "Program"
 oRule.str = eklstr
-Set colls = oPrt.relations
 paraDef oRule, colls
 
+        ’---创建"sum_all_Vol"
+orule.setNT "sum_all_Vol", "Relation"
+orule.str = "sum_all_Vol"
+paraDef orule, colls
+
+
+
+        ‘---创建link_mass
+orule.SetNT "link_mass", "Relation"
+orule.str = "Part_info\density*Part_info\sumVol"
+orule.target 
+paraDef orule, colls
+
+        ’---创建link_mass
+
+
+
+
+
+
+
 End Sub
- Function paraDef(thispara, colls)
+Function paraDef(thispara, colls)
     If Not paraGetSelf(thispara, colls)(0) Is Nothing Then GoTo continue
         Debug.Print "需要创建" & thispara.Name
-        paraCreatobj thispara, colls
-        MsgBox "已经创建" & thispara.obj.Name
+        paraCreatobj thispara, colls   '创建参数和公式时已经是默认值
+        Debug.Print "已经创建" & thispara.Name 
 continue:
-       Set thispara.obj = paraGetSelf(thispara, colls)(0)
+       Set thispara.obj = paraGetSelf(thispara, colls)(0) '已有参数和公式，校验默认值
        Debug.Print "不需要创建" & thispara.obj.Name
+        ' select case thispara.iType
+        '     Case "ParameterSet", "list"
+        '         Debug.Print "不需要校验"
+        '     case "Program"
+        '         If thispara.obj.Value <> thispara.str Then
+        '             Debug.Print "校验失败"
+        '             thispara.obj.Value = thispara.str
+        '             Debug.Print "校验成功"
+        '     Case "Mass", "Density", "Length", "Volume" '所有dimension参数
+        '         If thispara.obj.Value <> thispara.str Then
+        '             Debug.Print "校验失败"
+        '             thispara.obj.Value = thispara.str
+        '             Debug.Print "校验成功"
+        '         End If
 End Function
- Function paraGetSelf(thispara, collection)
+Function paraGetSelf(thispara, collection)
     Dim arr(1) ' 正确声明数组
     On Error Resume Next
         Set arr(0) = collection.item(thispara.Name)
