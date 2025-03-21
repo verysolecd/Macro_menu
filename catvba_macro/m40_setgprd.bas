@@ -1,10 +1,11 @@
 Attribute VB_Name = "m40_setgprd"
-'Attribute VB_Name = "selPrd"
 '{GP:4}
 '{Ep:setgprd}
 '{Caption:选择产品}
 '{ControlTipText:选择要被读取或修改的产品}
 '{BackColor:16744703}
+
+
 Sub setgprd()
 '            Dim oSel, status, iType(0)
 '            CATIA.ActiveWindow.WindowState = 0
@@ -29,8 +30,14 @@ Sub setgprd()
 '                oSel.Clear
 '            End If
 
-Dim xlm, pdm
-Set pdm = New class_PDM
-     Set gprd = pdm.defgprd()
-     MsgBox "按钮m40"
+    Dim xlm, pdm
+    Set pdm = New class_PDM
+    On Error Resume Next
+     Set gPrd = pdm.defgprd()
+        If gPrd Is Nothing Then
+        MsgBox "已退出，程序将结束"
+        Exit Sub
+        Else
+        MsgBox "待操作产品已经选择：" & gPrd.PartNumber
+        End If
 End Sub

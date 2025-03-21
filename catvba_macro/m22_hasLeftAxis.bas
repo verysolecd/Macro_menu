@@ -12,7 +12,7 @@ Sub LeftHand()
     ' 检查是否可以执行
     If Not CanExecute("PartDocument") Then Exit Sub
     Dim Doc As PartDocument: Set Doc = CATIA.Activedocument
-    Dim Axs As AxisSystems: Set Axs = Doc.part.AxisSystems
+    Dim Axs As AxisSystems: Set Axs = Doc.Part.AxisSystems
     Dim Ax As AxisSystem
     Dim Msg As String: Msg = vbNullString
     For Each Ax In Axs

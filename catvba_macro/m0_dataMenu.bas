@@ -86,21 +86,21 @@ Private Function Get_ButtonInfo() As Object
         Set Mdl = Comp.CodeModule
         ' 获取声明行数
         DecCnt = Mdl.CountOfDeclarationLines
-        If DecCnt < 1 Then GoTo Continue
+        If DecCnt < 1 Then GoTo continue
         ' 获取声明代码
         DecCode = Mdl.Lines(1, Mdl.CountOfDeclarationLines)
         ' 获取配置信息
         Set MdlInfo = Get_KeyValue(DecCode)
-        If MdlInfo Is Nothing Then GoTo Continue
+        If MdlInfo Is Nothing Then GoTo continue
         ' 检查分组信息
-        If Not MdlInfo.Exists(TAG_GROUP) Then GoTo Continue
+        If Not MdlInfo.Exists(TAG_GROUP) Then GoTo continue
         If IsNumeric(MdlInfo(TAG_GROUP)) Then
             MdlInfo(TAG_GROUP) = CLng(MdlInfo(TAG_GROUP))
         Else
-            GoTo Continue
+            GoTo continue
         End If
         Debug.Print TypeName(MdlInfo(TAG_GROUP)) & " : " & MdlInfo(TAG_GROUP)
-        If Not PageMap.Exists(MdlInfo(TAG_GROUP)) Then GoTo Continue
+        If Not PageMap.Exists(MdlInfo(TAG_GROUP)) Then GoTo continue
         
         ' 检查入口点方法
         CanExecMethod = vbNullString
@@ -116,12 +116,12 @@ Try_TAG_ENTRY_DEF:
                  CanExecMethod = TAG_ENTRY_DEF
             End If
         End If
-        If CanExecMethod = vbNullString Then GoTo Continue
+        If CanExecMethod = vbNullString Then GoTo continue
         Set MdlInfo = Push_Dic(MdlInfo, TAG_ENTRYPNT, CanExecMethod)
         Set MdlInfo = Push_Dic(MdlInfo, TAG_PJTPATH, PjtPath)
         Set MdlInfo = Push_Dic(MdlInfo, TAG_MDLNAME, Mdl.Name)
         BtnInfos.Add MdlInfo
-Continue:
+continue:
     Next
     If BtnInfos.Count < 1 Then Exit Function
     Set Get_ButtonInfo = BtnInfos
@@ -131,11 +131,11 @@ End Function
 ' 返回值: Dict
 Private Function Push_Dic(ByVal Dic As Object, _
                           ByVal Key As Variant, _
-                          ByVal Item As Variant) As Object
+                          ByVal item As Variant) As Object
     If Dic.Exists(Key) Then
-        Dic(Key) = Item
+        Dic(Key) = item
     Else
-        Dic.Add Key, Item
+        Dic.Add Key, item
     End If
     Set Push_Dic = Dic
 End Function
@@ -167,17 +167,17 @@ Private Function Get_KeyValue( _
     For Each Match In Matches
         Set SubMatchs = Match.SubMatches
         
-        If SubMatchs.Count < 2 Then GoTo Continue
+        If SubMatchs.Count < 2 Then GoTo continue
         
         Key = Trim(Replace(SubMatchs(0), """", ""))
-        If Len(Key) < 1 Then GoTo Continue
+        If Len(Key) < 1 Then GoTo continue
         If KeyToLong Then Key = CLng(Key)
         
         Var = Trim(Replace(SubMatchs(1), """", ""))
-        If Len(Var) < 1 Then GoTo Continue
+        If Len(Var) < 1 Then GoTo continue
         
         Set Dic = Push_Dic(Dic, Key, Var)
-Continue:
+continue:
     Next
     
     If Dic.Count < 1 Then Exit Function
@@ -192,16 +192,16 @@ Private Function To_SortedList(ByVal Infos As Object) As Object
     
     Dim SoLst As Object
     Set SoLst = CreateObject("System.Collections.SortedList")
-    Dim Lst As Object
+    Dim lst As Object
     
     Dim Info As Object
     For Each Info In Infos
         If SoLst.ContainsKey(Info(TAG_GROUP)) = True Then
             SoLst(Info(TAG_GROUP)).Add Info
         Else
-            Set Lst = KCL.InitLst()
-            Lst.Add Info
-            SoLst.Add Info(TAG_GROUP), Lst
+            Set lst = KCL.InitLst()
+            lst.Add Info
+            SoLst.Add Info(TAG_GROUP), lst
         End If
     Next
     
@@ -219,20 +219,20 @@ End Function
 ' 按模块名称排序
 ' 参数  :lst(Dict)
 ' 返回值: lst(Dict)
-Private Function Sort_by(ByVal Lst As Object) As Object
+Private Function Sort_by(ByVal lst As Object) As Object
     Dim tmp As Object
     Dim i As Long, j As Long
-    Set tmp = Lst(0)
-    For i = 0 To Lst.Count - 1
-        For j = Lst.Count - 1 To i Step -1
-            If Lst(i)(TAG_MDLNAME) > Lst(j)(TAG_MDLNAME) Then
-                Set tmp = Lst(i)
-                Set Lst(i) = Lst(j)
-                Set Lst(j) = tmp
+    Set tmp = lst(0)
+    For i = 0 To lst.Count - 1
+        For j = lst.Count - 1 To i Step -1
+            If lst(i)(TAG_MDLNAME) > lst(j)(TAG_MDLNAME) Then
+                Set tmp = lst(i)
+                Set lst(i) = lst(j)
+                Set lst(j) = tmp
             End If
         Next j
     Next i
-    Set Sort_by = Lst
+    Set Sort_by = lst
 End Function
 '******* APC/VBE *********
 ' 获取APC对象
@@ -284,14 +284,14 @@ End Function
 ' 1-vbext_ct_StdModule 2-vbext_ct_ClassModule 3-vbext_ct_MSForm
 Private Function GetModuleLst(ByVal Itms As Object) As Object
     Set GetModuleLst = Nothing
-    Dim Lst As Object: Set Lst = KCL.InitLst()
+    Dim lst As Object: Set lst = KCL.InitLst()
     Dim Itm As Object
     For Each Itm In Itms
-        If Not Itm.Type = 1 Then GoTo Continue 'vbext_ComponentType
-        Lst.Add Itm
-Continue:
+        If Not Itm.Type = 1 Then GoTo continue 'vbext_ComponentType
+        lst.Add Itm
+continue:
     Next
-    If Lst.Count < 1 Then Exit Function
-    Set GetModuleLst = Lst
+    If lst.Count < 1 Then Exit Function
+    Set GetModuleLst = lst
 End Function
 

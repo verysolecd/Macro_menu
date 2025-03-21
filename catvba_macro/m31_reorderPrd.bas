@@ -20,7 +20,7 @@ Sub CATMain()
     
 
     Dim AssyMode As AsmConstraintSettingAtt
-    Set AssyMode = CATIA.SettingControllers.Item("CATAsmConstraintSettingCtrl")
+    Set AssyMode = CATIA.SettingControllers.item("CATAsmConstraintSettingCtrl")
     Dim OriginalMode As CatAsmPasteComponentMode
     OriginalMode = AssyMode.PasteComponentMode
     
@@ -38,7 +38,7 @@ Sub CATMain()
     
     Sel.Clear
     For Each Itm In Names
-        Sel.Add Pros.Item(Itm)
+        Sel.Add Pros.item(Itm)
     Next
     Sel.Cut
     
@@ -58,15 +58,15 @@ Sub CATMain()
 End Sub
 
 Private Function Get_SortedNames(ByVal Pros As Products) As Object
-    Dim Lst As Object
-    Set Lst = KCL.InitLst()
+    Dim lst As Object
+    Set lst = KCL.InitLst()
     
     Dim Pro As product
     For Each Pro In Pros
-        Lst.Add Pro.Name
+        lst.Add Pro.Name
     Next
     
-    Lst.Sort
+    lst.Sort
     
-    Set Get_SortedNames = Lst
+    Set Get_SortedNames = lst
 End Function

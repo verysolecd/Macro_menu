@@ -1,5 +1,4 @@
 Attribute VB_Name = "m51_Cal_Mass"
-'Attribute VB_Name = "calmass"
 '{GP:5}
 '{Ep:Cal_Mass}
 '{Caption:Ñ¡Ôñ²úÆ·}

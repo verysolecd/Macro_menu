@@ -10,7 +10,7 @@ Sub CATMain()
 Set Doc = CATIA.Activedocument
 Set rootPrd = Doc.product
 Set sPrd = rootPrd.Products
-Set iPrd = sPrd.Item("点焊信息")
+Set iPrd = sPrd.item("点焊信息")
 Set oSel = Doc.Selection
 Dim oPn
 Dim iType(0)
@@ -20,7 +20,7 @@ status = oSel.SelectElement3(iType, "选择被连接产品", True, 2, False)
 If status = "Normal" And oSel.Count2 <= 3 Then
 oName = ""
 For i = 1 To oSel.Count
-     oPn = oPn & "_" & oSel.Item(i).LeafProduct.PartNumber
+     oPn = oPn & "_" & oSel.item(i).LeafProduct.PartNumber
 Next
  iPn = "SotWeld_" & oPn
      MsgBox iPn

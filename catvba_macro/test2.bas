@@ -10,9 +10,9 @@ Private Const eklstr = "let lst(list) set lst=Part_info\ibodys  let V (Volume) V
 Sub test()
 
 Dim oPrd
-Set oPrd = CATIA.ActiveDocument.Product
-Dim refprd: Set refprd = oPrd.ReferenceProduct
-    Dim oPrt: Set oPrt = refprd.Parent.Part
+Set oPrd = CATIA.Activedocument.product
+Dim refPrd: Set refPrd = oPrd.ReferenceProduct
+    Dim oPrt: Set oPrt = refPrd.Parent.Part
 '============创建参数集合=================
     Dim colls
     On Error Resume Next
@@ -47,17 +47,17 @@ Dim refprd: Set refprd = oPrd.ReferenceProduct
     Next
  '=================进行发布======================
     Dim Pubs
-    Set Pubs = refprd.Publications
+    Set Pubs = refPrd.Publications
         For i = 1 To 4
             If getAtt(att(i), Pubs)(0) Is Nothing Then
-                Dim oref, oPub
+                Dim oRef, oPub
                 Select Case i
                     Case 2
-                        Set attObj(i) = refprd.UserRefProperties.item(att(i))
+                        Set attObj(i) = refPrd.UserRefProperties.item(att(i))
                 End Select
-            Set oref = refprd.CreateReferenceFromName(attObj(i).Name)
+            Set oRef = refPrd.CreateReferenceFromName(attObj(i).Name)
                 Set oPub = Pubs.Add(att(i)) ' 添加发布
-                Pubs.SetDirect att(i), oref ' 设置发布元素
+                Pubs.SetDirect att(i), oRef ' 设置发布元素
             End If
         Next
         
@@ -68,7 +68,7 @@ Dim refprd: Set refprd = oPrd.ReferenceProduct
             Set eklobj = colls.CreateProgram(eklname, ekldesc, eklstr)
         Else
             If getAtt("ekl", colls)(1) <> eklstr Then
-                getAtt("ekl", colls)(0).modify eklstr
+                getAtt("ekl", colls)(0).Modify eklstr
             End If
         End If
  
@@ -82,16 +82,16 @@ Dim refprd: Set refprd = oPrd.ReferenceProduct
         Set eklobj = colls.CreateProgram(eklname, ekldesc, eklstr)
     Else
         If getAtt("ekl", colls)(1) <> eklstr Then
-            getAtt("ekl", colls)(0).modify eklstr
+            getAtt("ekl", colls)(0).Modify eklstr
         End If
     End If
    '================创建关系====================
 ' Sub qcFormula(oPrd, item)   ' item="thickness"
     '===质量关系===
-    Dim refprd, oPrt, colls
+    Dim refPrd, oPrt, colls
     Dim objName, objtarget, objstr, obj
-    Set refprd = oPrd.ReferenceProduct
-    Set oPrt = refprd.Parent.Part
+    Set refPrd = oPrd.ReferenceProduct
+    Set oPrt = refPrd.Parent.Part
     Set colls = oPrt.relations
     Select Case item
     Case "thickness"
@@ -101,13 +101,13 @@ Dim refprd: Set refprd = oPrd.ReferenceProduct
         objstr = "Part_info\density*Part_info\sumVol"
         objName = "Calmass"
     End If
-    objtarget = refprd.UserRefProperties.item(item)
+    objtarget = refPrd.UserRefProperties.item(item)
     If getAtt(objName, colls)(0) Is Nothing Then
        Set obj = colls.CreateRelation(objName, "", objtarget, objstr)
     Else
         Set obj = getAtt(objName, colls)(0)
             If obj.Value <> objstr Then
-                obj.modify objstr
+                obj.Modify objstr
             End If
     End If
  End Sub

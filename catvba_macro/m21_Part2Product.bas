@@ -13,7 +13,7 @@ Sub CATMain()
     If Not CanExecute("PartDocument") Then Exit Sub
     Dim BaseDoc As PartDocument: Set BaseDoc = CATIA.Activedocument
     Dim BasePath As Variant: BasePath = Array(BaseDoc.FullName)
-    Dim Pt As part: Set Pt = BaseDoc.part
+    Dim Pt As Part: Set Pt = BaseDoc.Part
     Dim LeafItems As collection: Set LeafItems = Get_LeafItemLst(Pt.Bodies)
     Dim Msg As String
     If LeafItems Is Nothing Then
@@ -60,7 +60,7 @@ Private Sub ToProduct(ByVal TopDoc As ProductDocument, _
     CATIA.HSOSynchronized = False
     For Each Itm In LeafItems
         If ProdsNameDic.Exists(Itm.Name) Then
-            Set TgtDoc = ProdsNameDic.Item(Itm.Name)
+            Set TgtDoc = ProdsNameDic.item(Itm.Name)
         Else
             Set TgtDoc = Init_Part(Prods, Itm.Name)
             ProdsNameDic.Add Itm.Name, TgtDoc
@@ -72,7 +72,7 @@ Private Sub ToProduct(ByVal TopDoc As ProductDocument, _
         End With
         With TopSel
             .Clear
-            .Add TgtDoc.part
+            .Add TgtDoc.Part
             .PasteSpecial PasteType
         End With
     Next
@@ -104,30 +104,30 @@ Private Sub Preparing_Copy(ByVal Sel As Selection, ByVal Itm As AnyObject)
 End Sub
 
 Private Function Get_All_OdrGeoSetShapes(ByVal OdrGeoSet As OrderedGeometricalSet, _
-                                         ByVal Lst As collection) As collection
+                                         ByVal lst As collection) As collection
     Dim child As OrderedGeometricalSet
     For Each child In OdrGeoSet.OrderedGeometricalSets
-        Lst.Add child.HybridShapes
+        lst.Add child.HybridShapes
         If child.OrderedGeometricalSets.Count > 0 Then
-            Set Lst = Get_All_OdrGeoSetShapes(child, Lst)
+            Set lst = Get_All_OdrGeoSetShapes(child, lst)
         End If
     Next
-    Set Get_All_OdrGeoSetShapes = Lst
+    Set Get_All_OdrGeoSetShapes = lst
 End Function
 
 Private Function Get_All_HbShapes(ByVal Hbdy As HybridBody, _
-                                  ByVal Lst As collection) As collection
+                                  ByVal lst As collection) As collection
     Dim child As HybridBody
     For Each child In Hbdy.hybridBodies
-        Lst.Add child.HybridShapes
+        lst.Add child.HybridShapes
         If child.hybridBodies.Count > 0 Then
-            Set Lst = Get_All_HbShapes(child, Lst)
+            Set lst = Get_All_HbShapes(child, lst)
         End If
     Next
-    Set Get_All_HbShapes = Lst
+    Set Get_All_HbShapes = lst
 End Function
 
-Private Function Get_LeafItemLst(ByVal Pt As part) As collection
+Private Function Get_LeafItemLst(ByVal Pt As Part) As collection
     Set Get_LeafItemLst = Nothing
     Dim Sel As Selection: Set Sel = Pt.Parent.Selection
     Dim TmpLst As collection: Set TmpLst = New collection
@@ -142,7 +142,7 @@ Private Function Get_LeafItemLst(ByVal Pt As part) As collection
         .Add Pt
         .Search Filter
         For i = 1 To .Count2
-            TmpLst.Add .Item(i).Value
+            TmpLst.Add .item(i).Value
         Next
         .Clear
     End With
@@ -157,17 +157,17 @@ Private Function Get_LeafItemLst(ByVal Pt As part) As collection
         LeafHBdys.Add Hbdy, 0
     Next
     Dim Itm As AnyObject
-    Dim Lst As collection: Set Lst = New collection
+    Dim lst As collection: Set lst = New collection
     For Each Itm In TmpLst
         Select Case TypeName(Itm)
             Case "Body"
-                If Is_LeafBody(Itm) Then Lst.Add Itm
+                If Is_LeafBody(Itm) Then lst.Add Itm
             Case Else
-                If Is_LeafHybridBody(Itm, LeafHBdys) Then Lst.Add Itm
+                If Is_LeafHybridBody(Itm, LeafHBdys) Then lst.Add Itm
         End Select
     Next
-    If Lst.Count < 1 Then Exit Function
-    Set Get_LeafItemLst = Lst
+    If lst.Count < 1 Then Exit Function
+    Set Get_LeafItemLst = lst
 End Function
 
 Private Function Is_LeafBody(ByVal Bdy As Body) As Boolean
@@ -199,7 +199,7 @@ Private Function Init_Part(ByVal Prods As Variant, _
     On Error Resume Next
         Set Prod = Prods.AddNewComponent("Part", PtNum)
     On Error GoTo 0
-    Set Init_Part = Prods.Item(Prods.Count).ReferenceProduct.Parent
+    Set Init_Part = Prods.item(Prods.Count).ReferenceProduct.Parent
 End Function
 
 Private Sub UpdateScene(ByVal Scene As Variant)

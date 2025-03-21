@@ -21,7 +21,7 @@ Sub CATMain()
       End If
             
             Dim View As DrawingView
-                 Set View = Views.Item(3)
+                 Set View = Views.item(3)
             Dim LockState As Boolean
                  LockState = View.LockStatus
             Dim Msg As String
@@ -36,7 +36,7 @@ Sub CATMain()
      If Views.Count > 3 Then
             Dim i As Long
             For i = 3 To Views.Count
-                 Set View = Views.Item(i)
+                 Set View = Views.item(i)
                       View.LockStatus = LockState
                  Next
      End If

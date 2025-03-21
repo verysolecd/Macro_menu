@@ -1,4 +1,5 @@
 Attribute VB_Name = "test3"
+Option Explicit
 Private att(1 To 10)
 Private aType(1 To 10)
 Private Const xx = "测试成功"
@@ -8,9 +9,10 @@ Private Const eklname = "sumVol"
 Private Const ekldesc = "sum of vol of bodylist"
 Private Const eklstr = "let lst(list) set lst=Part_info\ibodys  let V (Volume) V=0 let i(integer) i=1 for i while i<=lst.Size() {V=V+smartVolume(lst.GetItem(i)) i=i+1} Part_info\sumVol=V"  '使用Const关键字定义常量
 Sub CATMain()
+    Dim oPrd, colls
     Set oPrd = CATIA.Activedocument.product
-    Dim refprd: Set refprd = oPrd.ReferenceProduct
-    Dim oPrt: Set oPrt = refprd.Parent.Part
+    Dim refPrd: Set refPrd = oPrd.ReferenceProduct
+    Dim oPrt: Set oPrt = refPrd.Parent.Part
   '============创建usrp参数=================
 
     Dim NT As Variant
@@ -20,9 +22,9 @@ Sub CATMain()
         Array("Thickness", "Length"), _
         Array("Density", "Density") _
     )
-
     Dim usrp(0 To 3)
-    Set colls = refprd.UserRefProperties
+    Set colls = refPrd.UserRefProperties
+    Dim i
     For i = 0 To 3
         Set usrp(i) = New Class_para
         usrp(i).SetNT NT(i)(0), NT(i)(1)
@@ -43,16 +45,16 @@ Sub CATMain()
             iBodys.obj.valuelist.Add oPrt.mainbody
         End If
     
-    Dim piset(0 To 2)
+    Dim infoPara(0 To 2)
      PNT = Array( _
         Array("sumVol", "Volume"), _
         Array("Thickness", "Length"), _
         Array("Density", "Density") _
     )
     For i = 0 To 2
-        Set piset(i) = New Class_para
-        piset(i).SetNT PNT(i)(0), PNT(i)(1)
-        paraDef piset(i), colls
+        Set infoPara(i) = New Class_para
+        infoPara(i).SetNT PNT(i)(0), PNT(i)(1)
+        paraDef infoPara(i), colls
     Next
     
 '============创建Relation参数=================
@@ -71,7 +73,7 @@ oRule.SetNT "link_mass", "Formula"
 oRule.Desc = "汇总体积"
 oRule.Str = "Part_info\sumVol *Part_info\Density"
 
-Set oRule.Target = refprd.UserRefProperties.item("Mass")
+Set oRule.Target = refPrd.UserRefProperties.item("Mass")
 paraDef oRule, colls
 
         '---创建link_thickness
@@ -80,7 +82,7 @@ oRule.SetNT "link_thickness", "Formula"
 oRule.Desc = "链接厚度"
 oRule.Str = "Part_info\Thickness"
 
-Set oRule.Target = refprd.UserRefProperties.item("Thickness")
+Set oRule.Target = refPrd.UserRefProperties.item("Thickness")
 paraDef oRule, colls
 
     

@@ -8,8 +8,9 @@ Attribute VB_Name = "m41_freegPrd"
 
 
 Sub freegprd()
-Set gprd = Nothing
+Set gPrd = Nothing
 MsgBox "已清空待操作产品"
+Call clearall
 End Sub
 
 
