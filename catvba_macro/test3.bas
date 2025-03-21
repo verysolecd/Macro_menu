@@ -71,21 +71,21 @@ orule.setNT "sum_all_Vol", "Relation"
 orule.str = "sum_all_Vol"
 paraDef orule, colls
 
+        '---创建link_mass
+oRule.SetNT "link_mass", "Formula"
+oRule.Desc = "汇总体积"
+oRule.Str = "Part_info\sumVol *Part_info\Density"
 
+Set oRule.Target = refprd.UserRefProperties.item("Mass")
+paraDef oRule, colls
+        '---创建link_thickness
+oRule.Reset
+oRule.SetNT "link_thickness", "Formula"
+oRule.Desc = "链接厚度"
+oRule.Str = "Part_info\Thickness"
 
-        ‘---创建link_mass
-orule.SetNT "link_mass", "Relation"
-orule.str = "Part_info\density*Part_info\sumVol"
-orule.target 
-paraDef orule, colls
-
-        ’---创建link_mass
-
-
-
-
-
-
+Set oRule.Target = refprd.UserRefProperties.item("Thickness")
+paraDef oRule, colls
 
 End Sub
 Function paraDef(thispara, colls)
