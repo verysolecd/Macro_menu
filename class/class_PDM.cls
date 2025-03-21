@@ -15,7 +15,7 @@ Attribute VB_Exposed = False
 ' 2  catSel1方法  带提示让用户选择单个产品\Part
 ' 3  catSelx方法 带提示让用户选择多个产品\Part
 ' 4  infoPrd方法 获取传递的oPrd的一系列属性
-' 5  getAtt方法  获取 属性或属性值，不存在时返回nothing 和“__”
+' 5  getPara方法  获取 属性或属性值，不存在时返回nothing 和“__”
 ' 6  meQty 方法  获取产品在当前子总成下的数量
 ' 7  recurPrd方法  调用infoPrd方法获取根产品及所有子产品的属性，返回为数组，数组第一列为编号，数组第二列为装配层级
 ' 对于产品发布谁？  质量mass来自usrp
@@ -165,12 +165,12 @@ End Function
             End With
         Dim colls
            Set colls = oPrd.ReferenceProduct.UserRefProperties
-                arr(5) = getAtt("iMass", colls)(1)
-                arr(6) = getAtt("iMaterial", colls)(1)
-                arr(7) = getAtt("iThickness", colls)(1)
+                arr(5) = getPara("Mass", colls)(1)
+                arr(6) = getPara("Material", colls)(1)
+                arr(7) = getPara("Thickness", colls)(1)
         On Error Resume Next
            Set colls = oPrd.ReferenceProduct.Parent.Part.Parameters.RootParameterSet.ParameterSets.Item("part_info").DirectParameters
-                arr(8) = getAtt("iDensity", colls)(1)
+                arr(8) = getPara("Density", colls)(1)
             If Error.Number <> 0 Then
                 arr(8) = "__"
             End If
@@ -201,19 +201,6 @@ Private Function count_me(oPrd)  '获取兄弟字典
           QTy = 1
      End If
     count_me = QTy
-End Function
-
-Private Function getAtt(itemName, collection)
-    Dim arr(1) ' 正确声明数组
-    On Error Resume Next
-        Set arr(0) = collection.Item(itemName)
-        If Err.Number = 0 Then ' 检查是否成功获取对象
-            arr(1) = arr(0).Value
-            getAtt = arr
-        Else
-            getAtt = Array(Nothing, "__")
-        End If
-    On Error GoTo 0
 End Function
 
 ' 全局变量声明
@@ -266,138 +253,127 @@ public modatt(oprd, oData)
     next
 end sub
 
-public sub initprd(oprd)
-    dim refprd : set refprd = oprd.referenceproduct
-    dim colls
-    dim attObj(1 to 4)
-    set colls = refprd.userrefproperties
-    for i = 1 to 4
-        if getAtt(att(i),colls)(0) is nothing then                
-            select case
-                case 1,3        
-                    set attObj = colls.CreateDimension(att(i),aType(i),0#)       
-                Case 2
-                    set attobj(i)=colls.createstring(att(i),"tbd")
-            end select
-        else
-            set attObj(i)=getAtt(att(i),colls)(0)
+public sub initPrd(oprd)
+    Dim refprd: Set refprd = oPrd.ReferenceProduct   
+    Dim NT As Variant
+        NT = Array( _
+            Array("Mass", "Mass"), _
+            Array("Material", "String"), _
+            Array("Thickness", "Length"), _
+            Array("Density", "Density") _
+        )
+    Dim usrp(0 To 3)
+    Set colls = refprd.UserRefProperties
+    For i = 0 To 3
+        Set usrp(i) = New Class_para
+        usrp(i).SetNT NT(i)(0), NT(i)(1)
+        checkPara usrp(i), colls
     Next
-     Set colls = Nothing
-    '=================进行发布======================
-    Dim oprt 
-    On Error Resume Next
-        Set oPrt = refprd.Parent.Part
-        Err.Clear
-    On Error GoTo 0
-    If Not oPrt Is Nothing Then
-        Call iniPrt(oPrd, att_usp_Names())
-    Else
-        Set colls = refprd.Publications       
-        If getAtt(att(i),colls)(0) is nothing Then
-            Dim oref, oPub
-            i = 1
-            Set oref = refprd.CreateReferenceFromName(attObj(i).Name)
-            Set oPub = colls.Add(att(i)) ' 添加发布元素名称
-            colls.SetDirect att(i), oref ' 设置发布元素参考
-            Set colls = Nothing
-        End If
+    on error resume next
+         Dim oPrt: Set oPrt = refprd.Parent.Part
+    If Err.Number = 0 Then
+           Call iniPrt(oPrd, att_usp_Names())
+        Else
+           Err.Clear
+    end if
+
+Private sub iniPrt(oPrd)
+    Dim refprd: Set refprd = oPrd.ReferenceProduct
+    Dim oPrt: Set oPrt = refprd.Parent.Part
+    '============创建参数集合=================
+        Set infoset = New Class_para
+        infoset.SetNT "Part_info", "ParameterSet"
+        Set colls = oPrt.Parameters.RootParameterSet.ParameterSets
+        checkPara infoset, colls
+        Set colls = infoset.obj.DirectParameters
+'============创建part_info内参数=================
+    Dim iBodys
+    Set iBodys = New Class_para
+    iBodys.SetNT "iBodys", "list"
+    checkPara iBodys, colls
+    If getPara(oPrt.mainbody, iBodys.obj.valuelist)(0) Is Nothing Then
+            iBodys.obj.valuelist.Add oPrt.mainbody
     End If
-    On Error GoTo 0
-    Set colls = Nothing
-End Sub
+    
+    Dim piset(0 To 2)
+     PNT = Array( _
+        Array("sumVol", "Volume"), _
+        Array("Thickness", "Length"), _
+        Array("Density", "Density") _
+    )
+    For i = 0 To 2
+        Set piset(i) = New Class_para
+        piset(i).SetNT PNT(i)(0), PNT(i)(1)
+        checkPara piset(i), colls
+    Next
+    
+Set colls = oPrt.relations
+Dim oRule
+Set oRule = New Class_para
+       '---创建EKL
+oRule.Reset
+oRule.SetNT "sum_all_Vol", "Program"
+oRule.str = eklstr
+oRule.Desc = "汇总体积"
+checkPara oRule, colls
+        '---创建link_mass
+oRule.Reset
+oRule.SetNT "link_mass", "Formula"
+oRule.Desc = "汇总体积"
+oRule.Str = "Part_info\sumVol *Part_info\Density"
+Set oRule.Target = refprd.UserRefProperties.item("Mass")
+checkPara oRule, colls
 
-private sub initprt(oprd)
-    Dim refprd：Set refprd = oPrd.ReferenceProduct
-    dim oPrt：Set oPrt = refprd.Parent.Part
-'============创建参数集合=================
-    Dim colls
+        '---创建link_thickness
+oRule.Reset
+oRule.SetNT "link_thickness", "Formula"
+oRule.Desc = "链接厚度"
+oRule.Str = "Part_info\Thickness"
+Set oRule.Target = refprd.UserRefProperties.item("Thickness")
+checkPara oRule, colls
+
+Private Function checkPara(thispara, colls)
+    If  getPara(thispara, colls)(0) Is Nothing Then
+        Debug.Print "需要创建" & thispara.Name
+        paraCreatobj thispara, colls   '创建参数和公式时已经是默认值
+        Debug.Print "已经创建" & thispara.Name
+    else
+       Set thispara.obj = getPara(thispara, colls)(0) '已有参数和公式，校验默认值
+       Debug.Print "不需要创建" & thispara.obj.Name
+End Function
+
+Private Function getPara(thispara, collection)
+    Dim arr(1) ' 正确声明数组
     On Error Resume Next
-        Set colls = oPrt.Parameters.RootParameterSet.ParameterSets.Item(iset).DirectParameters
-        If colls is nothing then
-            Err.Clear
-            Set colls = oPrt.Parameters.RootParameterSet.ParameterSets.CreateSet(iset)
-            Set colls = oPrt.Parameters.RootParameterSet.ParameterSets.Item(iset).DirectParameters
+        Set arr(0) = collection.item(thispara.Name)
+        If Err.Number = 0 Then ' 检查是否成功获取对象
+            arr(1) = arr(0).Value
+            getPara = arr
+        Else
+            getPara = Array(Nothing, "__")
         End If
     On Error GoTo 0
-'创建list，将mainbody加入list
-    if gettAtt("ibodys",colls)(0) is nothing then
-        Dim lst
-        Set lst = colls.CreateList("ibodys")
-    else
-        Set lst = gettAtt("ibodys",colls)(0)
-    end if
-        if getAtt(oprt.mainbody.name,lst.valuelist)(0) is nothing then
-            lst.valuelist.Add oprt.mainbody
-        end if
-        set lst = nothing
-'============创建参数和发布=================
-    dim attObj
-    For i = 1 to 4
-        if i<>2 Then
-            if getAtt(att(i),colls)(0) is nothing then     
-                set attObj = colls.CreateDimension(att(i),aType(i),0#)       
-            else          
-                set attObj(i)=getAtt(att(i),colls)(0)         
-            end if
-        end if 
-    next
- '=================进行发布======================    
-    Dim Pubs
-    Set pubs = refprd.Publications
-        for i=1 to 4
-            if getAtt(att(i),pubs)(0) is nothing then
-                Dim oref, oPub
-                Select Case i             
-                    Case 2
-                        Set attObj(i) = refprd.UserRefProperties.Item(att(i))                    
-                End Select
-            Set oref = refprd.CreateReferenceFromName(attObj(i).Name)
-                Set oPub = pubs.Add(att(i)) ' 添加发布
-                pubs.SetDirect att(i), oref ' 设置发布元素
-            End If
-        next
-    '================创建ekl====================    
-   private sub 
-   
-   
-   sub qcEK(oprt)
-   Sert colls=oprt.relations
-    if gettAtt("eklname",colls)(0) is nothing then
-        Dim eklobj, eklname, ekldesc
-        eklname="sumVol"
-        ekldesc="sum of vol of bodylist"
-        eklstr="let lst(list) set lst=Part_info\ibodys  let V (Volume) V=0 let i(integer) i=1 for i while i<=lst.Size() {V=V+smartVolume(lst.GetItem(i)) i=i+1} Part_info\sumVol=V"
-        Set eklobj =colls.CreateProgram(eklname, ekldesc, eklstr)
-    else
-        if  gettAtt("ekl",colls)(1)<>eklstr then
-            gettAtt("ekl",colls)(0).modify eklstr
-        end if
-    end if
-    end sub 
-   '================创建关系==================== 
+End Function
 
- sub qcFormula(oprd,item)    ' item="thickness"  
-    '===质量关系===
-    dim refprd,oprt,colls
-    Dim objName, objtarget, objstr, obj
-    Set refprd = oPrd.ReferenceProduct
-    Set oPrt = refprd.Parent.Part    
-    set colls=oprt.relations
-    select case item
-    case "thickness"    
-        objstr="Part_info\thickness"
-        objName="Calthickness"
-    case "mass"
-        objstr="Part_info\density*Part_info\sumVol"
-        objName="Calmass"
-    end if
-    objtarget=refprd.UserRefProperties.Item(item)    
-    if getAtt(objName,colls)(0) is nothing then
-       set obj=colls.CreateRelation(objName,"",objtarget,objstr)
-    else 
-        set obj=getAtt(objname,colls)(0)
-            if obj.value<>objstr then
-                obj.modify objstr
-            end if
-    end if
- End Sub
+Private Function paraCreatobj(thispara, colls)
+        Select Case thispara.iType
+            Case "ParameterSet"
+                Set thispara.obj = colls.CreateSet(thispara.Name)
+            Case "list"
+                Set thispara.obj = colls.CreateList(thispara.Name)
+            Case "Mass", "Density", "Length", "Volume" '所有dimension参数
+                Set thispara.obj = colls.CreateDimension(thispara.Name, thispara.iType, thispara.Str)
+            Case "String"
+                Set thispara.obj = colls.CreateString(thispara.Name, thispara.Str)
+            Case "Formula"
+                Set thispara.obj = colls.CreateFormula(thispara.Name, thispara.Desc, thispara.Target, thispara.Str)
+            Case "Program"
+                Set thispara.obj = colls.CreateProgram(thispara.Name, thispara.Desc, thispara.Str)
+    End Select
+End Function
+
+
+
+
+
+  
