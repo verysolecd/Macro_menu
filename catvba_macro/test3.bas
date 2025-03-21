@@ -8,7 +8,7 @@ Private Const eklname = "sumVol"
 Private Const ekldesc = "sum of vol of bodylist"
 Private Const eklstr = "let lst(list) set lst=Part_info\ibodys  let V (Volume) V=0 let i(integer) i=1 for i while i<=lst.Size() {V=V+smartVolume(lst.GetItem(i)) i=i+1} Part_info\sumVol=V"  '使用Const关键字定义常量
 Sub CATMain()
-    Set oPrd = CATIA.ActiveDocument.Product
+    Set oPrd = CATIA.Activedocument.product
     Dim refprd: Set refprd = oPrd.ReferenceProduct
     Dim oPrt: Set oPrt = refprd.Parent.Part
   '============创建usrp参数=================
@@ -61,16 +61,11 @@ Set colls = oPrt.relations
 Dim oRule
 Set oRule = New Class_para
 
-        ’---创建EKL
-oRule.SetNT "sum_all_Vol", "Program"
-oRule.str = eklstr
-paraDef oRule, colls
-
-        ’---创建"sum_all_Vol"
-orule.setNT "sum_all_Vol", "Relation"
-orule.str = "sum_all_Vol"
-paraDef orule, colls
-
+'        '---创建EKL
+'oRule.SetNT "sum_all_Vol", "Program"
+'oRule.str = eklstr
+'oRule.sesc = "汇总体积"
+'paraDef oRule, colls
         '---创建link_mass
 oRule.SetNT "link_mass", "Formula"
 oRule.Desc = "汇总体积"
@@ -78,6 +73,7 @@ oRule.Str = "Part_info\sumVol *Part_info\Density"
 
 Set oRule.Target = refprd.UserRefProperties.item("Mass")
 paraDef oRule, colls
+
         '---创建link_thickness
 oRule.Reset
 oRule.SetNT "link_thickness", "Formula"
@@ -87,15 +83,14 @@ oRule.Str = "Part_info\Thickness"
 Set oRule.Target = refprd.UserRefProperties.item("Thickness")
 paraDef oRule, colls
 
-End Sub
-Function paraDef(thispara, colls)
-    If Not paraGetSelf(thispara, colls)(0) Is Nothing Then GoTo continue
-        Debug.Print "需要创建" & thispara.Name
-        paraCreatobj thispara, colls   '创建参数和公式时已经是默认值
-        Debug.Print "已经创建" & thispara.Name 
-continue:
-       Set thispara.obj = paraGetSelf(thispara, colls)(0) '已有参数和公式，校验默认值
-       Debug.Print "不需要创建" & thispara.obj.Name
+    
+'============创建发布=================
+        
+
+
+
+
+'       MsgBox "不需要创建" & thispara.obj.Name & "请校验其value"
         ' select case thispara.iType
         '     Case "ParameterSet", "list"
         '         Debug.Print "不需要校验"
@@ -110,6 +105,32 @@ continue:
         '             thispara.obj.Value = thispara.str
         '             Debug.Print "校验成功"
         '         End If
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+End Sub
+Function paraDef(thispara, colls)
+    If Not paraGetSelf(thispara, colls)(0) Is Nothing Then GoTo continue
+        Debug.Print "需要创建" & thispara.Name
+        paraCreatobj thispara, colls   '创建参数和公式时已经是默认值
+        Debug.Print "已经创建" & thispara.Name
+continue:
+       Set thispara.obj = paraGetSelf(thispara, colls)(0) '已有参数和公式，校验默认值
+       Debug.Print "不需要创建" & thispara.obj.Name
+
 End Function
 Function paraGetSelf(thispara, collection)
     Dim arr(1) ' 正确声明数组
@@ -124,21 +145,23 @@ Function paraGetSelf(thispara, collection)
     On Error GoTo 0
 End Function
 Function paraCreatobj(thispara, colls)
-        Select Case para.iType
+        Select Case thispara.iType
             Case "ParameterSet"
                 Set thispara.obj = colls.CreateSet(thispara.Name)
             Case "list"
                 Set thispara.obj = colls.CreateList(thispara.Name)
             Case "Mass", "Density", "Length", "Volume" '所有dimension参数
-                Set thispara.obj = colls.CreateDimension(thispara.Name, thispara.iType, thispara.str)
+                Set thispara.obj = colls.CreateDimension(thispara.Name, thispara.iType, thispara.Str)
             Case "String"
-                Set thispara.obj = colls.createstring(para.Name, para.str)
-            Case "Relation"
-                Set thispara.obj = colls.CreateRelation(thispara.Name, thispara.desc, thispara.Target, thispara.str)
+                Set thispara.obj = colls.CreateString(thispara.Name, thispara.Str)
+            Case "Formula"
+                Set thispara.obj = colls.CreateFormula(thispara.Name, thispara.Desc, thispara.Target, thispara.Str)
             Case "Program"
-                Set thispara.obj = colls.CreateProgram(thispara.Name, thispara.desc, thispara.str)
+                Set thispara.obj = colls.CreateProgram(thispara.Name, thispara.Desc, thispara.Str)
     End Select
 End Function
+
+
 
 
 
