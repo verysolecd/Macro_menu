@@ -1,7 +1,7 @@
 Attribute VB_Name = "pubtest"
-Sub CATMain()
-    Set oDoc = CATIA.Activedocument
-    Set rootPrd = oDoc.product
+Sub CATmain()
+    Set oDoc = CATIA.ActiveDocument
+    Set rootPrd = oDoc.Product
     
     Set oPrd = rootPrd
     

@@ -1,6 +1,6 @@
 Attribute VB_Name = "test3"
 Option Explicit
-Private att(1 To 10)
+Private Att(1 To 10)
 Private aType(1 To 10)
 Private Const xx = "测试成功"
 Private Const xy = "测试失败"
@@ -8,9 +8,9 @@ Private Const iset = "Part_info"
 Private Const eklname = "sumVol"
 Private Const ekldesc = "sum of vol of bodylist"
 Private Const eklstr = "let lst(list) set lst=Part_info\ibodys  let V (Volume) V=0 let i(integer) i=1 for i while i<=lst.Size() {V=V+smartVolume(lst.GetItem(i)) i=i+1} Part_info\sumVol=V"  '使用Const关键字定义常量
-Sub CATMain()
+Sub CATmain()
     Dim oPrd, colls
-    Set oPrd = CATIA.Activedocument.product
+    Set oPrd = CATIA.ActiveDocument.Product
     Dim refPrd: Set refPrd = oPrd.ReferenceProduct
     Dim oPrt: Set oPrt = refPrd.Parent.Part
   '============创建usrp参数=================

@@ -1,21 +1,34 @@
 Attribute VB_Name = "m52_Cbom"
 '{GP:5}
 '{Ep:cBom}
-'{Caption:选择产品}
+'{Caption:生成BOM}
 '{ControlTipText:选择要被读取或修改的产品}
 '{BackColor:16744703}
 
 Sub cBom()
-     Dim xlm As New Class_XLM
-     Dim pdm As New class_PDM
-     Dim bPrd
+     If pdm Is Nothing Then
+   
+          Set pdm = New class_PDM
+          End If
+   If gws Is Nothing Then
+     Set xlm = New Class_XLM
+     End If
+     
      If gPrd Is Nothing Then
           pdm.defgprd
-     Else
-          Set iPrd = gPrd
-          xlm.inject_bom pdm.recurPrd(iPrd, 0)
      End If
-     Set iPrd = Nothing
+     
+    
+          Set iprd = gPrd
+     counter = 1
+          
+          
+          If Not iprd Is Nothing Then
+          xlm.inject_bom pdm.recurPrd(iprd, 1)
+     End If
+     
+     Set iprd = Nothing
+     xlm.freesheet
 End Sub
  
 

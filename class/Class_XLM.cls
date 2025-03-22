@@ -7,15 +7,19 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
-Public wb, ws
 Private header_bom(1 To 12)
 Private header_rv(1 To 14)
 Private inject_cols
 Private extract_cols
 Private bom_cols
+Private wsEVT  As Ws_Evt
+Private wb As Object
+Private ws As Object
+Private bws As Object
+
 ' 在类初始化时检查实例
 Private Sub Class_Initialize()
-iniarr
+
 On Error Resume Next
     If gws Is Nothing Then
         Set xlApp = CreateObject("Excel.Application")
@@ -34,9 +38,25 @@ On Error Resume Next
 '         MsgBox "excel sheet 错误"
 '     '    Exit Sub
      End If
+     
+
      xlApp.Visible = True
-     xlApp.Hide
+             With xlApp.Windows(1)
+        .Width = 500  ' 设置窗口宽度
+        .Height = 900 ' 设置窗口高度
+    End With
+     
+     
     On Error GoTo 0
+    
+    
+    Set wsEVT = New Ws_Evt
+    wsEVT.Init wb
+    
+    
+  iniarr
+    
+    
 End Sub
 Private Sub iniarr()
     inject_cols = Array(1, 3, 5, 7, 13, 9, 14, 11)
@@ -89,9 +109,8 @@ Public Sub inject_data(rowNumber, data)
     Dim iCols As Variant
     Dim iHeader As Variant
      iCols = inject_cols
-     iHeader = header_rv
-    If ws.Cells(1, 1).Value = "" Then
-        Call set_Header(iHeader)
+    If ws.Cells(1, 1).Value <> "零件号" & Chr(10) & "Partnumber" Then
+        Call set_Header(header_rv)
     End If
     maxCol = xlApp.Max(iCols)
     ReDim outputArr(1 To 1, 1 To maxCol)  '转义数组，一行多列，其中列数由 iCols 数组的最大值决定
@@ -106,17 +125,34 @@ Public Sub inject_data(rowNumber, data)
     ws.Range(ws.Cells(rowNumber, 1), ws.Cells(rowNumber, maxCol)).Value = outputArr
 End Sub
 
-Sub inject_bom(data)
+Public Sub inject_bom(data)
+
+     Set ws = wb.ActiveSheet
+     ws.Name = "BOM_xx"
+     xlApp.Visible = True
+     Call set_Header(header_bom)
+     
      Dim fn
-    startrow = 2
-    lastrow = counter + startrow
-    With ws
-    ws.Range(.Cells(startrow, 1), .Cells(lastrow, 11)).Value = data
-  End With
+     startrow = 2
+     lastrow = counter + startrow - 1
+     
+     With ws
+          ws.Range(.Cells(startrow, 1), .Cells(lastrow, 11)).Value = data
+     End With
+     
+     xlApp.Visible = True
+
+     
+      counter = 0
+     
+   Call freesheet
 End Sub
-    xlApp.Visible = True
-    
-    counter = 0
+Public Sub freesheet()
+
+Set ws = Nothing
+Set gws = Nothing
+Set gwb = Nothing
+
 
 End Sub
  
@@ -125,14 +161,14 @@ Public Function extract_data(row As Long)
     iCols = extract_cols
     Dim outputArr As Variant
     Dim j As Long
-    ReDim outputArr(1 To 1, 1 To UBound(iCols) - LBound(iCols) + 1)        ' 定义输出数组的大小
-    For j = LBound(iCols) To UBound(iCols)     ' 从工作表中提取指定行的数据
+    ReDim outputArr(1 To UBound(iCols) - LBound(iCols) + 1)        ' 定义输出数组的大小
+    For j = LBound(iCols) + 1 To UBound(iCols) + 1 ' 从工作表中提取指定行的数据
         outputArr(1, j - LBound(iCols) + 1) = ws.Cells(row, iCols(j)).Value
     Next j
     extract_data = outputArr ' 返回提取的数据
 End Function
 
-Public Sub lvmg()
+Private Sub LvMg()
     Const xlUp = -4162
     Const xlLeft = -4131
     Dim APP
@@ -157,3 +193,31 @@ Public Sub lvmg()
         End If
     Next
 End Sub
+
+
+Public Sub LvMg2(xlsht)
+    Dim lastrow, i, LVcol
+    With xlsht
+            .Cells.ClearOutline
+            .Outline.AutomaticStyles = False
+            .Outline.SummaryRow = xlAbove
+            .Outline.SummaryColumn = xlRight
+            Set LVcol = .Columns(2)
+            LVcol.HorizontalAlignment = xlLeft
+            lastrow = .Cells(.Rows.Count, 2).End(xlUp).row
+            
+        For i = 4 To lastrow
+            If LVcol.Cells(i).Value <> "" Then
+                .Rows(i).OutlineLevel = LVcol.Cells(i).Value ' 设置当前行的大纲级别
+                LVcol.Cells(i).IndentLevel = LVcol.Cells(i).Value - 1 ' 设置当前单元格的缩进级别
+            End If
+        Next
+    End With
+    
+    lastrow = xlsht.Cells(Rows.Count, 3).End(xlUp).row
+    xlsht.Rows(lastrow + 3 & ":" & Rows.Count).EntireRow.Hidden = True
+    Columns("Q:Q").Select
+    Range(Selection, Selection.End(xlToRight)).Select
+    Selection.EntireColumn.Hidden = True
+End Sub
+

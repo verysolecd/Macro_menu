@@ -1,5 +1,5 @@
 Attribute VB_Name = "test2"
-Private att(1 To 10)
+Private Att(1 To 10)
 Private aType(1 To 10)
 Private Const iset = "Part_info"
 Private Const eklname = "sumVol"
@@ -10,7 +10,7 @@ Private Const eklstr = "let lst(list) set lst=Part_info\ibodys  let V (Volume) V
 Sub test()
 
 Dim oPrd
-Set oPrd = CATIA.Activedocument.product
+Set oPrd = CATIA.ActiveDocument.Product
 Dim refPrd: Set refPrd = oPrd.ReferenceProduct
     Dim oPrt: Set oPrt = refPrd.Parent.Part
 '============创建参数集合=================
@@ -38,10 +38,10 @@ Dim refPrd: Set refPrd = oPrd.ReferenceProduct
     Dim attObj
     For i = 1 To 4
         If i <> 2 Then
-            If getAtt(att(i), colls)(0) Is Nothing Then
-                Set attObj = colls.CreateDimension(att(i), aType(i), 0#)
+            If getAtt(Att(i), colls)(0) Is Nothing Then
+                Set attObj = colls.CreateDimension(Att(i), aType(i), 0#)
             Else
-                Set attObj(i) = getAtt(att(i), colls)(0)
+                Set attObj(i) = getAtt(Att(i), colls)(0)
             End If
         End If
     Next
@@ -49,15 +49,15 @@ Dim refPrd: Set refPrd = oPrd.ReferenceProduct
     Dim Pubs
     Set Pubs = refPrd.Publications
         For i = 1 To 4
-            If getAtt(att(i), Pubs)(0) Is Nothing Then
+            If getAtt(Att(i), Pubs)(0) Is Nothing Then
                 Dim oRef, oPub
                 Select Case i
                     Case 2
-                        Set attObj(i) = refPrd.UserRefProperties.item(att(i))
+                        Set attObj(i) = refPrd.UserRefProperties.item(Att(i))
                 End Select
             Set oRef = refPrd.CreateReferenceFromName(attObj(i).Name)
-                Set oPub = Pubs.Add(att(i)) ' 添加发布
-                Pubs.SetDirect att(i), oRef ' 设置发布元素
+                Set oPub = Pubs.Add(Att(i)) ' 添加发布
+                Pubs.SetDirect Att(i), oRef ' 设置发布元素
             End If
         Next
         

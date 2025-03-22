@@ -10,7 +10,9 @@ Attribute VB_Name = "m41_freegPrd"
 Sub freegprd()
 Set gPrd = Nothing
 MsgBox "已清空待操作产品"
-Call clearall
+If Not gwb Is Nothing Then
+gwb.Close
+End If
 End Sub
 
 

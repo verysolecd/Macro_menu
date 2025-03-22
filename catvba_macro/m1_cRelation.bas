@@ -3,10 +3,10 @@ Attribute VB_Name = "m1_cRelation"
 
 
 
-Sub CATMain()
+Sub CATmain()
 
 Dim partDocument1 As PartDocument
-Set partDocument1 = CATIA.Activedocument
+Set partDocument1 = CATIA.ActiveDocument
 
 Dim selection1 As Selection
 Set selection1 = partDocument1.Selection
