@@ -7,8 +7,14 @@ Attribute VB_Name = "m43_readPrd"
 '{BackColor:16744703}
 
 Sub readPrd()
-Set xlm = New Class_XLM
+
+If gws Is Nothing Then
+     Set xlm = New Class_XLM
+End If
+
+If pdm Is Nothing Then
 Set pdm = New class_PDM
+End If
 '---------获取待修改产品
      If Not gPrd Is Nothing Then
         gPrd.ApplyWorkMode (3)
