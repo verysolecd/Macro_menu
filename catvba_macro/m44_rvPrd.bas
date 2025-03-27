@@ -15,12 +15,8 @@ Sub rvme()
         Set Prd2rv = gPrd
 
         Dim data As Variant
-        
        xlm.extract_data (currRow)
         Call pdm.modatt(Prd2rv, data)
-        
-        
-        
         Dim children
         Set children = Prd2rv.Products
         For i = 1 To children.Count
@@ -30,13 +26,12 @@ Sub rvme()
         Next
         Set Prd2rv = Nothing
         MsgBox "已经修改产品"
-        
-        
     Else
         MsgBox "请先选择产品，程序将退出"
         Exit Sub
      End If
 On Error GoTo 0
 End Sub
+
 
 

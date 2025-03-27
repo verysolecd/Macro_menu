@@ -61,7 +61,7 @@ End Sub
 Private Sub iniarr()
     inject_cols = Array(1, 3, 5, 7, 13, 9, 14, 11)
     extract_cols = Array(1, 3, 5, 7, 9, 11)
-    bom_cols = Array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15)
+
     
     header_bom(1) = "No." & Chr(10) & "±àºÅ"
     header_bom(2) = "Layout" & Chr(10) & "²ã¼¶"
@@ -126,27 +126,22 @@ Public Sub inject_data(rowNumber, data)
 End Sub
 
 Public Sub inject_bom(data)
-
      Set ws = wb.ActiveSheet
      ws.Name = "BOM_xx"
      xlApp.Visible = True
      Call set_Header(header_bom)
-     
      Dim fn
      startrow = 2
      lastrow = counter + startrow - 1
-     
      With ws
           ws.Range(.Cells(startrow, 1), .Cells(lastrow, 11)).Value = data
      End With
-     
      xlApp.Visible = True
-
-     
-      counter = 0
-     
+     counter = 0
    Call freesheet
 End Sub
+
+
 Public Sub freesheet()
 
 Set ws = Nothing

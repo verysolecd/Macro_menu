@@ -46,18 +46,18 @@ Dim refPrd: Set refPrd = oPrd.ReferenceProduct
         End If
     Next
  '=================进行发布======================
-    Dim Pubs
-    Set Pubs = refPrd.Publications
+    Dim pubs
+    Set pubs = refPrd.Publications
         For i = 1 To 4
-            If getAtt(Att(i), Pubs)(0) Is Nothing Then
-                Dim oRef, oPub
+            If getAtt(Att(i), pubs)(0) Is Nothing Then
+                Dim oref, oPub
                 Select Case i
                     Case 2
                         Set attObj(i) = refPrd.UserRefProperties.item(Att(i))
                 End Select
-            Set oRef = refPrd.CreateReferenceFromName(attObj(i).Name)
-                Set oPub = Pubs.Add(Att(i)) ' 添加发布
-                Pubs.SetDirect Att(i), oRef ' 设置发布元素
+            Set oref = refPrd.CreateReferenceFromName(attObj(i).Name)
+                Set oPub = pubs.Add(Att(i)) ' 添加发布
+                pubs.SetDirect Att(i), oref ' 设置发布元素
             End If
         Next
         
