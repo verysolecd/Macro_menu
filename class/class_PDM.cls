@@ -417,21 +417,6 @@ Set oRule.Target = refPrd.UserRefProperties.item("Density")
 checkPara oRule, colls
 
 oRule.Reset
-
-
-
-
-
-
-
-
-
-            
-            
-            
-            
-            
-            
             
 End Sub
 

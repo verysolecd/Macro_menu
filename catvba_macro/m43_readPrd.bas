@@ -24,14 +24,13 @@ Sub readPrd()
 '---------遍历修改产品及子产品
 
         Dim Prd2Read: Set Prd2Read = gPrd
-        xlm.inject_data currRow, pdm.infoPrd(Prd2Read)
-        
-        
+        xlm.inject_data currRow, pdm.infoPrd(Prd2Read)        
         Dim children
         Set children = Prd2Read.Products
         For i = 1 To children.Count
         currRow = i + 2
         xlm.inject_data currRow, pdm.infoPrd(children.item(i))
+        
         Next
         Set Prd2Read = Nothing
     Else

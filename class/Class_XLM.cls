@@ -191,28 +191,16 @@ End Sub
 
 
 Public Sub LvMg2(xlsht)
-    Dim lastrow, i, LVcol
     With xlsht
-            .Cells.ClearOutline
-            .Outline.AutomaticStyles = False
-            .Outline.SummaryRow = xlAbove
-            .Outline.SummaryColumn = xlRight
-            Set LVcol = .Columns(2)
-            LVcol.HorizontalAlignment = xlLeft
-            lastrow = .Cells(.Rows.Count, 2).End(xlUp).row
-            
-        For i = 4 To lastrow
-            If LVcol.Cells(i).Value <> "" Then
-                .Rows(i).OutlineLevel = LVcol.Cells(i).Value ' 设置当前行的大纲级别
-                LVcol.Cells(i).IndentLevel = LVcol.Cells(i).Value - 1 ' 设置当前单元格的缩进级别
-            End If
-        Next
+        .Cells.ClearOutline
+        .Outline.AutomaticStyles = False
+        .Outline.SummaryRow = xlAbove
+        
+        ' 仅使用分组功能替代大纲级别设置
+        Dim rng As Range
+        Set rng = .Range("B4:B" & .Cells(.Rows.Count, 2).End(xlUp).row)
+        rng.Columns.Group
     End With
-    
-    lastrow = xlsht.Cells(Rows.Count, 3).End(xlUp).row
-    xlsht.Rows(lastrow + 3 & ":" & Rows.Count).EntireRow.Hidden = True
-    Columns("Q:Q").Select
-    Range(Selection, Selection.End(xlToRight)).Select
-    Selection.EntireColumn.Hidden = True
 End Sub
+   
 
