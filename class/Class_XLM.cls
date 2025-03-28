@@ -40,13 +40,13 @@ On Error Resume Next
      End If
      
 
-     xlApp.Visible = True
+'     xlApp.Visible = True
              With xlApp.Windows(1)
         .Width = 500  ' 设置窗口宽度
         .Height = 900 ' 设置窗口高度
     End With
      
-     
+     xlApp.Visible = False
     On Error GoTo 0
     
     
@@ -134,8 +134,7 @@ Public Sub inject_data(rowNumber, data)
         outputArr(1, iCols(LBound(iCols) + i - 1)) = data(LBound(data) + i - 1)
     Next i
     ws.Range(ws.Cells(rowNumber, 1), ws.Cells(rowNumber, maxCol)).Value = outputArr
-    
-    
+  
 
 '    colArray = iCols
 '
@@ -151,16 +150,15 @@ Public Sub inject_data(rowNumber, data)
 '    rng.Interior.Color = RGB(190, 190, 190)
 '
   
-    
+       xlApp.Visible = True
   
- 
     
 End Sub
 
 Public Sub inject_bom(data)
      Set ws = wb.ActiveSheet
      ws.Name = "BOM_xx"
-     xlApp.Visible = True
+     
      Call set_Header(header_bom)
      Dim fn
      startrow = 2
@@ -174,12 +172,10 @@ Public Sub inject_bom(data)
             End With
         End If
          End With
-     
-     xlApp.Visible = True
      counter = 0
-     
 Call LvMg
    Call freesheet
+   xlApp.Visible = True
 End Sub
 
 
