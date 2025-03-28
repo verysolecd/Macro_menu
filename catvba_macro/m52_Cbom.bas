@@ -7,29 +7,25 @@ Attribute VB_Name = "m52_Cbom"
 
 Sub cBom()
      If pdm Is Nothing Then
-   
           Set pdm = New class_PDM
-          End If
-   If gws Is Nothing Then
-     Set xlm = New Class_XLM
      End If
      
-     If gPrd Is Nothing Then
+      If gPrd Is Nothing Then
           pdm.defgprd
      End If
      
+    If gws Is Nothing Then
+     Set xlm = New Class_XLM
+    End If
     
-          Set iprd = gPrd
-     counter = 1
-          
-          
-          If Not iprd Is Nothing Then
-          xlm.inject_bom pdm.recurPrd(iprd, 1)
+      Set iPrd = gPrd
+            counter = 1
+          If Not iPrd Is Nothing Then
+          xlm.inject_bom pdm.recurPrd(iPrd, 1)
      End If
      
-     Set iprd = Nothing
+     Set iPrd = Nothing
      xlm.freesheet
 End Sub
- 
 
 

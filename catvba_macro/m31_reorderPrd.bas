@@ -14,8 +14,8 @@ Sub CATMain()
     If Not CanExecute("ProductDocument") Then Exit Sub
     
 
-    Dim ProDoc As ProductDocument: Set ProDoc = CATIA.Activedocument
-    Dim Pros As Products: Set Pros = ProDoc.product.Products
+    Dim ProDoc As ProductDocument: Set ProDoc = CATIA.ActiveDocument
+    Dim Pros As Products: Set Pros = ProDoc.Product.Products
     If Pros.Count < 2 Then Exit Sub
     
 
@@ -54,14 +54,14 @@ Sub CATMain()
     
 
     AssyMode.PasteComponentMode = OriginalMode
-    ProDoc.product.Update
+    ProDoc.Product.Update
 End Sub
 
 Private Function Get_SortedNames(ByVal Pros As Products) As Object
     Dim lst As Object
     Set lst = KCL.InitLst()
     
-    Dim Pro As product
+    Dim Pro As Product
     For Each Pro In Pros
         lst.Add Pro.Name
     Next

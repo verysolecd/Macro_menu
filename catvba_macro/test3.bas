@@ -1,5 +1,5 @@
 Attribute VB_Name = "test3"
-Sub CATmain()
+Sub CATMain()
 
 Set rootPrd = CATIA.ActiveDocument.Product
 Set oPrd = rootPrd.Products.item(4)

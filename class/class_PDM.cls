@@ -21,8 +21,7 @@ Attribute VB_Exposed = False
 Option Explicit
 Public bomdata As Variant
 
-Private i  As Integer
-Private bdict  As Object
+
 Private oSel
 Private imsg
 Private Att(1 To 10)
@@ -168,11 +167,8 @@ End Function
                 arr(5) = getAtt("Mass", colls)(1)
                 arr(6) = getAtt("Material", colls)(1)
                 arr(7) = getAtt("Thickness", colls)(1)
-      
                 arr(8) = getAtt("Density", colls)(1)
-            If Error.Number <> 0 Then
-                arr(8) = "__"
-            End If
+
         On Error GoTo 0
                 arr(9) = count_me(oPrd)
         infoPrd = arr()
@@ -187,11 +183,11 @@ Private Function count_me(oPrd)  '获取兄弟字典
                    Set oDict = CreateObject("Scripting.Dictionary")
                    For i = 1 To oParent.Products.Count
                           pn = oParent.Products.item(i).PartNumber
-                          If oDict.Exists(pn) = True Then
-                              oDict(pn) = oDict(pn) + 1
-                          Else
-                              oDict(pn) = 1
-                          End If
+                            If oDict.Exists(pn) = True Then
+                                oDict(pn) = oDict(pn) + 1
+                            Else
+                                oDict(pn) = 1
+                            End If
                       Next
             QTy = oDict(oPrd.PartNumber)
           End If
@@ -200,42 +196,53 @@ End Function
 
 
 Public Function recurPrd(oPrd, LV)
-    If counter = 1 Then
-          ReDim bomdata(1 To 220, 1 To 11) ' 扩展为11列：2列原有数据 + 9列产品属性
-    End If
+    
     Dim mapping As Variant
-    mapping = Array(0, 3, 4, 5, 6, 8, 9, 10, 11, 7)
     Dim mapsize
-    mapsize = xlApp.Max(mapping)
-    Dim data As Variant: data = infoPrd(oPrd)
-    Dim datasize, maxind
-    datasize = UBound(data) - LBound(data) + 1
-    maxind = xlApp.Min(datasize, mapsize)
-        bomdata(counter, 1) = counter
-        bomdata(counter, 2) = LV
-        Dim j
-          For j = 1 To maxind
-          bomdata(counter, mapping(j)) = data(j)
+    
+    mapping = Array(0, 1, 2, 3, 4, 9, 5, 0, 6, 7, 0, 6, 8, 0, 0, 0)
+    mapsize = UBound(mapping) + 2
+    
+    If counter = 1 Then
+          ReDim bomdata(1 To 220, 1 To mapsize) ' 扩展列：2列原有数据 + XX列产品属性
+    End If
+    
+    Dim data
+    data = infoPrd(oPrd)
+
+   '=====生成行数据
+   
+    bomdata(counter, 1) = counter
+    bomdata(counter, 2) = LV
+    Dim i
+          For i = 1 To UBound(bomdata, 2) - 2
+                bomdata(counter, i + 2) = ""
+                If mapping(i) <= UBound(data) And mapping(i) >= LBound(data) Then
+                    bomdata(counter, i + 2) = data(mapping(i))
+                End If
           Next
+          
     Dim children As Products
     Set children = oPrd.Products
+    
     If children.Count > 0 Then
-     Set bdict = CreateObject("Scripting.Dictionary")
-        Dim i As Integer
+            Dim bdict
+            Set bdict = CreateObject("Scripting.Dictionary")
         For i = 1 To children.Count
-        If bdict.Exists(oPrd.Products.item(i).PartNumber) = False Then
-               bdict(oPrd.Products.item(i).PartNumber) = 1
+            If bdict.Exists(children.item(i).PartNumber) = False Then
+               bdict(children.item(i).PartNumber) = 1
                counter = counter + 1
-            recurPrd children.item(i), LV + 1
+               recurPrd children.item(i), LV + 1
             End If
         Next
     End If
+    
     recurPrd = bomdata
 End Function
 
 Public Function modatt(oPrd, odata)
     Dim refPrd: Set refPrd = oPrd.ReferenceProduct
-    Dim colls
+    Dim colls, i
     Dim currAtt As Variant
     
     Set currAtt = infoPrd(oPrd)
@@ -254,10 +261,8 @@ Public Function modatt(oPrd, odata)
                     On Error Resume Next
                     Set colls = refPrd.Parent.Part.Parameters.RootParameterSet.ParameterSets.item("Part_info").DirectParameters
                     colls.item(Att(i - 4)).Value = odata(i)
-                    
                     Error.Clear
                     On Error GoTo 0
-                    
             End Select
             On Error GoTo 0
         End If
@@ -287,10 +292,12 @@ Public Sub initPrd(oPrd)
         checkPara usrp(i), colls
     Next
     
+    
     On Error Resume Next
          Dim oPrt
          Set oPrt = refPrd.Parent.Part
         If Err.Number <> 0 Then
+            Err.Clear
             Set oPrt = Nothing
         End If
     On Error GoTo 0
@@ -298,7 +305,6 @@ Public Sub initPrd(oPrd)
     If Not oPrt Is Nothing Then
             Call iniPrt(oPrd)
     Else
-            Err.Clear
             Dim k
             k = 0
              Dim oref, pubid, oPub, pubs
@@ -311,15 +317,18 @@ Public Sub initPrd(oPrd)
                 Set oPub = pubs.Add(usrp(k).Name)
                 pubs.SetDirect usrp(k).Name, oref
             End If
+    
     End If
-   On Error GoTo 0
+         
+
 End Sub
 Private Sub iniPrt(oPrd)
     Dim refPrd, colls
     Dim i
     Set refPrd = oPrd.ReferenceProduct
     Dim oPrt: Set oPrt = refPrd.Parent.Part
-    
+
+    '============创建usrp属性=================
     Dim NT As Variant
         NT = Array( _
             Array("Mass", "Mass"), _
@@ -327,7 +336,6 @@ Private Sub iniPrt(oPrd)
             Array("Thickness", "Length"), _
             Array("Density", "Density") _
         )
-        
     Dim usrp(0 To 3)
     Set colls = refPrd.UserRefProperties
     For i = 0 To 3
@@ -335,7 +343,7 @@ Private Sub iniPrt(oPrd)
         usrp(i).SetNT NT(i)(0), NT(i)(1)
         checkPara usrp(i), colls
     Next
-   
+
  
     '============创建参数集合=================
         Dim infoset
@@ -367,24 +375,29 @@ Private Sub iniPrt(oPrd)
     Next
               
 '======创建零件发布======
-              Dim oref, pubid, oPub, pubs
+     Dim oref, pubid, oPub, pubs
      Set pubs = refPrd.Publications
       Dim k
        For k = 1 To 2
-            If getAtt(infoPara(k), pubs)(0) Is Nothing Then
+            If getAtt(infoPara(k).Name, pubs)(0) Is Nothing Then
                 Dim iName
                 iName = refPrd.PartNumber & "\Parameters\Part_info\" & infoPara(k).Name
                 Set oref = refPrd.CreateReferenceFromName(iName)
                 Set oPub = pubs.Add(infoPara(k).Name)
                 pubs.SetDirect infoPara(k).Name, oref
+            Else
+            
+            Debug.Print "不需要发布" & infoPara(k).Name
              End If
         Next
-    
+   
+            
     '创建所有relations
 Set colls = oPrt.relations
 Dim oRule
 Set oRule = New Class_para
        '---创建EKL
+       
 oRule.Reset
 oRule.SetNT "sum_all_Vol", "Program"
 oRule.Str = eklstr
@@ -417,22 +430,23 @@ Set oRule.Target = refPrd.UserRefProperties.item("Density")
 checkPara oRule, colls
 
 oRule.Reset
-            
+
+    
 End Sub
 
 Private Function checkPara(thispara, colls)
     If getPara(thispara, colls)(0) Is Nothing Then
-        Debug.Print "需要创建" & thispara.Name
-        paraCreatobj thispara, colls   '创建参数和公式时已经是默认值
-        Debug.Print "已经创建" & thispara.Name
+'        Debug.Print "需要创建" & thispara.Name
+        paraCreatobj thispara, colls   '创建参数和公式时已经是默认值'
+        
     Else
-        Set thispara.obj = getPara(thispara, colls)(0) '已有参数和公式，校验默认值
-            Debug.Print "不需要创建" & thispara.obj.Name
+'        Debug.Print "不需要创建" & thispara.obj.Name
+        Set thispara.obj = getPara(thispara, colls)(0) '已有参数和公式，校验默认值'
         Select Case thispara.iType  '只有formula和rule才需要校核其内容
             Case "Program", "Formula"
                 If thispara.obj.Value <> thispara.Str Then
                  thispara.obj.Modify thispara.Str
-                  Debug.Print "已经修改" & thispara.obj.Name
+'                  Debug.Print "已经修改" & thispara.obj.Name
                 End If
                 thispara.obj.Hidden = True
         End Select
@@ -480,14 +494,16 @@ Private Function paraCreatobj(thispara, colls)
                 Set thispara.obj = colls.CreateFormula(thispara.Name, thispara.Desc, thispara.Target, thispara.Str)
                  thispara.obj.Hidden = True
             Case "Program"
-                On Error Resume Next
-                Set thispara.obj = colls.CreateProgram(thispara.Name, thispara.Desc, thispara.Str)
-                 
+                  On Error Resume Next
+                    Set thispara.obj = colls.CreateProgram(thispara.Name, thispara.Desc, thispara.Str)
                   If Error.Number <> 0 Then
-                  MsgBox "缺少KWA lisence, 无法创建rule单位"
+                    Debug.Print "缺少KWA lisence, 无法创建rule单位"
                   End If
+                    Error.Clear
                   On Error GoTo 0
     End Select
+    
+    Debug.Print "已经创建" & thispara.Name
 End Function
 
 

@@ -7,7 +7,7 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
-Private header_bom(1 To 12)
+Private header_bom(1 To 17)
 Private header_rv(1 To 14)
 Private inject_cols
 Private extract_cols
@@ -71,9 +71,16 @@ Private Sub iniarr()
     header_bom(6) = "Picture" & Chr(10) & "图像"
     header_bom(7) = "Quantity" & Chr(10) & "数量(PCS)"
     header_bom(8) = "Weight" & Chr(10) & "单质量"
-    header_bom(9) = "Material" & Chr(10) & "材料"
-    header_bom(10) = "Thickness" & Chr(10) & "厚度(mm)"
-    header_bom(11) = "Density" & Chr(10) & "密度"
+    header_bom(9) = "sum_Weight" & Chr(10) & "总质量"
+    header_bom(10) = "Material" & Chr(10) & "材料"
+    header_bom(11) = "Thickness" & Chr(10) & "厚度(mm)"
+    header_bom(12) = ""
+    header_bom(13) = "Material" & Chr(10) & "材料"
+    header_bom(14) = "Density" & Chr(10) & "密度(kg/m^3)"
+    header_bom(15) = "UTS" & Chr(10) & "抗拉(Mpa)"
+    header_bom(16) = "YS" & Chr(10) & "屈服(Mpa)"
+    header_bom(17) = "EL" & Chr(10) & "延伸率(%)"
+   
 
     header_rv(1) = "零件号" & Chr(10) & "Partnumber"
     header_rv(2) = "更改" & Chr(10) & "件号"
@@ -95,6 +102,7 @@ Private Sub set_Header(header)
     lastCol = UBound(header) - LBound(header) + 1
     With ws
     .Range(.Cells(1, 1), .Cells(1, lastCol)).Value = header
+    .Range(.Cells(1, 1), .Cells(1, lastCol)).Interior.Color = RGB(190, 190, 190)
     End With
 End Sub
 
@@ -104,16 +112,19 @@ End Sub
 
 Public Sub inject_data(rowNumber, data)
     Dim maxCol As Long
-    Dim outputArr As Variant
+    Dim outputArr() As String
     Dim i As Long
     Dim iCols As Variant
     Dim iHeader As Variant
      iCols = inject_cols
-    If ws.Cells(1, 1).Value <> "零件号" & Chr(10) & "Partnumber" Then
+      If ws.Cells(1, 1).Value <> "零件号" & Chr(10) & "Partnumber" Then
         Call set_Header(header_rv)
     End If
+
     maxCol = xlApp.Max(iCols)
+    
     ReDim outputArr(1 To 1, 1 To maxCol)  '转义数组，一行多列，其中列数由 iCols 数组的最大值决定
+    
     ' 检查 data 数组长度是否足够
     Dim dataLength As Long
      dataLength = UBound(data) - LBound(data) + 1
@@ -123,6 +134,27 @@ Public Sub inject_data(rowNumber, data)
         outputArr(1, iCols(LBound(iCols) + i - 1)) = data(LBound(data) + i - 1)
     Next i
     ws.Range(ws.Cells(rowNumber, 1), ws.Cells(rowNumber, maxCol)).Value = outputArr
+    
+    
+
+'    colArray = iCols
+'
+'     Dim rng As Range
+'
+'    For i = LBound(colArray) To UBound(colArray)
+'        If rng Is Nothing Then
+'            Set rng = ws.Range(ws.Cells(1, colArray(i)), ws.Cells(RowCount, colArray(i)))
+'        Else
+'            Set rng = Union(rng, ws.Range(ws.Cells(1, colArray(i)), ws.Cells(RowCount, colArray(i))))
+'        End If
+'    Next
+'    rng.Interior.Color = RGB(190, 190, 190)
+'
+  
+    
+  
+ 
+    
 End Sub
 
 Public Sub inject_bom(data)
@@ -132,12 +164,21 @@ Public Sub inject_bom(data)
      Call set_Header(header_bom)
      Dim fn
      startrow = 2
-     lastrow = counter + startrow - 1
+     lastRow = counter + startrow - 1
      With ws
-          ws.Range(.Cells(startrow, 1), .Cells(lastrow, 11)).Value = data
-     End With
+          ws.Range(.Cells(startrow, 1), .Cells(lastRow, 17)).Value = data
+        If lastRow >= 2 Then
+            With ws.Range(.Cells(2, 9), .Cells(lastRow, 9))
+                .Formula = "=G2*H2"  ' G列=第7列，H列=第8列
+                .NumberFormat = "0.00"  ' 设置数字格式
+            End With
+        End If
+         End With
+     
      xlApp.Visible = True
      counter = 0
+     
+Call LvMg
    Call freesheet
 End Sub
 
@@ -164,20 +205,25 @@ Public Function extract_data(row As Long)
 End Function
 
 Private Sub LvMg()
-    Const xlUp = -4162
-    Const xlLeft = -4131
-    Dim APP
+ Dim APP
     Set APP = GetObject(, "Excel.Application")
     Dim row_num As Long ' 声明 row_num 变量
     Dim cell ' 声明 cell 变量
-    ' 设置大纲级别
+    Set ws = APP.ActiveSheet
+     With ws
+            .Cells.ClearOutline
+            .Outline.AutomaticStyles = False
+            .Outline.SummaryRow = xlAbove
+            .Outline.SummaryColumn = xlRight
+    End With
+    
     For row_num = 2 To ws.Cells(ws.Rows.Count, 1).End(xlUp).row ' 使用 xlApp.xlUp
         Dim cell_value As Variant
         cell_value = ws.Cells(row_num, 2).Value
         If Not IsEmpty(cell_value) Then
-            ws.Rows(row_num).OutlineLevel = cell_value - 1
+            ws.Rows(row_num).OutlineLevel = cell_value
         End If
-    Next row_num
+    Next
     ' 设置对齐方式和缩进级别
     For Each cell In ws.Range("B2:B" & ws.Cells(ws.Rows.Count, 2).End(xlUp).row) ' 使用 xlApp.xlUp
         If Not IsEmpty(cell) Then
@@ -187,20 +233,34 @@ Private Sub LvMg()
             End If
         End If
     Next
+     
+    
 End Sub
 
 
-Public Sub LvMg2(xlsht)
-    With xlsht
-        .Cells.ClearOutline
-        .Outline.AutomaticStyles = False
-        .Outline.SummaryRow = xlAbove
-        
-        ' 仅使用分组功能替代大纲级别设置
-        Dim rng As Range
-        Set rng = .Range("B4:B" & .Cells(.Rows.Count, 2).End(xlUp).row)
-        rng.Columns.Group
+Public Sub LvMg2()
+    Dim lastRow, i, LVcol
+    With ws
+            .Cells.ClearOutline
+            .Outline.AutomaticStyles = False
+            .Outline.SummaryRow = xlAbove
+            .Outline.SummaryColumn = xlRight
+            Set LVcol = .Columns(2)
+            LVcol.HorizontalAlignment = xlLeft
+            lastRow = .Cells(.Rows.Count, 2).End(xlUp).row
+            
+        For i = 4 To lastRow
+            If LVcol.Cells(i).Value <> "" Then
+                .Rows(i).OutlineLevel = LVcol.Cells(i).Value ' 设置当前行的大纲级别
+                LVcol.Cells(i).IndentLevel = LVcol.Cells(i).Value - 1 ' 设置当前单元格的缩进级别
+            End If
+        Next
     End With
+    
+    lastRow = ws.Cells(Rows.Count, 3).End(xlUp).row
+    ws.Rows(lastRow + 3 & ":" & Rows.Count).EntireRow.Hidden = True
+    Columns("Q:Q").Select
+    Range(Selection, Selection.End(xlToRight)).Select
+    Selection.EntireColumn.Hidden = True
 End Sub
-   
 
