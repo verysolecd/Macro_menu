@@ -11,8 +11,7 @@ Option Explicit
 
 Sub CATMain()
 
-    If Not CanExecute("ProductDocument") Then Exit Sub
-    
+    If Not CanExecute("ProductDocument") Then Exit Sub    
 
     Dim ProDoc As ProductDocument: Set ProDoc = CATIA.ActiveDocument
     Dim Pros As Products: Set Pros = ProDoc.Product.Products

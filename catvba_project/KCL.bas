@@ -3,9 +3,7 @@ Attribute VB_Name = "KCL"
 'vba Kantoku_CATVBA_Library ver0.1.0
 'KCL.bas - 自定义VBA库
 Option Explicit
-
 Private mSW& ' 秒表开始时间
-
 #If VBA7 And Win64 Then
     Private Declare PtrSafe Function timeGetTime Lib "winmm.dll" () As Long
 #Else
@@ -29,8 +27,7 @@ End Sub
 ''' @param:DocTypes-array(string),string 指定可执行操作的文档类型
 ''' @return:Boolean
 Function CanExecute(ByVal docTypes As Variant) As Boolean
-    CanExecute = False
-    
+    CanExecute = False    
     If CATIA.Windows.Count < 1 Then
         MsgBox "没有打开的窗口"
         Exit Function
@@ -203,14 +200,12 @@ End Function
 
 ' 检查是否为字符串数组
 Private Function IsStringAry(ByVal ary As Variant) As Boolean
-    IsStringAry = False
-    
+    IsStringAry = False    
     If Not IsArray(ary) Then Exit Function
     Dim i&
     For i = 0 To UBound(ary)
         If Not VarType(ary(i)) = vbString Then Exit Function
-    Next
-    
+    Next    
     IsStringAry = True
 End Function
 
