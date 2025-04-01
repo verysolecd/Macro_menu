@@ -47,6 +47,7 @@ On Error Resume Next
     End With
      
      xlApp.Visible = False
+     xlApp.Visible = True
     On Error GoTo 0
     
     
@@ -59,9 +60,13 @@ On Error Resume Next
     
 End Sub
 Private Sub iniarr()
-    inject_cols = Array(1, 3, 5, 7, 13, 9, 14, 11)
-    extract_cols = Array(1, 3, 5, 7, 9, 11)
 
+
+    
+    inject_cols = Array(1, 3, 5, 7, 13, 9, 14, 11)
+    
+    mapping = Array(0, 1, 2, 3, 4, 9, 5, 0, 6, 7, 0, 6, 8, 0, 0, 0)
+    extract_cols = Array(0, 2, 4, 6, 8, 10, 12)
     
     header_bom(1) = "No." & Chr(10) & "编号"
     header_bom(2) = "Layout" & Chr(10) & "层级"
@@ -110,49 +115,36 @@ Public Sub clear_table()
     ws.UsedRange.ClearContents
 End Sub
 
-Public Sub inject_data(rowNumber, data)
-    Dim maxCol As Long
-    Dim outputArr() As String
+Public Sub inject_data(rowNb, data)
     Dim i As Long
-    Dim iCols As Variant
-    Dim iHeader As Variant
-     iCols = inject_cols
       If ws.Cells(1, 1).Value <> "零件号" & Chr(10) & "Partnumber" Then
         Call set_Header(header_rv)
     End If
-
-    maxCol = xlApp.Max(iCols)
     
-    ReDim outputArr(1 To 1, 1 To maxCol)  '转义数组，一行多列，其中列数由 iCols 数组的最大值决定
-    
-    ' 检查 data 数组长度是否足够
-    Dim dataLength As Long
-     dataLength = UBound(data) - LBound(data) + 1
-    Dim maxIndex As Long
-    maxIndex = xlApp.Min(dataLength, UBound(iCols) - LBound(iCols) + 1)
-    For i = 1 To maxIndex
-        outputArr(1, iCols(LBound(iCols) + i - 1)) = data(LBound(data) + i - 1)
-    Next i
-    ws.Range(ws.Cells(rowNumber, 1), ws.Cells(rowNumber, maxCol)).Value = outputArr
-  
-
-'    colArray = iCols
-'
-'     Dim rng As Range
-'
-'    For i = LBound(colArray) To UBound(colArray)
-'        If rng Is Nothing Then
-'            Set rng = ws.Range(ws.Cells(1, colArray(i)), ws.Cells(RowCount, colArray(i)))
-'        Else
-'            Set rng = Union(rng, ws.Range(ws.Cells(1, colArray(i)), ws.Cells(RowCount, colArray(i))))
-'        End If
+    Dim mapdata, osize
+    mapdata = Array(0, 1, 2, 3, 4, 5, 6, 7, 8)
+'    osize = UBound(mapdata)
+'    Dim outputArr() As String
+'    ReDim outputArr(1 To 1, 1 To osize) '转义数组
+'    For i = 1 To UBound(outputArr, 2)
+'        outputArr(1, i) = data(mapdata(i))
+'        rng.Areas(i).Value = outputArr(1, i)
 '    Next
-'    rng.Interior.Color = RGB(190, 190, 190)
 '
-  
-       xlApp.Visible = True
-  
     
+    '====获取区域====
+    Dim mapcells
+        mapcells = Array(0, 1, 3, 5, 7, 9, 11, 13, 14)
+    Dim rng As Range
+        Set rng = Nothing
+    For i = 1 To UBound(mapcells)
+            ws.Cells(rowNb, mapcells(i)).Value = data(mapdata(i))
+            ws.Cells(rowNb, mapcells(i)).Interior.Color = RGB(190, 190, 190)
+    Next
+        
+
+    
+    xlApp.Visible = True
 End Sub
 
 Public Sub inject_bom(data)
@@ -188,21 +180,29 @@ Set gwb = Nothing
 
 End Sub
  
-Public Function extract_data(row As Long)
+Public Function extract_data(indRow As Long)
     Dim iCols
     iCols = extract_cols
+    
+    Dim temparr As Variant
+    
+    temparr = ws.Rows(indRow).Resize(1, 14).Value
+    
+
     Dim outputArr As Variant
     Dim j As Long
-    ReDim outputArr(1 To UBound(iCols) - LBound(iCols) + 1)        ' 定义输出数组的大小
-    For j = LBound(iCols) + 1 To UBound(iCols) + 1 ' 从工作表中提取指定行的数据
-        outputArr(1, j - LBound(iCols) + 1) = ws.Cells(row, iCols(j)).Value
-    Next j
+    ReDim outputArr(1 To UBound(iCols))
+    For j = 1 To UBound(iCols)
+         outputArr(j) = ""
+         If IsEmpty(temparr(1, iCols(j))) = False Then
+         outputArr(j) = temparr(1, iCols(j))
+         End If
+    Next
     extract_data = outputArr ' 返回提取的数据
 End Function
 
 Private Sub LvMg()
- Dim APP
-    Set APP = GetObject(, "Excel.Application")
+
     Dim row_num As Long ' 声明 row_num 变量
     Dim cell ' 声明 cell 变量
     Set ws = APP.ActiveSheet

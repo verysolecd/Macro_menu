@@ -17,27 +17,26 @@ Sub readPrd()
          MsgBox "请先选择产品，程序将退出"
          Exit Sub
     Else
-    
          If gws Is Nothing Then
            Set xlm = New Class_XLM
-        End If
+         End If
+        
         gPrd.ApplyWorkMode (3)
         Dim currRow: currRow = 2
-        
          
         Dim Prd2Read
-     
         Set Prd2Read = gPrd
-       
-        xlm.inject_data currRow, pdm.infoPrd(Prd2Read)
-                
-        Dim children
-        Set children = Prd2Read.Products
-        For i = 1 To children.Count
-        currRow = i + 2
-        xlm.inject_data currRow, pdm.infoPrd(children.item(i))
-        Next
-        Set Prd2Read = Nothing
         
-    End If
+        If Not Prd2Read Is Nothing Then
+            xlm.inject_data currRow, pdm.infoPrd(Prd2Read)
+            
+            Dim children
+            Set children = Prd2Read.Products
+            For i = 1 To children.Count
+                currRow = i + 2
+                xlm.inject_data currRow, pdm.infoPrd(children.item(i))
+            Next
+        End If
+      End If
+        Set Prd2Read = Nothing
 End Sub

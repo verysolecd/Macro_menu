@@ -1,42 +1,19 @@
-Attribute VB_Name = "test3"
-Sub CATMain()
-
-Set rootPrd = CATIA.ActiveDocument.Product
-Set oPrd = rootPrd.Products.item(4)
-
-
-Set pdm = New class_PDM
-
-arr = pdm.infoPrd(oPrd)
-
-
-
-
-
-
-
-
-End Sub
-
-
-
-
-Function count_me(oPrd)  '获取兄弟字典
-     Dim i, oDict, QTy, pn
-         QTy = 1
-     On Error Resume Next
-          If TypeOf oPrd.Parent Is Products Then    '若有父级产品'获取兄弟字典
-                    Dim oParent: Set oParent = oPrd.Parent.Parent
-                   Set oDict = CreateObject("Scripting.Dictionary")
-                   For i = 1 To oParent.Products.Count
-                          pn = oParent.Products.item(i).PartNumber
-                          If oDict.Exists(pn) = True Then
-                              oDict(pn) = oDict(pn) + 1
-                          Else
-                              oDict(pn) = 1
-                          End If
-                      Next
-            QTy = oDict(oPrd.PartNumber)
-          End If
-    count_me = QTy
-End Function
+'Const catCaptureFormatPNG As Integer =6
+Const catCaptureFormatJPEG As Integer =1
+Const catCaptureFormatBMP As Integer =0Const catCaptureFormatTIFF As Integer=2
+Set annotationSet = mCATIA-ActiveDocument .part .AnnotationSets.Item(1)Set captures = annotationSet.captures
+'Loop Through CapturesForb=1To captures.CountSet captureItem = captures.Item(b)If captureItem.Name=Then
+'Activate the capture
+captureItem.DisplayCapture
+Set viewer =mCATIA.Activeindow.ActiveviewermCATIA.RefreshDisplay =True
+Set targetSheet = newWorkbook.Sheets(6)
+imagePath = ThisWorkbook.path &"”&“”&timeStampCat &”.bmp”
+viewer.CaptureToFile catCaptureFormatBMP,imagePath
+DiminsertedPicture As Shape
+SetinsertedPicture = targetSheet.Shapes.AddPicture(Filename:=imagePath,LinkToFile:=msoFalse, SaveWithDocument:=msoTrue,Left:=10, Top:=10,Width:=1, Height:=1)
+With insertedPicture.LockAspectRatio = msoTrue.Width =300
+End With
+Height = 200
+targetSheet.Range("A1").Select Deselect image to avoid errorstargetSheet .Activate
+End If
+Next b
