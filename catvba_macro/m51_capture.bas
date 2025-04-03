@@ -1,60 +1,105 @@
-Attribute VB_Name = "mCaptureClipboard"
-'{GP:4}
-'{Ep:CaptureToClipboard}
-'{Caption:截图到剪贴板}
-'{ControlTipText:将当前CATIA视图截图复制到剪贴板}
-
-' 需要声明Windows API函数
-Private Declare Function OpenClipboard Lib "user32" (ByVal hwnd As Long) As Long
-Private Declare Function EmptyClipboard Lib "user32" () As Long
-Private Declare Function CloseClipboard Lib "user32" () As Long
-Private Declare Function SetClipboardData Lib "user32" (ByVal wFormat As Long, ByVal hMem As Long) As Long
-Private Declare Function CopyImage Lib "user32" (ByVal handle As Long, ByVal un1 As Long, ByVal n1 As Long, ByVal n2 As Long, ByVal un2 As Long) As Long
-
-Const CF_BITMAP = 2
-
-Sub CaptureToClipboard()
+Sub CATMain()
     On Error GoTo ErrorHandler
-    
-    ' 获取CATIA应用和活动窗口
-    Dim catia As Application
-    Set catia = CATIA
-    
-    If catia.ActiveWindow Is Nothing Then
-        MsgBox "没有活动窗口可截图", vbExclamation
-        Exit Sub
-    End If
-    
-    ' 获取当前视图
-    Dim viewer As Viewer
-    Set viewer = catia.ActiveWindow.ActiveViewer
-    
-    ' 临时文件路径
-    Dim tempFile As String
-    tempFile = Environ("TEMP") & "\CATIA_temp_capture.bmp"
-    
-    ' 先保存为临时BMP文件
-    viewer.CaptureToFile 0, tempFile ' 0 = catCaptureFormatBMP
-    
-    ' 将BMP文件复制到剪贴板
-    Dim hBitmap As Long
-    hBitmap = LoadImage(0, tempFile, 0, 0, 0, &H10) ' LR_LOADFROMFILE
-    
-    If hBitmap <> 0 Then
-        OpenClipboard 0
-        EmptyClipboard
-        SetClipboardData CF_BITMAP, hBitmap
-        CloseClipboard
-        MsgBox "截图已复制到剪贴板", vbInformation
-    Else
-        MsgBox "无法将图像复制到剪贴板", vbExclamation
-    End If
-    
-    ' 删除临时文件
-    Kill tempFile
-    
+    GetNextNode CATIA.ActiveDocument.Product
     Exit Sub
-    
 ErrorHandler:
-    MsgBox "截图失败：" & Err.Description, vbCritical
+    MsgBox "执行过程中出现错误: " & Err.Description, vbCritical, "错误"
 End Sub
+
+Sub GetNextNode(oCurrentProduct As Product)
+    Dim oCurrentTreeNode As Product
+    Dim StrNomenclature As String, StrDesignation As String, StrWindows As String, PartNumber As String
+    Dim i As Integer
+    
+    ' Loop through every tree node for the current product+
+    For i = 1 To oCurrentProduct.Products.Count
+        Set oCurrentTreeNode = oCurrentProduct.Products.Item(i)
+        PartNumber = oCurrentTreeNode.PartNumber
+        
+        ' Determine if the current node is a part, product or component
+        If Right(oCurrentTreeNode.Name, 4) = "Part" Then
+            PictureGet PartNumber
+            MsgBox PartNumber & " is a part"
+        ElseIf IsProduct(oCurrentTreeNode) Then
+            PictureGet PartNumber
+            MsgBox PartNumber & " is a product"
+        Else
+            PictureGet PartNumber
+            MsgBox PartNumber & " is a component"
+        End If
+        
+        ' if sub-nodes exist below the current tree node, call the sub recursively
+        If oCurrentTreeNode.Products.Count > 0 Then
+            GetNextNode oCurrentTreeNode
+        End If
+    Next i
+End Sub
+
+Function IsProduct(objCurrentProduct As Product) As Boolean
+    Dim oTestProduct As ProductDocument
+    Set oTestProduct = Nothing
+    On Error Resume Next
+    Set oTestProduct = CATIA.Documents.Item(objCurrentProduct.PartNumber & ".CATProduct")
+    On Error GoTo 0
+    IsProduct = Not oTestProduct Is Nothing
+End Function
+
+Function PictureGet(PartName As String, oCurrentProduct As Product) As String
+    Dim ObjViewer3D As Viewer3D
+    Set objViewer3D = CATIA.ActiveWindow.ActiveViewer
+    
+    Dim objCamera3D As Camera3D
+    Set objCamera3D = CATIA.ActiveDocument.Cameras.Item(1)
+    
+    If PartName = "" Then
+        MsgBox "No name was entered. Operation aborted.", vbExclamation, "Cancel"
+    Else
+        'turn off the spec tree
+        Dim objSpecWindow As SpecsAndGeomWindow
+        Set objSpecWindow = CATIA.ActiveWindow
+        objSpecWindow.Layout = catWindowGeomOnly
+        
+        '=== 新增: 聚焦到当前组件 ===
+        CATIA.ActiveDocument.Selection.Clear
+        CATIA.ActiveDocument.Selection.Add oCurrentProduct
+        objViewer3D.Reframe ' 这将使视图聚焦到选中的组件
+        '=========================
+        
+        'Toggle Compass
+        CATIA.StartCommand("Compass")
+        
+        'change background color to white
+        Dim DBLBackArray(2)
+        objViewer3D.GetBackgroundColor(dblBackArray)
+        Dim dblWhiteArray(2)
+        dblWhiteArray(0) = 1
+        dblWhiteArray(1) = 1
+        dblWhiteArray(2) = 1
+        objViewer3D.PutBackgroundColor(dblWhiteArray)
+        
+        'file location to save image
+        Dim fileloc As String
+        fileloc = "C:\Temp\"
+        
+        Dim exten As String
+        exten = ".jpg"
+        
+        Dim strName As String
+        strName = fileloc & PartName & exten
+        
+        'clear selection for picture
+        CATIA.ActiveDocument.Selection.Clear()
+        
+        'increase to fullscreen to obtain maximum resolution
+        objViewer3D.FullScreen = True
+        
+        'take picture
+        objViewer3D.CaptureToFile 4, strName
+        
+        '*******************RESET**********************
+        objViewer3D.FullScreen = False
+        objViewer3D.PutBackgroundColor(dblBackArray)
+        objSpecWindow.Layout = catWindowSpecsAndGeom
+        CATIA.StartCommand("Compass")
+    End If
+End Function
