@@ -141,8 +141,7 @@ Public Sub inject_data(rowNb, data)
             ws.Cells(rowNb, mapcells(i)).Value = data(mapdata(i))
             ws.Cells(rowNb, mapcells(i)).Interior.Color = RGB(190, 190, 190)
     Next
-        
-
+    
     
     xlApp.Visible = True
 End Sub
