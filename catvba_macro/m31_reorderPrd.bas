@@ -5,17 +5,18 @@ Attribute VB_Name = "m31_reorderPrd"
 '{Ep:CATMain}
 '{Caption:产品排序}
 '{ControlTipText:产品排序}
-'{BackColor:16744703}
+'{BackColor: }
 
 Option Explicit
 
 Sub CATMain()
 
-    If Not CanExecute("ProductDocument") Then Exit Sub    
+    If Not CanExecute("ProductDocument") Then Exit Sub
+    
 
     Dim ProDoc As ProductDocument: Set ProDoc = CATIA.ActiveDocument
     Dim Pros As Products: Set Pros = ProDoc.Product.Products
-    If Pros.Count < 2 Then Exit Sub
+    If Pros.count < 2 Then Exit Sub
     
 
     Dim AssyMode As AsmConstraintSettingAtt
@@ -30,19 +31,19 @@ Sub CATMain()
     Dim Names: Set Names = Get_SortedNames(Pros)
     
 
-    Dim Sel As Selection: Set Sel = ProDoc.Selection
-    Dim Itm As Variant
+    Dim sel As Selection: Set sel = ProDoc.Selection
+    Dim itm As Variant
     
     CATIA.HSOSynchronized = False
     
-    Sel.Clear
-    For Each Itm In Names
-        Sel.Add Pros.item(Itm)
+    sel.Clear
+    For Each itm In Names
+        sel.Add Pros.item(itm)
     Next
-    Sel.Cut
+    sel.Cut
     
 
-    With Sel
+    With sel
         .Clear
         .Add Pros
         .Paste

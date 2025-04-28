@@ -1,4 +1,4 @@
-Attribute VB_Name = "sample_GetMinBox_Product"
+Attribute VB_Name = "m63_minbox"
 'vba GetMinimumBox_Product Ver0.0.1 'using-'KCL0.1.0'  by Kantoku
 '指定した???????を元にMinimumBoxを作成
 
@@ -29,7 +29,7 @@ Sub CATMain()
     If prod Is Nothing Then Exit Sub
     
     ' body取得
-    Dim targetBodies As Collection
+    Dim targetBodies As collection
     Set targetBodies = getBodies(prod)
     If targetBodies Is Nothing Then Exit Sub
 
@@ -51,7 +51,7 @@ Sub CATMain()
     Dim minBody As body
     Set minBody = workPt.bodies.Add
     
-    minBody.name = "MinimumBox"
+    minBody.Name = "MinimumBox"
     Call changeColor(minBody)
 
     '????
@@ -135,7 +135,7 @@ End Function
 '6方向最大距離取得
 Private Function getMaxSize_Bodies( _
     ByVal pt As part, _
-    ByVal bodies As Collection, _
+    ByVal bodies As collection, _
     ByVal ax As AxisSystem) _
     As Variant
 
@@ -186,7 +186,7 @@ Private Function getAxis( _
     Set axiss = pt.AxisSystems
     
     If axiss.count > 0 Then
-        Set getAxis = axiss.Item(1)
+        Set getAxis = axiss.item(1)
     Else
         Set getAxis = initAxis(pt)
     End If
@@ -253,7 +253,7 @@ End Function
 ' 選択???????内の表示されているBodyを取得
 Private Function getBodies( _
     ByVal prod As Product) _
-    As Collection
+    As collection
 
     Set getBodies = Nothing
     
@@ -266,8 +266,8 @@ Private Function getBodies( _
     sel.Add prod
     sel.Search "CATPrtSearch.BodyFeature.Visibility=Shown,sel"
     
-    Dim lst As Collection
-    Set lst = New Collection
+    Dim lst As collection
+    Set lst = New collection
     
     Dim i As Long
     Dim bdy As body
@@ -441,7 +441,7 @@ Private Sub initLine2D( _
     End With
     
     Dim ax2D As Axis2D
-    Set ax2D = KCL.GetParent_Of_T(csts, "Sketch").GeometricElements.Item(1)
+    Set ax2D = KCL.GetParent_Of_T(csts, "Sketch").GeometricElements.item(1)
     
     Select Case True
         Case Abs(posSt(0) - posEd(0)) < 0.001

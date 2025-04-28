@@ -1,16 +1,15 @@
-Attribute VB_Name = "m43_readPrd"
+Attribute VB_Name = "m41_readPrd"
 'Attribute VB_Name = "ReadPrd"
 '{gp:4}
 '{Ep:readPrd}
 '{Caption:读取属性}
 '{ControlTipText:读取待操作产品}
-'{BackColor:16744703}
+'{BackColor: }
 
 Sub readPrd()
     If pdm Is Nothing Then
      Set pdm = New class_PDM
     End If
- 
 
  '---------获取待修改产品 '---------遍历修改产品及子产品
     If gPrd Is Nothing Then
