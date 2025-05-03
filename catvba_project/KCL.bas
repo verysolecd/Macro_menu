@@ -29,20 +29,23 @@ End Sub
 Function CanExecute(ByVal docTypes As Variant) As Boolean
     CanExecute = False    
     If CATIA.Windows.Count < 1 Then
-        MsgBox "没有打开的窗口"
+        MsgBox "没有打开的文件窗口"
         Exit Function
     End If
     
     If VarType(docTypes) = vbString Then docTypes = Split(docTypes, ",")
     If Not IsFilterType(docTypes) Then Exit Function
     
-    Dim ErrMsg As String
-    ErrMsg = "不支持当前活动文档类型。" + vbNewLine + "(" + Join(docTypes, ",") + " 类型除外)"
+    
     
     Dim ActDoc As Document
     On Error Resume Next
         Set ActDoc = CATIA.Activedocument
     On Error GoTo 0
+
+    Dim ErrMsg As String
+    ErrMsg = "不支持当前活动文档类型。" + vbNewLine + "(" + Join(docTypes, ",") + " 类型除外)"
+
     If ActDoc Is Nothing Then
         MsgBox ErrMsg, vbExclamation + vbOKOnly
         Exit Function
