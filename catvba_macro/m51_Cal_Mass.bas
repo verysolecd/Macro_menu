@@ -7,7 +7,7 @@ Attribute VB_Name = "m51_Cal_Mass"
 
 Sub Cal_Mass()
 If gPrd Is Nothing Then
-Call setgprd
+    Call setgprd
 End If
 
 If pdm Is Nothing Then

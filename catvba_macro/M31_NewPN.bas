@@ -1,10 +1,11 @@
-Attribute VB_Name = "M32_Rname"
-'Attribute VB_Name = "m30_Rname"
+Attribute VB_Name = "M31_NewPN"
+'Attribute VB_Name = "m30_NewPn"
 '{GP:3}
 '{Ep:CATMain}
 '{Caption:项目前缀}
 '{ControlTipText:为所有零件号增加项目前缀}
 '{BackColor:}
+
 Private prj
 Sub CATMain()
  If Not CanExecute("ProductDocument") Then Exit Sub
@@ -21,7 +22,6 @@ Else
  Exit Sub
 End If
 End Sub
-
 
 Sub rePn(oprd)
     pn = oprd.PartNumber

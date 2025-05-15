@@ -3,7 +3,9 @@ Attribute VB_Name = "KCL"
 'vba Kantoku_CATVBA_Library ver0.1.0
 'KCL.bas - 自定义VBA库
 Option Explicit
+
 Private mSW& ' 秒表开始时间
+
 #If VBA7 And Win64 Then
     Private Declare PtrSafe Function timeGetTime Lib "winmm.dll" () As Long
 #Else
@@ -11,41 +13,38 @@ Private mSW& ' 秒表开始时间
 #End If
 
 ' 主程序入口 - 循环选择项目
-Sub CATMain()
-    Dim Msg$: Msg = "请选择项目 : 按ESC键退出"
-    Dim SI As AnyObject
-    Dim Doc As Document: Set Doc = CATIA.Activedocument
-    Do
-        Set SI = SelectItem(Msg)
-        If IsNothing(SI) Then Exit Do
-        Stop
-    Loop
-End Sub
+'Sub CATMain()
+'    Dim Msg$: Msg = "请选择项目 : 按ESC键退出"
+'    Dim SI As AnyObject
+'    Dim Doc As Document: Set Doc = CATIA.ActiveDocument
+'    Do
+'        Set SI = SelectItem(Msg)
+'        If IsNothing(SI) Then Exit Do
+'        Stop
+'    Loop
+'End Sub
 
 '*****CATIA相关函数*****
 ' 检查是否可以执行操作
 ''' @param:DocTypes-array(string),string 指定可执行操作的文档类型
 ''' @return:Boolean
 Function CanExecute(ByVal docTypes As Variant) As Boolean
-    CanExecute = False    
+    CanExecute = False
     If CATIA.Windows.Count < 1 Then
-        MsgBox "没有打开的文件窗口"
+        MsgBox "没有打开的窗口"
         Exit Function
     End If
     
     If VarType(docTypes) = vbString Then docTypes = Split(docTypes, ",")
     If Not IsFilterType(docTypes) Then Exit Function
     
-    
+    Dim ErrMsg As String
+    ErrMsg = "不支持当前活动文档类型。" + vbNewLine + "(" + Join(docTypes, ",") + " 类型除外)"
     
     Dim ActDoc As Document
     On Error Resume Next
-        Set ActDoc = CATIA.Activedocument
+        Set ActDoc = CATIA.ActiveDocument
     On Error GoTo 0
-
-    Dim ErrMsg As String
-    ErrMsg = "不支持当前活动文档类型。" + vbNewLine + "(" + Join(docTypes, ",") + " 类型除外)"
-
     If ActDoc Is Nothing Then
         MsgBox ErrMsg, vbExclamation + vbOKOnly
         Exit Function
@@ -63,10 +62,10 @@ End Function
 ''' @param:Msg-提示信息
 ''' @param:Filter-array(string),string 选择过滤器(默认为AnyObject)
 ''' @return:AnyObject
-Function SelectItem(ByVal Msg$, _
+Function SelectItem(ByVal msg$, _
                            Optional ByVal Filter As Variant = Empty)
     Dim se As SelectedElement
-    Set se = SelectElement(Msg, Filter)
+    Set se = SelectElement(msg, Filter)
     
     If IsNothing(se) Then
         Set SelectItem = se
@@ -79,16 +78,16 @@ End Function
 ''' @param:Msg-提示信息
 ''' @param:Filter-array(string),string 选择过滤器(默认为AnyObject)
 ''' @return:SelectedElement
-Function SelectElement(ByVal Msg$, _
+Function SelectElement(ByVal msg$, _
                            Optional ByVal Filter As Variant = Empty) ' _
                            As SelectedElement
     If IsEmpty(Filter) Then Filter = Array("AnyObject")
     If VarType(Filter) = vbString Then Filter = ToStrVriAry(Filter)
     If Not IsFilterType(Filter) Then Exit Function
     
-    Dim Sel As Variant: Set Sel = CATIA.Activedocument.Selection
+    Dim Sel As Variant: Set Sel = CATIA.ActiveDocument.Selection
     Sel.Clear
-    Select Case Sel.SelectElement2(Filter, Msg, False)
+    Select Case Sel.SelectElement2(Filter, msg, False)
         Case "Cancel", "Undo", "Redo"
             Exit Function
     End Select
@@ -157,7 +156,7 @@ Function GetLanguage() As String
     GetLanguage = "non"
     If CATIA.Windows.Count < 1 Then Exit Function
     GetLanguage = "other"
-    CATIA.Activedocument.Selection.Clear
+    CATIA.ActiveDocument.Selection.Clear
     Dim st As String: st = CATIA.StatusBar
     Select Case True
         Case ExistsKey(st, "object")
@@ -203,12 +202,14 @@ End Function
 
 ' 检查是否为字符串数组
 Private Function IsStringAry(ByVal ary As Variant) As Boolean
-    IsStringAry = False    
+    IsStringAry = False
+    
     If Not IsArray(ary) Then Exit Function
     Dim i&
     For i = 0 To UBound(ary)
         If Not VarType(ary(i)) = vbString Then Exit Function
-    Next    
+    Next
+    
     IsStringAry = True
 End Function
 
@@ -442,5 +443,18 @@ End Sub
 Function SW_GetTime#()
     SW_GetTime = IIf(mSW = 0, -1, (timeGetTime - mSW) * 0.001)
 End Function
+
+Public Function GetInput(msg) As String
+    Dim userInput As String
+    userInput = InputBox(msg, "输入提示")
+    
+    ' 如果用户没有输入或点击取消，则返回默认值"XX"
+    If userInput = "" Or userInput = "0" Then
+        GetInput = ""
+    Else
+        GetInput = userInput
+    End If
+End Function
+
 
 

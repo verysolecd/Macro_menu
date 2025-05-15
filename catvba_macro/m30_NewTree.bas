@@ -11,7 +11,7 @@ Sub CATMain()
         Dim oprd, Tree, oDoc, rootPrd, cover, house, ref
           Dim imsg
           imsg = "请输入你的项目名称"
-        prj = KCL.GetInput(imsg)
+        prj = GetInput(imsg)
         If prj = "" Then
             Exit Sub
         End If
@@ -99,3 +99,16 @@ Sub newPn(oprd, arr)
     oprd.Name = arr(4)
     On Error GoTo 0
 End Sub
+
+
+Public Function GetInput(msg) As String
+    Dim userInput As String
+    userInput = InputBox(msg, "输入提示")
+    
+    ' 如果用户没有输入或点击取消，则返回默认值"XX"
+    If userInput = "" Or userInput = "0" Then
+        GetInput = ""
+    Else
+        GetInput = userInput
+    End If
+End Function

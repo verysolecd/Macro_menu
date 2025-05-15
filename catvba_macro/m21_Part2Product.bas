@@ -11,23 +11,23 @@ Option Explicit
 
 Sub CATMain()
     If Not CanExecute("PartDocument") Then Exit Sub
-    Dim BaseDoc As PartDocument: Set BaseDoc = CATIA.Activedocument
+    Dim BaseDoc As PartDocument: Set BaseDoc = CATIA.ActiveDocument
     Dim BasePath As Variant: BasePath = Array(BaseDoc.FullName)
     Dim Pt As Part: Set Pt = BaseDoc.Part
     Dim LeafItems As collection: Set LeafItems = Get_LeafItemLst(Pt.Bodies)
-    Dim Msg As String
+    Dim msg As String
     If LeafItems Is Nothing Then
-        Msg = "没有可复制的元素！"
-        MsgBox Msg, vbOKOnly + vbExclamation
+        msg = "没有可复制的元素！"
+        MsgBox msg, vbOKOnly + vbExclamation
         Exit Sub
     End If
-    Msg = LeafItems.Count & " 个可复制的元素。" & vbNewLine & _
+    msg = LeafItems.Count & " 个可复制的元素。" & vbNewLine & _
           "请指定粘贴的类型" & vbNewLine & vbNewLine & _
           "是 : 带链接的结果(As Result With Link)" & vbNewLine & _
           "否 : 作为结果(As Result)" & vbNewLine & _
           "取消 : 宏中止"
     Dim PasteType As String
-    Select Case MsgBox(Msg, vbQuestion + vbYesNoCancel)
+    Select Case MsgBox(msg, vbQuestion + vbYesNoCancel)
         Case vbYes
             PasteType = "CATPrtResult"
         Case vbNo
@@ -40,7 +40,7 @@ Sub CATMain()
     Dim TopDoc As ProductDocument: Set TopDoc = CATIA.Documents.Add("Product")
     Call ToProduct(TopDoc, LeafItems, PasteType)
     Call UpdateScene(BaseScene)
-    TopDoc.product.Update
+    TopDoc.Product.Update
     Debug.Print "时间:" & KCL.SW_GetTime & "s"
     MsgBox "完成"
 End Sub
@@ -53,7 +53,7 @@ Private Sub ToProduct(ByVal TopDoc As ProductDocument, _
     Dim BaseSel As Selection
     Set BaseSel = KCL.GetParent_Of_T(LeafItems(1), "PartDocument").Selection
     Dim Prods As Products
-    Set Prods = TopDoc.product.Products
+    Set Prods = TopDoc.Product.Products
     Dim Itm As AnyObject
     Dim TgtDoc As PartDocument
     Dim ProdsNameDic As Object: Set ProdsNameDic = KCL.InitDic()
@@ -118,9 +118,9 @@ End Function
 Private Function Get_All_HbShapes(ByVal Hbdy As HybridBody, _
                                   ByVal lst As collection) As collection
     Dim child As HybridBody
-    For Each child In Hbdy.hybridBodies
+    For Each child In Hbdy.HybridBodies
         lst.Add child.HybridShapes
-        If child.hybridBodies.Count > 0 Then
+        If child.HybridBodies.Count > 0 Then
             Set lst = Get_All_HbShapes(child, lst)
         End If
     Next
@@ -150,7 +150,7 @@ Private Function Get_LeafItemLst(ByVal Pt As Part) As collection
     If TmpLst.Count < 1 Then Exit Function
     Dim LeafHBdys As Object: Set LeafHBdys = KCL.InitDic()
     Dim Hbdy As AnyObject
-    For Each Hbdy In Pt.hybridBodies
+    For Each Hbdy In Pt.HybridBodies
         LeafHBdys.Add Hbdy, 0
     Next
     For Each Hbdy In Pt.OrderedGeometricalSets
@@ -195,7 +195,7 @@ End Function
 
 Private Function Init_Part(ByVal Prods As Variant, _
                            ByVal PtNum As String) As PartDocument
-    Dim Prod As product
+    Dim Prod As Product
     On Error Resume Next
         Set Prod = Prods.AddNewComponent("Part", PtNum)
     On Error GoTo 0
@@ -203,9 +203,9 @@ Private Function Init_Part(ByVal Prods As Variant, _
 End Function
 
 Private Sub UpdateScene(ByVal Scene As Variant)
-    Dim Viewer As Viewer3D: Set Viewer = CATIA.ActiveWindow.ActiveViewer
+    Dim viewer As Viewer3D: Set viewer = CATIA.ActiveWindow.ActiveViewer
     Dim VPnt3D As Variant
-    Set VPnt3D = Viewer.Viewpoint3D
+    Set VPnt3D = viewer.Viewpoint3D
     Dim ary As Variant
     ary = GetRangeAry(Scene, 0, 2)
     Call VPnt3D.PutOrigin(ary)
@@ -215,7 +215,7 @@ Private Sub UpdateScene(ByVal Scene As Variant)
     Call VPnt3D.PutUpDirection(ary)
     VPnt3D.FieldOfView = Scene(9)
     VPnt3D.FocusDistance = Scene(10)
-    Call Viewer.Update
+    Call viewer.Update
 End Sub
 
 Private Function GetScene3D(ViewPnt3D As Viewpoint3D) As Variant

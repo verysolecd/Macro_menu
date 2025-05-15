@@ -6,12 +6,15 @@ Attribute VB_Name = "m40_setgprd"
 '{BackColor:16744703}
 
 Sub setgprd()
+
     If pdm Is Nothing Then
         Set pdm = New class_PDM
     End If
     
+    Dim oprd
+    
     imsg = MsgBox("“是”选择产品，“否”读取根产品，“取消退出”", vbYesNoCancel + vbDefaultButton2, "请选择产品")
-     Dim oprd
+
         Select Case imsg
             Case 7 '===选择“否”====
                 Set oprd = CATIA.ActiveDocument.Product
@@ -26,11 +29,12 @@ Sub setgprd()
                     End If
                 On Error GoTo 0
         End Select
+        
          Set gPrd = oprd
          Set oprd = Nothing
          
         If Not gPrd Is Nothing Then
-           imsg = "你选择的产品是" & gPrd.PartNumber & "是否继续"
+           imsg = "你选择的产品是" & gPrd.PartNumber
             MsgBox imsg
         Else
              MsgBox "已退出，程序将结束"

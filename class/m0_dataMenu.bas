@@ -8,7 +8,7 @@ Const FormTitle = "Macro"
 Private Const MENU_SHOW_TYPE = True
 ' 菜单的隐藏类型
 ' True - 隐藏菜单按钮  False - 显示菜单按钮
-Private Const MENU_HIDE_TYPE = False
+Private Const MENU_HIDE_TYPE = True
 ' 菜单分组的配置信息
 ' 请根据需要修改
 '{ 分组编号 : 分组标题 }
@@ -18,7 +18,8 @@ Private Const groupName = _
             "{2 : 零件建模 }" & _
             "{3 : 总成装配 }" & _
             "{4 : 读取修改 }" & _
-            "{5 : BOM处理}"
+            "{5 : BOM处理}" & _
+            "{6 : 其他}"
 '-----------------------------------------------------------------
 Option Explicit
 '----- 配置参数 请勿修改除非必要 -----------------------

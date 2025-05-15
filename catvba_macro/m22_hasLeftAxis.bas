@@ -11,19 +11,19 @@ Option Explicit
 Sub LeftHand()
     ' 检查是否可以执行
     If Not CanExecute("PartDocument") Then Exit Sub
-    Dim Doc As PartDocument: Set Doc = CATIA.Activedocument
+    Dim Doc As PartDocument: Set Doc = CATIA.ActiveDocument
     Dim Axs As AxisSystems: Set Axs = Doc.Part.AxisSystems
     Dim Ax As AxisSystem
-    Dim Msg As String: Msg = vbNullString
+    Dim msg As String: msg = vbNullString
     For Each Ax In Axs
         If IsLeft(Ax) Then
-            Msg = Msg & Ax.Name & vbNewLine
+            msg = msg & Ax.Name & vbNewLine
         End If
     Next
-    If Msg = vbNullString Then
+    If msg = vbNullString Then
         MsgBox "未找到左手坐标系。"
     Else
-        MsgBox "已找到左手坐标系：" & vbNewLine & Msg
+        MsgBox "已找到左手坐标系：" & vbNewLine & msg
     End If
 End Sub
 

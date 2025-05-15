@@ -12,7 +12,7 @@ Sub newgeo()
  If Not CanExecute("PartDocument") Then Exit Sub
  
 Set oDoc = CATIA.ActiveDocument.Product
-Set oprt = oDoc.ReferenceProduct.Parent.part
+Set oprt = oDoc.ReferenceProduct.Parent.Part
 Set colls = oprt.HybridBodies
 On Error Resume Next
 Set og = colls.item("Geo_sheet")
@@ -43,7 +43,7 @@ oPln.SetReferencePoint oPoint  'oref
 og.AppendHybridShape oPln
 oprt.InWorkObject = oPln
 oprt.Update
-Set skts = og.HybridSketches
+Set SKTs = og.HybridSketches
 Set oSkt = og.HybridSketches.Add(oPln)
 oprt.InWorkObject = oSkt
 Set factory2D1 = oSkt.OpenEdition()

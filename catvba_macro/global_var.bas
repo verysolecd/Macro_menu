@@ -9,7 +9,9 @@ Public gws  As Object
 Public pdm As Object
 Public xlm As Object
 Public allPN As Object
-Public counter As Long
+Public counter As Integer
+Public Const fn As Integer = 150
+
 
 
 Sub clearall()
