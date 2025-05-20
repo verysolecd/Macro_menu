@@ -60,7 +60,8 @@ Sub Set_FormInfo(ByVal InfoLst As Object, _
                  
     ' 初始化窗体边距
     FrmMargin = Array(10, 10, 10, 0) ' 上, 右, 下, 左 窗体边距调整值
-    
+   
+
     ' 创建多页控件
     Dim MPgs As MultiPage
     Set MPgs = Me.Controls.Add("Forms.MultiPage.1", 1, True)
@@ -88,6 +89,38 @@ Sub Set_FormInfo(ByVal InfoLst As Object, _
             Call BtnEvt.set_ButtonEvent(Btn, Info, Me, CloseType)
             Btns.Add BtnEvt
         Next
+
+ ' 创建并设置产品信息标签
+    Set lblProductInfo = Me.Controls.Add("Forms.Label.1", "lblProductInfo", True)
+    With lblProductInfo
+        .Caption = "产品待选择"
+        .Top = 5
+        .Left = MPgs.Left + MPgs.Width + 10
+        .Width = 150
+        .Height = 20
+        .Font.Name = "Arial"
+        .Font.Size = 10
+    End With
+    
+    ' 连接到全局产品观察者
+    Set prdObserver = ProductObserver
+    
+    ' 初始更新产品信息
+    UpdateProductInfo
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 continue:
     Next
     Set mBtns = Btns
@@ -201,6 +234,16 @@ Private Function Get_Page(ByVal Pgs As Pages, ByVal Name As String) As Page
     Set Get_Page = Pg
 End Function
 
-Private Sub UserForm_Click()
+' 产品变化事件处理程序
+Private Sub prdObserver_ProductChanged()
+    UpdateProductInfo
+End Sub
 
+' 更新产品信息的方法
+Private Sub UpdateProductInfo()
+    If prdObserver.CurrentProduct Is Nothing Then
+        lblProductInfo.Caption = "产品待选择"
+    Else
+        lblProductInfo.Caption = "当前产品：" & prdObserver.CurrentProduct.PartNumber
+    End If
 End Sub

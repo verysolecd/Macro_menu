@@ -30,7 +30,12 @@ Sub setgprd()
                 On Error GoTo 0
         End Select
         
+         ' 原代码
+         ' Set gPrd = oprd
+         
+         ' 修改为使用观察者模式
          Set gPrd = oprd
+         Set ProductObserver.CurrentProduct = oprd  ' 这会自动触发事件
          Set oprd = Nothing
          
         If Not gPrd Is Nothing Then
