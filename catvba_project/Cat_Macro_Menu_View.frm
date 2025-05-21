@@ -28,27 +28,38 @@ Attribute VB_Exposed = False
 'Attribute VB_Creatable = False
 'Attribute VB_PredeclaredId = True
 'Attribute VB_Exposed = False
-
+'Attribute prdObserver.VB_VarHelpID = -1
 ' 窗体边距
 Private FrmMargin As Variant ' 上, 右, 下, 左 窗体边距调整值
 
 ' 窗体宽度调整值
-Private Const ADJUST_F_W = 10
+Private Const ADJUST_F_W = 4
 ' 窗体高度调整值
-Private Const ADJUST_F_H = 10
+Private Const ADJUST_F_H = 4
 
 ' 多页控件调整
-Private Const ADJUST_M_W = 80 ' 多页控件宽度调整值
+Private Const ADJUST_M_W = 64 ' 多页控件宽度调整值
 Private Const ADJUST_M_H = 90 ' 多页控件高度调整值
+
 Private Const Tab_W = 45 ' Tab固定宽度
 Private Const Tab_H = 20 ' TAB高度
 Private Const Tab_frontsize = 10
 ' 按钮尺寸
-Private Const BTN_W = 68 ' 按钮的固定宽度
-Private Const BTN_H = 20 ' 单个按钮的高度
-Private Const BTN_frontsize = 10 ' 按钮字体大小
+Private Const BTN_W = 62 ' 按钮的固定宽度
+Private Const BTN_H = 22 ' 单个按钮的高度
+Private Const BTN_frontsize = 8 ' 按钮字体大小
+
+'标签尺寸
+Private Const lb_W = 62 ' 宽度
+Private Const lb_H = 18 ' 高度
+Private Const lb_frontsize = 10 ' 字体大小
+
 
 Private mBtns As Object ' 按钮事件集合
+Private WithEvents prdObserver As ProductObserver
+Attribute prdObserver.VB_VarHelpID = -1
+Private lblProductInfo As MSForms.Label
+Private Const itl = "公众号:键盘造车手"
 
 Option Explicit
 
@@ -57,11 +68,13 @@ Sub Set_FormInfo(ByVal InfoLst As Object, _
                  ByVal PageMap As Object, _
                  ByVal FormTitle As String, _
                  ByVal CloseType As Boolean)
+    
+         ' 连接到全局产品观察者
+    Set prdObserver = ProductObserver
                  
     ' 初始化窗体边距
-    FrmMargin = Array(10, 10, 10, 0) ' 上, 右, 下, 左 窗体边距调整值
-   
-
+    FrmMargin = Array(2, 2, 2, 0) ' 上, 右, 下, 左 窗体边距调整值
+    
     ' 创建多页控件
     Dim MPgs As MultiPage
     Set MPgs = Me.Controls.Add("Forms.MultiPage.1", 1, True)
@@ -72,60 +85,64 @@ Sub Set_FormInfo(ByVal InfoLst As Object, _
     
     Dim Key As Long, KeyStr As Variant
     Dim Pg As Page, pName As String
+    
     Dim BtnInfos As Object, Info As Variant
     Dim Btns As Object: Set Btns = KCL.InitLst()
-    Dim Btn As MSForms.CommandButton
+    
+    Dim btn As MSForms.CommandButton
     Dim BtnEvt As Button_Evt
     
     For Each KeyStr In InfoLst
         Key = CLng(KeyStr)
         If Not PageMap.Exists(Key) Then GoTo continue
+        
         pName = PageMap(Key)
+        
         Set Pg = Get_Page(Pgs, pName)
         Set BtnInfos = InfoLst(KeyStr)
+        
         For Each Info In BtnInfos
-            Set Btn = Init_Button(Pg.Controls, Key, Info)
+            Set btn = Init_Button(Pg.Controls, Key, Info)
             Set BtnEvt = New Button_Evt
-            Call BtnEvt.set_ButtonEvent(Btn, Info, Me, CloseType)
+            Call BtnEvt.set_ButtonEvent(btn, Info, Me, CloseType)
             Btns.Add BtnEvt
         Next
+continue:
+    Next
+    
+        Set mBtns = Btns
+    Call Set_MPage(MPgs)
+    Call Set_Form(MPgs, FormTitle)
+    
+  
+    
 
- ' 创建并设置产品信息标签
     Set lblProductInfo = Me.Controls.Add("Forms.Label.1", "lblProductInfo", True)
-    With lblProductInfo
+    
+   With lblProductInfo
         .Caption = "产品待选择"
-        .Top = 5
-        .Left = MPgs.Left + MPgs.Width + 10
-        .Width = 150
-        .Height = 20
-        .Font.Name = "Arial"
-        .Font.Size = 10
+        .Top = FrmMargin(0)
+        .Left = 2
+        
+        .Width = MPgs.Width - 20
+        .Height = lb_H
+        
+        
+        .Font.Size = lb_frontsize
+        .BackColor = vbGreen
+        .TextAlign = fmTextAlignCenter
+        .BorderStyle = fmBorderStyleSingle
+        
+        .WordWrap = False              ' 不换行
+         .AutoSize = True
+        
+        
     End With
-    
-    ' 连接到全局产品观察者
-    Set prdObserver = ProductObserver
-    
     ' 初始更新产品信息
     UpdateProductInfo
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-continue:
-    Next
-    Set mBtns = Btns
-    Call Set_MPage(MPgs)
-    Call Set_Form(MPgs, FormTitle)
+    Me.Caption = itl
+       
 End Sub
 
 ' 设置窗体属性
@@ -141,6 +158,8 @@ End Sub
 Private Sub Set_MPage(ByVal MPgs As MultiPage)
     MPgs.Width = FrmMargin(1) + BTN_W + FrmMargin(3) + ADJUST_M_W
     With MPgs
+        .Top = lb_H + 2 * FrmMargin(1)
+        .Left = FrmMargin(0)
         .TabFixedHeight = Tab_H  ' 标签高度（单位：磅）
         .TabFixedWidth = Tab_W ' 标签宽度
         .Font.Name = "Arial"
@@ -148,7 +167,7 @@ Private Sub Set_MPage(ByVal MPgs As MultiPage)
         .MultiRow = True
         .TabOrientation = fmTabOrientationLeft
         
-'        .Style = fmTabStyleButtons  ' 切换为按钮样式
+        .Style = fmTabStyleButtons  ' 切换为按钮样式
      End With
     Dim Pg As Page
     Dim MaxBtnCnt As Long: MaxBtnCnt = 0
@@ -165,14 +184,15 @@ End Sub
 Private Function Init_Button(ByVal Ctls As Controls, _
                              ByVal idx As Long, _
                              ByVal BtnInfo As Variant) As MSForms.CommandButton
-    Dim Btn As MSForms.CommandButton
-    Set Btn = Ctls.Add("Forms.CommandButton.1", idx, True)
+                             
+    Dim btn As MSForms.CommandButton
+    Set btn = Ctls.Add("Forms.CommandButton.1", idx, True)
     
     Dim Pty As Variant
     For Each Pty In BtnInfo.keys
-        Call Try_SetProperty(Btn, Pty, BtnInfo.item(Pty))
+        Call Try_SetProperty(btn, Pty, BtnInfo.item(Pty))
     Next
-    With Btn
+    With btn
         .Top = FrmMargin(0) + (Ctls.Count - 1) * BTN_H
         .Left = FrmMargin(2)
         .Height = BTN_H
@@ -183,7 +203,7 @@ Private Function Init_Button(ByVal Ctls As Controls, _
         ' 设置按钮背景颜色
        ' .BackColor = RGB(220, 220, 220)
     End With
-    Set Init_Button = Btn
+    Set Init_Button = btn
 End Function
 
 ' 尝试设置控件属性
@@ -236,14 +256,25 @@ End Function
 
 ' 产品变化事件处理程序
 Private Sub prdObserver_ProductChanged()
+ Debug.Print "事件触发"
     UpdateProductInfo
 End Sub
 
 ' 更新产品信息的方法
 Private Sub UpdateProductInfo()
-    If prdObserver.CurrentProduct Is Nothing Then
-        lblProductInfo.Caption = "产品待选择"
-    Else
-        lblProductInfo.Caption = "当前产品：" & prdObserver.CurrentProduct.PartNumber
+    Dim msg
+    Dim mcolor
+   mcolor = vbRed
+    msg = "产品待选择"
+    If Not prdObserver.CurrentProduct Is Nothing Then
+        
+          msg = prdObserver.CurrentProduct.PartNumber & "待修改"
+            mcolor = vbGreen
     End If
+       
+        lblProductInfo.Caption = msg
+        lblProductInfo.BackColor = mcolor
 End Sub
+
+
+
