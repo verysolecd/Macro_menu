@@ -7,35 +7,18 @@ Attribute VB_Name = "m40_setgprd"
 
 Sub setgprd()
 
+
+    If Not CanExecute("ProductDocument") Then Exit Sub
+
+
     If pdm Is Nothing Then
         Set pdm = New class_PDM
     End If
+
     
     Dim oprd
-    
-    imsg = MsgBox("“是”选择产品，“否”读取根产品，“取消退出”", vbYesNoCancel + vbDefaultButton2, "请选择产品")
-
-        Select Case imsg
-            Case 7 '===选择“否”====
-                Set oprd = CATIA.ActiveDocument.Product
-            Case 2:
-                Exit Sub '===选择“取消”====
-            Case 6  '===选择“是”,进行产品选择====
-                On Error Resume Next
-                    Set oprd = pdm.selPrd()
-                    If Err.Number <> 0 Then
-                        Err.Clear
-                        Exit Sub
-                    End If
-                On Error GoTo 0
-        End Select
-        
-    
-    ' 修改为使用观察者模式
-    Set gPrd = oprd
-    
+    Set gPrd = pdm.defgprd()
     Set ProductObserver.CurrentProduct = gPrd ' 这会自动触发事件
-    Set oprd = Nothing
          
         If Not gPrd Is Nothing Then
            imsg = "你选择的产品是" & gPrd.PartNumber
