@@ -26,13 +26,13 @@ Sub CATMain()
     On Error GoTo 0
 
     Dim oWindow, oViewer
-    Set oWindow = CATIA.ActiveWindow
+    Set oWindow = CATIA.activeWindow
     Set oViewer = oWindow.ActiveViewer
     
     oWindow.Layout = catWindowGeomOnly
     oViewer.Reframe
     
-    Dim MyViewer: Set MyViewer = CATIA.ActiveWindow.ActiveViewer
+    Dim MyViewer: Set MyViewer = CATIA.activeWindow.ActiveViewer
     Dim currentColor(2)
     MyViewer.GetBackgroundColor currentColor
     
