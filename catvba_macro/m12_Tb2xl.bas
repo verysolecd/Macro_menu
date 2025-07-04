@@ -43,16 +43,16 @@ Sub Tb2xl()
         
         
         Dim i As Long, j As Long
-        ReDim arr(rowsNo - 1, colsNo - 1) As Variant
+        ReDim Arr(rowsNo - 1, colsNo - 1) As Variant
       
         For i = 1 To rowsNo
             For j = 1 To colsNo
                 ' write cell content to an array item
-                arr(i - 1, j - 1) = drwTable.GetCellString(i, j)
+                Arr(i - 1, j - 1) = drwTable.GetCellString(i, j)
             Next
         Next
         
-        ArrayToExcel arr
+        ArrayToxl Arr
     Else
     
     MsgBox "无可操作表格，请检查"
@@ -63,11 +63,11 @@ Sub Tb2xl()
 End Sub
 
 
-Sub ArrayToExcel(arr2D() As Variant)
-    Dim xlApp As Object
-    Set xlApp = CreateObject("Excel.Application")
+Sub ArrayToxl(arr2D() As Variant)
+    Dim xlAPP As Object
+    Set xlAPP = CreateObject("Excel.Application")
     Dim wbook As Object
-    Set wbook = xlApp.Workbooks.Add
+    Set wbook = xlAPP.Workbooks.Add
     Dim rng As Object
     Set rng = wbook.Sheets(1).Range("B2")
     
@@ -78,6 +78,6 @@ Sub ArrayToExcel(arr2D() As Variant)
         .Borders.ColorIndex = 0
     End With
     
-    xlApp.Visible = True
+    xlAPP.Visible = True
 End Sub
 
