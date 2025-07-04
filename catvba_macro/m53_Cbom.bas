@@ -6,21 +6,26 @@ Attribute VB_Name = "m53_Cbom"
 '{BackColor:16744703}
 
 Sub cBom()
+If Not KCL.CanExecute("ProductDocument") Then Exit Sub
      If pdm Is Nothing Then
           Set pdm = New class_PDM
      End If
      If gPrd Is Nothing Then
-          pdm.defgprd
-     End If
+    
+     Set gPrd = pdm.defgprd()
+    Set ProductObserver.CurrentProduct = gPrd ' 这会自动触发事件
+      End If
+     
+     
     If gws Is Nothing Then
      Set xlm = New Class_XLM
     End If
-      Set iPrd = gPrd
+      Set iprd = gPrd
             counter = 1
-          If Not iPrd Is Nothing Then
-          xlm.inject_bom pdm.recurPrd(iPrd, 1)
+          If Not iprd Is Nothing Then
+          xlm.inject_bom pdm.recurPrd(iprd, 1)
      End If
-     Set iPrd = Nothing
+     Set iprd = Nothing
      xlm.freesheet
      
 End Sub
