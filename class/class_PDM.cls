@@ -60,7 +60,7 @@ Public Function Assmass(oprd)
         Set children = oprd.Products
         If oprd.Products.Count > 0 Then
             For i = 1 To children.Count
-                Assmass (children.item(i)) 'Assmass = Assmass +
+                total = total + Assmass(children.item(i))
                 total = total + children.item(i).ReferenceProduct.UserRefProperties.item("Mass").Value
             Next
             oprd.ReferenceProduct.UserRefProperties.item("Mass").Value = total
@@ -486,4 +486,3 @@ Public Function selPrd()
         Exit Function
     End If
 End Function
-
