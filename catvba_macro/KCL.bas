@@ -16,7 +16,7 @@ Private mSW& ' 秒表开始时间
 Sub CATMain()
     Dim Msg$: Msg = "请选择项目 : 按ESC键退出"
     Dim SI As AnyObject
-    Dim Doc As Document: Set Doc = CATIA.ActiveDocument
+    Dim doc As Document: Set doc = CATIA.ActiveDocument
     Do
         Set SI = SelectItem(Msg)
         If IsNothing(SI) Then Exit Do
@@ -50,7 +50,7 @@ Function CanExecute(ByVal docTypes As Variant) As Boolean
         Exit Function
     End If
     
-    If UBound(Filter(docTypes, TypeName(ActDoc))) < 0 Then
+    If UBound(filter(docTypes, TypeName(ActDoc))) < 0 Then
         MsgBox ErrMsg, vbExclamation + vbOKOnly
         Exit Function
     End If
@@ -63,9 +63,9 @@ End Function
 ''' @param:Filter-array(string),string 选择过滤器(默认为AnyObject)
 ''' @return:AnyObject
 Function SelectItem(ByVal Msg$, _
-                           Optional ByVal Filter As Variant = Empty)
+                           Optional ByVal filter As Variant = Empty)
     Dim se As SelectedElement
-    Set se = SelectElement(Msg, Filter)
+    Set se = SelectElement(Msg, filter)
     
     If IsNothing(se) Then
         Set SelectItem = se
@@ -79,22 +79,22 @@ End Function
 ''' @param:Filter-array(string),string 选择过滤器(默认为AnyObject)
 ''' @return:SelectedElement
 Function SelectElement(ByVal Msg$, _
-                           Optional ByVal Filter As Variant = Empty) ' _
+                           Optional ByVal filter As Variant = Empty) ' _
                            As SelectedElement
-    If IsEmpty(Filter) Then Filter = Array("AnyObject")
-    If VarType(Filter) = vbString Then Filter = ToStrVriAry(Filter)
-    If Not IsFilterType(Filter) Then Exit Function
+    If IsEmpty(filter) Then filter = Array("AnyObject")
+    If VarType(filter) = vbString Then filter = ToStrVriAry(filter)
+    If Not IsFilterType(filter) Then Exit Function
     
-    Dim Sel As Variant: Set Sel = CATIA.ActiveDocument.Selection
-    Sel.Clear
-    Select Case Sel.SelectElement2(Filter, Msg, False)
+    Dim sel As Variant: Set sel = CATIA.ActiveDocument.Selection
+    sel.Clear
+    Select Case sel.SelectElement2(filter, Msg, False)
         Case "Cancel", "Undo", "Redo"
              Set SelectElement = Nothing
             Exit Function
     End Select
     
-    Set SelectElement = Sel.item(1)
-    Sel.Clear
+    Set SelectElement = sel.item(1)
+    sel.Clear
 End Function
 
 ' 获取内部名称
@@ -113,7 +113,7 @@ End Function
 ''' @return:AnyObject
 Function GetParent_Of_T( _
     ByVal anyObj As AnyObject, _
-    ByVal T As String) _
+    ByVal t As String) _
     As AnyObject
     
     Dim anyObjName As String
@@ -130,10 +130,10 @@ Function GetParent_Of_T( _
         Set GetParent_Of_T = Nothing
         Exit Function
     End If
-    If TypeName(anyObj) = T Then
+    If TypeName(anyObj) = t Then
         Set GetParent_Of_T = anyObj
     Else
-        Set GetParent_Of_T = GetParent_Of_T(anyObj.Parent, T)
+        Set GetParent_Of_T = GetParent_Of_T(anyObj.Parent, t)
     End If
 End Function
 
@@ -221,12 +221,10 @@ Private Function IsFilterType(ByVal ary As Variant) As Boolean
     Dim ErrMsg$: ErrMsg = "过滤器类型无效" + vbNewLine + _
                           "需要为Variant(String)类型的数组" + vbNewLine + _
                           "(具体请参考文档)"
-    
     If Not IsStringAry(ary) Then
         MsgBox ErrMsg
         Exit Function
     End If
-    
     IsFilterType = True
 End Function
 
@@ -269,8 +267,8 @@ End Function
 ''' @param:OJ-Object
 ''' @param:T-String
 ''' @return:Boolean
-Function IsType_Of_T(ByVal oj As Object, ByVal T$) As Boolean
-    IsType_Of_T = IIf(TypeName(oj) = T, True, False)
+Function IsType_Of_T(ByVal oj As Object, ByVal t$) As Boolean
+    IsType_Of_T = IIf(TypeName(oj) = t, True, False)
 End Function
 
 
@@ -378,17 +376,30 @@ End Function
 ' 检查路径是否存在
 ''' @param:Path-路径
 ''' @return:Boolean
-Function IsExists(ByVal path$) As Boolean
-    IsExists = False
-    Dim FSO As Object: Set FSO = GetFSO
-    If FSO.FileExists(path) Then
-        IsExists = True: Exit Function ' 文件
-    ElseIf FSO.FolderExists(path) Then
-        IsExists = True: Exit Function ' 文件夹
+Function isExists(ByVal path$) As Boolean
+    isExists = False
+    Dim fso As Object: Set fso = GetFSO
+    If fso.FileExists(path) Then
+        isExists = True: Exit Function ' 文件
+    ElseIf fso.FolderExists(path) Then
+        isExists = True: Exit Function ' 文件夹
     End If
-    Set FSO = Nothing
+    Set fso = Nothing
 End Function
-
+Function DeleteMe(ByVal path$) As Boolean
+    DeleteMe = False
+    On Error Resume Next
+    Dim fso As Object: Set fso = GetFSO
+    If fso.FileExists(path) Then
+        fso.DeleteFile path, True
+    End If
+    If Error.Number = 0 Then
+        DeleteMe = True
+    Else
+    Error.Clear
+    End If
+    Set fso = Nothing
+End Function
 ' 获取新文件名
 ''' @param:Path-完整路径
 ''' @return:新的完整路径
@@ -397,7 +408,7 @@ Function GetNewName$(ByVal oldPath$)
     path = SplitPathName(oldPath)
     path(2) = "." & path(2)
     Dim newPath$: newPath = path(0) + "\" + path(1)
-    If Not IsExists(newPath + path(2)) Then
+    If Not isExists(newPath + path(2)) Then
         GetNewName = newPath + path(2)
         Exit Function
     End If
@@ -405,7 +416,7 @@ Function GetNewName$(ByVal oldPath$)
     Do
         i = i + 1
         TempName = newPath + "_" + CStr(i) + path(2)
-        If Not IsExists(TempName) Then
+        If Not isExists(TempName) Then
             GetNewName = TempName
             Exit Function
         End If
@@ -458,5 +469,89 @@ Public Function GetInput(Msg) As String
     End If
 End Function
 
+'@@param: oPath-路径
+Public Function ofParentPath(ByVal opath$)
+    Dim idx
+    idx = InStrRev(opath, "\")
+If idx > 0 Then
+        ofParentPath = Left(opath, idx)
+    Else
+        ofParentPath = opath
+    End If
+End Function
 
+'@@ param:ostr-时间格式
+
+Public Function timestamp(ostr) As String
+    Dim FT As String  ' 显式声明变量
+    
+    Select Case True
+        Case ExistsKey(ostr, "i"): FT = "yymmdd_hhnn"
+        Case ExistsKey(ostr, "h"): FT = "yymmdd_hh"
+        Case ExistsKey(ostr, "d"): FT = "yymmdd"
+        Case ExistsKey(ostr, "s"): FT = "yymmdd_hhnnss"
+        Case Else: FT = "yymmdd"  ' 默认格式，避免未赋值情况
+    End Select
+    
+    timestamp = Format(Now, FT)
+End Function
+
+
+
+Function isEngPath(ByVal path As String) As Boolean
+    Dim i As Long, charCode As Long
+    Dim validChars As String
+    
+    ' 定义允许的英文符号（包括路径分隔符）
+    validChars = "!@#$%^&*()-_=+[]{};:'"",.<>/?\|~\/"
+    
+    ' 遍历路径中的每个字符
+    For i = 1 To Len(path)
+        charCode = AscW(Mid(path, i, 1))
+        
+        ' 检查是否为英文字母（A-Z, a-z）
+        If (charCode >= 65 And charCode <= 90) Or _
+           (charCode >= 97 And charCode <= 122) Then
+            GoTo NextChar  ' 等同于 Continue For
+        End If
+        
+        ' 检查是否为数字（0-9）
+        If charCode >= 48 And charCode <= 57 Then
+            GoTo NextChar  ' 等同于 Continue For
+        End If
+        
+        ' 检查是否为允许的英文符号
+        If InStr(validChars, Mid(path, i, 1)) > 0 Then
+            GoTo NextChar  ' 等同于 Continue For
+        End If
+        
+        ' 如果都不是，则路径包含非法字符
+        isEngPath = False
+        Exit Function
+        
+NextChar:
+    Next i
+    
+    ' 所有字符都通过检查
+    isEngPath = True
+End Function
+
+' 此函数用于检查输入的路径是否包含中文字符
+' 参数:
+'   pathToCheck - 需要检查的路径
+' 返回值:
+'   Boolean 类型，True 表示路径包含中文，False 表示不包含
+Function isPathchn(pathToCheck) As Boolean
+    Dim regEx As Object
+    Set regEx = CreateObject("VBScript.RegExp")
+    
+    ' 设置正则表达式模式，匹配中文字符
+    regEx.Pattern = "[\u4e00-\u9fa5]"
+    regEx.IgnoreCase = True
+    regEx.Global = True
+    
+    ' 执行匹配并返回结果
+    isPathchn = regEx.test(pathToCheck)
+    Set regEx = Nothing
+End Function
 

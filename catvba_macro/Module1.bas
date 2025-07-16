@@ -1,30 +1,31 @@
-Attribute VB_Name = "ç§»é™¤æ—§çš„"
+Attribute VB_Name = "Module1"
+'Attribute VB_Name = "ÒÆ³ý¾ÉµÄ"
 Sub CATMain()
-Set oprd = CATIA.ActiveDocument.Product
+Set oprd = CATIA.ActiveDocument.product
 rm oprd
 End Sub
 Sub rm(oprd)
     On Error Resume Next
      Set refPrd = oprd.ReferenceProduct
-     Set oprt = refPrd.Parent.Part
+     Set oprt = refPrd.Parent.part
     Set colls = refPrd.Publications
     colls.Remove ("Location")
     colls.Remove ("iMass")
     colls.Remove ("iDensity")
     colls.Remove ("iThickness")
     colls.Remove ("iMaterial")
-     Set colls = refPrd.Parent.Part.Parameters.RootParameterSet.ParameterSets
+     Set colls = refPrd.Parent.part.Parameters.RootParameterSet.ParameterSets
         Set cm = colls.GetItem("cm")
         Set osel = CATIA.ActiveDocument.Selection
         osel.Clear
         osel.Add cm
         osel.Delete
-		
-     Set colls = refPrd.Parent.Part.relations
+        
+     Set colls = refPrd.Parent.part.relations
      colls.Remove ("CalM")
      colls.Remove ("CMAS")
      colls.Remove ("CTK")
-	 
+     
      Set colls = refPrd.UserRefProperties
      colls.Remove ("iMass")
      colls.Remove ("iMaterial")
