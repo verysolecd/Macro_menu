@@ -229,8 +229,8 @@ Private Function IsFilterType(ByVal ary As Variant) As Boolean
 End Function
 
 ' 将字符串转换为变体数组
-Private Function ToStrVriAry(ByVal s$) As Variant
-    Dim ary As Variant: ary = Split(s, ",")
+Private Function ToStrVriAry(ByVal S$) As Variant
+    Dim ary As Variant: ary = Split(S, ",")
     Dim vriary() As Variant: ReDim vriary(UBound(ary))
     Dim i&
     For i = 0 To UBound(ary)
@@ -269,6 +269,7 @@ End Function
 ''' @return:Boolean
 Function IsType_Of_T(ByVal oj As Object, ByVal t$) As Boolean
     IsType_Of_T = IIf(TypeName(oj) = t, True, False)
+    MsgBox TypeName(oj)
 End Function
 
 
@@ -458,14 +459,13 @@ Function SW_GetTime#()
 End Function
 
 Public Function GetInput(Msg) As String
-    Dim userInput As String
-    userInput = InputBox(Msg, "输入提示")
-    
+    Dim UserInput As String
+    UserInput = InputBox(Msg, "输入提示")
     ' 如果用户没有输入或点击取消，则返回默认值"XX"
-    If userInput = "" Or userInput = "0" Then
+    If UserInput = "" Or UserInput = "0" Then
         GetInput = ""
     Else
-        GetInput = userInput
+        GetInput = UserInput
     End If
 End Function
 
@@ -501,34 +501,27 @@ End Function
 Function isEngPath(ByVal path As String) As Boolean
     Dim i As Long, charCode As Long
     Dim validChars As String
-    
     ' 定义允许的英文符号（包括路径分隔符）
     validChars = "!@#$%^&*()-_=+[]{};:'"",.<>/?\|~\/"
-    
     ' 遍历路径中的每个字符
     For i = 1 To Len(path)
         charCode = AscW(Mid(path, i, 1))
-        
         ' 检查是否为英文字母（A-Z, a-z）
         If (charCode >= 65 And charCode <= 90) Or _
            (charCode >= 97 And charCode <= 122) Then
             GoTo NextChar  ' 等同于 Continue For
         End If
-        
         ' 检查是否为数字（0-9）
         If charCode >= 48 And charCode <= 57 Then
             GoTo NextChar  ' 等同于 Continue For
         End If
-        
         ' 检查是否为允许的英文符号
         If InStr(validChars, Mid(path, i, 1)) > 0 Then
             GoTo NextChar  ' 等同于 Continue For
         End If
-        
         ' 如果都不是，则路径包含非法字符
         isEngPath = False
         Exit Function
-        
 NextChar:
     Next i
     
@@ -549,9 +542,32 @@ Function isPathchn(pathToCheck) As Boolean
     regEx.Pattern = "[\u4e00-\u9fa5]"
     regEx.IgnoreCase = True
     regEx.Global = True
-    
     ' 执行匹配并返回结果
     isPathchn = regEx.test(pathToCheck)
     Set regEx = Nothing
 End Function
+'@iStr string
+'获得字符串最后一个"iext"之前的字符或返回原字符
+Function strbflast(Str, iext)
+Dim idx
+idx = InStrRev(Str, iext)
+If idx > 0 Then
+        strbflast = Left(Str, idx)
+    Else
+        strbflast = Str
+    End If
+End Function
 
+'@iStr string
+'获得字符串第一个"_"之前的字符或返回原字符
+Function getPrefix(iStr)
+    Dim oPrefix As String
+        Dim underscorePos As Long
+        underscorePos = InStr(iStr, "_")
+        If underscorePos > 0 Then
+            oPrefix = Left(iStr, underscorePos - 1)
+        Else
+           oPrefix = iStr
+        End If
+End Function
+ 

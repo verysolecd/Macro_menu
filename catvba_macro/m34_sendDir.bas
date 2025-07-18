@@ -10,22 +10,30 @@ Sub sendDir()
     CATIA.DisplayFileAlerts = True
     Dim odoc
     Set odoc = CATIA.ActiveDocument
-    Dim rootprd
-    Set rootprd = odoc.product
+
     dpath = odoc.path
     dName = odoc.Name
     initial = dpath & "\" & dName
+ 
+    Dim pn
+    If KCL.IsType_Of_T(odoc, "DrawingDocument") Then
+        pn = strbflast(odoc.Name, ".")
+    Else
+        pn = odoc.product.PartNumber
+    End If
+    
+    fname = rmchn(pn)    '将所有中文字符替换为&
+        
     Dim bckFolderName As String
-    bckFolderName = rootprd.PartNumber & "_" & KCL.timestamp("d")
+    bckFolderName = KCL.strbflast(fname, "_") & "_" & KCL.timestamp("d")
     
     Dim opath
     opath = KCL.ofParentPath(dpath)
-    Set TCF = CATIA.FileSystem.CreateFolder(bckFolderName)
     
-    bckFolder = opath & "\" & bckFolderName
-    
+    bckFolder = opath & bckFolderName
     If Not KCL.isPathchn(bckFolder) Then
         Set Send = CATIA.CreateSendTo()
+        Send.KeepDirectory (1)  '1 keepdir ， 0 no keep dir
         Send.SetInitialFile initial
         Send.SetDirectoryFile bckFolder
         Send.Run
@@ -33,13 +41,21 @@ Sub sendDir()
     Else
         MsgBox bckFolder & vbNewLine & _
         "  " & vbNewLine & _
-         "路径包含非法字符，无法备份，请检查!"
+         "你的产品零件号包含非法字符，无法备份，请检查!"
     End If
 End Sub
+
+
+Function rmchn(inputString) As String
+    Dim regEx: Set regEx = CreateObject("VBScript.RegExp")
+    regEx.Pattern = "[\u4e00-\u9fa5]"
+    regEx.Global = True
+    rmchn = regEx.Replace(inputString, " ")
+    Set regEx = Nothing
+End Function
 Sub mdlog()
     Dim odoc, currPath
     Set odoc = CATIA.ActiveDocument
     currPath = IIf(odoc.path = "", "", odoc.path)
 mdpath = currPath & ".md"
 End Sub
-
