@@ -269,7 +269,7 @@ End Function
 ''' @return:Boolean
 Function IsType_Of_T(ByVal oj As Object, ByVal t$) As Boolean
     IsType_Of_T = IIf(TypeName(oj) = t, True, False)
-    MsgBox TypeName(oj)
+'    MsgBox TypeName(oj)
 End Function
 
 
@@ -482,9 +482,8 @@ End Function
 
 '@@ param:ostr-时间格式
 
-Public Function timestamp(ostr) As String
+Public Function timestamp(Optional ByVal ostr) As String
     Dim FT As String  ' 显式声明变量
-    
     Select Case True
         Case ExistsKey(ostr, "i"): FT = "yymmdd_hhnn"
         Case ExistsKey(ostr, "h"): FT = "yymmdd_hh"
@@ -560,14 +559,24 @@ End Function
 
 '@iStr string
 '获得字符串第一个"_"之前的字符或返回原字符
-Function getPrefix(iStr)
-    Dim oPrefix As String
+Function strbf1st(iStr, iext)
+    Dim oPrefix
         Dim underscorePos As Long
-        underscorePos = InStr(iStr, "_")
+        underscorePos = InStr(iStr, iext)
         If underscorePos > 0 Then
             oPrefix = Left(iStr, underscorePos - 1)
         Else
            oPrefix = iStr
         End If
+        strbf1st = oPrefix
 End Function
  
+Function straf1st(iStr, iext)
+Dim idx
+idx = InStr(iStr, iext)
+If idx > 0 Then
+        straf1st = Mid(iStr, idx)
+    Else
+        straf1st = iStr
+    End If
+End Function

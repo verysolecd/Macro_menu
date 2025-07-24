@@ -8,24 +8,22 @@ Attribute VB_Name = "m34_sendDir"
 
 Sub sendDir()
     CATIA.DisplayFileAlerts = True
-    Dim odoc
-    Set odoc = CATIA.ActiveDocument
-
-    dpath = odoc.path
-    dName = odoc.Name
+    Dim oDoc
+    Set oDoc = CATIA.ActiveDocument
+    dpath = oDoc.path
+    dName = oDoc.Name
     initial = dpath & "\" & dName
- 
     Dim pn
-    If KCL.IsType_Of_T(odoc, "DrawingDocument") Then
-        pn = strbflast(odoc.Name, ".")
+    If KCL.IsType_Of_T(oDoc, "DrawingDocument") Then
+        pn = strbflast(oDoc.Name, ".")
     Else
-        pn = odoc.product.PartNumber
+        pn = oDoc.product.PartNumber
     End If
     
     fname = rmchn(pn)    '将所有中文字符替换为&
         
     Dim bckFolderName As String
-    bckFolderName = KCL.strbflast(fname, "_") & "_" & KCL.timestamp("d")
+    bckFolderName = KCL.strbflast(fname, "_") & "_" & KCL.timestamp("min")
     
     Dim opath
     opath = KCL.ofParentPath(dpath)
@@ -54,8 +52,8 @@ Function rmchn(inputString) As String
     Set regEx = Nothing
 End Function
 Sub mdlog()
-    Dim odoc, currPath
-    Set odoc = CATIA.ActiveDocument
-    currPath = IIf(odoc.path = "", "", odoc.path)
-mdpath = currPath & ".md"
+    Dim oDoc, currPath
+    Set oDoc = CATIA.ActiveDocument
+    currPath = IIf(oDoc.path = "", "", oDoc.path)
+    mdpath = currPath & ".md"
 End Sub

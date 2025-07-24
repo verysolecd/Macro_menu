@@ -17,11 +17,11 @@ Sub ex2stp_zip()
         GoTo ShowMessage
     End If
     
-    Dim odoc As Document
-    Set odoc = CATIA.ActiveDocument
+    Dim oDoc As Document
+    Set oDoc = CATIA.ActiveDocument
     
     Dim outputpath As String
-    outputpath = GetOutputPath(odoc)
+    outputpath = GetOutputPath(oDoc)
     
     If outputpath = "" Then
         errorMessage = "缺少导出路径，操作取消！"
@@ -30,18 +30,17 @@ Sub ex2stp_zip()
         Dim tdy As String
         tdy = Format(Now, "yymmdd.hh.nn")
         Dim pn As String
-        pn = odoc.product.PartNumber
-        odoc.product.PartNumber = strbflast(pn, "_") & "_" & tdy ' 零件号更新
+        pn = oDoc.product.PartNumber
+        oDoc.product.PartNumber = KCL.strbflast(pn, "_") & "_" & tdy ' 零件号更新
+        stpname = KCL.strbf1st(oDoc.product.PartNumber, "_") & "_Prj_Housing_" & tdy
         Dim stpfilepath As String
-        
         Dim opath(2) '0=路径，1=name，2=extname
         opath(0) = outputpath
-        opath(1) = GetSTPFileName(odoc.product)
+        opath(1) = stpname
         opath(2) = "stp"
         stpfilepath = KCL.JoinPathName(opath)
         MsgBox stpfilepath
-        odoc.ExportData stpfilepath, "stp"
-        
+        oDoc.ExportData stpfilepath, "stp"
         If Err.Number <> 0 Then
             errorMessage = "STP 导出失败：" & Err.Description
             GoTo ShowMessage
@@ -50,7 +49,6 @@ Sub ex2stp_zip()
             errorMessage = "STP 文件导出后未找到：" & stpfilepath
             GoTo ShowMessage
         End If
-        
         If Not ex2zip(stpfilepath) Then
             GoTo ShowMessage
          End If
@@ -64,7 +62,7 @@ ShowMessage:
         MsgBox stpfilepath & ".zip文件已压缩,STP 原始文件已删除。", vbInformation
     End If
     
-    Set odoc = Nothing
+    Set oDoc = Nothing
     On Error GoTo 0 ' 关闭错误处理
     errorMessage = "" ' 重置错误信息
 End Sub
@@ -98,11 +96,6 @@ Private Function GetOutputPath(ByVal doc As Document) As String
     End Select
 End Function
 
-Private Function GetSTPFileName(ByVal product As Object) As String   ' 生成带时间戳的STP文件名
-    Dim timestamp As String
-    timestamp = Format(Now, "yymmdd_hhnn")
-    GetSTPFileName = KCL.getPrefix(product.PartNumber) & "_Prj_Housing_" & timestamp
-End Function
 Function ex2zip(oFilepath) As Boolean
     Dim zipPath, result, shell, cmd, path7z
     path7z = "D:\for use\7-Zip\7z.exe"
