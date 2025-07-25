@@ -36,6 +36,7 @@ Private Sub Class_Initialize()
         End If
             Set rootprd = CATIA.ActiveDocument.product
         On Error GoTo 0
+        
         If Not rootprd Is Nothing Then
             rootprd.ApplyWorkMode (3)
         End If
@@ -291,35 +292,36 @@ Private Sub iniPrt(oprd)
                    '---创建EKL
             oRule.Reset
             oRule.SetNT "sum_all_Vol", "Program"
-            oRule.str = eklstr
+            oRule.Str = eklstr
             oRule.Desc = "汇总体积"
             checkPara oRule, colls
                     '---创建Cal_mass
             oRule.Reset
             oRule.SetNT "cal_Mass", "Formula"
             oRule.Desc = "链接重量"
-            oRule.str = "Part_info\sumVol *Part_info\Density"
+    
+            oRule.Str = "round(Part_info\sumVol *Part_info\Density,""kg"",3)"   ''''"Part_info\sumVol *Part_info\Density"
             Set oRule.Target = infoPara(3).obj
             checkPara oRule, colls
                     '---创建link_mass
             oRule.Reset
             oRule.SetNT "link_Mass", "Formula"
             oRule.Desc = "链接重量"
-            oRule.str = "Part_info\Mass"
+            oRule.Str = "Part_info\Mass"
             Set oRule.Target = refPrd.UserRefProperties.item("Mass")
             checkPara oRule, colls
                     '---创建link_thickness
             oRule.Reset
             oRule.SetNT "link_Thickness", "Formula"
             oRule.Desc = "链接厚度"
-            oRule.str = "Part_info\Thickness"
+            oRule.Str = "Part_info\Thickness"
             Set oRule.Target = refPrd.UserRefProperties.item("Thickness")
             checkPara oRule, colls
                     '---创建link_Density
             oRule.Reset
             oRule.SetNT "link_Density", "Formula"
             oRule.Desc = "链接密度"
-            oRule.str = "Part_info\Density"
+            oRule.Str = "Part_info\Density"
             Set oRule.Target = refPrd.UserRefProperties.item("Density")
             checkPara oRule, colls
             oRule.Reset
@@ -333,8 +335,8 @@ Private Function checkPara(thispara, colls)
         Set thispara.obj = getPara(thispara, colls)(0) '已有参数和公式，校验默认值'
         Select Case thispara.iType  '只有formula和rule才需要校核其内容
             Case "Program", "Formula"
-                If thispara.obj.Value <> thispara.str Then
-                 thispara.obj.Modify thispara.str
+                If thispara.obj.Value <> thispara.Str Then
+                 thispara.obj.Modify thispara.Str
 '                  Debug.Print "已经修改" & thispara.obj.Name
                 End If
                 thispara.obj.Hidden = True
@@ -372,15 +374,15 @@ Private Function paraCreatobj(thispara, colls)
             Case "list"
                 Set thispara.obj = colls.CreateList(thispara.Name)
             Case "Mass", "Density", "Length", "Volume" '所有dimension参数
-                Set thispara.obj = colls.CreateDimension(thispara.Name, thispara.iType, thispara.str)
+                Set thispara.obj = colls.CreateDimension(thispara.Name, thispara.iType, thispara.Str)
             Case "String"
-                Set thispara.obj = colls.CreateString(thispara.Name, thispara.str)
+                Set thispara.obj = colls.CreateString(thispara.Name, thispara.Str)
             Case "Formula"
-                Set thispara.obj = colls.CreateFormula(thispara.Name, thispara.Desc, thispara.Target, thispara.str)
+                Set thispara.obj = colls.CreateFormula(thispara.Name, thispara.Desc, thispara.Target, thispara.Str)
                  thispara.obj.Hidden = True
             Case "Program"
                   On Error Resume Next
-                    Set thispara.obj = colls.CreateProgram(thispara.Name, thispara.Desc, thispara.str)
+                    Set thispara.obj = colls.CreateProgram(thispara.Name, thispara.Desc, thispara.Str)
                   If Error.Number <> 0 Then
                     Debug.Print "缺少KWA lisence, 无法创建rule单位"
                   End If

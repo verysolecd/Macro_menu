@@ -16,11 +16,11 @@ Sub Cal_Mass()
                 Call pdm.Assmass(gPrd)
             Else
                 Call setgprd
-                Error.Clear
+                Err.Clear
                 Call pdm.Assmass(gPrd)
             End If
             
-   If Error.Number > 0 Then
+   If Err.Number > 0 Then
         MsgBox "程序错误,请确认零件模板是否应用：" & Err.Description, vbCritical
    Else
             MsgBox "重量已计算"
