@@ -13,22 +13,25 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
-'Version 5#
-'Begin {C62A69F0-16DC-11CE-9E98-00AA00574A4F} Cat_Macro_Menu_View
-'   Caption = "UserForm1"
-'   ClientHeight = 7994
-'   ClientLeft = 119
-'   ClientTop = 448
-'   ClientWidth = 5418
-'   OleObjectBlob   =   "Cat_Macro_Menu_View.frx":0000
-'   StartUpPosition = 1    'CenterOwner
-'End
-'Attribute VB_Name = "Cat_Macro_Menu_View"
-'Attribute VB_GlobalNameSpace = False
-'Attribute VB_Creatable = False
-'Attribute VB_PredeclaredId = True
-'Attribute VB_Exposed = False
+' VERSION 5.00
+' Begin {C62A69F0-16DC-11CE-9E98-00AA00574A4F} Cat_Macro_Menu_View
+   ' Caption         =   "UserForm1"
+   ' ClientHeight    =   7995
+   ' ClientLeft      =   120
+   ' ClientTop       =   450
+   ' ClientWidth     =   11595
+   ' OleObjectBlob   =   "Cat_Macro_Menu_View.frx":0000
+   ' StartUpPosition =   1  'CenterOwner
+' End
+' Attribute VB_Name = "Cat_Macro_Menu_View"
+' Attribute VB_GlobalNameSpace = False
+' Attribute VB_Creatable = False
+' Attribute VB_PredeclaredId = True
+' Attribute VB_Exposed = False
+'Attribute lblAuthor.VB_VarHelpID = -1
+'Attribute MPgs.VB_VarHelpID = -1
 'Attribute prdObserver.VB_VarHelpID = -1
+'Attribute lblProductInfo.VB_VarHelpID = -1
 ' 窗体边距
 Private FrmMargin As Variant ' 上, 右, 下, 左 窗体边距调整值
 
@@ -38,15 +41,15 @@ Private Const ADJUST_F_W = 4
 Private Const ADJUST_F_H = 4
 
 ' 多页控件调整
-Private Const ADJUST_M_W = 64 ' 多页控件宽度调整值
-Private Const ADJUST_M_H = 90 ' 多页控件高度调整值
+Private Const ADJUST_M_W = 15 ' 多页控件宽度调整值
+Private Const ADJUST_M_H = 2 ' 多页控件高度调整值
 
-Private Const Tab_W = 45 ' Tab固定宽度
-Private Const Tab_H = 20 ' TAB高度
+Private Const Tab_W = 30 ' Tab固定宽度
+Private Const Tab_H = 17 ' TAB高度
 Private Const Tab_frontsize = 10
 ' 按钮尺寸
-Private Const BTN_W = 62 ' 按钮的固定宽度
-Private Const BTN_H = 22 ' 单个按钮的高度
+Private Const BTN_W = 60 ' 按钮的固定宽度
+Private Const BTN_H = 20 ' 单个按钮的高度
 Private Const BTN_frontsize = 8 ' 按钮字体大小
 
 '标签尺寸
@@ -58,31 +61,34 @@ Private Const lb_frontsize = 10 ' 字体大小
 Private mBtns As Object ' 按钮事件集合
 Private WithEvents prdObserver As ProductObserver
 Attribute prdObserver.VB_VarHelpID = -1
-Private lblProductInfo As MSForms.Label
+
+Private WithEvents lblProductInfo As MSForms.Label
+Attribute lblProductInfo.VB_VarHelpID = -1
+
+Private WithEvents lblAuthor As MSForms.Label
+Attribute lblAuthor.VB_VarHelpID = -1
+
+Private WithEvents MPgs As MSForms.MultiPage
+Attribute MPgs.VB_VarHelpID = -1
+
 Private Const itl = "公众号:键盘造车手"
 
 Option Explicit
-
 ' 设置窗体信息
 Sub Set_FormInfo(ByVal InfoLst As Object, _
                  ByVal PageMap As Object, _
                  ByVal FormTitle As String, _
                  ByVal CloseType As Boolean)
-    
          ' 连接到全局产品观察者
     Set prdObserver = ProductObserver
-                 
     ' 初始化窗体边距
-    FrmMargin = Array(2, 2, 2, 0) ' 上, 右, 下, 左 窗体边距调整值
-    
+    FrmMargin = Array(2, 2, 2, 2) ' 上, 右, 下, 左 窗体边距调整值
     ' 创建多页控件
-    Dim MPgs As MultiPage
-    Set MPgs = Me.Controls.Add("Forms.MultiPage.1", 1, True)
+    Set MPgs = Me.Controls.Add("Forms.MultiPage.1", "MPgs", True)
     
     Dim Pgs As Pages
      Set Pgs = MPgs.Pages
      Pgs.Clear
-    
     Dim Key As Long, KeyStr As Variant
     Dim Pg As Page, pName As String
     
@@ -95,12 +101,9 @@ Sub Set_FormInfo(ByVal InfoLst As Object, _
     For Each KeyStr In InfoLst
         Key = CLng(KeyStr)
         If Not PageMap.Exists(Key) Then GoTo continue
-        
         pName = PageMap(Key)
-        
         Set Pg = Get_Page(Pgs, pName)
         Set BtnInfos = InfoLst(KeyStr)
-        
         For Each Info In BtnInfos
             Set btn = Init_Button(Pg.Controls, Key, Info)
             Set BtnEvt = New Button_Evt
@@ -109,46 +112,47 @@ Sub Set_FormInfo(ByVal InfoLst As Object, _
         Next
 continue:
     Next
-    
         Set mBtns = Btns
     Call Set_MPage(MPgs)
     Call Set_Form(MPgs, FormTitle)
-    
-  
-    
-
     Set lblProductInfo = Me.Controls.Add("Forms.Label.1", "lblProductInfo", True)
-    
    With lblProductInfo
         .Caption = "产品待选择"
         .Top = FrmMargin(0)
         .Left = 2
-        
         .Width = MPgs.Width - 20
         .Height = lb_H
-        
-        
         .Font.Size = lb_frontsize
         .BackColor = vbGreen
         .TextAlign = fmTextAlignCenter
         .BorderStyle = fmBorderStyleSingle
-        
         .WordWrap = False              ' 不换行
          .AutoSize = True
-        
-        
+    End With
+    ' 新增：创建底部的作者信息栏
+    Set lblAuthor = Me.Controls.Add("Forms.Label.1", "lblAuthor", True)
+    With lblAuthor
+        .Caption = itl ' 使用常量显示作者信息
+        .Top = MPgs.Top + MPgs.Height + 2 * FrmMargin(1) ' 放置在多页控件下方
+        .Left = lblProductInfo.Left + 5 ' 与顶部信息栏左对齐
+        .Width = lblProductInfo.Width ' 与顶部信息栏同宽
+        .Height = lb_H
+        .Font.Size = lb_frontsize - 1 ' 字体可以稍小一些
+        .TextAlign = fmTextAlignCenter
+         .WordWrap = False              ' 不换行
+         .AutoSize = True
+          .BorderStyle = fmBorderStyleSingle
     End With
     ' 初始更新产品信息
     UpdateProductInfo
-
-    Me.Caption = itl
-       
 End Sub
 
 ' 设置窗体属性
 Private Sub Set_Form(ByVal MPgs As MultiPage, ByVal Cap As String)
     With Me
-        .Height = MPgs.Height + ADJUST_F_H
+        Dim requiredInsideHeight
+        requiredInsideHeight = MPgs.Top + MPgs.Height + lb_H + FrmMargin(2) + ADJUST_F_H
+        .Height = requiredInsideHeight + (Me.Height - Me.InsideHeight)
         .Width = MPgs.Width + ADJUST_F_W
         .Caption = Cap
     End With
@@ -156,7 +160,7 @@ End Sub
 
 ' 设置多页控件属性
 Private Sub Set_MPage(ByVal MPgs As MultiPage)
-    MPgs.Width = FrmMargin(1) + BTN_W + FrmMargin(3) + ADJUST_M_W
+    MPgs.Width = FrmMargin(1) + Tab_W + BTN_W + FrmMargin(3) + ADJUST_M_W
     With MPgs
         .Top = lb_H + 2 * FrmMargin(1)
         .Left = FrmMargin(0)
@@ -166,7 +170,6 @@ Private Sub Set_MPage(ByVal MPgs As MultiPage)
         .Font.Size = Tab_frontsize
         .MultiRow = True
         .TabOrientation = fmTabOrientationLeft
-        
         .Style = fmTabStyleButtons  ' 切换为按钮样式
      End With
     Dim Pg As Page
@@ -275,6 +278,38 @@ Private Sub UpdateProductInfo()
         lblProductInfo.Caption = msg
         lblProductInfo.BackColor = mcolor
 End Sub
+
+Private Sub toMP()
+    On Error Resume Next
+    Dim shell As Object
+    Set shell = CreateObject("WScript.Shell")
+    shell.Run "https://mp.weixin.qq.com/s?__biz=MzU5MTk1MDUwNg==&mid=2247484525&idx=1&sn=554a37aff4bc876424043a9aa5968d6d&scene=21&poc_token=HCUyg2ijuHYXMx810A5yID4tAYIemJFdJ7FpVvew"
+    Set shell = Nothing
+    If Err.Number <> 0 Then
+        MsgBox "无法公众号链接" & vbCrLf & "错误: " & Err.Description, vbExclamation, "链接错误"
+    End If
+    On Error GoTo 0
+End Sub
+
+Private Sub UserForm_Click()
+    toMP
+End Sub
+
+Private Sub lblAuthor_Click()
+    toMP
+End Sub
+
+Private Sub lblProductInfo_Click()
+    toMP
+End Sub
+
+Private Sub MPgs_MouseDown(ByVal Index As Long, ByVal Button As Integer, ByVal Shift As Integer, ByVal X As Single, ByVal Y As Single)
+    If Button <> 1 Then Exit Sub
+      If X > Tab_W - 32 Then
+    toMP
+    End If
+End Sub
+
 
 
 
