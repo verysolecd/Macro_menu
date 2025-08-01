@@ -21,7 +21,7 @@ End Sub
 Public Sub Reset()
     Me.Name = ""
     Me.iType = ""
-    Me.str = ""
+    Me.Str = ""
     Me.Desc = ""
     Set Me.obj = Nothing
     Set Me.Target = Nothing
@@ -44,10 +44,10 @@ End Property
 Public Property Let Desc(ByVal Value As Variant)
     pDesc = Value
 End Property
-Public Property Get str() As Variant
-    str = pStr
+Public Property Get Str() As Variant
+    Str = pStr
 End Property
-Public Property Let str(ByVal Value As Variant)
+Public Property Let Str(ByVal Value As Variant)
     pStr = Value
 End Property
 Public Property Get Target()

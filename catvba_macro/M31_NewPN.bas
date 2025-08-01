@@ -8,16 +8,17 @@ Attribute VB_Name = "M31_NewPN"
 
 Private prj
 Sub CATMain()
- If Not CanExecute("ProductDocument") Then Exit Sub
-Set rootPrd = CATIA.ActiveDocument.Product
-If rootPrd.PartNumber = "_Prj_Housing_Asm" Then
+
+If Not KCL.CanExecute("ProductDocument") Then Exit Sub
+Set rootprd = CATIA.ActiveDocument.product
+If Not rootprd Is Nothing Then
  Dim imsg
           imsg = "请输入你的项目名称"
         prj = KCL.GetInput(imsg)
         If prj = "" Then
             Exit Sub
         End If
-    Call rePn(rootPrd)
+    Call rePn(rootprd)
 Else
  Exit Sub
 End If
@@ -25,8 +26,9 @@ End Sub
 
 Sub rePn(oprd)
     pn = oprd.PartNumber
-    oprd.PartNumber = prj & "_" & pn
-    For Each Product In oprd.Products
-        Call rePn(Product)
+    purePN = KCL.straf1st(pn, "_")
+    oprd.PartNumber = prj & "_" & purePN
+    For Each product In oprd.Products
+        Call rePn(product)
         Next
 End Sub

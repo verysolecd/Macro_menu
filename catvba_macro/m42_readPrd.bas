@@ -1,4 +1,4 @@
-Attribute VB_Name = "m41_readPrd"
+Attribute VB_Name = "m42_readPrd"
 'Attribute VB_Name = "ReadPrd"
 '{gp:4}
 '{Ep:readPrd}
@@ -10,7 +10,6 @@ Sub readPrd()
     If pdm Is Nothing Then
      Set pdm = New class_PDM
     End If
-
  '---------获取待修改产品 '---------遍历修改产品及子产品
     If gPrd Is Nothing Then
          MsgBox "请先选择产品，程序将退出"
@@ -25,10 +24,8 @@ Sub readPrd()
          
         Dim Prd2Read
         Set Prd2Read = gPrd
-        
         If Not Prd2Read Is Nothing Then
             xlm.inject_data currRow, pdm.infoPrd(Prd2Read)
-            
             Dim children
             Set children = Prd2Read.Products
             For i = 1 To children.Count

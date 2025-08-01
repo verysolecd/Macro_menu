@@ -1,12 +1,13 @@
 Attribute VB_Name = "M31_NewPN2"
 'Attribute VB_Name = "m30_NewPn2"
-'{GP:3}
+'{GP:111}
 '{Ep:CATMain}
 '{Caption:件号后缀}
 '{ControlTipText:为所有零件号增加项目前缀}
 '{BackColor:}
-Private odate
+Private oSuffix
 Sub CATMain()
+If Not KCL.CanExecute("ProductDocument") Then Exit Sub
     If pdm Is Nothing Then
         Set pdm = New class_PDM
     End If
@@ -16,19 +17,19 @@ Sub CATMain()
     Else
         Dim imsg
               imsg = "请输入后缀"
-            odate = KCL.GetInput(imsg)
-            If odate = "" Then
+            oSuffix = KCL.GetInput(imsg)
+            If oSuffix = "" Then
                 Exit Sub
             End If
-        Call rePn(oprd)
+        Call postPn(oprd)
     End If
 End Sub
 
-
-Sub rePn(oprd)
+Sub postPn(oprd)
     pn = oprd.PartNumber
-    oprd.PartNumber = pn & "_" & odate
-    For Each Product In oprd.Products
-        Call rePn(Product)
+    oprd.PartNumber = pn & "_" & oSuffix
+    For Each product In oprd.Products
+        Call postPn(product)
         Next
 End Sub
+

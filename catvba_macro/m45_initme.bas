@@ -1,4 +1,4 @@
-Attribute VB_Name = "m44_initme"
+Attribute VB_Name = "m45_initme"
 'Attribute VB_Name = "initme"
 '{GP:4}
 '{Ep:initme}
@@ -13,17 +13,11 @@ If Not KCL.CanExecute("ProductDocument") Then Exit Sub
      If pdm Is Nothing Then
           Set pdm = New class_PDM
      End If
-     
- 
-     
+  
      Set allPN = KCL.InitDic(vbTextCompare)
      allPN.RemoveAll
      
     Dim iprd
-    
-
-    
-    
     
        Set iprd = pdm.defgprd()
       
@@ -48,8 +42,8 @@ Sub ini_oPrd(oprd)
             allPN(oprd.PartNumber) = 1
             Call pdm.initPrd(oprd)
         End If
-            For Each Product In oprd.Products
-                Call ini_oPrd(Product)
+            For Each product In oprd.Products
+                Call ini_oPrd(product)
         Next
 End Sub
 

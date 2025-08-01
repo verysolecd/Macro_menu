@@ -14,11 +14,11 @@ Private mSW& ' 秒表开始时间
 
 ' 主程序入口 - 循环选择项目
 Sub CATMain()
-    Dim Msg$: Msg = "请选择项目 : 按ESC键退出"
+    Dim msg$: msg = "请选择项目 : 按ESC键退出"
     Dim SI As AnyObject
     Dim doc As Document: Set doc = CATIA.ActiveDocument
     Do
-        Set SI = SelectItem(Msg)
+        Set SI = SelectItem(msg)
         If IsNothing(SI) Then Exit Do
         Stop
     Loop
@@ -62,10 +62,10 @@ End Function
 ''' @param:Msg-提示信息
 ''' @param:Filter-array(string),string 选择过滤器(默认为AnyObject)
 ''' @return:AnyObject
-Function SelectItem(ByVal Msg$, _
+Function SelectItem(ByVal msg$, _
                            Optional ByVal filter As Variant = Empty)
     Dim se As SelectedElement
-    Set se = SelectElement(Msg, filter)
+    Set se = SelectElement(msg, filter)
     
     If IsNothing(se) Then
         Set SelectItem = se
@@ -78,7 +78,7 @@ End Function
 ''' @param:Msg-提示信息
 ''' @param:Filter-array(string),string 选择过滤器(默认为AnyObject)
 ''' @return:SelectedElement
-Function SelectElement(ByVal Msg$, _
+Function SelectElement(ByVal msg$, _
                            Optional ByVal filter As Variant = Empty) ' _
                            As SelectedElement
     If IsEmpty(filter) Then filter = Array("AnyObject")
@@ -87,7 +87,7 @@ Function SelectElement(ByVal Msg$, _
     
     Dim sel As Variant: Set sel = CATIA.ActiveDocument.Selection
     sel.Clear
-    Select Case sel.SelectElement2(filter, Msg, False)
+    Select Case sel.SelectElement2(filter, msg, False)
         Case "Cancel", "Undo", "Redo"
              Set SelectElement = Nothing
             Exit Function
@@ -458,9 +458,9 @@ Function SW_GetTime#()
     SW_GetTime = IIf(mSW = 0, -1, (timeGetTime - mSW) * 0.001)
 End Function
 
-Public Function GetInput(Msg) As String
+Public Function GetInput(msg) As String
     Dim UserInput As String
-    UserInput = InputBox(Msg, "输入提示")
+    UserInput = InputBox(msg, "输入提示")
     ' 如果用户没有输入或点击取消，则返回默认值"XX"
     If UserInput = "" Or UserInput = "0" Then
         GetInput = ""

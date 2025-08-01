@@ -34,45 +34,34 @@ Attribute VB_Exposed = False
 'Attribute lblProductInfo.VB_VarHelpID = -1
 ' 窗体边距
 Private FrmMargin As Variant ' 上, 右, 下, 左 窗体边距调整值
-
 ' 窗体宽度调整值
 Private Const ADJUST_F_W = 4
 ' 窗体高度调整值
 Private Const ADJUST_F_H = 4
-
 ' 多页控件调整
 Private Const ADJUST_M_W = 15 ' 多页控件宽度调整值
-Private Const ADJUST_M_H = 2 ' 多页控件高度调整值
-
+Private Const ADJUST_M_H = 40 ' 多页控件高度调整值
 Private Const Tab_W = 30 ' Tab固定宽度
-Private Const Tab_H = 17 ' TAB高度
+Private Const Tab_H = 19 ' TAB高度
 Private Const Tab_frontsize = 10
 ' 按钮尺寸
 Private Const BTN_W = 60 ' 按钮的固定宽度
 Private Const BTN_H = 20 ' 单个按钮的高度
 Private Const BTN_frontsize = 8 ' 按钮字体大小
-
 '标签尺寸
 Private Const lb_W = 62 ' 宽度
 Private Const lb_H = 18 ' 高度
 Private Const lb_frontsize = 10 ' 字体大小
-
-
 Private mBtns As Object ' 按钮事件集合
 Private WithEvents prdObserver As ProductObserver
 Attribute prdObserver.VB_VarHelpID = -1
-
 Private WithEvents lblProductInfo As MSForms.Label
 Attribute lblProductInfo.VB_VarHelpID = -1
-
 Private WithEvents lblAuthor As MSForms.Label
 Attribute lblAuthor.VB_VarHelpID = -1
-
 Private WithEvents MPgs As MSForms.MultiPage
 Attribute MPgs.VB_VarHelpID = -1
-
 Private Const itl = "公众号:键盘造车手"
-
 Option Explicit
 ' 设置窗体信息
 Sub Set_FormInfo(ByVal InfoLst As Object, _
@@ -85,19 +74,15 @@ Sub Set_FormInfo(ByVal InfoLst As Object, _
     FrmMargin = Array(2, 2, 2, 2) ' 上, 右, 下, 左 窗体边距调整值
     ' 创建多页控件
     Set MPgs = Me.Controls.Add("Forms.MultiPage.1", "MPgs", True)
-    
     Dim Pgs As Pages
      Set Pgs = MPgs.Pages
      Pgs.Clear
     Dim Key As Long, KeyStr As Variant
     Dim Pg As Page, pName As String
-    
     Dim BtnInfos As Object, Info As Variant
     Dim Btns As Object: Set Btns = KCL.InitLst()
-    
     Dim btn As MSForms.CommandButton
     Dim BtnEvt As Button_Evt
-    
     For Each KeyStr In InfoLst
         Key = CLng(KeyStr)
         If Not PageMap.Exists(Key) Then GoTo continue
@@ -133,7 +118,7 @@ continue:
     Set lblAuthor = Me.Controls.Add("Forms.Label.1", "lblAuthor", True)
     With lblAuthor
         .Caption = itl ' 使用常量显示作者信息
-        .Top = MPgs.Top + MPgs.Height + 2 * FrmMargin(1) ' 放置在多页控件下方
+        .Top = MPgs.Top + MPgs.Height + FrmMargin(1) ' 放置在多页控件下方
         .Left = lblProductInfo.Left + 5 ' 与顶部信息栏左对齐
         .Width = lblProductInfo.Width ' 与顶部信息栏同宽
         .Height = lb_H
@@ -146,7 +131,6 @@ continue:
     ' 初始更新产品信息
     UpdateProductInfo
 End Sub
-
 ' 设置窗体属性
 Private Sub Set_Form(ByVal MPgs As MultiPage, ByVal Cap As String)
     With Me
@@ -157,12 +141,11 @@ Private Sub Set_Form(ByVal MPgs As MultiPage, ByVal Cap As String)
         .Caption = Cap
     End With
 End Sub
-
 ' 设置多页控件属性
 Private Sub Set_MPage(ByVal MPgs As MultiPage)
     MPgs.Width = FrmMargin(1) + Tab_W + BTN_W + FrmMargin(3) + ADJUST_M_W
     With MPgs
-        .Top = lb_H + 2 * FrmMargin(1)
+        .Top = lb_H + FrmMargin(1)
         .Left = FrmMargin(0)
         .TabFixedHeight = Tab_H  ' 标签高度（单位：磅）
         .TabFixedWidth = Tab_W ' 标签宽度
@@ -179,18 +162,15 @@ Private Sub Set_MPage(ByVal MPgs As MultiPage)
         BtnCnt = Pg.Controls.Count
         MaxBtnCnt = IIf(BtnCnt > MaxBtnCnt, BtnCnt, MaxBtnCnt)
     Next
-    MPgs.Height = FrmMargin(0) + (BTN_H * MaxBtnCnt) + FrmMargin(2) + ADJUST_M_H
+    MPgs.Height = FrmMargin(0) + (BTN_H * MaxBtnCnt * 1.1) + FrmMargin(2) + ADJUST_M_H
     ' 设置多页控件背景颜色
 End Sub
-
 ' 初始化按钮
 Private Function Init_Button(ByVal Ctls As Controls, _
                              ByVal idx As Long, _
                              ByVal BtnInfo As Variant) As MSForms.CommandButton
-                             
     Dim btn As MSForms.CommandButton
     Set btn = Ctls.Add("Forms.CommandButton.1", idx, True)
-    
     Dim Pty As Variant
     For Each Pty In BtnInfo.keys
         Call Try_SetProperty(btn, Pty, BtnInfo.item(Pty))
@@ -208,21 +188,18 @@ Private Function Init_Button(ByVal Ctls As Controls, _
     End With
     Set Init_Button = btn
 End Function
-
 ' 尝试设置控件属性
 Private Sub Try_SetProperty(ByVal Ctrl As Object, _
                             ByVal PptyName As String, _
                             ByVal Value As Variant)
     On Error Resume Next
         Err.Number = 0
-        
         Dim tmp As Variant
         tmp = CallByName(Ctrl, PptyName, VbGet)
         If Not Err.Number = 0 Then
             Debug.Print PptyName & ": 获取属性失败(" & Err.Number & ")"
             Exit Sub
         End If
-        
         Select Case TypeName(tmp)
             Case "Empty"
                 Exit Sub
@@ -237,7 +214,6 @@ Private Sub Try_SetProperty(ByVal Ctrl As Object, _
             Debug.Print Value & ": 类型转换失败(" & Err.Number & ")"
             Exit Sub
         End If
-        
         Call CallByName(Ctrl, PptyName, VbLet, Value)
         If Not Err.Number = 0 Then
             Debug.Print Value & ": 设置属性失败(" & Err.Number & ")"
@@ -256,13 +232,11 @@ Private Function Get_Page(ByVal Pgs As Pages, ByVal Name As String) As Page
     End If
     Set Get_Page = Pg
 End Function
-
 ' 产品变化事件处理程序
 Private Sub prdObserver_ProductChanged()
  Debug.Print "事件触发"
     UpdateProductInfo
 End Sub
-
 ' 更新产品信息的方法
 Private Sub UpdateProductInfo()
     Dim msg
@@ -270,15 +244,12 @@ Private Sub UpdateProductInfo()
    mcolor = vbRed
     msg = "产品待选择"
     If Not prdObserver.CurrentProduct Is Nothing Then
-        
           msg = prdObserver.CurrentProduct.PartNumber & "待修改"
             mcolor = vbGreen
     End If
-       
         lblProductInfo.Caption = msg
         lblProductInfo.BackColor = mcolor
 End Sub
-
 Private Sub toMP()
     On Error Resume Next
     Dim shell As Object
@@ -290,26 +261,19 @@ Private Sub toMP()
     End If
     On Error GoTo 0
 End Sub
-
 Private Sub UserForm_Click()
-    toMP
+'      toMP
 End Sub
-
 Private Sub lblAuthor_Click()
-    toMP
+'      toMP
 End Sub
-
 Private Sub lblProductInfo_Click()
-    toMP
+'      toMP
 End Sub
-
 Private Sub MPgs_MouseDown(ByVal Index As Long, ByVal Button As Integer, ByVal Shift As Integer, ByVal X As Single, ByVal Y As Single)
     If Button <> 1 Then Exit Sub
       If X > Tab_W - 32 Then
-    toMP
+'      toMP
     End If
 End Sub
-
-
-
 

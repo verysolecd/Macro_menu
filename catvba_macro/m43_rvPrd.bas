@@ -1,4 +1,4 @@
-Attribute VB_Name = "m42_rvPrd"
+Attribute VB_Name = "m43_rvPrd"
 '{GP:4}
 '{Ep:rvme}
 '{Caption:ÐÞ¸Ä²úÆ·}
@@ -6,6 +6,9 @@ Attribute VB_Name = "m42_rvPrd"
 '{BackColor: }
 
 Sub rvme()
+
+
+
      If Not gPrd Is Nothing Then
         gPrd.ApplyWorkMode (3)
         Dim currRow: currRow = 2
@@ -47,7 +50,7 @@ Public Function extract_data(indRow)
     iCols = Array(0, 2, 4, 6, 8, 10, 12)
 
     
-     Set ws = xlApp.ActiveSheet
+     Set ws = xlAPP.ActiveSheet
      
     
     Dim temparr As Variant
