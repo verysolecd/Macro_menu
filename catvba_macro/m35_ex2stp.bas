@@ -5,8 +5,7 @@ Attribute VB_Name = "m35_ex2stp"
 '{EP:ex2stp_zip}
 '{Caption:导出stp}
 '{ControlTipText: 一键导出stp并压缩到指定路径或本身目录}
-'{BackColor:12648447}
-
+'{BackColor:}
 ' 定义模块级变量
 Private errorMessage As String
 
@@ -21,37 +20,44 @@ Sub ex2stp_zip()
     Set oDoc = CATIA.ActiveDocument
     
     Dim outputpath As String
+    askdir.Show
     outputpath = GetOutputPath(oDoc)
     
     If outputpath = "" Then
         errorMessage = "缺少导出路径，操作取消！"
         GoTo ShowMessage
     Else
-        Dim tdy As String
-        tdy = Format(Now, "yymmdd.hh.nn")
-        Dim pn As String
-        pn = oDoc.product.PartNumber
-        oDoc.product.PartNumber = KCL.strbflast(pn, "_") & "_" & tdy ' 零件号更新
-        stpname = KCL.strbf1st(oDoc.product.PartNumber, "_") & "_Prj_Housing_" & tdy
+        Dim pn: pn = oDoc.Product.PartNumber
+        If dt_pth_ctrl(0) = 1 Then
+            Dim ttp: ttp = KCL.timestamp(dt_pth_ctrl(1))
+            oDoc.Product.PartNumber = KCL.strbflast(pn, "_") & ttp ' 零件号更新
+        End If
+
+        stpname = KCL.strbf1st(oDoc.Product.PartNumber, "_") & "_Housing_" & ttp
+        
         Dim stpfilepath As String
         Dim opath(2) '0=路径，1=name，2=extname
-        opath(0) = outputpath
-        opath(1) = stpname
-        opath(2) = "stp"
+            opath(0) = outputpath
+            opath(1) = stpname
+            opath(2) = "stp"
         stpfilepath = KCL.JoinPathName(opath)
+        
         MsgBox stpfilepath
+        '================导出stp
         oDoc.ExportData stpfilepath, "stp"
         If Err.Number <> 0 Then
             errorMessage = "STP 导出失败：" & Err.Description
             GoTo ShowMessage
         End If
-        If Not KCL.isExists(stpfilepath) Then
-            errorMessage = "STP 文件导出后未找到：" & stpfilepath
-            GoTo ShowMessage
-        End If
-        If Not ex2zip(stpfilepath) Then
-            GoTo ShowMessage
-         End If
+        '================检查文件存在性
+        
+                If Not KCL.isExists(stpfilepath) Then
+                    errorMessage = "STP 文件导出后未找到：" & stpfilepath
+                    GoTo ShowMessage
+                End If
+                If Not ex2zip(stpfilepath) Then
+                    GoTo ShowMessage
+                 End If
         KCL.DeleteMe stpfilepath ' 删除原始 STP 文件
     End If
 
@@ -66,35 +72,6 @@ ShowMessage:
     On Error GoTo 0 ' 关闭错误处理
     errorMessage = "" ' 重置错误信息
 End Sub
-
-Private Function GetOutputPath(ByVal doc As Document) As String
-    Dim userChoice As VbMsgBoxResult
-
-    userChoice = MsgBox("选择导出路径:" & vbNewLine & _
-    "“ 是”      选择导出路径" & vbNewLine & _
-    "“ 否”      导出到Product所在路径" & vbNewLine & _
-    "“取消 ”   退出", _
-    vbYesNoCancel + vbExclamation, "警告")
-    
-    Select Case userChoice
-        Case vbYes  ' 用户选择自定义路径
-            Dim shellApp As Object
-            Set shellApp = CreateObject("Shell.Application")
-            Dim folderBrowser As Object
-            Set folderBrowser = shellApp.BrowseForFolder(0, "选择STP输出文件夹", 16, 0)
-            If Not folderBrowser Is Nothing Then
-                GetOutputPath = folderBrowser.Self.path
-            Else
-              GetOutputPath = ""
-            End If
-        Case vbNo
-            ' 使用当前文档路径
-            GetOutputPath = IIf(doc.path = "", "", doc.path)
-        Case vbCancel
-            ' 用户取消操作
-            GetOutputPath = ""
-    End Select
-End Function
 
 Function ex2zip(oFilepath) As Boolean
     Dim zipPath, result, shell, cmd, path7z
@@ -116,12 +93,33 @@ Function ex2zip(oFilepath) As Boolean
             errorMessage = "压缩完成但未找到压缩文件！"
             ex2zip = False
         Else
+        
+      
             ex2zip = True
+            
+              cmd = "explorer.exe /select, """ & zipPath & """"
+        shell.Run (cmd)
         End If
     End If
 End Function
 
 
-
+Private Function GetOutputPath(ByVal doc As Document) As String
+    Select Case dt_pth_ctrl(2)
+        Case 0  ' 用户选择自定义路径
+            Dim shellApp, folderBrowser
+            Set shellApp = CreateObject("Shell.Application")
+            Set folderBrowser = shellApp.BrowseForFolder(0, "选择STP输出文件夹", 16, 0)
+            If Not folderBrowser Is Nothing Then
+                GetOutputPath = folderBrowser.Self.path
+            Else
+              GetOutputPath = ""
+            End If
+        Case 1  ' 使用当前文档路径
+            GetOutputPath = IIf(doc.path = "", "", doc.path)
+        Case others ' 用户取消操作
+            GetOutputPath = ""
+    End Select
+End Function
 
 

@@ -6,9 +6,6 @@ Attribute VB_Name = "m43_rvPrd"
 '{BackColor: }
 
 Sub rvme()
-
-
-
      If Not gPrd Is Nothing Then
         gPrd.ApplyWorkMode (3)
         Dim currRow: currRow = 2

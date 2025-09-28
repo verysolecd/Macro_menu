@@ -8,7 +8,7 @@ Attribute VB_Name = "m31_reorderPrd"
 Option Explicit
 Sub CATMain()
     If Not CanExecute("ProductDocument") Then Exit Sub
-    Dim ProDoc As ProductDocument: Set ProDoc = CATIA.ActiveDocument
+    Dim ProDoc As productDocument: Set ProDoc = CATIA.ActiveDocument
     Dim Pros As Products: Set Pros = ProDoc.Product.Products
     If Pros.Count < 2 Then Exit Sub
     Dim AssyMode As AsmConstraintSettingAtt
@@ -17,15 +17,15 @@ Sub CATMain()
     OriginalMode = AssyMode.PasteComponentMode
     AssyMode.PasteComponentMode = catPasteWithCstOnCopyAndCut
     Dim Names: Set Names = Get_SortedNames(Pros)
-    Dim Sel As Selection: Set Sel = ProDoc.Selection
+    Dim sel As Selection: Set sel = ProDoc.Selection
     Dim Itm As Variant
     CATIA.HSOSynchronized = False
-    Sel.Clear
+    sel.Clear
     For Each Itm In Names
-        Sel.Add Pros.item(Itm)
+        sel.Add Pros.item(Itm)
     Next
-    Sel.Cut
-    With Sel
+    sel.Cut
+    With sel
         .Clear
         .Add Pros
         .Paste

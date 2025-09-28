@@ -10,7 +10,7 @@ Private prj
 Sub CATMain()
 
 If Not KCL.CanExecute("ProductDocument") Then Exit Sub
-Set rootprd = CATIA.ActiveDocument.product
+Set rootprd = CATIA.ActiveDocument.Product
 If Not rootprd Is Nothing Then
  Dim imsg
           imsg = "请输入你的项目名称"
@@ -28,7 +28,7 @@ Sub rePn(oprd)
     pn = oprd.PartNumber
     purePN = KCL.straf1st(pn, "_")
     oprd.PartNumber = prj & "_" & purePN
-    For Each product In oprd.Products
-        Call rePn(product)
+    For Each Product In oprd.Products
+        Call rePn(Product)
         Next
 End Sub

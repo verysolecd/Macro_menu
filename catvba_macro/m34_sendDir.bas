@@ -13,11 +13,12 @@ Sub sendDir()
     dpath = oDoc.path
     dName = oDoc.Name
     initial = dpath & "\" & dName
+    
     Dim pn
     If KCL.IsType_Of_T(oDoc, "DrawingDocument") Then
         pn = strbflast(oDoc.Name, ".")
     Else
-        pn = oDoc.product.PartNumber
+        pn = oDoc.Product.PartNumber
     End If
     
     fname = rmchn(pn)    '将所有中文字符替换为&
@@ -36,6 +37,7 @@ Sub sendDir()
         Send.SetDirectoryFile bckFolder
         Send.Run
         MsgBox "已经备份到" & bckFolder
+        
     Else
         MsgBox bckFolder & vbNewLine & _
         "  " & vbNewLine & _

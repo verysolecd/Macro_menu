@@ -25,7 +25,6 @@ Attribute VB_Exposed = False
 
 Option Explicit
 
-
 Private WithEvents mBtn As MSForms.CommandButton
 Attribute mBtn.VB_VarHelpID = -1
 Private mInfo As Object
@@ -48,10 +47,8 @@ End Sub
 ' 按钮点击事件处理
 'Private Sub mBtn_Click()
 '    If Not mCloseType Then Unload mParentForm
-'
 '    Dim ary: ary = Array()
 '    Dim ss: Set ss = CATIA.SystemService
-'
 '    Call ss.ExecuteScript(mInfo(TAG_PJTPATH), _
 '                          catScriptLibraryTypeVBAProject, _
 '                          mInfo(TAG_MDLNAME), _
@@ -62,14 +59,14 @@ End Sub
 
 Private Sub mBtn_Click()
     If Not mCloseType Then Unload mParentForm
-    
     ' 如果是颜色切换按钮，在执行前更新按钮文字
     If mInfo(TAG_MDLNAME) = "M60_Color" Then
-        Dim MyViewer As Object
+        On Error Resume Next
+        Dim MyViewer
         Set MyViewer = CATIA.activeWindow.ActiveViewer
-        Dim currentColor(2)
+         Dim currentColor(2)
         MyViewer.GetBackgroundColor currentColor
-        
+        On Error GoTo 0
         ' 根据当前背景色判断即将切换到的状态
         Dim willBeWhite As Boolean
         willBeWhite = (currentColor(0) <> 1 Or currentColor(1) <> 1 Or currentColor(2) <> 1)
