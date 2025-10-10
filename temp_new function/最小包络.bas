@@ -1,12 +1,12 @@
 Attribute VB_Name = "sample_GetMinBox_Product"
 'vba GetMinimumBox_Product Ver0.0.1 'using-'KCL0.1.0'  by Kantoku
-'指定した???????を元にMinimumBoxを作成
+'婎槹巜掕揑?昳?寶MinimumBox
 
 Option Explicit
 
-Private Const MINBODYNAME = "MinimumBox" 'MinimumBoxName
-Private Const DMYLNG = 1000000# '????面距離
-Private Enum MINMAX '測定値配列???????用
+Private Const MINBODYNAME = "MinimumBox" 'MinimumBox柤徧
+Private Const DMYLNG = 1000000# '嫊?柺嫍?
+Private Enum MINMAX '?検?悢?嶕堷梡
     MinX = 0
     MaxX = 1
     MinY = 2
@@ -17,44 +17,44 @@ End Enum
 
 Sub CATMain()
 
-    ' ???????の????
+    ' ??暥瀮?宆
     If Not KCL.CanExecute("ProductDocument") Then Exit Sub
 
-    ' product指定
+    ' ???昳
     Dim msg As String
-    msg = "Productを選択して下さい!"
+    msg = "???Product!"
     
     Dim prod As Product
     Set prod = KCL.SelectItem(msg, "Product")
     If prod Is Nothing Then Exit Sub
     
-    ' body取得
+    ' ?庢?懱
     Dim targetBodies As Collection
     Set targetBodies = getBodies(prod)
     If targetBodies Is Nothing Then Exit Sub
 
-    ' 作業用Part作成
+    ' ?寶岺嶌Part
     Dim workDoc As PartDocument
     Set workDoc = initPartDoc(prod)
     Dim workPt As part
     Set workPt = workDoc.part
     
-    ' axis
+    ' 嵖?宯
     Dim ax As AxisSystem
     Set ax = getAxis(workDoc)
     
-    ' 距離測定
+    ' 嫍??検
     Dim maxBox As Variant
     maxBox = getMaxSize_Bodies(workPt, targetBodies, ax)
     
-    ' ?????作成
+    ' ?寶嵟彫?懱
     Dim minBody As body
     Set minBody = workPt.bodies.Add
     
     minBody.name = "MinimumBox"
     Call changeColor(minBody)
 
-    '????
+    '憪?暯柺
     Dim supportRef As Reference
     If ax Is Nothing Then
         Set supportRef = workPt.CreateReferenceFromGeometry(workPt.OriginElements.PlaneXY)
@@ -68,15 +68,15 @@ Sub CATMain()
     Set skt = initSketch(minBody.Sketches, supportRef, ax)
     Call initBox2D(skt, maxBox)
 
-    '?????
+    '漟怢摿惇
     Call initPad(minBody, skt, maxBox)
     workPt.Update
     
-    MsgBox "Done"
+    MsgBox "姰惉"
 
 End Sub
 
-' 2要素間距離
+' ?尦慺?嫍?
 Private Function getMimLength( _
     ByVal pt As part, _
     ByVal body As AnyObject, _
@@ -99,7 +99,7 @@ Private Function getMimLength( _
     
 End Function
 
-' 2つのBoxをAdd
+' 崌涹?槩Box
 Private Function updateBox( _
     ByVal newBox As Variant, _
     ByVal maxBox As Variant) _
@@ -132,14 +132,14 @@ Private Function updateBox( _
     
 End Function
 
-'6方向最大距離取得
+'6曽岦嵟戝嫍??庢
 Private Function getMaxSize_Bodies( _
     ByVal pt As part, _
     ByVal bodies As Collection, _
     ByVal ax As AxisSystem) _
     As Variant
 
-    '測定方向用?????　???????はEnum MinMax
+    '?検曽岦梡岦検 悢?嶕堷巊梡Enum MinMax
     Dim vec As Variant
     vec = Array( _
         Array(-1#, 0#, 0#), _
@@ -174,7 +174,7 @@ Private Function getMaxSize_Bodies( _
     
 End Function
 
-' 座標系取得-なきゃ作る
+' ?庢嵖?宯-杤桳廇?寶
 Private Function getAxis( _
     ByVal doc As PartDocument) _
     As AxisSystem
@@ -193,7 +193,7 @@ Private Function getAxis( _
     
 End Function
 
-' 座標系作成
+' ?寶嵖?宯
 Private Function initAxis( _
     ByVal pt As part) _
     As AxisSystem
@@ -228,7 +228,7 @@ Private Function initAxis( _
 
 End Function
 
-' Part作成
+' ?寶Part
 Private Function initPartDoc( _
     ByVal prod As Product) _
     As PartDocument
@@ -250,7 +250,7 @@ Private Function initPartDoc( _
     
 End Function
 
-' 選択???????内の表示されているBodyを取得
+' ?庢???昳撪?帵揑Body
 Private Function getBodies( _
     ByVal prod As Product) _
     As Collection
@@ -284,7 +284,7 @@ Private Function getBodies( _
     
     Dim msg As String
     If lst.count < 1 Then
-        msg = "表示されているボディがありません!"
+        msg = "杤桳?帵揑?懱!"
         MsgBox msg, vbExclamation
         Exit Function
     End If
@@ -293,7 +293,7 @@ Private Function getBodies( _
 
 End Function
 
-' 平面作成
+' ?寶暯柺
 Private Function createPlane( _
     ByVal pt As part, _
     ByVal axRef As Reference, _
@@ -315,8 +315,8 @@ Private Function createPlane( _
     
 End Function
 
-' 座標系の各平面の??????の取得
-'Return : 0-XY,1-YZ,2-ZY の??????
+' ?庢嵖?宯奺暯柺揑堷梡
+'Return : 0-XY,1-YZ,2-ZY 揑堷梡
 Private Function getAxisPlaneRefs( _
     ByVal ax As AxisSystem) _
     As Variant ' Reference()
@@ -335,8 +335,8 @@ Private Function getAxisPlaneRefs( _
     
 End Function
 
-' 座標系BrepNameの取得
-' PlaneN0 : 0-XY,1-YZ,2-ZYの何れか
+' ?庢嵖?宯BrepName
+' PlaneN0 : 0-XY,1-YZ,2-ZY拞揑?堦槩
 Private Function getAxisPlaneBrepName( _
     ByVal ax As AxisSystem, _
     ByVal planeNo As Long) _
@@ -350,8 +350,8 @@ Private Function getAxisPlaneBrepName( _
 
 End Function
 
-'***** Sketch関連 *****
-' ????作成
+'***** Sketch憡? *****
+' ?寶憪?
 Private Function initSketch( _
     ByVal skts As Sketches, _
     ByVal supportRef As Reference, _
@@ -384,7 +384,7 @@ Private Function initSketch( _
     
 End Function
 
-' 四角作成
+' ?寶嬮宍
 Private Sub initBox2D( _
     ByVal skt As Sketch, _
     ByVal poss As Variant)
@@ -411,7 +411,7 @@ Private Sub initBox2D( _
     skt.CloseEdition
 End Sub
 
-' 線作成 - 可能なら垂直水平拘束
+' ?寶?抜 - 壜擻揑?揧壛悅捈悈暯?懇
 Private Sub initLine2D( _
     ByVal fact2D As Factory2D, _
     ByVal csts As Constraints, _
@@ -447,7 +447,7 @@ Private Sub initLine2D( _
         Case Abs(posSt(0) - posEd(0)) < 0.001
             Call initConstraint( _
                 csts, catCstTypeVerticality, _
-                line, ax2D.VerticalReference) '弟3,4逆NG
+                line, ax2D.VerticalReference) '戞3,4嶲悢?彉晄擻?搢
                 
             Call initConstraint( _
                 csts, catCstTypeDistance, _
@@ -456,7 +456,7 @@ Private Sub initLine2D( _
         Case Abs(posSt(1) - posEd(1)) < 0.001
             Call initConstraint( _
                 csts, catCstTypeHorizontality, _
-                line, ax2D.HorizontalReference) '弟3,4逆NG
+                line, ax2D.HorizontalReference) '戞3,4嶲悢?彉晄擻?搢
                 
             Call initConstraint( _
                 csts, catCstTypeDistance, _
@@ -465,7 +465,7 @@ Private Sub initLine2D( _
     End Select
 End Sub
 
-' 拘束
+' 揧壛?懇
 Private Sub initConstraint( _
     ByVal csts As Constraints, _
     ByVal cstType As CatConstraintType, _
@@ -483,7 +483,7 @@ Private Sub initConstraint( _
         pt.CreateReferenceFromObject(itm2))
 
     Cst.mode = catCstModeDrivingDimension
-    If dist < 0.001 Then Exit Sub 'IsMissing(Dist)????
+    If dist < 0.001 Then Exit Sub 'IsMissing(Dist)???
 
     Dim Leng As Length
     Set Leng = Cst.Dimension
@@ -492,8 +492,8 @@ Private Sub initConstraint( _
 
 End Sub
 
-'***** Body関連 *****
-'?????
+'***** Body憡? *****
+'?寶漟怢
 Private Sub initPad( _
     ByVal bdy As body, _
     ByVal skt As Sketch, _
@@ -518,7 +518,7 @@ Private Sub initPad( _
 
 End Sub
 
-'色等変更
+'峏夵?怓摍懏惈
 Private Sub changeColor( _
     ByVal itm As AnyObject)
 
@@ -541,8 +541,8 @@ Private Sub changeColor( _
 
 End Sub
 
-'***** Array関連 *****
-''距離-配列同士
+'***** Array憡? *****
+''嫍?-悢?擵?
 Private Function dist2D_Ary2Ary( _
     ByVal XY1 As Variant, _
     ByVal XY2 As Variant) _
