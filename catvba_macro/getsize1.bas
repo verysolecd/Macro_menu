@@ -4,12 +4,12 @@ Sub getSize()
 
 CATIA.HSOSynchronized = False
 
-Dim Doc: Set Doc = CATIA.ActiveDocument
+Dim doc: Set doc = CATIA.ActiveDocument
 Dim oprt
-Set oprt = Doc.Product.Products.item(1).ReferenceProduct.Parent.part
+Set oprt = doc.Product.Products.item(1).ReferenceProduct.Parent.part
 
 Dim MBD
-Set MBD = oprt.Bodies.item(1)
+Set MBD = oprt.bodies.item(1)
 
 Dim BBX 'As HybridBody
 Set BBX = oprt.HybridBodies.Add
@@ -25,7 +25,7 @@ Set Extract = HSF.AddNewExtract(ref)
 BBX.AppendHybridShape Extract
 
 Extract.Compute
-Doc.Selection.Add Extract
+doc.Selection.Add Extract
 
 Set ref = oprt.CreateReferenceFromObject(Extract)
 Dim xDir
@@ -39,32 +39,32 @@ Dim xmax, xmin, ymax, ymin, zmax, zmin
 
 Set xmax = HSF.AddNewExtremum(ref, xDir, 1)
 BBX.AppendHybridShape xmax
-Doc.Selection.Add xmax
+doc.Selection.Add xmax
 
 Set xmin = HSF.AddNewExtremum(ref, xDir, 0)
 BBX.AppendHybridShape xmin
-Doc.Selection.Add xmin
+doc.Selection.Add xmin
 
 Set ymax = HSF.AddNewExtremum(ref, yDir, 1)
 BBX.AppendHybridShape ymax
-Doc.Selection.Add ymax
+doc.Selection.Add ymax
 
 Set ymin = HSF.AddNewExtremum(ref, yDir, 0)
 BBX.AppendHybridShape ymin
-Doc.Selection.Add ymin
+doc.Selection.Add ymin
 
 Set zmax = HSF.AddNewExtremum(ref, zDir, 1)
 BBX.AppendHybridShape zmax
-Doc.Selection.Add zmax
+doc.Selection.Add zmax
 
 Set zmin = HSF.AddNewExtremum(ref, zDir, 0)
 BBX.AppendHybridShape zmin
-Doc.Selection.Add zmin
+doc.Selection.Add zmin
 
 oprt.Update
 
 Dim WB
-Set WB = Doc.GetWorkbench("SPAWorkbench")
+Set WB = doc.GetWorkbench("SPAWorkbench")
 Dim Mes(2), Arr(5), DisX, DisY, DisZ
 Set Mes(0) = WB.GetMeasurable(xmax)
 Mes(0).GetMinimumDistancePoints xmin, Arr
@@ -93,31 +93,31 @@ Set length3 = parameters1.CreateDimension("ZÏò", "LENGTH", DisZ)
 Set p1 = HSF.AddNewPointCoord(xmaxc, yminc, zminc)
 BBX.AppendHybridShape p1
 p1.Compute
-Doc.Selection.Add p1
+doc.Selection.Add p1
 Set p2 = HSF.AddNewPointCoord(xminc, yminc, zminc)
 BBX.AppendHybridShape p2
 p2.Compute
-Doc.Selection.Add p2
+doc.Selection.Add p2
 Set ln = HSF.AddNewLinePtPt(p1, p2)
 BBX.AppendHybridShape ln
 ln.Compute
-Doc.Selection.Add ln
+doc.Selection.Add ln
 Set ext = HSF.AddNewExtrude(ln, DisY, 0, yDir)
 BBX.AppendHybridShape ext
 ext.Compute
-Doc.Selection.Add ext
+doc.Selection.Add ext
 Set bound = HSF.AddNewBoundaryOfSurface(ext)
 BBX.AppendHybridShape bound
 bound.Compute
-Doc.Selection.Add bound
+doc.Selection.Add bound
 Set ext2 = HSF.AddNewExtrude(bound, DisZ, 0, zDir)
 BBX.AppendHybridShape ext2
 ext2.Compute
-Doc.Selection.Add ext2
+doc.Selection.Add ext2
 Set trans = HSF.AddNewTranslate(ext, zDir, DisZ)
 BBX.AppendHybridShape trans
 trans.Compute
-Doc.Selection.Add trans
+doc.Selection.Add trans
 Set asm = HSF.AddNewJoin(ext, ext2)
 asm.AddElement trans
 BBX.AppendHybridShape asm
@@ -127,10 +127,10 @@ BBX.AppendHybridShape eles(0)
 eles(0).Name = "Bounding box of " & MBD.Name
 HSF.DeleteObjectForDatum asm
 
-Doc.Selection.Delete
-Doc.Selection.Add eles(0)
-Doc.Selection.VisProperties.SetRealOpacity 100, 1
-Doc.Selection.Clear
+doc.Selection.Delete
+doc.Selection.Add eles(0)
+doc.Selection.VisProperties.SetRealOpacity 100, 1
+doc.Selection.Clear
 CATIA.HSOSynchronized = True
 
 'resp = MsgBox("X direction size is " & Round(DisX, 3) & vbCrLf & _

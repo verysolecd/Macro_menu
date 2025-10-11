@@ -1,11 +1,9 @@
-Attribute VB_Name = "GETSIZE2"
-
-
+Attribute VB_Name = "Minibox3"
+'getSize 3
 Option Explicit
-
 Private Const MINBODYNAME = "MinimumBox" 'MinimumBoxName
-Private Const DMYLNG = 1000000# '????面距離
-Private Enum MINMAX '測定値配列???????用
+Private Const DMYLNG = 1000000#
+Private Enum MINMAX
     MinX = 0
     MaxX = 1
     MinY = 2
@@ -15,35 +13,37 @@ Private Enum MINMAX '測定値配列???????用
 End Enum
 
 Sub CATMain()
-
-
-    If Not KCL.CanExecute("PartDocument") Then Exit Sub
-
-    ' product指定
     Dim msg As String
     msg = "请选择产品"
-    
     Dim prod As Product
-'    Set prod = KCL.SelectItem(msg, "Product")
-'    If prod Is Nothing Then Exit Sub
-Set prod = CATIA.ActiveDocument.Product
 
-    
-    
+    If KCL.CanExecute("PartDocument") Then
+        Set prod = CATIA.ActiveDocument.Product
+    Else
+        Set prod = KCL.SelectItem(msg, "Product")
+     
+        
+    End If
+       If prod Is Nothing Then Exit Sub
     ' body取得
+    
     Dim targetBodies As collection
     Set targetBodies = getBodies(prod)
     If targetBodies Is Nothing Then Exit Sub
 
     ' 作業用Part作成
-    Dim workDoc As PartDocument
-    Set workDoc = initPartDoc(prod)
-    Dim workPt As part
+    Dim workDoc, workPt
+    
+'    If KCL.CanExecute("PartDocument") Then
+        Set workDoc = initPartDoc(prod)
+'    End If
+
     Set workPt = workDoc.part
     
     ' axis
     Dim ax As AxisSystem
     Set ax = getAxis(workDoc)
+    workPt.Parent.Product.PartNumber = "minibox" & "__" & prod.PartNumber
     
     ' 距離測定
     Dim maxBox As Variant
@@ -175,7 +175,7 @@ Private Function getMaxSize_Bodies( _
     
 End Function
 
-' 座標系取得-なきゃ作る
+' 获取坐标系
 Private Function getAxis( _
     ByVal doc As PartDocument) _
     As AxisSystem
@@ -194,7 +194,7 @@ Private Function getAxis( _
     
 End Function
 
-' 座標系作成
+' 制作
 Private Function initAxis( _
     ByVal pt As part) _
     As AxisSystem
@@ -223,7 +223,7 @@ Private Function initAxis( _
     ax.PutYAxis ary
 
     ax.IsCurrent = True
-   ' pt.Update
+    pt.Update
     
     Set initAxis = ax
 
@@ -234,21 +234,21 @@ Private Function initPartDoc( _
     ByVal prod As Product) _
     As PartDocument
 
-'    Dim belongProd As Product
-'    If prod.Products.Count < 1 Then
-'        Set belongProd = prod.Parent.Parent
-'    Else
-'        Set belongProd = prod
-'    End If
-'
-'    Dim prods As Products
-'    Set prods = belongProd.Products
-'
-'    Dim newProd As Product
-'    Set newProd = prods.AddNewComponent("Part", "")
-'
-'    Set initPartDoc = newProd.ReferenceProduct.Parent
-      Set initPartDoc = prod.ReferenceProduct.Parent
+    Dim belongProd As Product
+    If prod.Products.Count < 1 Then
+        Set belongProd = prod.Parent.Parent
+    Else
+        Set belongProd = prod
+    End If
+
+    Dim prods As Products
+    Set prods = belongProd.Products
+
+    Dim newProd As Product
+    Set newProd = prods.AddNewComponent("Part", "")
+
+    Set initPartDoc = newProd.ReferenceProduct.Parent
+'      Set initPartDoc = prod.ReferenceProduct.Parent
 End Function
 
 
@@ -551,4 +551,5 @@ Private Function dist2D_Ary2Ary( _
             (XY2(1) - XY1(1)) * (XY2(1) - XY1(1)))
 
 End Function
+
 
