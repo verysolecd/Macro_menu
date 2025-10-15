@@ -1,0 +1,224 @@
+'Macro created by Per Björk, Engineering Partner
+'This macro creates text labels with leaders for selected 3D points in 3DPMI documents.
+
+'Variables
+Dim strFilePath As String
+Dim objFile As File
+Dim objTextStream As TextStream
+Dim strLine As String
+Dim xOffset, yOffset as Integer
+	
+Dim ParentHB As HybridBody
+Dim CompGeom
+Dim part1 As Part
+Dim targetPart As String
+Dim indexL As String
+Dim indexN As Integer
+Dim parentName As String
+
+'Dim Coords(2) As Variant
+'Dim TheMeasurable As Variant
+Dim numberOfPoints As Integer
+Dim pointName As String
+Dim objPart As Part
+Dim partName As String
+Dim oPartName As String
+Dim nPartName As String
+
+Dim Selection1 As Selection
+Dim documents1 As Documents
+Dim partDocument1 As PartDocument
+Dim annotationSets1 As AnnotationSets
+Dim annotationSet1 As AnnotationSet
+Dim hybridShapes1 As HybridShapes
+
+Dim HybridShapePoint1 As HybridShapePointExplicit
+Dim reference1 As Reference
+Dim userSurfaces1 As UserSurfaces
+Dim bSTR1 As String
+Dim userSurface1 As UserSurface
+Dim annotationFactory1 As AnnotationFactory
+Dim annotation1 As Annotation
+
+'Function variables
+'getPfromO
+Dim strType As String
+
+'getHparent
+Dim CurHBs As HybridBodies 
+
+Sub CATMain()
+    'On Error GoTo errorHandler:
+	yOffset = -3700
+	xOffset = 0
+            
+        Set Selection1 = CATIA.ActiveDocument.Selection 'handle the selection in catia
+                numberOfPoints = Selection1.Count                    
+                    If numberOfPoints = 0 Then    'if selection is empty display message
+                        MsgBox "Nothing selected! Please select at least one datum point.", vbCritical, "Empty selection!"
+                            Exit Sub
+                    End If
+            
+        'handle the selection in catia
+        Set point1 = Selection1.Item(1)  'pick first element (the point) of the selection in Catia
+            If point1.Type <> "HybridShapePointExplicit" Then     'check if the object selected is a dautm point
+                errorMes = MsgBox("Wrong type of object selected! Please only select datum points.", vbCritical, "Wrong type of object!!")
+                    Exit Sub
+            End If
+			
+		indexL = InputBox("Point index?" & vbNewLine & "(Cancel or empty input ends macro.)", "Point index")      'input the letter before each number
+			If indexL = "" Then
+				exit sub  
+			end if
+	
+		indexN = InputBox("Starting number?" & vbNewLine & "(Cancel or empty input ends macro.)", "Start number")     'input number to start with
+			If indexN  = "" Then
+				Exit Sub		
+			End If      
+			
+		Set objPart = getPFromO (point1.Value)
+		
+		oPartName = objPart.Name      'get the partname
+		nPartName = Left(oPartName, Len(oPartName) - 2) & ".CATPart"      'remove last two characters and add ".CATPart" to the end
+		
+		'all the iterations for Catia to reach down into the feature tree
+		Set documents1 = CATIA.Documents     
+		Set partDocument1 = documents1.Item(nPartName)            
+		Set part1 = partDocument1.Part        
+		Set annotationSets1 = part1.AnnotationSets        
+		Set annotationSet1 = annotationSets1.Add("VCS_ISO_3D_ASSY")
+				
+			getHparent point1.Value   'find geometric set                
+			Set hybridShapes1 = ParentHB.HybridShapes                
+'               hybridCount = hybridShapes1.Count
+'
+'               For h = 1 To hybridCount
+'                   MsgBox hybridShapes1.Item(h).Name
+'               Next
+                
+'**************************************************************************************************************************************
+	'coordinate extraction process
+	'Dim TheSPAWorkbench As Workbench
+	'Set TheSPAWorkbench = CATIA.ActiveDocument.GetWorkbench("SPAWorkbench") ' set TheSPAWorkbench
+	'Dim pointRef As Reference
+			
+'**************************************************************************************************************************************
+	For i = 1 To numberOfPoints       'iterate through all poinst of polyline
+		'MsgBox pointRef.Name
+		Set Element = Selection1.Item(i)
+			Set selPoint = Element.Value
+
+		'Set TheMeasurable = TheSPAWorkbench.GetMeasurable(selPoint)
+		'TheMeasurable.GetPoint Coords       'get coordinates from Measurable
+
+		'xPoint = Coords(0)
+		'yPoint = Coords(1)
+		'zPoint = Coords(2)
+			'MsgBox xPoint & vbnewline & yPoint 
+		   
+		pointName = hybridShapes1.Item(i).Name                                        
+			Set HybridShapePoint1 = hybridShapes1.Item(pointName)                    
+				Set reference1 = part1.CreateReferenceFromObject(HybridShapePoint1)                    
+					Set userSurfaces1 = part1.UserSurfaces
+						bSTR1 = part1.Name
+
+		'set up target surface for each point
+		Set userSurface1 = userSurfaces1.Generate(reference1)
+	
+		'set up annotations
+		Set annotationFactory1 = annotationSet1.AnnotationFactory           
+			Set annotation1 = annotationFactory1.CreateEvoluateText(userSurface1, xOffset , yOffset, 0, True)   'create the  annotation
+				annotation1.Text.Text = indexL & indexN					
+
+		annotation1.Text.Get2dAnnot.leaders.Item(1).HeadSymbol = catFilledArrow  'define the leader headsymbol, a filled arrow
+		'annotation1.Text.Get2dAnnot.ActivateFrame (catRectangle)
+							
+		indexN = indexN + 1
+		xOffset = xOffset + 100
+	Next
+            
+	part1.Update    'update the part document
+            
+    MsgBox "Leaders created!"  'display message of completion
+'***************************************************************************************************************************************************
+'errorHandler:           'error messages
+'    MsgBox "The most recent error number is " & Err & _
+'          ". Its message text is: " & Error(Err)
+
+    'If Err.Number = -2147467259 Then
+        'errorMes = MsgBox("You have to select points from the feature tree.", vbCritical, "Error!")
+            'Err.Number = 0
+    'End If
+End Sub
+
+Function getPfromO(ByRef iObject As Object) As Part
+    'This function calls itself recursively to access the
+    'parent of the object passed in until a Part object
+    'is reached.    
+        'Get the type of the object passed into the function
+        strType = TypeName(iObject)
+            If strType = "Part" Then
+                'If the object passed in is a part, return it and exit
+                Set getPfromO= iObject
+                    Exit Function
+            ElseIf strType = TypeName(iObject.Parent) Then
+                'If the type of this object is the same as the parent object
+                'then return nothing. The reason is the Parent property of
+                'some objects simply returns the same object. This will never
+                'get us to the part and will result in an infinite loop.
+                'Example object types are Reference and Resource among others
+                Set getPfromO= Nothing
+                    Exit Function
+            Else
+                'Call the function again and pass it the object’s parent
+                Set getPfromO= getPfromO(iObject.Parent)
+            End If
+End Function
+
+Function getHparent(InputGeom As HybridShape) As HybridBody    
+	set ParentHB = nothing
+	Set CurHBs = part1.HybridBodies
+        Set CompGeom = InputGeom
+            For v = 1 To CurHBs.Count
+                RecHB CurHBs.Item(v)				
+                    If Not ParentHB Is Nothing Then
+                        Set getHparent = ParentHB
+                            Exit Function
+                    End If
+            Next
+End Function
+
+Sub RecHB(inputHb As HybridBody)
+    If inputHb.HybridBodies.Count <> 0 And Not CompGeom Is Nothing Then
+         For XX = 1 To inputHb.HybridBodies.Count       'first level
+             For YY = 1 To inputHb.HybridBodies.Item(XX).HybridBodies.Count     'second level
+                If inputHb.HybridBodies.Item(XX).HybridBodies.Item(YY).Name = CompGeom.Name Then
+                    Set ParentHB = inputHb.HybridBodies.Item(XX)
+                        Set CompGeom = Nothing
+                        Exit Sub
+                End If
+
+                If CompGeom Is Nothing Then
+                    Exit Sub
+                End If
+            Next
+
+            For YY = 1 To inputHb.HybridBodies.Item(XX).HybridShapes.Count  'next level
+                If inputHb.HybridBodies.Item(XX).HybridShapes.Item(YY).Name = CompGeom.Name Then
+                    Set ParentHB = inputHb.HybridBodies.Item(XX)
+                        Set CompGeom = Nothing
+                            Exit Sub
+                End If
+
+                If CompGeom Is Nothing Then
+                    Exit Sub
+                End If
+            Next
+
+            RecHB inputHb.HybridBodies.Item(XX)     'call the function again
+            If CompGeom Is Nothing Then
+                Exit Sub
+            End If
+        Next
+    End If
+End Sub

@@ -1,0 +1,44 @@
+Sub CATMain()
+    'variables
+    Dim selectedPoints As Selection
+    Dim pointIndex As String
+    Dim startNum As Variant
+    Dim numberOfPoints As Integer
+    
+    'On Error GoTo errorHandler
+	
+    Set selectedPoints = CATIA.ActiveDocument.Selection 'handle the selection in catia
+		numberOfPoints = selectedPoints.Count                
+			If numberOfPoints = 0 Then    'if selection is empty display message
+				MsgBox "Nothing selected! Please select at least one point.", vbCritical, "Empty selection!"
+					Exit Sub
+			End If                    
+	
+	pointIndex= InputBox("Point index?" & vbNewLine & "(Cancel or empty input ends macro.)", "Point index")      'input the letter before each number
+		If pointIndex= "" Then
+			exit sub  
+		end if
+
+    startNum = InputBox("Starting number?" & vbNewLine & "(Cancel or empty input ends macro.)", "Start number")     'input number to start with
+       	If startNum = "" Then
+            	Exit Sub		
+		End If
+    
+        For i = 1 To numberOfPoints
+            'MsgBox selectedPoints.Item(i).Value.Name
+            selectedPoints.Item(i).Value.Name = pointIndex & startNum
+                startNum = startNum + 1
+        Next
+        
+    MsgBox "Renaming complete!"
+        
+'***************************************************************************************************************************************************
+'errorHandler:           'error messages
+'    MsgBox "The most recent error number is " & Err & _
+'          ". Its message text is: " & Error(Err)
+
+	'If Err.Number = -2147467259 Then
+		'errorMes = MsgBox("You have to select points from the feature tree.", vbCritical, "Error!")
+		'Err.Number = 0
+	'End If
+End Sub

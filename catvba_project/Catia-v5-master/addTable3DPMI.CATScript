@@ -1,0 +1,188 @@
+'Macro created by Per Björk, Engineering Partner
+'This macro inserts a table in 3DPMI document.
+
+Language="VBSCRIPT"
+
+'Variables
+Dim strFilePath As String
+Dim objFile As File
+Dim objTextStream As TextStream
+Dim strLine As String
+
+Dim ParentHB As HybridBody
+Dim CompGeom
+Dim part1 As Part
+Dim targetPart As String
+Dim parentName As String
+
+Dim objPart As Part
+Dim partName As String
+Dim oPartName As String
+Dim nPartName As String
+Dim numberOfItems As Integer
+
+Dim Selection1 As Selection
+Dim myObj As HybridShape
+Dim documents1 As Documents
+Dim partDocument1 As PartDocument
+Dim annotationSets1 As AnnotationSets
+Dim annotationSet1 As AnnotationSet
+Dim hybridShapes1 As HybridShapes
+Dim HybridShape1 As HybridShape
+Dim reference1 As Reference
+Dim userSurfaces1 As UserSurfaces
+Dim bSTR1 As String
+Dim userSurface1 As UserSurface
+Dim annotationFactory1 As AnnotationFactory 
+Dim annotation1 As Annotation
+
+'Function variables
+Dim strType As String
+Dim CurHBs As HybridBodies
+
+Sub catMain()
+
+    'On Error GoTo errorHandler:
+        Set Selection1 = CATIA.ActiveDocument.Selection 'handle the selection in catia
+                numberOfItems = Selection1.Count                    
+                    If numberOfItems = 0 Then    'if selection is empty display message
+                        MsgBox "Nothing selected!" & vbNewLine & "Please select an item from a Geometrical set to be used as reference.", vbCritical, "No reference!"
+                            Exit Sub
+                    End If
+            
+	Set selObj = Selection1.Item(1)      
+		Set myObj = selObj.Value
+			Set objPart = GetPartFromObject(myObj)
+            
+	oPartName = objPart.Name      'get the partname
+	nPartName = Left(oPartName, Len(oPartName) - 2) & ".CATPart"      'remove last two characters and add ".CATPart" to the end
+	
+	'all the iterations for Catia to reach down into the feature tree
+	Set documents1 = CATIA.Documents        
+	
+	Set partDocument1 = documents1.Item(nPartName)            
+		Set part1 = partDocument1.Part        
+			Set annotationSets1 = part1.AnnotationSets        
+				Set annotationSet1 = annotationSets1.Add("VCS_ISO_3D_ASSY")
+					getHParent myObj   'find geometric set
+						Set hybridShapes1 = ParentHB.HybridShapes
+                					
+    '                hybridCount = hybridShapes1.Count
+    '
+    '                For h = 1 To hybridCount
+    '                    MsgBox hybridShapes1.Item(h).Name '            
+                
+	Set HybridShape1 = hybridShapes1.Item(myObj.Name)
+		Set reference1 = part1.CreateReferenceFromObject(HybridShape1)
+			Set userSurfaces1 = part1.UserSurfaces        
+				bSTR1 = part1.Name
+        					
+	'set up target surface for each point
+	Set userSurface1 = userSurfaces1.Generate(reference1)
+	
+	'set up for the table and annotations
+	Set annotationFactory1 = annotationSet1.AnnotationFactory            
+		Set annotation1 = annotationFactory1.CreateText(userSurface1)                
+                        
+			strFilePath = CATIA.FileSelectionBox("Please select a *.prn file", "*.prn", 0)		'Display file open dialog                         
+			
+			If strFilePath = "" Then Exit Sub	'If user clicked cancel (empty string is returned), then exit the program
+			 
+			'Open the file, read the first line then close the file
+			Set objFile = CATIA.FileSystem.GetFile(strFilePath)
+				Set objTextStream = objFile.OpenAsTextStream("ForReading")
+			
+			strLine = objTextStream.Read(10000)
+			objTextStream.Close
+			 
+			'Display the read text value…just to show it was read.
+			'MsgBox "First line: " & strLine, 0, "Text File Content"
+
+			annotation1.Text.Text = strLine
+				annotation1.Text.Get2dAnnot.ActivateFrame (catRectangle)
+						  
+			part1.Update    'update the part document
+                
+        MsgBox "Table added!" 'display message of completion
+'***************************************************************************************************************************************************
+'errorHandler:           'error messages
+'    MsgBox "The most recent error number is " & Err & _
+'          ". Its message text is: " & Error(Err)
+
+    'If Err.Number = 13 Then
+        'errorMes = MsgBox("You have to select an item from a Geometrical set.", vbCritical, "Error!")
+            'Err.Number = 0
+    'End If
+End Sub
+
+Function GetPartFromObject(ByRef iObject As Object) As Part
+    'This function calls itself recursively to access the
+    'parent of the object passed in until a Part object
+    'is reached.    
+        'Get the type of the object passed into the function
+        strType = TypeName(iObject)
+            If strType = "Part" Then
+                'If the object passed in is a part, return it and exit
+                Set GetPartFromObject = iObject
+                    Exit Function
+            ElseIf strType = TypeName(iObject.Parent) Then
+                'If the type of this object is the same as the parent object
+                'then return nothing. The reason is the Parent property of
+                'some objects simply returns the same object. This will never
+                'get us to the part and will result in an infinite loop.
+                'Example object types are Reference and Resource among others
+                Set GetPartFromObject = Nothing
+                    Exit Function
+            Else
+                'Call the function again and pass it the object’s parent
+                Set GetPartFromObject = GetPartFromObject(iObject.Parent)
+            End If
+End Function
+
+Function getHparent(InputGeom As HybridShape) As HybridBody    
+	Set ParentHB = nothing
+	Set CurHBs = part1.HybridBodies
+	Set CompGeom = InputGeom
+		For v = 1 To CurHBs.Count
+			RecHB CurHBs.Item(v)				
+				If Not ParentHB Is Nothing Then
+					Set getHparent = ParentHB
+						Exit Function
+				End If
+		Next
+End Function
+
+Sub RecHB(inputHb As HybridBody)
+    If inputHb.HybridBodies.Count <> 0 And Not CompGeom Is Nothing Then
+         For XX = 1 To inputHb.HybridBodies.Count       'first level
+             For YY = 1 To inputHb.HybridBodies.Item(XX).HybridBodies.Count     'second level
+                If inputHb.HybridBodies.Item(XX).HybridBodies.Item(YY).Name = CompGeom.Name Then
+                    Set ParentHB = inputHb.HybridBodies.Item(XX)
+                        Set CompGeom = Nothing
+                        Exit Sub
+                End If
+
+                If CompGeom Is Nothing Then
+                    Exit Sub
+                End If
+            Next
+
+            For YY = 1 To inputHb.HybridBodies.Item(XX).HybridShapes.Count  'next level
+                If inputHb.HybridBodies.Item(XX).HybridShapes.Item(YY).Name = CompGeom.Name Then
+                    Set ParentHB = inputHb.HybridBodies.Item(XX)
+                        Set CompGeom = Nothing
+                            Exit Sub
+                End If
+
+                If CompGeom Is Nothing Then
+                    Exit Sub
+                End If
+            Next
+
+            RecHB inputHb.HybridBodies.Item(XX)     'call the function again
+            If CompGeom Is Nothing Then
+                Exit Sub
+            End If
+        Next
+    End If
+End Sub
