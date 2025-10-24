@@ -132,3 +132,4 @@ CATIA.HSOSynchronized = True
 'End If
 'MsgBox "零件长宽高属性已添加"
 End Sub
+
