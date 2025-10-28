@@ -12,6 +12,8 @@ Public allPN As Object
 Public counter As Integer
 Public Const gfn As Integer = 400
 Public ProductObserver As New ProductObserver
+Public dt_pth_ctrl
+
 
 
 

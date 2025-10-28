@@ -15,7 +15,7 @@ Private extract_cols
 Private bom_cols
 
 Private wsEVT  As Ws_Evt
-Private wb As Object
+Private WB As Object
 Private ws As Object
 Private bws As Object
 
@@ -27,12 +27,12 @@ On Error Resume Next
         Set xlAPP = CreateObject("Excel.Application")
         Set gwb = xlAPP.Workbooks.Add
         Set gws = gwb.ActiveSheet
-        Set wb = gwb
+        Set WB = gwb
         Set ws = gws
         ws.Name = "bom"
     Else
         Set xlAPP = GetObject("Excel.Application")
-        Set wb = gwb
+        Set WB = gwb
         Set ws = gws
     End If
      If Error.Number <> 0 Then
@@ -52,7 +52,7 @@ On Error Resume Next
 
     On Error GoTo 0
     Set wsEVT = New Ws_Evt
-    wsEVT.Init wb
+    wsEVT.Init WB
   iniarr
     
 End Sub

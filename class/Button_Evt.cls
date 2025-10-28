@@ -63,7 +63,7 @@ Private Sub mBtn_Click()
     If mInfo(TAG_MDLNAME) = "M60_Color" Then
         On Error Resume Next
         Dim MyViewer
-        Set MyViewer = CATIA.activeWindow.ActiveViewer
+        Set MyViewer = CATIA.ActiveWindow.ActiveViewer
          Dim currentColor(2)
         MyViewer.GetBackgroundColor currentColor
         On Error GoTo 0
@@ -72,7 +72,7 @@ Private Sub mBtn_Click()
         willBeWhite = (currentColor(0) <> 1 Or currentColor(1) <> 1 Or currentColor(2) <> 1)
         
         ' 调用M60_Color模块的函数更新按钮文字
-        Call M60_Color.UpdateButtonText(mBtn, willBeWhite)
+        Call UpdateButtonText(mBtn, willBeWhite)
     End If
     
     Dim ary: ary = Array()

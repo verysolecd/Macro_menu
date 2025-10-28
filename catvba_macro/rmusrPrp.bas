@@ -1,6 +1,6 @@
 Attribute VB_Name = "rmusrPrp"
 Sub CATMain()
-Set oprd = CATIA.ActiveDocument.product
+Set oprd = CATIA.ActiveDocument.Product
 rm oprd
 End Sub
 Sub rm(oprd)

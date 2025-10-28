@@ -42,9 +42,7 @@ Function CanExecute(ByVal docTypes As Variant) As Boolean
     
     Dim ErrMsg As String
     ErrMsg = "不支持当前活动文档类型。" + vbNewLine + "(" + Join(docTypes, ",") + " 类型除外)"
-    
-    
-    
+ 
 '    Dim ActDoc As Document
 '
 '    On Error Resume Next
@@ -63,32 +61,25 @@ Function CanExecute(ByVal docTypes As Variant) As Boolean
     
     CanExecute = checkDocType(docTypes)
     
+    If Not CanExecute Then MsgBox ErrMsg, vbExclamation + vbOKOnly
+    
 End Function
 Function checkDocType(ByVal docTypes As Variant)
     checkDocType = False
-    
     If VarType(docTypes) = vbString Then docTypes = Split(docTypes, ",") '过滤器转数组
-    
     If Not checkFilterType(docTypes) Then Exit Function '过滤器检查，非数组则退出
-
-
     Dim ActDoc As Document
-    
     On Error Resume Next
         Set ActDoc = CATIA.ActiveDocument
     On Error GoTo 0
-    
     If ActDoc Is Nothing Then
         MsgBox "无打开的文档"
         Exit Function
     End If
-
-
      If UBound(filter(docTypes, TypeName(ActDoc))) < 0 Then '此处filter函数是VBA中比较厚返回数组的函数
         Exit Function
     End If
  checkDocType = True
-
 End Function
 
 
