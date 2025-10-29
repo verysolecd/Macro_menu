@@ -1,5 +1,5 @@
-Attribute VB_Name = "BOM_Cal_Mass"
-'{GP:5}
+Attribute VB_Name = "RW_Cal_Mass"
+'{GP:1}
 '{Ep:Cal_Mass}
 '{Caption:迭代重量}
 '{ControlTipText:选择要被读取或修改的产品}

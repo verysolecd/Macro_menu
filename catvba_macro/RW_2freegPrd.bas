@@ -1,4 +1,4 @@
-Attribute VB_Name = "RW_freegPrd"
+Attribute VB_Name = "RW_2freegPrd"
 'Attribute VB_Name = "selPrd"
 '{GP:1}
 '{Ep:freegprd}

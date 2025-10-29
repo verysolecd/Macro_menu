@@ -37,12 +37,12 @@ Private FrmMargin As Variant ' 上, 右, 下, 左 窗体边距调整值
 ' 窗体宽度调整值
 Private Const ADJUST_F_W = 4
 ' 窗体高度调整值
-Private Const ADJUST_F_H = 4
+Private Const ADJUST_F_H = 20
 ' 多页控件调整
-Private Const ADJUST_M_W = 15 ' 多页控件宽度调整值
-Private Const ADJUST_M_H = 40 ' 多页控件高度调整值
+Private Const ADJUST_M_W = 10 ' 多页控件宽度调整值
+Private Const ADJUST_M_H = 5 ' 多页控件高度调整值
 Private Const Tab_W = 30 ' Tab固定宽度
-Private Const Tab_H = 19 ' TAB高度
+Private Const Tab_H = 22 ' TAB高度
 Private Const Tab_frontsize = 10
 ' 按钮尺寸
 Private Const BTN_W = 70 ' 按钮的固定宽度
@@ -50,9 +50,11 @@ Private Const BTN_H = 20 ' 单个按钮的高度
 Private Const BTN_frontsize = 8 ' 按钮字体大小
 '标签尺寸
 Private Const lb_W = 62 ' 宽度
-Private Const lb_H = 18 ' 高度
+Private Const lb_H = 20 ' 高度
 Private Const lb_frontsize = 10 ' 字体大小
-Private mBtns As Object ' 按钮事件集合
+Private Const itl = "公众号:键盘造车手"
+' 按钮事件集合
+Private mBtns As Object
 Private WithEvents prdObserver As ProductObserver
 Attribute prdObserver.VB_VarHelpID = -1
 Private WithEvents lblProductInfo As MSForms.Label
@@ -61,7 +63,7 @@ Private WithEvents lblAuthor As MSForms.Label
 Attribute lblAuthor.VB_VarHelpID = -1
 Private WithEvents MPgs As MSForms.MultiPage
 Attribute MPgs.VB_VarHelpID = -1
-Private Const itl = "公众号:键盘造车手"
+
 Option Explicit
 ' 设置窗体信息
 Sub Set_FormInfo(ByVal InfoLst As Object, _
@@ -135,15 +137,15 @@ End Sub
 Private Sub Set_Form(ByVal MPgs As MultiPage, ByVal Cap As String)
     With Me
         Dim requiredInsideHeight
-        requiredInsideHeight = MPgs.Top + MPgs.Height + lb_H + FrmMargin(2) + ADJUST_F_H
+        requiredInsideHeight = MPgs.Top + MPgs.Height + ADJUST_F_H + lb_H  '+ FrmMargin(2)
         .Height = requiredInsideHeight + (Me.Height - Me.InsideHeight)
-        .Width = MPgs.Width + ADJUST_F_W
+        .Width = MPgs.Width + ADJUST_F_W + 2 * FrmMargin(2)
         .Caption = Cap
     End With
 End Sub
 ' 设置多页控件属性
 Private Sub Set_MPage(ByVal MPgs As MultiPage)
-    MPgs.Width = FrmMargin(1) + Tab_W + BTN_W + FrmMargin(3) + ADJUST_M_W
+    MPgs.Width = Tab_W + BTN_W + FrmMargin(3) + ADJUST_M_W
     With MPgs
         .Top = lb_H + FrmMargin(1)
         .Left = FrmMargin(0)
@@ -162,7 +164,7 @@ Private Sub Set_MPage(ByVal MPgs As MultiPage)
         BtnCnt = Pg.Controls.Count
         MaxBtnCnt = IIf(BtnCnt > MaxBtnCnt, BtnCnt, MaxBtnCnt)
     Next
-    MPgs.Height = FrmMargin(0) + (BTN_H * MaxBtnCnt * 1.1) + FrmMargin(2) + ADJUST_M_H
+    MPgs.Height = FrmMargin(0) + (BTN_H * MaxBtnCnt * 1) + FrmMargin(2) + ADJUST_M_H
     ' 设置多页控件背景颜色
 End Sub
 ' 初始化按钮
@@ -176,7 +178,7 @@ Private Function Init_Button(ByVal Ctls As Controls, _
         Call Try_SetProperty(btn, Pty, BtnInfo.item(Pty))
     Next
     With btn
-        .Top = FrmMargin(0) + (Ctls.Count - 1) * BTN_H
+        .Top = FrmMargin(0) + (Ctls.Count - 1) * BTN_H  '+ (Ctls.Count - 1)
         .Left = FrmMargin(2)
         .Height = BTN_H
         .Width = BTN_W
@@ -262,18 +264,18 @@ Private Sub toMP()
     On Error GoTo 0
 End Sub
 Private Sub UserForm_Click()
-'      toMP
+      toMP
 End Sub
 Private Sub lblAuthor_Click()
-'      toMP
+     toMP
 End Sub
 Private Sub lblProductInfo_Click()
-'      toMP
+      toMP
 End Sub
 Private Sub MPgs_MouseDown(ByVal Index As Long, ByVal Button As Integer, ByVal Shift As Integer, ByVal X As Single, ByVal Y As Single)
     If Button <> 1 Then Exit Sub
       If X > Tab_W - 32 Then
-'      toMP
+      toMP
     End If
 End Sub
 

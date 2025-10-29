@@ -1,4 +1,4 @@
-Attribute VB_Name = "RW_rvPrd"
+Attribute VB_Name = "RW_5rvPrd"
 '{GP:1}
 '{Ep:rvme}
 '{Caption:修改产品属性}

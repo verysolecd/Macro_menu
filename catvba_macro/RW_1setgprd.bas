@@ -1,4 +1,4 @@
-Attribute VB_Name = "RW_setgprd"
+Attribute VB_Name = "RW_1setgprd"
 '{GP:1}
 '{Ep:setgprd}
 '{Caption:Ñ¡Ôñ²úÆ·}

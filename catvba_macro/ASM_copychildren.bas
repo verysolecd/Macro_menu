@@ -14,26 +14,22 @@ If CATIA.Windows.Count < 1 Then
     Exit Sub
 End If
 If Not CanExecute("ProductDocument") Then Exit Sub
-
 Dim imsg, filter(0), iSel
 Set oDoc = CATIA.ActiveDocument
 Set osel = CATIA.ActiveDocument.Selection
-
 On Error Resume Next
-    imsg = "请选择要复制的子产品父集"
+    imsg = "请先点击选择源父产品，再点击选择目标父产品"
     MsgBox imsg
     filter(0) = "Product"
     Dim sourcePrd, targetPrd
-    Set sourcePrd = KCL.SelectElement(imsg, filter).Value
+    Set sourcePrd = KCL.SelectItem(imsg, filter)
     If sourcePrd Is Nothing Then Exit Sub
-    For Each Prd In sourcePrd.Products
-       osel.Add Prd
-    Next
-        osel.Copy
-        osel.Clear
-    imsg = "请选择黏贴目标产品"
-    MsgBox imsg
-    Set targetPrd = KCL.SelectElement(imsg, filter).Value
+        For Each prd In sourcePrd.Products
+           osel.Add prd
+        Next
+    osel.Copy
+    osel.Clear
+    Set targetPrd = KCL.SelectItem(imsg, filter)
     If targetPrd Is Nothing Then
         Exit Sub
     Else
@@ -43,4 +39,3 @@ On Error Resume Next
     End If
 On Error GoTo 0
 End Sub
-

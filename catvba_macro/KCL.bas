@@ -82,15 +82,12 @@ Function checkDocType(ByVal docTypes As Variant)
  checkDocType = True
 End Function
 
-
-
-
 ' 选择项目
 ''' @param:Msg-提示信息
 ''' @param:Filter-array(string),string 选择过滤器(默认为AnyObject)
 ''' @return:AnyObject
 Function SelectItem(ByVal msg$, _
-                           Optional ByVal filter As Variant = Empty)
+                    Optional ByVal filter As Variant = Empty)
     Dim se As SelectedElement
     Set se = SelectElement(msg, filter)
     
@@ -116,6 +113,7 @@ Function SelectElement(ByVal msg$, _
     
     Dim sel As Variant: Set sel = CATIA.ActiveDocument.Selection
     sel.Clear
+    
     Select Case sel.SelectElement2(filter, msg, False)
         Case "Cancel", "Undo", "Redo"
              Set SelectElement = Nothing
@@ -124,6 +122,7 @@ Function SelectElement(ByVal msg$, _
     
     Set SelectElement = sel.item(1)
     sel.Clear
+    
 End Function
 
 ' 获取内部名称
@@ -141,9 +140,9 @@ End Function
 ''' @param:T-String
 ''' @return:AnyObject
 Function GetParent_Of_T( _
-    ByVal anyObj As AnyObject, _
-    ByVal t As String) _
-    As AnyObject
+                        ByVal anyObj As AnyObject, _
+                        ByVal t As String) _
+         As AnyObject
     
     Dim anyObjName As String
     Dim parentName As String
@@ -159,6 +158,7 @@ Function GetParent_Of_T( _
         Set GetParent_Of_T = Nothing
         Exit Function
     End If
+    
     If TypeName(anyObj) = t Then
         Set GetParent_Of_T = anyObj
     Else
@@ -297,7 +297,6 @@ Function IsType_Of_T(ByVal oj As Object, ByVal t$) As Boolean
 '    MsgBox TypeName(oj)
 End Function
 
-
 '*****数组相关函数*****
 ' 合并两个数组
 ''' @param:Ary1-Variant(Of Array)
@@ -333,6 +332,7 @@ End Function
 ''' @param:EndIdx-Long
 ''' @return:Variant(Of Array)
 Function GetRangeAry(ByVal ary As Variant, ByVal StartIdx&, ByVal EndIdx&) As Variant
+
     If Not IsArray(ary) Then Exit Function
     If EndIdx - StartIdx < 0 Then Exit Function
     If StartIdx < 0 Then Exit Function
@@ -344,6 +344,7 @@ Function GetRangeAry(ByVal ary As Variant, ByVal StartIdx&, ByVal EndIdx&) As Va
         RngAry(i - StartIdx) = ary(i)
     Next
     GetRangeAry = RngAry
+    
 End Function
 
 ' 克隆数组

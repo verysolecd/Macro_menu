@@ -1,4 +1,4 @@
-Attribute VB_Name = "RW_readPrd"
+Attribute VB_Name = "RW_4readPrd"
 'Attribute VB_Name = "ReadPrd"
 '{gp:1}
 '{Ep:readPrd}

@@ -1,15 +1,12 @@
-Attribute VB_Name = "RW_initme"
+Attribute VB_Name = "RW_3initme"
 'Attribute VB_Name = "initme"
 '{GP:1}
 '{Ep:initme}
 '{Caption:初始化模板}
 '{ControlTipText:将选择的产品和子产品文档按模板格式化}
-'{BackColor: }
+'{BackColor:1229803}
 
 Sub initme()
-
-
-
  
  If KCL.CanExecute("ProductDocument") Then
      If pdm Is Nothing Then

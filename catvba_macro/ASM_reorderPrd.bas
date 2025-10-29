@@ -8,7 +8,7 @@ Attribute VB_Name = "ASM_reorderPrd"
 Option Explicit
 Sub CATMain()
     If Not CanExecute("ProductDocument") Then Exit Sub
-    Dim ProDoc As productDocument: Set ProDoc = CATIA.ActiveDocument
+    Dim ProDoc As ProductDocument: Set ProDoc = CATIA.ActiveDocument
     Dim Pros As Products: Set Pros = ProDoc.Product.Products
     If Pros.Count < 2 Then Exit Sub
     Dim AssyMode As AsmConstraintSettingAtt

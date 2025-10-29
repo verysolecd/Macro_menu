@@ -40,12 +40,15 @@ Sub sendDir()
         Send.SetDirectoryFile bckFolder
         Send.Run
         MsgBox "已经备份到" & bckFolder
-        
     Else
         MsgBox bckFolder & vbNewLine & _
         "  " & vbNewLine & _
-         "你的产品零件号包含非法字符，无法备份，请检查!"
+        "你的产品零件号包含非法字符，无法备份，请检查!"
     End If
+    
+    
+    
+    
 End Sub
 
 

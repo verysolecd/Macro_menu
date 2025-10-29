@@ -1,11 +1,11 @@
-Attribute VB_Name = "BOM_cGXBOM"
-'{GP:2}
-'{Ep:cgxBom}
-'{Caption:GXBOM}
+Attribute VB_Name = "RW_Cbom"
+'{GP:1}
+'{Ep:cBom}
+'{Caption:生成BOM}
 '{ControlTipText:选择要被读取或修改的产品}
 '{BackColor:16744703}
 
-Sub cgxBom()
+Sub cBom()
 If Not KCL.CanExecute("ProductDocument") Then Exit Sub
      If pdm Is Nothing Then
           Set pdm = New class_PDM
@@ -22,12 +22,11 @@ If Not KCL.CanExecute("ProductDocument") Then Exit Sub
       Set iprd = gPrd
             counter = 1
           If Not iprd Is Nothing Then
-          xlm.inject_gxbom pdm.gxBom(iprd, 1)
+          xlm.inject_bom pdm.recurPrd(iprd, 1)
      End If
      Set iprd = Nothing
      xlm.freesheet
      
 End Sub
-
 
 

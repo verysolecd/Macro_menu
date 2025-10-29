@@ -1,10 +1,10 @@
 VERSION 5.00
 Begin {C62A69F0-16DC-11CE-9E98-00AA00574A4F} askdir 
    Caption         =   "请确定时间格式和路径"
-   ClientHeight    =   3135
+   ClientHeight    =   3255
    ClientLeft      =   120
    ClientTop       =   465
-   ClientWidth     =   7845
+   ClientWidth     =   7155
    OleObjectBlob   =   "askdir.frx":0000
    StartUpPosition =   1  'CenterOwner
 End
