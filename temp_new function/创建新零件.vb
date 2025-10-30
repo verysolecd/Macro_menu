@@ -12,15 +12,15 @@ Set oBody = oPart.MainBody
 Dim oHBodies 'As HybridBodies
 Set oHBodies = oPart.HybridBodies
 Dim oHBody 'As HybridBody
-'é‡å‘½åä¸»å®ä½“
+'ÖØÃüÃûÖ÷ÊµÌå
 oBody.name = "Part_Body"
-'ç»™å®ä½“éšæœºä¸Šè‰²
+'¸øÊµÌåËæ»úÉÏÉ«
 oselection.Clear()
 oselection.add(oBody)
 Randomize
-'è‰²è°ƒ 0Â°~360ã€é¥±å’Œåº¦0~1ã€æ˜åº¦0~1 
+'É«µ÷ 0¡ã~360¡¢±¥ºÍ¶È0~1¡¢Ã÷¶È0~1 
 'MyH = 60+rnd*240
-MyH = (rnd*rnd*10000 mod 280) + 40   'ä»40~280çš„è‰²ç›¸é€‰è‰²ï¼Œé¿å¼€çº¢è‰²
+MyH = (rnd*rnd*10000 mod 280) + 40   '´Ó40~280µÄÉ«ÏàÑ¡É«£¬±Ü¿ªºìÉ«
 
 Randomize
 MyS = 0.518+rnd*0.2
@@ -37,7 +37,7 @@ B = int(B)
 'Msgbox("R:" & R & " G:" & G  & " B:" & B)
 'Msgbox("H:" & MyH/1.5 & " S:" & int(MyS*240)  & " V:" & int(MyV*240))
 MyVisProperties.SetRealColor R ,G ,B ,1
-'åˆ é™¤æ‰€æœ‰å‡ ä½•å›¾å½¢é›†
+'É¾³ıËùÓĞ¼¸ºÎÍ¼ĞÎ¼¯
 oSelection.Clear()
 if oHBodies.count>0 then
     for i = 1 to oHBodies.count
@@ -46,59 +46,59 @@ if oHBodies.count>0 then
     Next
 oSelection.delete
 end if
-'å¢åŠ #è‰å›¾æ¨¡æ¿_sketchå‡ ä½•å›¾å½¢é›†
+'Ôö¼Ó#²İÍ¼Ä£°å_sketch¼¸ºÎÍ¼ĞÎ¼¯
 Set oHybridBody = oHBodies.Add()
-oHybridBody.Name = "#è‰å›¾æ¨¡æ¿"
-'å¢åŠ #Final_Designå‡ ä½•å›¾å½¢é›†
+oHybridBody.Name = "#²İÍ¼Ä£°å"
+'Ôö¼Ó#Final_Design¼¸ºÎÍ¼ĞÎ¼¯
 Set oHybridBody = oHBodies.Add()
-oHybridBody.Name = "#Final_Design_æœ€ç»ˆç»“æœ"
-'å¢åŠ #Input informationå‡ ä½•å›¾å½¢é›†
+oHybridBody.Name = "#Final_Design_×îÖÕ½á¹û"
+'Ôö¼Ó#Input information¼¸ºÎÍ¼ĞÎ¼¯
 Set oHybridBody = oHBodies.Add()
-oHybridBody.Name = "#Input information_è¾“å…¥ä¿¡æ¯"
-'å¢åŠ #Input informationé‡Œé¢çš„Styling_Surfacå‡ ä½•å›¾å½¢é›†
+oHybridBody.Name = "#Input information_ÊäÈëĞÅÏ¢"
+'Ôö¼Ó#Input informationÀïÃæµÄStyling_Surfac¼¸ºÎÍ¼ĞÎ¼¯
 Dim Input_information_HBodies 'As HybridBodies
 set Input_information_HBodies=oHybridBody.HybridBodies
 Set oHybridBody = Input_information_HBodies.Add()
-oHybridBody.Name = "#Styling_Surface_é€ å‹é¢"
-'å¢åŠ #Input informationé‡Œé¢çš„#Imported_Geometryå‡ ä½•å›¾å½¢é›†
+oHybridBody.Name = "#Styling_Surface_ÔìĞÍÃæ"
+'Ôö¼Ó#Input informationÀïÃæµÄ#Imported_Geometry¼¸ºÎÍ¼ĞÎ¼¯
 Set oHybridBody = Input_information_HBodies.Add()
-oHybridBody.Name = "#Imported_Geometry_è¾“å…¥å…ƒç´ "
-'å¢åŠ #Input informationé‡Œé¢çš„#Sectionå‡ ä½•å›¾å½¢é›†
+oHybridBody.Name = "#Imported_Geometry_ÊäÈëÔªËØ"
+'Ôö¼Ó#Input informationÀïÃæµÄ#Section¼¸ºÎÍ¼ĞÎ¼¯
 Set oHybridBody = Input_information_HBodies.Add()
-oHybridBody.Name = "#Section_æ–­é¢"
-'å¢åŠ #Basic_Surfaceå‡ ä½•å›¾å½¢é›†
+oHybridBody.Name = "#Section_¶ÏÃæ"
+'Ôö¼Ó#Basic_Surface¼¸ºÎÍ¼ĞÎ¼¯
 Set oHybridBody = oHBodies.Add()
-oHybridBody.Name = "#Basic_Surface_åŸºç¡€ç»“æ„"
-'å¢åŠ #Trimmingå‡ ä½•å›¾å½¢é›†
+oHybridBody.Name = "#Basic_Surface_»ù´¡½á¹¹"
+'Ôö¼Ó#Trimming¼¸ºÎÍ¼ĞÎ¼¯
 Set oHybridBody = oHBodies.Add()
-oHybridBody.Name = "#Spilt_ä¿®è¾¹"
-'å¢åŠ #Spilt/Holeså‡ ä½•å›¾å½¢é›†
+oHybridBody.Name = "#Spilt_ĞŞ±ß"
+'Ôö¼Ó#Spilt/Holes¼¸ºÎÍ¼ĞÎ¼¯
 Set oHybridBody = oHBodies.Add()
-oHybridBody.Name = "#Holes_å¼€å­”"
-'å¢åŠ #Manufacturing_informationå‡ ä½•å›¾å½¢é›†
+oHybridBody.Name = "#Holes_¿ª¿×"
+'Ôö¼Ó#Manufacturing_information¼¸ºÎÍ¼ĞÎ¼¯
 Set oHybridBody = oHBodies.Add()
-oHybridBody.Name = "#Manufacturing_information_å·¥è‰ºä¿¡æ¯"
-'å¢åŠ #Manufacturing_informationé‡Œé¢çš„RPSå‡ ä½•å›¾å½¢é›†
+oHybridBody.Name = "#Manufacturing_information_¹¤ÒÕĞÅÏ¢"
+'Ôö¼Ó#Manufacturing_informationÀïÃæµÄRPS¼¸ºÎÍ¼ĞÎ¼¯
 Dim Manufacturing_information_HBodies 'As HybridBodies
 set Manufacturing_information_HBodies=oHybridBody.HybridBodies
 Set oHybridBody = Manufacturing_information_HBodies.Add()
 oHybridBody.Name = "#RPS"
-'å¢åŠ #Manufacturing_informationé‡Œé¢çš„#Imported_Geometryå‡ ä½•å›¾å½¢é›†
+'Ôö¼Ó#Manufacturing_informationÀïÃæµÄ#Imported_Geometry¼¸ºÎÍ¼ĞÎ¼¯
 Set oHybridBody = Manufacturing_information_HBodies.Add()
-oHybridBody.Name = "#Matching_Areas_è´´åˆé¢"
+oHybridBody.Name = "#Matching_Areas_ÌùºÏÃæ"
 
-'è®¾ç½®çº¿æ€§ä¸é¢œè‰²
+'ÉèÖÃÏßĞÔÓëÑÕÉ«
 oselection.Clear()
 oselection.add(oHybridBody)
 MyVisProperties.SetRealColor 255 ,0 ,255 ,1
 MyVisProperties.SetRealLineType 5,1
-'å¢åŠ #Manufacturing_informationé‡Œé¢çš„#Sectionå‡ ä½•å›¾å½¢é›†
+'Ôö¼Ó#Manufacturing_informationÀïÃæµÄ#Section¼¸ºÎÍ¼ĞÎ¼¯
 Set oHybridBody = Manufacturing_information_HBodies.Add()
-oHybridBody.Name = "#Hoel_Function_å­”ä½æè¿°"
-'å¢åŠ #Manufacturing_informationé‡Œé¢çš„#åŒ…è¾¹åŸºå‡†çº¿å‡ ä½•å›¾å½¢é›†
+oHybridBody.Name = "#Hoel_Function_¿×Î»ÃèÊö"
+'Ôö¼Ó#Manufacturing_informationÀïÃæµÄ#°ü±ß»ù×¼Ïß¼¸ºÎÍ¼ĞÎ¼¯
 Set oHybridBody = Manufacturing_information_HBodies.Add()
-oHybridBody.Name = "#åŒ…è¾¹åŸºå‡†çº¿"
-'éšè—åæ ‡ç³»
+oHybridBody.Name = "#°ü±ß»ù×¼Ïß"
+'Òş²Ø×ø±êÏµ
 oSelection.Clear()
 Set MyXY=oPart.originElements.PlaneXY
 Set MyYZ=oPart.originElements.PlaneYZ
@@ -109,14 +109,14 @@ oSelection.Add(MyZX)
 MyVisProperties.SetShow catVisPropertyNoShowAttr
 oSelection.Clear()
 oPart.Update 
-'msgbox "æ¨¡å‹æ ‘å·²æ„å»ºå®Œæˆï¼Œæ³¨æ„æ›´æ”¹é›¶ä»¶ç¼–å·"
+'msgbox "Ä£ĞÍÊ÷ÒÑ¹¹½¨Íê³É£¬×¢Òâ¸ü¸ÄÁã¼ş±àºÅ"
 End Sub
 function HSV2RGB(H,S,V)
-'è‰²è°ƒ 0Â°~360ã€é¥±å’Œåº¦0~1ã€æ˜åº¦0~1
+'É«µ÷ 0¡ã~360¡¢±¥ºÍ¶È0~1¡¢Ã÷¶È0~1
 Dim C
 Dim X
 Dim m
-Dim RGB(3)  'å­˜å‚¨RGBçš„æ•°ç»„
+Dim RGB(3)  '´æ´¢RGBµÄÊı×é
 hi = (H /60)  mod 6
 f = h/60 - hi
 p = V * (1-s)
