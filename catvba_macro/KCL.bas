@@ -64,6 +64,7 @@ Function CanExecute(ByVal docTypes As Variant) As Boolean
     If Not CanExecute Then MsgBox ErrMsg, vbExclamation + vbOKOnly
     
 End Function
+
 Function checkDocType(ByVal docTypes As Variant)
     checkDocType = False
     If VarType(docTypes) = vbString Then docTypes = Split(docTypes, ",") '过滤器转数组
@@ -79,7 +80,7 @@ Function checkDocType(ByVal docTypes As Variant)
      If UBound(filter(docTypes, TypeName(ActDoc))) < 0 Then '此处filter函数是VBA中比较厚返回数组的函数
         Exit Function
     End If
- checkDocType = True
+    checkDocType = True
 End Function
 
 ' 选择项目
@@ -225,23 +226,23 @@ Function GetLanguage() As String
     End Select
 End Function
 ' 检查是否为字符串数组
-Private Function IsStringAry(ByVal ary As Variant) As Boolean
+Private Function IsStringAry(ByVal Ary As Variant) As Boolean
     IsStringAry = False
-    If Not IsArray(ary) Then Exit Function
+    If Not IsArray(Ary) Then Exit Function
     Dim i&
-    For i = 0 To UBound(ary)
-        If Not VarType(ary(i)) = vbString Then Exit Function
+    For i = 0 To UBound(Ary)
+        If Not VarType(Ary(i)) = vbString Then Exit Function
     Next
     IsStringAry = True
 End Function
 
 ' 检查过滤器类型是否有效
-Private Function checkFilterType(ByVal ary As Variant) As Boolean
+Private Function checkFilterType(ByVal Ary As Variant) As Boolean
     checkFilterType = False
     Dim ErrMsg$: ErrMsg = "过滤器类型无效" + vbNewLine + _
                           "需要为Variant(String)类型的数组" + vbNewLine + _
                           "(具体请参考文档)"
-    If Not IsStringAry(ary) Then
+    If Not IsStringAry(Ary) Then
         MsgBox ErrMsg
         Exit Function
     End If
@@ -251,13 +252,13 @@ Private Function checkFilterType(ByVal ary As Variant) As Boolean
 End Function
 
 ' 将字符串转换为变体数组
-Private Function strToAry(ByVal S$) As Variant
-    Dim ary As Variant: ary = Split(S, ",")
+Private Function strToAry(ByVal s$) As Variant
+    Dim Ary As Variant: Ary = Split(s, ",")
     
-    Dim oAry() As Variant: ReDim oAry(UBound(ary))
+    Dim oAry() As Variant: ReDim oAry(UBound(Ary))
     Dim i&
-    For i = 0 To UBound(ary)
-        oAry(i) = ary(i)
+    For i = 0 To UBound(Ary)
+        oAry(i) = Ary(i)
     Next
     
     strToAry = oAry
@@ -292,8 +293,8 @@ End Function
 ''' @param:OJ-Object
 ''' @param:T-String
 ''' @return:Boolean
-Function IsType_Of_T(ByVal oj As Object, ByVal t$) As Boolean
-    IsType_Of_T = IIf(TypeName(oj) = t, True, False)
+Function isobjtype(ByVal oj As Object, ByVal t$) As Boolean
+    isobjtype = IIf(TypeName(oj) = t, True, False)
 '    MsgBox TypeName(oj)
 End Function
 
@@ -331,17 +332,17 @@ End Function
 ''' @param:StartIdx-Long
 ''' @param:EndIdx-Long
 ''' @return:Variant(Of Array)
-Function GetRangeAry(ByVal ary As Variant, ByVal StartIdx&, ByVal EndIdx&) As Variant
+Function GetRangeAry(ByVal Ary As Variant, ByVal StartIdx&, ByVal EndIdx&) As Variant
 
-    If Not IsArray(ary) Then Exit Function
+    If Not IsArray(Ary) Then Exit Function
     If EndIdx - StartIdx < 0 Then Exit Function
     If StartIdx < 0 Then Exit Function
-    If EndIdx > UBound(ary) Then Exit Function
+    If EndIdx > UBound(Ary) Then Exit Function
     
     Dim RngAry() As Variant: ReDim RngAry(EndIdx - StartIdx)
     Dim i&
     For i = StartIdx To EndIdx
-        RngAry(i - StartIdx) = ary(i)
+        RngAry(i - StartIdx) = Ary(i)
     Next
     GetRangeAry = RngAry
     
@@ -350,9 +351,9 @@ End Function
 ' 克隆数组
 ''' @param:Ary-Variant(Of Array)
 ''' @return:Variant(Of Array)
-Function CloneAry(ByVal ary As Variant) As Variant
-    If Not IsArray(ary) Then Exit Function
-    CloneAry = GetRangeAry(ary, 0, UBound(ary))
+Function CloneAry(ByVal Ary As Variant) As Variant
+    If Not IsArray(Ary) Then Exit Function
+    CloneAry = GetRangeAry(Ary, 0, UBound(Ary))
 End Function
 
 ' 检查两个数组是否相等
@@ -496,6 +497,7 @@ Public Function GetInput(msg) As String
 End Function
 
 '@@param: oPath-路径
+'获取输入路径父级
 Public Function ofParentPath(ByVal opath$)
     Dim idx
     idx = InStrRev(opath, "\")
@@ -606,3 +608,33 @@ If idx > 0 Then
         straf1st = iStr
     End If
 End Function
+
+''替换字符串的所有中文为空格
+Function rmchn(ByVal inputString$) As String
+    Dim regEx: Set regEx = CreateObject("VBScript.RegExp")
+    regEx.Pattern = "[\u4e00-\u9fa5]"
+    regEx.Global = True
+    rmchn = regEx.Replace(inputString, " ")
+    Set regEx = Nothing
+End Function
+
+
+'创建md文件
+Function getmd(ByVal ipath_name As String)
+    Set fso = CreateObject("Scripting.FileSystemObject")
+    If Not KCL.isExists(ipath) Then
+        Set mdfile = fso.CreateTextFile(ipath_name, False) '不存在则创建
+    Else
+        Set mdfile = fso.OpenTextFile(ipath_name, ForAppending, TristateFalse) '存在则
+    End If
+    Set getmd = mdfile
+    Set mdfile = Nothing
+End Function
+'文本文件写入
+Sub Appendtext(ByVal tfile As Object, _
+           ByVal iText$ _
+           )
+    tfile.WriteLine (iText)
+    Set tfile = Nothing
+End Sub
+

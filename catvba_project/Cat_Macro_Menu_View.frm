@@ -1,10 +1,10 @@
 VERSION 5.00
 Begin {C62A69F0-16DC-11CE-9E98-00AA00574A4F} Cat_Macro_Menu_View 
    Caption         =   "UserForm1"
-   ClientHeight    =   7995
+   ClientHeight    =   3870
    ClientLeft      =   120
    ClientTop       =   450
-   ClientWidth     =   11595
+   ClientWidth     =   8550.001
    OleObjectBlob   =   "Cat_Macro_Menu_View.frx":0000
    StartUpPosition =   1  'CenterOwner
 End
@@ -68,23 +68,26 @@ Option Explicit
 ' 设置窗体信息
 Sub Set_FormInfo(ByVal InfoLst As Object, _
                  ByVal PageMap As Object, _
-                 ByVal FormTitle As String, _
+                 ByVal formTitle As String, _
                  ByVal CloseType As Boolean)
-         ' 连接到全局产品观察者
-    Set prdObserver = ProductObserver
-    ' 初始化窗体边距
+        
+    Set prdObserver = ProductObserver  ' 连接到全局产品观察器
     FrmMargin = Array(2, 2, 2, 2) ' 上, 右, 下, 左 窗体边距调整值
-    ' 创建多页控件
-    Set MPgs = Me.Controls.Add("Forms.MultiPage.1", "MPgs", True)
+    Set MPgs = Me.Controls.Add("Forms.MultiPage.1", "MPgs", True) ' 创建多页控件
     Dim Pgs As Pages
      Set Pgs = MPgs.Pages
-     Pgs.Clear
+    Pgs.Clear
+    
     Dim Key As Long, KeyStr As Variant
     Dim Pg As Page, pName As String
     Dim BtnInfos As Object, Info As Variant
+    
     Dim Btns As Object: Set Btns = KCL.InitLst()
+    
     Dim btn As MSForms.CommandButton
+    
     Dim BtnEvt As Button_Evt
+    
     For Each KeyStr In InfoLst
         Key = CLng(KeyStr)
         If Not PageMap.Exists(Key) Then GoTo continue
@@ -101,7 +104,9 @@ continue:
     Next
         Set mBtns = Btns
     Call Set_MPage(MPgs)
-    Call Set_Form(MPgs, FormTitle)
+    Call Set_Form(MPgs, formTitle)
+    
+    
     Set lblProductInfo = Me.Controls.Add("Forms.Label.1", "lblProductInfo", True)
    With lblProductInfo
         .Caption = "产品待选择"

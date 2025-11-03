@@ -1,18 +1,15 @@
 Attribute VB_Name = "m0_dataMenu"
 'Attribute VB_Name = "Cat_Macro_Menu_Model"
 ' 此代码用于获取宏菜单所需的配置信息并展示菜单界面
-Const FormTitle = "Macro"
+Const formTitle = "键盘造车手"
 '----- 菜单的配置信息 ---------------------------------------
-' 菜单的显示类型
 ' True - 非模态显示  False - 模态显示
-Private Const MENU_SHOW_TYPE = True
-' 菜单的隐藏类型
+Private Const MENU_SHOW_TYPE = False
 ' True - 隐藏菜单按钮  False - 显示菜单按钮
 Private Const MENU_HIDE_TYPE = True
+
 ' 菜单分组的配置信息
-' 请根据需要修改
 '{ 分组编号 : 分组标题 }
-' 示例配置
 Private Const groupName = _
             "{1 : R&W }" & _
             "{2 : BOM }" & _
@@ -52,8 +49,7 @@ Sub CATMain()
     ' 显示菜单界面
     Dim Menu
     Set Menu = New Cat_Macro_Menu_View
-    Call Menu.Set_FormInfo(SoLst, PageMap, FormTitle, MENU_HIDE_TYPE)
-    
+    Call Menu.Set_FormInfo(SoLst, PageMap, formTitle, MENU_HIDE_TYPE)
     If MENU_SHOW_TYPE Then
         Menu.Show vbModeless
     Else
@@ -84,14 +80,11 @@ Private Function Get_ButtonInfo() As Object
     Dim BtnInfos As Object: Set BtnInfos = KCL.InitLst()
     
     For Each Comp In AllComps
-        Set Mdl = Comp.CodeModule
-        ' 获取声明行数
-        DecCnt = Mdl.CountOfDeclarationLines
-        If DecCnt < 1 Then GoTo continue
-        ' 获取声明代码
-        DecCode = Mdl.Lines(1, Mdl.CountOfDeclarationLines)
-        ' 获取配置信息
-        Set MdlInfo = Get_KeyValue(DecCode)
+        Set Mdl = Comp.CodeModule        
+        DecCnt = Mdl.CountOfDeclarationLines ' 获取声明行数
+        If DecCnt < 1 Then GoTo continue        
+        DecCode = Mdl.Lines(1, Mdl.CountOfDeclarationLines) ' 获取声明代码       
+        Set MdlInfo = Get_KeyValue(DecCode)  ' 获取配置信息
         If MdlInfo Is Nothing Then GoTo continue
         ' 检查分组信息
         If Not MdlInfo.Exists(TAG_GROUP) Then GoTo continue
@@ -100,6 +93,7 @@ Private Function Get_ButtonInfo() As Object
         Else
             GoTo continue
         End If
+        
         Debug.Print TypeName(MdlInfo(TAG_GROUP)) & " : " & MdlInfo(TAG_GROUP)
         If Not PageMap.Exists(MdlInfo(TAG_GROUP)) Then GoTo continue
         

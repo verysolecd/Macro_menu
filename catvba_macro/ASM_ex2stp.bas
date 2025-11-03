@@ -8,6 +8,9 @@ Attribute VB_Name = "ASM_ex2stp"
 '{BackColor:}
 ' 定义模块级变量
 Private errorMessage As String
+Private formTitle
+Private textbox
+
 
 Sub ex2stp_zip()
     On Error Resume Next ' 临时开启错误处理
@@ -16,24 +19,24 @@ Sub ex2stp_zip()
         GoTo ShowMessage
     End If
     
-    Dim oDoc As Document
-    Set oDoc = CATIA.ActiveDocument
+    Dim odoc As Document
+    Set odoc = CATIA.ActiveDocument
     
     Dim outputpath As String
     askdir.Show
-    outputpath = GetOutputPath(oDoc)
+    outputpath = GetOutputPath(odoc)
     
     If outputpath = "" Then
         errorMessage = "缺少导出路径，操作取消！"
         GoTo ShowMessage
     Else
-        Dim pn: pn = oDoc.Product.PartNumber
+        Dim pn: pn = odoc.Product.PartNumber
         If dt_pth_ctrl(0) = 1 Then
             Dim ttp: ttp = KCL.timestamp(dt_pth_ctrl(1))
-            oDoc.Product.PartNumber = KCL.strbflast(pn, "_") & ttp ' 零件号更新
+            odoc.Product.PartNumber = KCL.strbflast(pn, "_") & ttp ' 零件号更新
         End If
 
-        stpname = KCL.strbf1st(oDoc.Product.PartNumber, "_") & "_Housing_" & ttp
+        stpname = KCL.strbf1st(odoc.Product.PartNumber, "_") & "_Housing_" & ttp
         
         Dim stpfilepath As String
         Dim opath(2) '0=路径，1=name，2=extname
@@ -44,7 +47,8 @@ Sub ex2stp_zip()
         
         MsgBox stpfilepath
         '================导出stp
-        oDoc.ExportData stpfilepath, "stp"
+        odoc.ExportData stpfilepath, "stp"
+        
         If Err.Number <> 0 Then
             errorMessage = "STP 导出失败：" & Err.Description
             GoTo ShowMessage
@@ -67,7 +71,7 @@ ShowMessage:
         MsgBox stpfilepath & ".zip文件已压缩,STP 原始文件已删除。", vbInformation
     End If
     
-    Set oDoc = Nothing
+    Set odoc = Nothing
     On Error GoTo 0 ' 关闭错误处理
     errorMessage = "" ' 重置错误信息
 End Sub

@@ -30,12 +30,15 @@ Private WithEvents cmdOK As MSForms.CommandButton
 Attribute cmdOK.VB_VarHelpID = -1
 Private WithEvents cmdCancel As MSForms.CommandButton
 Attribute cmdCancel.VB_VarHelpID = -1
-Private WithEvents txt_TM As MSForms.TextBox
+Private WithEvents txt_TM As MSForms.textbox
 Attribute txt_TM.VB_VarHelpID = -1
 Private colls As New collection
 Private class_ctrl As clsCtrls
 
 Private Sub UserForm_Initialize()
+
+
+'Call Set_Form
     ' 设置窗体基本属性
     Me.Caption = "零件号更新和路径选择"
     Me.Width = 300
@@ -67,7 +70,7 @@ Private Sub UserForm_Initialize()
      Set class_ctrl.txt = txt_TM
     class_ctrl.ohint = "请输入日期格式，日=d或day，时=hour或h，分=min或i，默认为日"
     
-    txt_TM.Text = class_ctrl.ohint
+    txt_TM.text = class_ctrl.ohint
     txt_TM.ForeColor = &H808080
     
     colls.Add class_ctrl
@@ -109,15 +112,15 @@ Private Sub chk_TM_Click()
 End Sub
 
 Private Sub txt_TM_gotfocus()
-    If txt_TM.Text = usrTXT Then
-        txt_TM.Text = " "
+    If txt_TM.text = usrTXT Then
+        txt_TM.text = " "
         txt_TM.ForeColor = &H80
     End If
 End Sub
 
 Private Sub txt_TM_Lostfocus()
-    If txt_TM.Text = "" Then
-        txt_TM.Text = usrTXT
+    If txt_TM.text = "" Then
+        txt_TM.text = usrTXT
         txt_TM.ForeColor = &H808080
   End If
 End Sub
@@ -133,15 +136,13 @@ Private Sub cmdOK_Click()
         tdy(1) = ""
     If UpdateTimestamp Then
         tdy(0) = 1
-        tdy(1) = txt_TM.Text
+        tdy(1) = txt_TM.text
     End If
     
     If ExportToCurrentPath Then
         tdy(2) = 1
     End If
-
-    dt_pth_ctrl = tdy
-'                                        Debug.Print dt_pth_ctrl(0), dt_pth_ctrl(1), dt_pth_ctrl(2)
+    dt_pth_ctrl = tdy '                                        Debug.Print dt_pth_ctrl(0), dt_pth_ctrl(1), dt_pth_ctrl(2)
         Unload Me
 End Sub
 
@@ -149,6 +150,17 @@ Private Sub cmdCancel_Click()
 
     dt_pth_ctrl = Array(0, 0, "")
     Unload Me
+End Sub
+
+Private Sub Set_Form(ByVal MPgs As MultiPage, ByVal Cap As String)
+
+    With Me
+        Dim requiredInsideHeight
+        requiredInsideHeight = MPgs.Top + MPgs.Height + ADJUST_F_H + lb_H  '+ FrmMargin(2)
+        .Height = requiredInsideHeight + (Me.Height - Me.InsideHeight)
+        .Width = MPgs.Width + ADJUST_F_W + 2 * FrmMargin(2)
+        .Caption = Cap
+    End With
 End Sub
 
 

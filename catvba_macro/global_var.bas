@@ -1,5 +1,4 @@
 Attribute VB_Name = "global_var"
-
 Public gPrd As Object
 Public rootprd  As Object  '全局产品obj
 Public startrow, lastRow  '全局excel行定义
@@ -13,14 +12,17 @@ Public counter As Integer
 Public Const gfn As Integer = 400
 Public ProductObserver As New ProductObserver
 Public dt_pth_ctrl
-
-
-
-
-
 Sub clearall()
-
-
 
 End Sub
 
+'Dim btn, bTitle, bResult
+'imsg = "将备份到" & bckpath "您确认吗"
+
+'btn = vbYesNo + vbExclamation
+'bResult = MsgBox(imsg, btn, "bTitle")  ' Yes(6),No(7),cancel(2)
+
+'Select Case bResult
+'Case 7: Exit Sub '===选择“否”====
+'Case 6  '===选择“是”====
+'Case 2  '===选择“取消”====
