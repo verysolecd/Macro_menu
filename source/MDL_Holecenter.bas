@@ -1,0 +1,47 @@
+Attribute VB_Name = "MDL_Holecenter"
+'Attribute VB_Name = "M25_Holecenter"
+' 获得识别特征下的所有孔中心
+'{GP:4}
+'{EP:ctrhole}
+'{Caption:get孔中心点}
+'{ControlTipText: 提示选择实体后导出所有孔中心，必须是识别孔特征后的实体}
+'{BackColor:12648447}
+
+Sub ctrhole()
+
+ If CATIA.Windows.count < 1 Then
+        MsgBox "没有打开的窗口"
+        Exit Sub
+    End If
+    
+  If Not CanExecute("PartDocument") Then Exit Sub
+
+    Set odoc = CATIA.ActiveDocument
+    Set oPart = odoc.part
+    Set HSF = oPart.HybridShapeFactory
+    '======= 要求选择body
+    Dim imsg, filter(0)
+    imsg = "请选择body"
+    filter(0) = "Body"
+    Dim obdy
+    Set obdy = KCL.SelectElement(imsg, filter).value
+    Set targethb = oPart.HybridBodies.Add()
+    targethb.name = "extracted points"
+    If Not obdy Is Nothing Then
+            Set holeBody = obdy
+            For Each Hole In holeBody.Shapes
+                If TypeOf Hole Is Hole Then
+                    Set skt = Hole.Sketch
+                    Set pt = HSF.AddNewPointCoord(0, 0, 0)
+                    Set ref = oPart.CreateReferenceFromObject(skt)
+                    pt.PtRef = ref
+                    pt.name = "Pt_" & i
+                    targethb.AppendHybridShape pt
+                    oPart.InWorkObject = pt
+                    oPart.Update
+                    i = i + 1
+                End If
+            Next
+        MsgBox "完成：" & i & "个点", vbInformation
+    End If
+End Sub

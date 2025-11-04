@@ -1,239 +1,199 @@
-Attribute VB_Name = "springWD"
-' è‡ªå®šä¹‰å¼¹çª—æ¨¡å—ï¼Œä½¿ç”¨ç°æœ‰çš„askdirçª—ä½“å¹¶åŠ¨æ€æ·»åŠ æ§ä»¶
-Option Explicit
+' ÀàÄ£¿é£ºclsControlConfig£¨¼ò»¯°æ£©
+Public ControlType As String ' ¿Ø¼şÀàĞÍ£ºLabel/CommandButton/TextBox/OptionButton/CheckBox
+Public Name As String ' Î¨Ò»Ãû³Æ
+Public Caption As String ' ÏÔÊ¾ÎÄ±¾
+Public DefaultValue As Variant ' Ä¬ÈÏÖµ£¨ÊäÈë/Ñ¡ÔñÀà£©
+Public MultiLine As Boolean ' ÎÄ±¾¿òÊÇ·ñ¶àĞĞ£¨½öTextBoxÓÃ£©
+' ÒÆ³ıWidth/Height/MarginTopµÈ¸´ÔÓ²ÎÊı£¬È«²¿ÓÃÄ¬ÈÏÖµ
 
-' å¼¹çª—ç»“æœæšä¸¾
-Public Enum PopupResult
-    prOK = 1
-    prCancel = 2
-End Enum
 
-' æ§ä»¶ä¿¡æ¯ç»“æ„
-Private Type ControlInfo
-    Type As Integer ' 1=Checkbox, 2=TextBox
-    Name As String
-    Caption As String
-    X As Integer
-    Y As Integer
-    Width As Integer
-    Height As Integer
-    Value As Variant
-End Type
 
-' æ¨¡å—çº§å˜é‡
-Private Controls() As ControlInfo
-Private ControlCount As Integer
-Private PopupTitle As String
-Private Result As PopupResult
-Private Values As Object
+' Ä£¿é£ºmodStyle£¨¼ò»¯°æ£©
+' ²¼¾Ö³£Á¿£¨ºËĞÄ¼ò»¯µã£©
+Public Const FORM_WIDTH As Integer = 300 ' ´°Ìå¹Ì¶¨¿í¶È
+Public Const LEFT_MARGIN As Integer = 15 ' ËùÓĞ¿Ø¼ş×ó¶ÔÆëµÄ×ó±ß¾à
+Public Const CONTROL_SPACING As Integer = 10 ' ¿Ø¼ş¼ä´¹Ö±¼ä¾à
+Public Const TOP_START As Integer = 15 ' µÚÒ»¸ö¿Ø¼şµÄ¶¥²¿ÆğÊ¼Î»ÖÃ
 
-' åˆ›å»ºæ–°å¼¹çª—
-' å‚æ•°:
-'   title - å¼¹çª—æ ‡é¢˜
-Public Sub CreatePopup(Optional title As String = "å¼¹çª—")
-    ControlCount = 0
-    ReDim Controls(0)
-    PopupTitle = title
-    Result = prCancel
-    Set Values = CreateObject("Scripting.Dictionary")
-End Sub
+' ¿Ø¼şÄ¬ÈÏ³ß´ç
+Public Const LABEL_HEIGHT As Integer = 15 ' ±êÇ©¸ß¶È
+Public Const BTN_WIDTH As Integer = 80 ' °´Å¥¿í¶È
+Public Const BTN_HEIGHT As Integer = 25 ' °´Å¥¸ß¶È
+Public Const INPUT_WIDTH As Integer = 250 ' ÊäÈë¿ò¿í¶È£¨=´°Ìå¿í-2*×ó±ß¾à£©
+Public Const INPUT_HEIGHT_SINGLE As Integer = 20 ' µ¥ĞĞÊäÈë¿ò¸ß¶È
+Public Const INPUT_HEIGHT_MULTI As Integer = 60 ' ¶àĞĞÊäÈë¿ò¸ß¶È
+Public Const OPTION_HEIGHT As Integer = 18 ' µ¥Ñ¡/¸´Ñ¡¿ò¸ß¶È
 
-' æ·»åŠ å¤é€‰æ¡†æ§ä»¶
-' å‚æ•°:
-'   name - æ§ä»¶åç§°(ç”¨äºåç»­è·å–å€¼)
-'   caption - æ˜¾ç¤ºæ–‡æœ¬
-'   x, y - ä½ç½®åæ ‡
-'   width, height - æ§ä»¶å°ºå¯¸
-'   defaultValue - é»˜è®¤é€‰ä¸­çŠ¶æ€(True/False)
-Public Sub AddCheckbox(name As String, caption As String, x As Integer, y As Integer, width As Integer, height As Integer, Optional defaultValue As Boolean = False)
-    ControlCount = ControlCount + 1
-    ReDim Preserve Controls(ControlCount)
+' ÑùÊ½³£Á¿£¨±£³ÖÃÀ¹Û£©
+Public Const FONT_NAME As String = "Î¢ÈíÑÅºÚ"
+Public Const FONT_SIZE As Integer = 10
+Public Const FORM_BACKCOLOR As Long = &H8000000F ' Ç³»Ò±³¾°
+Public Const BTN_BACKCOLOR As Long = &H8000000D ' °´Å¥»ÒÀ¶
+
+
+' Ä£¿é£ºmodFormGenerator£¨¼ò»¯°æ£©
+Public Sub ShowSimpleForm(controls As Collection, formTitle As String, callback As String)
+    Dim frm As Object
+    Dim ctl As Object, ctlConfig As clsControlConfig
+    Dim currentTop As Integer ' µ±Ç°¶¥²¿×ø±ê£¨ÀÛ¼ÆÖµ£©
     
-    With Controls(ControlCount)
-        .Type = 1
-        .Name = name
-        .Caption = caption
-        .X = x
-        .Y = y
-        .Width = width
-        .Height = height
-        .Value = defaultValue
+    ' 1. ´´½¨´°Ìå£¨¹Ì¶¨¿í¶È£©
+    Set frm = CreateObject("Forms.Form.1")
+    With frm
+        .Caption = formTitle
+        .Width = FORM_WIDTH
+        .BackColor = FORM_BACKCOLOR
+        .Font.Name = FONT_NAME
+        .Font.Size = FONT_SIZE
+        .StartUpPosition = 2 ' ¾ÓÖĞ
     End With
+    currentTop = TOP_START ' ´Ó¶¥²¿ÆğÊ¼Î»ÖÃ¿ªÊ¼
+    
+    ' 2. Ñ­»·´´½¨¿Ø¼ş£¨°´Ë³ĞòÅÅÁĞ£©
+    For Each ctlConfig In controls
+        ' ´´½¨¿Ø¼ş²¢ÉèÖÃÎ»ÖÃºÍ³ß´ç
+        Set ctl = CreateControl(frm, ctlConfig, currentTop)
+        ' ¸üĞÂµ±Ç°¶¥²¿×ø±ê£¨ÏÂÒ»¸ö¿Ø¼şµÄÎ»ÖÃ£©
+        currentTop = currentTop + ctl.Height + CONTROL_SPACING
+    Next
+    
+    ' 3. µ÷Õû´°Ìå¸ß¶È£¨×îºóÒ»¸ö¿Ø¼şµ×²¿+µ×²¿±ß¾à£©
+    frm.Height = currentTop + TOP_START ' µ×²¿ÁôÍ¬ÑùµÄ±ß¾à
+    
+    ' 4. °ó¶¨ÊÂ¼ş£¨°´Å¥µã»÷£©
+    BindEvents frm, callback
+    
+    ' 5. ÏÔÊ¾´°Ìå
+    frm.Show vbModal
 End Sub
 
-' æ·»åŠ æ–‡æœ¬æ¡†æ§ä»¶
-' å‚æ•°:
-'   name - æ§ä»¶åç§°(ç”¨äºåç»­è·å–å€¼)
-'   caption - æ ‡ç­¾æ–‡æœ¬
-'   x, y - ä½ç½®åæ ‡
-'   width, height - æ§ä»¶å°ºå¯¸
-'   defaultValue - é»˜è®¤æ–‡æœ¬
-Public Sub AddTextBox(name As String, caption As String, x As Integer, y As Integer, width As Integer, height As Integer, Optional defaultValue As String = "")
-    ControlCount = ControlCount + 1
-    ReDim Preserve Controls(ControlCount)
+' ´´½¨µ¥¸ö¿Ø¼ş£¨Ê¹ÓÃÄ¬ÈÏ³ß´çºÍ¹Ì¶¨×ó¶ÔÆë£©
+Private Function CreateControl(frm As Object, cfg As clsControlConfig, top As Integer) As Object
+    Dim ctl As Object
+    Select Case cfg.ControlType
+        Case "Label"
+            Set ctl = frm.Controls.Add("Forms.Label.1", cfg.Name)
+            With ctl
+                .Caption = cfg.Caption
+                .Height = LABEL_HEIGHT
+                .AutoSize = True ' ±êÇ©¿í¶È×ÔÊÊÓ¦ÎÄ±¾
+            End With
+        
+        Case "CommandButton"
+            Set ctl = frm.Controls.Add("Forms.CommandButton.1", cfg.Name)
+            With ctl
+                .Caption = cfg.Caption
+                .Width = BTN_WIDTH
+                .Height = BTN_HEIGHT
+                .BackColor = BTN_BACKCOLOR
+            End With
+        
+        Case "TextBox"
+            Set ctl = frm.Controls.Add("Forms.TextBox.1", cfg.Name)
+            With ctl
+                .Text = cfg.DefaultValue
+                .Width = INPUT_WIDTH
+                .Height = IIf(cfg.MultiLine, INPUT_HEIGHT_MULTI, INPUT_HEIGHT_SINGLE)
+                .MultiLine = cfg.MultiLine
+                .BorderStyle = 1
+            End With
+        
+        Case "OptionButton"
+            Set ctl = frm.Controls.Add("Forms.OptionButton.1", cfg.Name)
+            With ctl
+                .Caption = cfg.Caption
+                .Height = OPTION_HEIGHT
+                .Value = (cfg.DefaultValue = cfg.Caption) ' Ä¬ÈÏÑ¡ÖĞÏî
+            End With
+        
+        Case "CheckBox"
+            Set ctl = frm.Controls.Add("Forms.CheckBox.1", cfg.Name)
+            With ctl
+                .Caption = cfg.Caption
+                .Height = OPTION_HEIGHT
+                .Value = cfg.DefaultValue
+            End With
+    End Select
     
-    With Controls(ControlCount)
-        .Type = 2
-        .Name = name
-        .Caption = caption
-        .X = x
-        .Y = y
-        .Width = width
-        .Height = height
-        .Value = defaultValue
-    End With
+    ' ¹Ì¶¨×ó¶ÔÆë£¨ËùÓĞ¿Ø¼şLeftÏàÍ¬£©
+    ctl.Left = LEFT_MARGIN
+    ctl.Top = top ' Ê¹ÓÃ´«ÈëµÄ¶¥²¿×ø±ê
+    
+    Set CreateControl = ctl
+End Function
+
+
+' Ä£¿é£ºmodEvents£¨¼ò»¯°æ£©
+Private WithEvents btn As MSForms.CommandButton
+Private frm As Object, callback As String
+
+Public Sub BindEvents(frm As Object, callbackName As String)
+    Dim ctl As Object, obj As New modEvents
+    For Each ctl In frm.Controls
+        If TypeName(ctl) = "CommandButton" Then
+            Set obj.btn = ctl
+            Set obj.frm = frm
+            obj.callback = callbackName
+        End If
+    Next
 End Sub
 
-' æ˜¾ç¤ºå¼¹çª—å¹¶è¿”å›ç»“æœ
-Public Function ShowPopup() As PopupResult
-    Dim askdirForm As Object
-    Dim i As Integer
-    Dim Ctrl As ControlInfo
-    Dim maxWidth As Integer
-    Dim maxHeight As Integer
-    Dim gap As Integer
-    
-    ' ä½¿ç”¨ç°æœ‰çš„askdirçª—ä½“
-    On Error Resume Next
-    Set askdirForm = New askdir
-    On Error GoTo 0
-    
-    If askdirForm Is Nothing Then
-        MsgBox "æ— æ³•åˆ›å»ºaskdirçª—ä½“", vbExclamation, "é”™è¯¯"
-        ShowPopup = prCancel
-        Exit Function
-    End If
-    
-    ' è®¾ç½®çª—ä½“æ ‡é¢˜
-    askdirForm.Caption = PopupTitle
-    
-    ' æ¸…ç©ºçª—ä½“ä¸­çš„ç°æœ‰æ§ä»¶
-    For i = askdirForm.Controls.Count To 1 Step -1
-        askdirForm.Controls.Remove askdirForm.Controls(i).Name
-    Next i
-    
-    ' è®¡ç®—çª—ä½“æ‰€éœ€å°ºå¯¸
-    maxWidth = 0
-    maxHeight = 0
-    gap = 20 ' æ§ä»¶é—´çš„é—´éš™
-    
-    ' å…ˆæ‰¾å‡ºæ§ä»¶çš„æœ€å¤§åæ ‡å’Œå°ºå¯¸
-    For i = 1 To ControlCount
-        Ctrl = Controls(i)
-        If Ctrl.X + Ctrl.Width > maxWidth Then
-            maxWidth = Ctrl.X + Ctrl.Width
-        End If
-        If Ctrl.Y + Ctrl.Height > maxHeight Then
-            maxHeight = Ctrl.Y + Ctrl.Height
-        End If
-    Next i
-    
-    ' è®¾ç½®çª—ä½“å°ºå¯¸ï¼ˆåŠ ä¸Šè¾¹è·ï¼‰
-    askdirForm.Width = maxWidth + gap * 2
-    askdirForm.Height = maxHeight + gap * 3 ' å¤šåŠ ä¸€äº›é«˜åº¦ç”¨äºæŒ‰é’®
-    
-    ' æ·»åŠ æ§ä»¶åˆ°çª—ä½“
-    For i = 1 To ControlCount
-        Ctrl = Controls(i)
-        Select Case Ctrl.Type
-            Case 1 ' Checkbox
-                With askdirForm.Controls.Add("Forms.CheckBox.1")
-                    .Name = Ctrl.Name
-                    .Caption = Ctrl.Caption
-                    .Left = Ctrl.X
-                    .Top = Ctrl.Y
-                    .Width = Ctrl.Width
-                    .Height = Ctrl.Height
-                    .Value = Ctrl.Value
-                End With
-                
-            Case 2 ' TextBox
-                ' æ·»åŠ æ ‡ç­¾
-                With askdirForm.Controls.Add("Forms.Label.1")
-                    .Name = "lbl_" & Ctrl.Name
-                    .Caption = Ctrl.Caption
-                    .Left = Ctrl.X
-                    .Top = Ctrl.Y + 3 ' å¾®è°ƒä½ç½®ä½¿ä¸æ–‡æœ¬æ¡†å¯¹é½
-                    .Width = Ctrl.Width
-                    .Height = Ctrl.Height
-                End With
-                
-                ' æ·»åŠ æ–‡æœ¬æ¡†
-                With askdirForm.Controls.Add("Forms.TextBox.1")
-                    .Name = Ctrl.Name
-                    .Left = Ctrl.X + Ctrl.Width + 10
-                    .Top = Ctrl.Y
-                    .Width = Ctrl.Width * 2
-                    .Height = Ctrl.Height
-                    .Text = Ctrl.Value
-                End With
+Private Sub btn_Click()
+    ' ÊÕ¼¯½á¹û£¨Í¬Ö®Ç°µÄ×Öµä·½Ê½£©
+    Dim result As New Scripting.Dictionary
+    For Each ctl In frm.Controls
+        Select Case TypeName(ctl)
+            Case "TextBox": result(ctl.Name) = ctl.Text
+            Case "OptionButton": If ctl.Value Then result("SelectedOption") = ctl.Caption
+            Case "CheckBox": result(ctl.Name) = ctl.Value
+            Case "CommandButton": result("ClickedBtn") = ctl.Caption
         End Select
-    Next i
-    
-    ' æ·»åŠ ç¡®å®šå’Œå–æ¶ˆæŒ‰é’®
-    ' ç¡®å®šæŒ‰é’®
-    With askdirForm.Controls.Add("Forms.CommandButton.1")
-        .Name = "cmdOK"
-        .Caption = "ç¡®å®š"
-        .Left = askdirForm.Width - 180
-        .Top = askdirForm.Height - 60
-        .Width = 75
-        .Height = 25
-        .Default = True
-    End With
-    
-    ' å–æ¶ˆæŒ‰é’®
-    With askdirForm.Controls.Add("Forms.CommandButton.1")
-        .Name = "cmdCancel"
-        .Caption = "å–æ¶ˆ"
-        .Left = askdirForm.Width - 90
-        .Top = askdirForm.Height - 60
-        .Width = 75
-        .Height = 25
-    End With
-    
-    ' æ˜¾ç¤ºæ¨¡æ€çª—ä½“
-    askdirForm.Show vbModal
-    
-    ' æ”¶é›†ç»“æœ
-    If Result = prOK Then
-        Values.RemoveAll
-        For i = 1 To ControlCount
-            Ctrl = Controls(i)
-            On Error Resume Next
-            Select Case Ctrl.Type
-                Case 1 ' Checkbox
-                    Values.Add Ctrl.Name, askdirForm.Controls(Ctrl.Name).Value
-                Case 2 ' TextBox
-                    Values.Add Ctrl.Name, askdirForm.Controls(Ctrl.Name).Text
-            End Select
-            On Error GoTo 0
-        Next i
-    End If
-    
-    ' æ¸…ç†çª—ä½“å¼•ç”¨
-    Set askdirForm = Nothing
-    
-    ShowPopup = Result
-End Function
-
-' ç”¨äºå¤„ç†OKæŒ‰é’®ç‚¹å‡»äº‹ä»¶çš„å‡½æ•°
-' éœ€è¦åœ¨askdirçª—ä½“çš„cmdOKæŒ‰é’®Clickäº‹ä»¶ä¸­è°ƒç”¨
-Public Sub HandleOK()
-    Result = prOK
+    Next
+    ' ´¥·¢»Øµ÷
+    If callback <> "" Then Application.Run callback, result
+    frm.Hide
 End Sub
 
-' ç”¨äºå¤„ç†CancelæŒ‰é’®ç‚¹å‡»äº‹ä»¶çš„å‡½æ•°
-' éœ€è¦åœ¨askdirçª—ä½“çš„cmdCancelæŒ‰é’®Clickäº‹ä»¶ä¸­è°ƒç”¨
-Public Sub HandleCancel()
-    Result = prCancel
+
+
+' Ä£¿é£ºmodTest
+Sub TestSimpleForm()
+    Dim controls As New Collection, ctl As clsControlConfig
+    
+    ' 1. ±êÌâ±êÇ©
+    Set ctl = New clsControlConfig
+    ctl.ControlType = "Label"
+    ctl.Name = "lblTitle"
+    ctl.Caption = "¼òµ¥ĞÅÏ¢²É¼¯"
+    controls.Add ctl
+    
+    ' 2. µ¥Ñ¡¿ò
+    Set ctl = New clsControlConfig
+    ctl.ControlType = "OptionButton"
+    ctl.Name = "opt1"
+    ctl.Caption = "Ñ¡ÏîA"
+    ctl.DefaultValue = "Ñ¡ÏîA"
+    controls.Add ctl
+    
+    ' 3. ÊäÈë¿ò
+    Set ctl = New clsControlConfig
+    ctl.ControlType = "TextBox"
+    ctl.Name = "txtInput"
+    ctl.Caption = "£¨ÎŞĞèÓÃµ½£¬ÎÄ±¾¿ò¿¿DefaultValueÏÔÊ¾ÌáÊ¾£©"
+    ctl.DefaultValue = "ÇëÊäÈëÄÚÈİ"
+    controls.Add ctl
+    
+    ' 4. °´Å¥
+    Set ctl = New clsControlConfig
+    ctl.ControlType = "CommandButton"
+    ctl.Name = "btnOK"
+    ctl.Caption = "È·¶¨"
+    controls.Add ctl
+    
+    ' ÏÔÊ¾´°Ìå
+    ShowSimpleForm controls, "¼ò»¯°æ¶¯Ì¬´°Ìå", "HandleResult"
 End Sub
 
-' è·å–æ§ä»¶çš„å€¼
-' å‚æ•°: name - æ§ä»¶åç§°
-' è¿”å›å€¼: æ§ä»¶çš„å€¼
-Public Function GetValue(name As String) As Variant
-    On Error Resume Next
-    GetValue = Values(name)
-    On Error GoTo 0
-End Function
+Sub HandleResult(result As Scripting.Dictionary)
+    MsgBox "ÓÃ»§ÊäÈë£º" & result("txtInput") & vbCrLf & "Ñ¡ÖĞÏî£º" & result("SelectedOption")
+End Sub
