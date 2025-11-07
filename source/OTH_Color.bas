@@ -1,5 +1,5 @@
 Attribute VB_Name = "OTH_Color"
-'Attribute VB_Name = "M60_Color"
+'Attribute VB_Name = "OTH_Color"
 '{GP:6}
 '{Ep:CATmain}
 '{Caption:背景颜色}
@@ -9,9 +9,9 @@ Const CF_BITMAP = 2
 ' 更新按钮文字的公共函数
 Public Sub UpdateButtonText(ByVal btn As MSForms.CommandButton, ByVal isWhiteBackground As Boolean)
     If isWhiteBackground Then
-        btn.caption = "默认背景"
+        btn.Caption = "默认背景"
     Else
-        btn.caption = "白色背景"
+        btn.Caption = "白色背景"
     End If
 End Sub
 

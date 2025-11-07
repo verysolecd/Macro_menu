@@ -1,11 +1,9 @@
 Attribute VB_Name = "RW_2freegPrd"
-'Attribute VB_Name = "selPrd"
 '{GP:1}
 '{Ep:freegprd}
 '{Caption:释放产品}
 '{ControlTipText:将待操作产品清空}
 '{BackColor:16744703}
-
 
 Sub freegprd()
     Set gPrd = Nothing

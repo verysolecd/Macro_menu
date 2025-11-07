@@ -134,73 +134,73 @@ End Sub
 
 Private Sub ScrB1_Change()
 Lbl1.BackColor = RGB(ScrR1.value, ScrG1.value, ScrB1.value)
-Frame1.caption = "Stem; R:" & CStr(ScrR1.value) & ", G:" & CStr(ScrG1.value) & ", B:" & CStr(ScrB1.value)
+Frame1.Caption = "Stem; R:" & CStr(ScrR1.value) & ", G:" & CStr(ScrG1.value) & ", B:" & CStr(ScrB1.value)
 
 End Sub
 
 Private Sub ScrB2_Change()
 Lbl2.BackColor = RGB(ScrR2.value, ScrG2.value, ScrB2.value)
-Frame2.caption = "Ovary; R:" & CStr(ScrR2.value) & ", G:" & CStr(ScrG2.value) & ", B:" & CStr(ScrB2.value)
+Frame2.Caption = "Ovary; R:" & CStr(ScrR2.value) & ", G:" & CStr(ScrG2.value) & ", B:" & CStr(ScrB2.value)
 
 End Sub
 
 Private Sub ScrB3_Change()
 Lbl3.BackColor = RGB(ScrR3.value, ScrG3.value, ScrB3.value)
-Frame3.caption = "Outer Petal; R:" & CStr(ScrR3.value) & ", G:" & CStr(ScrG3.value) & ", B:" & CStr(ScrB3.value)
+Frame3.Caption = "Outer Petal; R:" & CStr(ScrR3.value) & ", G:" & CStr(ScrG3.value) & ", B:" & CStr(ScrB3.value)
 
 End Sub
 
 Private Sub ScrB4_Change()
 Lbl4.BackColor = RGB(ScrR4.value, ScrG4.value, ScrB4.value)
-Frame4.caption = "Inner Petal; R:" & CStr(ScrR4.value) & ", G:" & CStr(ScrG4.value) & ", B:" & CStr(ScrB4.value)
+Frame4.Caption = "Inner Petal; R:" & CStr(ScrR4.value) & ", G:" & CStr(ScrG4.value) & ", B:" & CStr(ScrB4.value)
 
 End Sub
 
 Private Sub ScrG1_Change()
 Lbl1.BackColor = RGB(ScrR1.value, ScrG1.value, ScrB1.value)
-Frame1.caption = "Stem; R:" & CStr(ScrR1.value) & ", G:" & CStr(ScrG1.value) & ", B:" & CStr(ScrB1.value)
+Frame1.Caption = "Stem; R:" & CStr(ScrR1.value) & ", G:" & CStr(ScrG1.value) & ", B:" & CStr(ScrB1.value)
 
 End Sub
 
 Private Sub ScrG2_Change()
 Lbl2.BackColor = RGB(ScrR2.value, ScrG2.value, ScrB2.value)
-Frame2.caption = "Ovary; R:" & CStr(ScrR2.value) & ", G:" & CStr(ScrG2.value) & ", B:" & CStr(ScrB2.value)
+Frame2.Caption = "Ovary; R:" & CStr(ScrR2.value) & ", G:" & CStr(ScrG2.value) & ", B:" & CStr(ScrB2.value)
 
 End Sub
 
 Private Sub ScrG3_Change()
 Lbl3.BackColor = RGB(ScrR3.value, ScrG3.value, ScrB3.value)
-Frame3.caption = "Outer Petal; R:" & CStr(ScrR3.value) & ", G:" & CStr(ScrG3.value) & ", B:" & CStr(ScrB3.value)
+Frame3.Caption = "Outer Petal; R:" & CStr(ScrR3.value) & ", G:" & CStr(ScrG3.value) & ", B:" & CStr(ScrB3.value)
 
 End Sub
 
 Private Sub ScrG4_Change()
 Lbl4.BackColor = RGB(ScrR4.value, ScrG4.value, ScrB4.value)
-Frame4.caption = "Inner Petal; R:" & CStr(ScrR4.value) & ", G:" & CStr(ScrG4.value) & ", B:" & CStr(ScrB4.value)
+Frame4.Caption = "Inner Petal; R:" & CStr(ScrR4.value) & ", G:" & CStr(ScrG4.value) & ", B:" & CStr(ScrB4.value)
 
 End Sub
 
 Private Sub ScrR1_Change()
 Lbl1.BackColor = RGB(ScrR1.value, ScrG1.value, ScrB1.value)
-Frame1.caption = "Stem; R:" & CStr(ScrR1.value) & ", G:" & CStr(ScrG1.value) & ", B:" & CStr(ScrB1.value)
+Frame1.Caption = "Stem; R:" & CStr(ScrR1.value) & ", G:" & CStr(ScrG1.value) & ", B:" & CStr(ScrB1.value)
 
 End Sub
 
 Private Sub ScrR2_Change()
 Lbl2.BackColor = RGB(ScrR2.value, ScrG2.value, ScrB2.value)
-Frame2.caption = "Ovary; R:" & CStr(ScrR2.value) & ", G:" & CStr(ScrG2.value) & ", B:" & CStr(ScrB2.value)
+Frame2.Caption = "Ovary; R:" & CStr(ScrR2.value) & ", G:" & CStr(ScrG2.value) & ", B:" & CStr(ScrB2.value)
 
 End Sub
 
 Private Sub ScrR3_Change()
 Lbl3.BackColor = RGB(ScrR3.value, ScrG3.value, ScrB3.value)
-Frame3.caption = "Outer Petal; R:" & CStr(ScrR3.value) & ", G:" & CStr(ScrG3.value) & ", B:" & CStr(ScrB3.value)
+Frame3.Caption = "Outer Petal; R:" & CStr(ScrR3.value) & ", G:" & CStr(ScrG3.value) & ", B:" & CStr(ScrB3.value)
 
 End Sub
 
 Private Sub ScrR4_Change()
 Lbl4.BackColor = RGB(ScrR4.value, ScrG4.value, ScrB4.value)
-Frame4.caption = "Inner Petal; R:" & CStr(ScrR4.value) & ", G:" & CStr(ScrG4.value) & ", B:" & CStr(ScrB4.value)
+Frame4.Caption = "Inner Petal; R:" & CStr(ScrR4.value) & ", G:" & CStr(ScrG4.value) & ", B:" & CStr(ScrB4.value)
 
 End Sub
 
@@ -217,10 +217,10 @@ Private Sub UserForm_Activate()
     Lbl2.BackColor = RGB(ScrR2.value, ScrG2.value, ScrB2.value)
     Lbl3.BackColor = RGB(ScrR3.value, ScrG3.value, ScrB3.value)
     Lbl4.BackColor = RGB(ScrR4.value, ScrG4.value, ScrB4.value)
-    Frame4.caption = "Inner Petal; R:" & CStr(ScrR4.value) & ", G:" & CStr(ScrG4.value) & ", B:" & CStr(ScrB4.value)
-    Frame3.caption = "Outer Petal; R:" & CStr(ScrR3.value) & ", G:" & CStr(ScrG3.value) & ", B:" & CStr(ScrB3.value)
-    Frame2.caption = "Ovary; R:" & CStr(ScrR2.value) & ", G:" & CStr(ScrG2.value) & ", B:" & CStr(ScrB2.value)
-    Frame1.caption = "Stem; R:" & CStr(ScrR1.value) & ", G:" & CStr(ScrG1.value) & ", B:" & CStr(ScrB1.value)
+    Frame4.Caption = "Inner Petal; R:" & CStr(ScrR4.value) & ", G:" & CStr(ScrG4.value) & ", B:" & CStr(ScrB4.value)
+    Frame3.Caption = "Outer Petal; R:" & CStr(ScrR3.value) & ", G:" & CStr(ScrG3.value) & ", B:" & CStr(ScrB3.value)
+    Frame2.Caption = "Ovary; R:" & CStr(ScrR2.value) & ", G:" & CStr(ScrG2.value) & ", B:" & CStr(ScrB2.value)
+    Frame1.Caption = "Stem; R:" & CStr(ScrR1.value) & ", G:" & CStr(ScrG1.value) & ", B:" & CStr(ScrB1.value)
 End Sub
 
 Private Sub UserForm_Click()

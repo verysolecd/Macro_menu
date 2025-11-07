@@ -8,7 +8,7 @@ Set doc = CATIA.ActiveDocument
 Set oprt = doc.part 'Product.Products.item(1).ReferenceProduct.Parent.part
 Set MBD = oprt.bodies.item(1)
 Set HB = oprt.HybridBodies.Add
-HB.name = "Boundingbox"
+HB.Name = "Boundingbox"
 Set ref = oprt.CreateReferenceFromObject(MBD)
 Dim HSF 'As HybridShapeFactory
 Set HSF = oprt.HybridShapeFactory
@@ -124,7 +124,7 @@ HB.AppendHybridShape asm
 asm.Compute
 eles = HSF.AddNewDatums(asm)
 HB.AppendHybridShape eles(0)
-eles(0).name = "Bounding box of " & MBD.name
+eles(0).Name = "Bounding box of " & MBD.Name
 HSF.DeleteObjectForDatum asm
 
 doc.Selection.Delete

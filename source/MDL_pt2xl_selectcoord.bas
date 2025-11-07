@@ -77,7 +77,7 @@ Sub pt2xl()
                  fincoord = absCoord
                 End If
                 arr(irow, 0) = irow
-                arr(irow, 1) = opt.name
+                arr(irow, 1) = opt.Name
                 arr(irow, 2) = fincoord(0)
                 arr(irow, 3) = fincoord(1)
                 arr(irow, 4) = fincoord(2)

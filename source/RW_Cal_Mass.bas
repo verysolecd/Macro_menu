@@ -7,7 +7,6 @@ Attribute VB_Name = "RW_Cal_Mass"
 
 Sub Cal_Mass()
     If Not KCL.CanExecute("ProductDocument") Then Exit Sub
-
     If pdm Is Nothing Then
         Set pdm = New class_PDM
     End If
@@ -19,7 +18,6 @@ Sub Cal_Mass()
                 Err.Clear
                 Call pdm.Assmass(gPrd)
             End If
-            
    If Err.Number > 0 Then
         MsgBox "程序错误,请确认零件模板是否应用：" & Err.Description, vbCritical
    Else

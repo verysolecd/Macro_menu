@@ -26,7 +26,7 @@ Sub Faceholecenter()
     On Error GoTo 0
     If Not iSel Is Nothing Then
         Set oHB = oPart.HybridBodies.Add()
-        oHB.name = "extracted points"
+        oHB.Name = "extracted points"
         Set oExtact = HSF.AddNewExtract(iSel)
         oHB.AppendHybridShape oExtact
         oPart.Update
@@ -56,7 +56,7 @@ Sub Faceholecenter()
                 Set oref = oPart.CreateReferenceFromObject(oCtr)
                 oPart.Update
                 Set pt = HSF.AddNewPointDatum(oref)
-                pt.name = "pt_" & i
+                pt.Name = "pt_" & i
                 oHB.AppendHybridShape pt
                 'oPart.Update
                 osel.Add oCtr

@@ -56,7 +56,7 @@ Sub CATMain()
     Dim minBody As body
     Set minBody = workPt.bodies.Add
     
-    minBody.name = "MinimumBox"
+    minBody.Name = "MinimumBox"
     Call changeColor(minBody)
 
     '????
@@ -279,7 +279,7 @@ Private Function getBodies( _
         Set bdy = sel.Item2(i).value
  
         
-            If bdy.Shapes.count > 0 And bdy.name <> "MinimumBox" Then
+            If bdy.Shapes.count > 0 And bdy.Name <> "MinimumBox" Then
                 lst.Add bdy
             End If
  

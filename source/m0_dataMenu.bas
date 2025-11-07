@@ -121,7 +121,7 @@ Try_TAG_ENTRY_DEF:
         If CanExecMethod = vbNullString Then GoTo continue
         Set MdlInfo = Push_Dic(MdlInfo, TAG_ENTRYPNT, CanExecMethod)
         Set MdlInfo = Push_Dic(MdlInfo, TAG_PJTPATH, PjtPath)
-        Set MdlInfo = Push_Dic(MdlInfo, TAG_MDLNAME, Mdl.name)
+        Set MdlInfo = Push_Dic(MdlInfo, TAG_MDLNAME, Mdl.Name)
         BtnInfos.Add MdlInfo
 continue:
     Next
@@ -172,7 +172,7 @@ Private Function Get_KeyValue( _
         Key = Trim(Replace(SubMatchs(0), """", ""))
         If Len(Key) < 1 Then GoTo continue
         If KeyToLong Then Key = CLng(Key)
-        Var = Trim(Replace(SubMatchs(1), """", ""))
+        Var = Trim(Replace(SubMatchs(1), """", ""))  'trim 取消前后空格， replace 删除中间空格
         If Len(Var) < 1 Then GoTo continue
         Set Dic = Push_Dic(Dic, Key, Var)
 continue:
@@ -185,11 +185,9 @@ End Function
 ' 返回值: Dict(lst(Dict))
 Private Function To_SortedList(ByVal Infos As Object) As Object
     Set To_SortedList = Nothing
-    
     Dim SoLst As Object
     Set SoLst = CreateObject("System.Collections.SortedList")
     Dim lst As Object
-    
     Dim info As Object
     For Each info In Infos
         If SoLst.ContainsKey(info(TAG_GROUP)) = True Then
@@ -259,10 +257,10 @@ End Function
 ' 参数  : obj-CodeModule,str
 ' 返回值: Boolean
 Private Function Exist_Method(ByVal CodeMdl As Object, _
-                              ByVal name As String) As Boolean
+                              ByVal Name As String) As Boolean
     Dim tmp As Long
     On Error Resume Next
-        tmp = CodeMdl.ProcBodyLine(name, 0)
+        tmp = CodeMdl.ProcBodyLine(Name, 0)
     On Error GoTo 0
     Exist_Method = tmp > 0
     Err.Number = 0

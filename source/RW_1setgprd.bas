@@ -14,8 +14,8 @@ Sub setgprd()
     Set gPrd = pdm.defgprd()
     Set ProductObserver.CurrentProduct = gPrd ' 这会自动触发事件
         If Not gPrd Is Nothing Then
-           imsg = "你选择的产品是" & gPrd.PartNumber
-            MsgBox imsg
+'           imsg = "你选择的产品是" & gPrd.PartNumber
+'            MsgBox imsg
         Else
              MsgBox "已退出，程序将结束"
         End If

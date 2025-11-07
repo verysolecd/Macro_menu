@@ -7,8 +7,8 @@ i = 5
     Dim oSHT As DrawingSheet
     Set oSHT = oShts.item(i)
     oSHT.Activate
-        oo = straf1st(oSHT.name, " ")
-        oSHT.name = "SH" & i & oo
+        oo = straf1st(oSHT.Name, " ")
+        oSHT.Name = "SH" & i & oo
     Set oviews = oSHT.Views
     Set oView = oviews.item("Background View")
    oView.Activate

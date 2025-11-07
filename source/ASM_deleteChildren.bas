@@ -14,7 +14,8 @@ Sub DeleteChildren()
         MsgBox "没有打开的窗口"
         Exit Sub
   End If
-  If Not CanExecute("ProductDocument") Then Exit Sub
+    If Not CanExecute("ProductDocument") Then Exit Sub
+    
     Dim osel: Set osel = CATIA.ActiveDocument.Selection: osel.Clear
 
     Dim imsg, filter(0), iSel
@@ -27,7 +28,7 @@ Sub DeleteChildren()
     Next
     
       Dim btn, bTitle, bResult
-      imsg = "将删除" & iSel.PartNumber & iSel.name & "的所有子产品，您确认吗"
+      imsg = "将删除" & iSel.PartNumber & iSel.Name & "下的所有子产品，您确认吗"
       btn = vbYesNo + vbExclamation
       bResult = MsgBox(imsg, btn, "bTitle")  ' Yes(6),No(7),cancel(2)
            Select Case bResult

@@ -8,10 +8,7 @@ Attribute VB_Name = "OTH_postPN"
 Private oSuffix
 Sub CATMain()
 If Not KCL.CanExecute("ProductDocument") Then Exit Sub
-    If pdm Is Nothing Then
-        Set pdm = New class_PDM
-    End If
-    Set oprd = pdm.selPrd()
+    Set oprd = KCL.SelectItem("请选择产品", "Product")
     If oprd Is Nothing Then
         MsgBox "没有选择产品"
     Else
@@ -19,7 +16,7 @@ If Not KCL.CanExecute("ProductDocument") Then Exit Sub
               imsg = "请输入后缀"
             oSuffix = KCL.GetInput(imsg)
             If oSuffix = "" Then
-                Exit Sub
+                MsgBox imsg: Exit Sub
             End If
         Call postPn(oprd)
     End If

@@ -274,15 +274,15 @@ Sub Flower(Optional ByVal pp As Double)
 ' 1: Create Geometrical Sets---------------------
     Dim myHB As HybridBody
     Set myHB = HB1s.Add
-    myHB.name = "GS_Flower_Wireframe"
+    myHB.Name = "GS_Flower_Wireframe"
     
     Dim myHB2 As HybridBody
     Set myHB2 = HB1s.Add
-    myHB2.name = "GS_Flower_Hidden-Surface"
+    myHB2.Name = "GS_Flower_Hidden-Surface"
     
     Dim myHB3 As HybridBody
     Set myHB3 = HB1s.Add
-    myHB3.name = "GS_Flower_Surface"
+    myHB3.Name = "GS_Flower_Surface"
     
     Dim HSF As HybridShapeFactory
     Set HSF = myPart.HybridShapeFactory

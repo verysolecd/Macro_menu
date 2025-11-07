@@ -25,7 +25,7 @@ End Sub
 Private Sub UserForm_Initialize()
     Set mUtil = New clsVBAUtilityLib
     Set mModuleMgr = New clsVbaModuleManagerModel
-    Me.caption = mModuleMgr.title
+    Me.Caption = mModuleMgr.title
     Call update_comboBox
 End Sub
 '** 事件 **
@@ -73,9 +73,9 @@ Private Sub update_listbox()
         .ListIndex = -1
     End With
     If Me.ComboBox1.ListIndex < 0 Then Exit Sub
-    Dim name As Variant
-    For Each name In mModuleMgr.get_module_name_list(Me.ComboBox1.ListIndex + 1)
-        Call Me.ListBox1.AddItem(name)
+    Dim Name As Variant
+    For Each Name In mModuleMgr.get_module_name_list(Me.ComboBox1.ListIndex + 1)
+        Call Me.ListBox1.AddItem(Name)
     Next
     Dim btnEnabled As Boolean
     If mModuleMgr.has_user_data(Me.ComboBox1.ListIndex + 1) Then
@@ -209,6 +209,6 @@ End Sub
 '消息
 Private Sub show_msg( _
         ByVal msg As String)
-    MsgBox msg, vbOKOnly, Me.caption
+    MsgBox msg, vbOKOnly, Me.Caption
 End Sub
 

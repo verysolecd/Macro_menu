@@ -27,12 +27,42 @@ Option Explicit
 
 Private WithEvents mBtn As MSForms.CommandButton
 Attribute mBtn.VB_VarHelpID = -1
+
 Private mInfo As Object
 Private mParentForm As MSForms.UserForm
 Private mCloseType As Boolean
 Private Const TAG_ENTRYPNT = "ep"           ' 入口点标签
 Private Const TAG_PJTPATH = "pjt_path"      ' 项目路径标签
 Private Const TAG_MDLNAME = "mdl_name"      ' 模块名称标签
+
+Private WithEvents btn As MSForms.CommandButton
+Attribute btn.VB_VarHelpID = -1
+Private frm As Object, callback As String
+Public Sub BindEvents(frm As Object, callbackName As String)
+    Dim ctl As Object, obj As New modEvents
+    For Each ctl In frm.controls
+        If TypeName(ctl) = "CommandButton" Then
+            Set obj.btn = ctl
+            Set obj.frm = frm
+            obj.callback = callbackName
+        End If
+    Next
+End Sub
+Private Sub btn_Click()
+    ' 收集结果（同之前的字典方式）
+    Dim result As New Scripting.Dictionary
+    For Each ctl In frm.controls
+        Select Case TypeName(ctl)
+            Case "TextBox": result(ctl.Name) = ctl.Text
+            Case "OptionButton": If ctl.value Then result("SelectedOption") = ctl.Caption
+            Case "CheckBox": result(ctl.Name) = ctl.value
+            Case "CommandButton": result("ClickedBtn") = ctl.Caption
+        End Select
+    Next
+    ' 触发回调
+    If callback <> "" Then Application.Run callback, result
+    frm.Hide
+End Sub
 
 ' 设置事件
 Sub set_ButtonEvent(ByVal btn As MSForms.CommandButton, _
@@ -45,9 +75,10 @@ Sub set_ButtonEvent(ByVal btn As MSForms.CommandButton, _
     mCloseType = CloseType
 End Sub
 Private Sub mBtn_Click()
+
     If Not mCloseType Then Unload mParentForm
     ' 如果是颜色切换按钮，在执行前更新按钮文字
-    If mInfo(TAG_MDLNAME) = "M60_Color" Then
+    If mInfo(TAG_MDLNAME) = "OTH_Color" Then
         On Error Resume Next
         Dim MyViewer
         Set MyViewer = CATIA.ActiveWindow.ActiveViewer
@@ -91,4 +122,6 @@ End Sub
 '                          mInfo(TAG_ENTRYPNT), _
 '                          Array())
 'End Sub
+
+
 

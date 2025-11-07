@@ -41,7 +41,7 @@ Sub CATMain()
                 Set oprd = ref
             Case 12, 13, 14 '´´½¨Áã¼þ
                 Set oprd = house.Products.AddNewComponent("Part", "")
-                oprd.name = Tree(i)(4)
+                oprd.Name = Tree(i)(4)
             Case 15, 16:
                Set oprd = house.Products.AddNewProduct("")
             Case 17
@@ -101,14 +101,14 @@ Sub iniTree(Tree)
 End Sub
 
 Sub newPn(oprd, arr)
-    oprd.name = arr(4)
+    oprd.Name = arr(4)
     oprd.PartNumber = prj & arr(1)
     oprd.nomenclature = arr(2)
     oprd.definition = arr(3)
     On Error Resume Next
-    oprd.name = arr(4)
+    oprd.Name = arr(4)
     On Error GoTo 0
-    oprd.name = arr(4)
+    oprd.Name = arr(4)
     oprd.Update
 End Sub
 

@@ -36,7 +36,6 @@ Private Sub Class_Initialize()
         End If
             Set rootprd = CATIA.ActiveDocument.Product
         On Error GoTo 0
-        
         If Not rootprd Is Nothing Then
             rootprd.ApplyWorkMode (3)
         End If
@@ -77,7 +76,7 @@ Public Function Assmass(oprd)
                 arr(1) = .PartNumber
                 arr(2) = .nomenclature
                 arr(3) = .definition
-                arr(4) = oprd.name
+                arr(4) = oprd.Name
             End With
         Dim colls
            Set colls = oprd.ReferenceProduct.UserRefProperties
@@ -89,12 +88,86 @@ Public Function Assmass(oprd)
                 arr(9) = count_me(oprd)
         infoPrd = arr
     End Function
+Public Function attLv2Prd(oprd)
+    Dim tempdata, i, j
+    tempdata = infoPrd(oprd)
+    If counter = 1 Then
+        ReDim bigbom(1 To gfn, 0 To UBound(tempdata)) '初始化所有bigbom元素为""
+            For i = 1 To gfn
+                For j = 0 To UBound(tempdata)
+                    bigbom(i, j) = ""
+                Next j
+            Next i
+    End If
+   For i = 1 To UBound(tempdata)
+                 bigbom(counter, i) = tempdata(i)
+    Next
+       Dim children As Products
+            Set children = oprd.Products
+            If children.count > 0 Then
+                For j = 1 To children.count
+                    counter = counter + 1
+                    tempdata = infoPrd(children.item(j))
+                   For i = 1 To UBound(tempdata)
+                        bigbom(counter, i) = tempdata(i)
+                    Next
+                Next
+            End If
+  ReDim finalbom(1 To counter, 0 To UBound(tempdata))
+      For i = 1 To UBound(finalbom, 1)
+        For j = 0 To UBound(finalbom, 2)
+            finalbom(i, j) = bigbom(i, j)
+        Next
+      Next
+        attLv2Prd = finalbom
+End Function
+
+Public Function collsAttPrd(oprd, LV)
+    Dim tempdata, i, j
+    tempdata = infoPrd(oprd)
+    If counter = 1 Then
+        ReDim bigbom(1 To gfn, 0 To UBound(tempdata)) '初始化所有bigbom元素为""
+            For i = 1 To gfn
+                For j = 0 To UBound(tempdata)
+                    bigbom(i, j) = ""
+                Next j
+            Next i
+    End If
+   For i = 0 To UBound(tempdata)
+        Select Case i
+             Case 0: bigbom(counter, i) = LV
+             Case Else:
+                 bigbom(counter, i) = tempdata(i)
+             End Select
+    Next
+       Dim children As Products
+            Set children = oprd.Products
+            If children.count > 0 Then
+                    Dim bdict
+                    Set bdict = CreateObject("Scripting.Dictionary")
+                For i = 1 To children.count
+                    If bdict.Exists(children.item(i).PartNumber) = False Then
+                       bdict(children.item(i).PartNumber) = 1
+                       counter = counter + 1
+                       collsAttPrd children.item(i), LV + 1
+                    End If
+                Next
+            End If
+  ReDim finalbom(1 To counter, 0 To UBound(tempdata))
+      For i = 1 To UBound(finalbom, 1)
+        For j = 0 To UBound(finalbom, 2)
+            finalbom(i, j) = bigbom(i, j)
+        Next
+      Next
+        collsAttPrd = finalbom
+End Function
+
+
 Public Function recurPrd(oprd, LV)
     Dim mapping As Variant
     mapping = Array(0, 0, 0, 1, 2, 3, 4, 9, 7, 0, 5, 8, 0, 5, 6, 0, 0, 0)
     Dim bomsize
         bomsize = UBound(mapping)
-        
     Dim i, j
         If counter = 1 Then
         ReDim bigbom(1 To gfn, 1 To bomsize)
@@ -104,12 +177,9 @@ Public Function recurPrd(oprd, LV)
                 Next j
             Next i
     End If   '初始化所有bigbom元素为""
-   
     Dim tempdata
     tempdata = infoPrd(oprd)
-    
    '=====生成行数据 === bom行数据直接按最大列处理得到一行数据
-   
    
         For i = 1 To UBound(bigbom, 2)  '从1到最大列
             bigbom(counter, i) = ""  '默认赋值为空
@@ -122,7 +192,6 @@ Public Function recurPrd(oprd, LV)
                     End If
             End Select
            Next
-           
             Dim children As Products
             Set children = oprd.Products
             If children.count > 0 Then
@@ -136,15 +205,13 @@ Public Function recurPrd(oprd, LV)
                     End If
                 Next
             End If
-            
   ReDim finalbom(1 To counter, 1 To 17)
-  
   For i = 1 To UBound(finalbom, 1)
     For j = 1 To UBound(finalbom, 2)
         finalbom(i, j) = bigbom(i, j)
     Next
   Next
-        recurPrd = finalbom
+  recurPrd = finalbom
 End Function
 Public Function modatt(oprd, odata)
     Dim refPrd: Set refPrd = oprd.ReferenceProduct
@@ -152,13 +219,13 @@ Public Function modatt(oprd, odata)
     Dim currAtt As Variant
      currAtt = infoPrd(oprd)
     For i = 1 To 6
-        If odata(i) <> "" Then   'And odata(i) <> currAtt(i)
+        If odata(i) <> "" And odata(i) <> currAtt(i) Then
             On Error Resume Next
                 Select Case i
                     Case 1: refPrd.PartNumber = odata(i)
                     Case 2: refPrd.nomenclature = odata(i)
                     Case 3: refPrd.definition = odata(i)
-                    Case 4: oprd.name = odata(i)
+                    Case 4: oprd.Name = odata(i)
                     Case 5:
                         Set colls = refPrd.UserRefProperties
                         colls.item("Material").value = odata(i)
@@ -210,13 +277,13 @@ Public Sub initPrd(oprd)
             k = 0
              Dim oref, pubid, oPub, pubs
            Set pubs = refPrd.Publications
-            If getAtt(usrp(k).name, pubs)(0) Is Nothing Then
+            If getAtt(usrp(k).Name, pubs)(0) Is Nothing Then
                  Dim iName
-                 iName = refPrd.PartNumber & "\" & "Properties" & "\" & usrp(k).name
+                 iName = refPrd.PartNumber & "\" & "Properties" & "\" & usrp(k).Name
                 Set oref = refPrd.CreateReferenceFromName(iName)
-                Debug.Print usrp(k).name
-                Set oPub = pubs.Add(usrp(k).name)
-                pubs.SetDirect usrp(k).name, oref
+                Debug.Print usrp(k).Name
+                Set oPub = pubs.Add(usrp(k).Name)
+                pubs.SetDirect usrp(k).Name, oref
             End If
     End If
 End Sub
@@ -275,14 +342,14 @@ Private Sub iniPrt(oprd)
         Set pubs = refPrd.Publications
          Dim k
           For k = 1 To 3
-               If getAtt(infoPara(k).name, pubs)(0) Is Nothing Then
+               If getAtt(infoPara(k).Name, pubs)(0) Is Nothing Then
                    Dim iName
-                   iName = refPrd.PartNumber & "\Parameters\Part_info\" & infoPara(k).name
+                   iName = refPrd.PartNumber & "\Parameters\Part_info\" & infoPara(k).Name
                    Set oref = refPrd.CreateReferenceFromName(iName)
-                   Set oPub = pubs.Add(infoPara(k).name)
-                   pubs.SetDirect infoPara(k).name, oref
+                   Set oPub = pubs.Add(infoPara(k).Name)
+                   pubs.SetDirect infoPara(k).Name, oref
                Else
-               Debug.Print "不需要发布" & infoPara(k).name
+               Debug.Print "不需要发布" & infoPara(k).Name
                 End If
            Next
     '创建所有relations
@@ -346,19 +413,19 @@ End Function
 Private Function paraCreatobj(thispara, colls)
         Select Case thispara.iType
             Case "ParameterSet"
-                Set thispara.obj = colls.CreateSet(thispara.name)
+                Set thispara.obj = colls.CreateSet(thispara.Name)
             Case "list"
-                Set thispara.obj = colls.CreateList(thispara.name)
+                Set thispara.obj = colls.CreateList(thispara.Name)
             Case "Mass", "Density", "Length", "Volume" '所有dimension参数
-                Set thispara.obj = colls.CreateDimension(thispara.name, thispara.iType, thispara.Str)
+                Set thispara.obj = colls.CreateDimension(thispara.Name, thispara.iType, thispara.Str)
             Case "String"
-                Set thispara.obj = colls.CreateString(thispara.name, thispara.Str)
+                Set thispara.obj = colls.CreateString(thispara.Name, thispara.Str)
             Case "Formula"
-                Set thispara.obj = colls.CreateFormula(thispara.name, thispara.Desc, thispara.Target, thispara.Str)
+                Set thispara.obj = colls.CreateFormula(thispara.Name, thispara.Desc, thispara.Target, thispara.Str)
                  thispara.obj.Hidden = True
             Case "Program"
                   On Error Resume Next
-                    Set thispara.obj = colls.CreateProgram(thispara.name, thispara.Desc, thispara.Str)
+                    Set thispara.obj = colls.CreateProgram(thispara.Name, thispara.Desc, thispara.Str)
                     thispara.obj.Hidden = True
                   If Error.Number <> 0 Then
                     Debug.Print "缺少KWA lisence, 无法创建rule单位"
@@ -366,12 +433,12 @@ Private Function paraCreatobj(thispara, colls)
                     Error.Clear
                   On Error GoTo 0
     End Select
-    Debug.Print "已经创建" & thispara.name
+    Debug.Print "已经创建" & thispara.Name
 End Function
 Private Function getPara(thispara, collection)
     Dim arr(1) ' 正确声明数组
     On Error Resume Next
-        Set arr(0) = collection.item(thispara.name)
+        Set arr(0) = collection.item(thispara.Name)
         If Err.Number = 0 Then ' 检查是否成功获取对象
             arr(1) = arr(0).value
             getPara = arr
@@ -438,23 +505,26 @@ Public Function catSelx(prompt As String) As collection
     osel.Clear
 End Function
 Public Function defgprd()    '获取要读取或修改的  全局变量 gPrd定义
-     imsg = MsgBox("“是”选择产品，“否”读取根产品，“取消退出”", vbYesNoCancel + vbDefaultButton2, "请选择产品")
-     Dim oprd: Set oprd = Nothing
-        Select Case imsg
-            Case 7 '===选择“否”====
+
+  Dim oprd: Set oprd = Nothing
+    Dim btn, bTitle, bResult
+        bTitle = "请选择产品"
+      imsg = "“是”选择产品，“否”读取根产品，“取消退出”"
+      btn = vbYesNoCancel + vbDefaultButton2 'vbExclamation
+      bResult = MsgBox(imsg, btn, "bTitle")  ' Yes(6),No(7),cancel(2)
+           Select Case bResult
+              Case 7 '===选择“否”====
                 Set rootprd = CATIA.ActiveDocument.Product
                 Set oprd = rootprd
-            Case 2:
-            
-            Case 6  '===选择“是”,进行产品选择====
-                On Error Resume Next
-                    Set oprd = selPrd()
+              Case 6  '===选择“是”,进行产品选择====
+                 On Error Resume Next
+                   Set oprd = KCL.SelectItem("请选择产品", "Product")
                 If Err.Number <> 0 Then
                     Err.Clear
                     Exit Function
                 End If
-        End Select
-        
+          End Select
+
         Set defgprd = oprd
         Set oprd = Nothing
 End Function
@@ -462,30 +532,7 @@ Public Sub freePrd()
      Set gPrd = Nothing
 
 End Sub
-Public Function selPrd()
-    Set selPrd = Nothing
-    osel.Clear
-    Dim status, iType(0)
-'   catia.ActiveWindow.WindowState = 0
-    osel.Clear
-    iType(0) = "Product"
-    If osel.Count2 = 0 Then
-        status = osel.SelectElement2(iType, "请选择要读取的产品", False)
-        'status = oSel.SelectElement3(iType, "请选择要读取的产品", True, 2, False)
-    End If
-    If status = "Cancel" Then
-        Exit Function
-    End If
-    If status = "Normal" And osel.Count2 = 1 Then
-            Set selPrd = osel.item(1).LeafProduct.ReferenceProduct
-          '  MsgBox "你选择的产品是" & selPrd.PartNumber
-            osel.Clear
-    Else
-        MsgBox "请只选择一个产品"
-        Exit Function
-    End If
-    
-End Function
+
 Public Function gxBom(oprd, LV)
     Dim mapping As Variant
     mapping = Array(0, 0, 0, 0, 0, 0, 1, 0, 3, 2, 0, 9, 0, 7, 0, 5, 0)

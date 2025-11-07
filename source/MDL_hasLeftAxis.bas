@@ -17,7 +17,7 @@ Sub LeftHand()
     Dim msg As String: msg = vbNullString
     For Each ax In Axs
         If IsLeft(ax) Then
-            msg = msg & ax.name & vbNewLine
+            msg = msg & ax.Name & vbNewLine
         End If
     Next
     If msg = vbNullString Then

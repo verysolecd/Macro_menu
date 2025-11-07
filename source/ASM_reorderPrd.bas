@@ -40,7 +40,7 @@ Private Function Get_SortedNames(ByVal Pros As Products) As Object
     Set lst = KCL.InitLst()
     Dim Pro As Product
     For Each Pro In Pros
-        lst.Add Pro.name
+        lst.Add Pro.Name
     Next
     lst.Sort
     Set Get_SortedNames = lst

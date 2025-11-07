@@ -11,7 +11,7 @@ Public allPN As Object
 Public counter As Integer
 Public Const gfn As Integer = 400
 Public ProductObserver As New ProductObserver
-Public dt_pth_ctrl   ' 被定义为一个数组  Ary()  第一个元素是开
+Public export_CFG   ' 被定义为一个数组  Ary()  第一个元素是开
 
 
 Sub clearall()

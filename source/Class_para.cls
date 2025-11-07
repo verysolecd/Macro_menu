@@ -19,17 +19,17 @@ Private Sub Class_Initialize()
 Me.Desc = ""
 End Sub
 Public Sub Reset()
-    Me.name = ""
+    Me.Name = ""
     Me.iType = ""
     Me.Str = ""
     Me.Desc = ""
     Set Me.obj = Nothing
     Set Me.Target = Nothing
 End Sub
-Public Property Get name() As String
-    name = pName
+Public Property Get Name() As String
+    Name = pName
 End Property
-Public Property Let name(ByVal value As String)
+Public Property Let Name(ByVal value As String)
     pName = value
 End Property
 Public Property Get iType() As String
@@ -64,6 +64,6 @@ Public Property Set obj(value)
    Set pobj = value
 End Property
 Public Sub SetNT(ByVal newName As String, ByVal newType As String)
-    Me.name = newName
+    Me.Name = newName
     Me.iType = newType
 End Sub

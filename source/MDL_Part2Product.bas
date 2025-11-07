@@ -59,11 +59,11 @@ Private Sub ToProduct(ByVal TopDoc As ProductDocument, _
     Dim ProdsNameDic As Object: Set ProdsNameDic = KCL.InitDic()
     CATIA.HSOSynchronized = False
     For Each itm In LeafItems
-        If ProdsNameDic.Exists(itm.name) Then
-            Set TgtDoc = ProdsNameDic.item(itm.name)
+        If ProdsNameDic.Exists(itm.Name) Then
+            Set TgtDoc = ProdsNameDic.item(itm.Name)
         Else
-            Set TgtDoc = Init_Part(prods, itm.name)
-            ProdsNameDic.Add itm.name, TgtDoc
+            Set TgtDoc = Init_Part(prods, itm.Name)
+            ProdsNameDic.Add itm.Name, TgtDoc
         End If
         Call Preparing_Copy(BaseSel, itm)
         With BaseSel
@@ -181,16 +181,16 @@ Private Function Is_LeafHybridBody(ByVal Hbdy As AnyObject, _
     CATIA.HSOSynchronized = False
     Dim sel As Selection
     Set sel = KCL.GetParent_Of_T(Hbdy, "PartDocument").Selection
-    Dim Cnt As Long
+    Dim cnt As Long
     With sel
         .Clear
         .Add Hbdy
         .Search "Visibility=Shown,sel"
-        Cnt = .Count2
+        cnt = .Count2
         .Clear
     End With
     CATIA.HSOSynchronized = True
-    If Cnt > 1 Then Is_LeafHybridBody = True
+    If cnt > 1 Then Is_LeafHybridBody = True
 End Function
 
 Private Function Init_Part(ByVal prods As Variant, _

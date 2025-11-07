@@ -62,7 +62,7 @@ Function get_project_name_list() As collection
     Set lst = New collection
     Dim proj As Object
     For Each proj In mProjectLst
-        lst.Add proj.name
+        lst.Add proj.Name
     Next
     Set get_project_name_list = lst
 End Function
@@ -97,7 +97,7 @@ Function get_module_name_list( _
     Dim comp As Object
     For Each comp In get_module_list(projectIdx)
         If is_target_module_type(comp) Then
-            lst.Add comp.name
+            lst.Add comp.Name
         End If
     Next
 End Function
@@ -163,7 +163,7 @@ Function get_module_info( _
         totalCharCount = totalCharCount + GetValidCharacterCount(compX)
     Next
     get_module_info = _
-        "项目名称:" & proj.name & vbCrLf & _
+        "项目名称:" & proj.Name & vbCrLf & _
         "总体步数:" & totalCharCount & vbCrLf & _
         "文件路径:" & proj.Filename & vbCrLf & _
         "模块名称:" & moduleName & "." & get_extension(comp) & vbCrLf & _
@@ -222,7 +222,7 @@ Function get_dir_by_project_name( _
     On Error GoTo 0
     If proj Is Nothing Then Exit Function
     Dim path As String
-    path = parentDirPath & "\" & proj.name
+    path = parentDirPath & "\" & proj.Name
     Dim fso As Object
     Set fso = mUtil.GetFso()
     If Not fso.FolderExists(path) Then
@@ -269,7 +269,7 @@ Private Function get_target_file_path_list( _
     Dim file As Object
     Dim ext As String
     For Each file In dir.Files
-        ext = fso.GetExtensionName(file.name)
+        ext = fso.GetExtensionName(file.Name)
         If Not UBound(filter(targetExtensions, ext)) < 0 Then
             lst.Add file.path
         End If
@@ -286,10 +286,10 @@ Private Sub remove_modules( _
     If proj Is Nothing Then Exit Sub
     Dim lst As collection
     Set lst = get_module_name_list(projectIdx)
-    Dim name As Variant ' String
+    Dim Name As Variant ' String
     Dim comp As Object
-    For Each name In get_module_name_list(projectIdx)
-        Set comp = proj.VBComponents(name)
+    For Each Name In get_module_name_list(projectIdx)
+        Set comp = proj.VBComponents(Name)
         proj.VBComponents.Remove comp
     Next
 End Sub
@@ -307,12 +307,12 @@ Sub export_project( _
     On Error GoTo 0
     If proj Is Nothing Then Exit Sub
     
-    Dim name 'As String
+    Dim Name 'As String
     Dim comp As Object
-    For Each name In get_module_name_list(projectIdx)
-        Set comp = proj.VBComponents(name)
+    For Each Name In get_module_name_list(projectIdx)
+        Set comp = proj.VBComponents(Name)
         On Error Resume Next
-        comp.Export dirPath & "\" & comp.name & "." & get_extension(comp)
+        comp.Export dirPath & "\" & comp.Name & "." & get_extension(comp)
         If Not Err.Number = 0 Then
             MsgBox "导出失败，请删除.git以外的文件后重试"
             Exit Sub
@@ -397,7 +397,7 @@ Private Sub update_userdata( _
     End If
     Dim info As Object
     Set info = mUtil.InitDict()
-    info.Add "name", proj.name
+    info.Add "name", proj.Name
     info.Add "path", path
     mUserDict.Add Key, info
     Call cleanUp_userdata
@@ -456,7 +456,7 @@ Function get_this_project() As Object
     Dim thisProj As Object
     Dim proj As Object
     For Each proj In mVbe.vBProjects
-        If proj.name = THIS_PROJECT_NAME Then
+        If proj.Name = THIS_PROJECT_NAME Then
             Set get_this_project = proj
             Exit Function
         End If

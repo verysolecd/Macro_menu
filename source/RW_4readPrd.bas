@@ -17,22 +17,26 @@ Sub readPrd()
     Else
          If gws Is Nothing Then
            Set xlm = New Class_XLM
-         End If
-        
-        gPrd.ApplyWorkMode (3)
+           End If
+    End If
         Dim currRow: currRow = 2
-         
+         counter = 1
         Dim Prd2Read
         Set Prd2Read = gPrd
         If Not Prd2Read Is Nothing Then
-            xlm.inject_data currRow, pdm.infoPrd(Prd2Read)
-            Dim children
-            Set children = Prd2Read.Products
-            For i = 1 To children.count
-                currRow = i + 2
-                xlm.inject_data currRow, pdm.infoPrd(children.item(i))
-            Next
+            Prd2Read.ApplyWorkMode (3)
+        idx = Array(0, 1, 2, 3, 4, 5, 6, 7, 8) ' 需提取的属性索引（0-based）
+        idcol = Array(0, 1, 3, 5, 7, 9, 11, 13, 14) ' 目标列号, 0号元素不占位置
+        Dim idata()
+        idata = pdm.attLv2Prd(Prd2Read)
+            ReDim resultAry(1 To UBound(idata, 1), 1 To UBound(idx))
+        For i = 1 To UBound(idata, 1)
+             For j = 1 To UBound(resultAry, 2)
+               resultAry(i, j) = idata(i, (idx(j)))
+             Next j
+        Next i
+        xlm.inject_ary resultAry, idcol
         End If
-      End If
+          xlAPP.Visible = True
         Set Prd2Read = Nothing
 End Sub

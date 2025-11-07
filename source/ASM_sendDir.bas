@@ -10,13 +10,13 @@ Sub sendDir()
     CATIA.DisplayFileAlerts = True
     Dim odoc: Set odoc = CATIA.ActiveDocument
     
-    ipath_name = odoc.path & "\" & odoc.name
+    ipath_name = odoc.path & "\" & odoc.Name
     
     Dim opath
         opath = KCL.ofParentPath(odoc.path)
     Dim pn
         If KCL.isobjtype(odoc, "DrawingDocument") Then
-            pn = strbflast(odoc.name, ".")
+            pn = strbflast(odoc.Name, ".")
         Else
             pn = odoc.Product.PartNumber
         End If

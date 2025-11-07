@@ -26,7 +26,7 @@ Sub ctrhole()
     Dim obdy
     Set obdy = KCL.SelectElement(imsg, filter).value
     Set targethb = oPart.HybridBodies.Add()
-    targethb.name = "extracted points"
+    targethb.Name = "extracted points"
     If Not obdy Is Nothing Then
             Set holeBody = obdy
             For Each Hole In holeBody.Shapes
@@ -35,7 +35,7 @@ Sub ctrhole()
                     Set pt = HSF.AddNewPointCoord(0, 0, 0)
                     Set ref = oPart.CreateReferenceFromObject(skt)
                     pt.PtRef = ref
-                    pt.name = "Pt_" & i
+                    pt.Name = "Pt_" & i
                     targethb.AppendHybridShape pt
                     oPart.InWorkObject = pt
                     oPart.Update
