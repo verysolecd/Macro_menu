@@ -3,5 +3,9 @@
    "D:|Coding|Myhub|Macro_menu|CATIA_V5_SimpleMacroMenu.catvba": {
       "name": "CAT_MENU",
       "path": "D:\\Coding\\Myhub\\Macro_menu\\source"
+   },
+   "D:|Coding|Myhub|Macro_menu|CDF_Toolkit_CATIA.catvba": {
+      "name": "CDF_Toolkit_CATIA",
+      "path": "D:\\Coding\\Myhub\\Macro_menu\\temp_new function\\CDF_Toolkit_CATIA"
    }
 }
