@@ -37,6 +37,9 @@ Private Const TAG_MDLNAME = "mdl_name"      ' 模块名称标签
 '-----------------------------------------------------------------
 ' 菜单入口点
 Sub CATMain()
+
+
+     
     Set PageMap = Get_KeyValue(groupName, True)
     Dim ButtonInfos As Object
     Set ButtonInfos = Get_ButtonInfo()
@@ -282,4 +285,10 @@ continue:
     If lst.count < 1 Then Exit Function
     Set GetModuleLst = lst
 End Function
+
+
+
+    
+ 
+
 

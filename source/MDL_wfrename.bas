@@ -17,18 +17,18 @@ Attribute VB_Name = "MDL_wfrename"
 
 Sub wfrename()
    
-  If CATIA.Windows.count < 1 Then
+  If catia.Windows.count < 1 Then
         MsgBox "没有打开的窗口"
         Exit Sub
     End If
     
     Dim odoc
     On Error Resume Next
-        Set odoc = CATIA.ActiveDocument
+        Set odoc = catia.ActiveDocument
     On Error GoTo 0
-    Dim Str
-    Str = TypeName(odoc)
-    If Not Str = "PartDocument" Then
+    Dim str
+    str = TypeName(odoc)
+    If Not str = "PartDocument" Then
     MsgBox "没有打开的part"
     Exit Sub
     End If

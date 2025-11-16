@@ -8,12 +8,12 @@ Attribute VB_Name = "MDL_holecenter2"
 '{BackColor:12648447}
 
 Sub Faceholecenter()
-    If CATIA.Windows.count < 1 Then
+    If catia.Windows.count < 1 Then
         MsgBox "没有打开的窗口"
         Exit Sub
     End If
   If Not CanExecute("PartDocument") Then Exit Sub
-    Set odoc = CATIA.ActiveDocument
+    Set odoc = catia.ActiveDocument
     Set oPart = odoc.part
     Set HSF = oPart.HybridShapeFactory
 '======= 选择要识别的面
@@ -37,18 +37,18 @@ Sub Faceholecenter()
         Set oBdry = HSF.AddNewBoundaryOfSurface(oFace)
         oHB.AppendHybridShape oBdry
         oPart.Update
-        Dim osel
-        Set osel = CATIA.ActiveDocument.Selection
-        osel.Clear
-        osel.Add oBdry
-        CATIA.StartCommand ("Disassemble")
-        CATIA.RefreshDisplay = True
+        Dim oSel
+        Set oSel = catia.ActiveDocument.Selection
+        oSel.Clear
+        oSel.Add oBdry
+        catia.StartCommand ("Disassemble")
+        catia.RefreshDisplay = True
         MsgBox "请拆解窗口选择only domain后点击ok，再点击本窗口的ok"
-          CATIA.RefreshDisplay = True
-        osel.Clear
+          catia.RefreshDisplay = True
+        oSel.Clear
         i = 1
         For Each Hole In oHB.HybridShapes
-            osel.Add Hole
+            oSel.Add Hole
             If TypeOf Hole Is HybridShapeCircleTritangent Then
                 Set oref = oPart.CreateReferenceFromObject(Hole)
                 Set oCtr = HSF.AddNewPointCenter(oref)
@@ -59,19 +59,19 @@ Sub Faceholecenter()
                 pt.Name = "pt_" & i
                 oHB.AppendHybridShape pt
                 'oPart.Update
-                osel.Add oCtr
+                oSel.Add oCtr
 '                osel.Delete
 '                osel.Clear
                 i = i + 1
               Else
-                osel.Add Hole
+                oSel.Add Hole
                 
             End If
             
         Next
                 On Error Resume Next
-                osel.Delete
-                 osel.Clear
+                oSel.Delete
+                 oSel.Clear
                  On Error GoTo 0
      End If
 End Sub

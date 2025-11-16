@@ -11,7 +11,7 @@ Option Explicit
 Sub LeftHand()
     ' 检查是否可以执行
     If Not CanExecute("PartDocument") Then Exit Sub
-    Dim doc As PartDocument: Set doc = CATIA.ActiveDocument
+    Dim doc As PartDocument: Set doc = catia.ActiveDocument
     Dim Axs As AxisSystems: Set Axs = doc.part.AxisSystems
     Dim ax As AxisSystem
     Dim msg As String: msg = vbNullString

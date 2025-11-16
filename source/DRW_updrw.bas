@@ -1,6 +1,6 @@
 Attribute VB_Name = "DRW_updrw"
 Sub DRA()
-Set odoc = CATIA.ActiveDocument
+Set odoc = catia.ActiveDocument
 Set oShts = odoc.Sheets
 k = oShts.count
 i = 5

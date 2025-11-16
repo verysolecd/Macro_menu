@@ -10,13 +10,13 @@ Attribute VB_Name = "ASM_deleteChildren"
 Option Explicit
 
 Sub DeleteChildren()
-  If CATIA.Windows.count < 1 Then
+  If catia.Windows.count < 1 Then
         MsgBox "没有打开的窗口"
         Exit Sub
   End If
     If Not CanExecute("ProductDocument") Then Exit Sub
     
-    Dim osel: Set osel = CATIA.ActiveDocument.Selection: osel.Clear
+    Dim oSel: Set oSel = catia.ActiveDocument.Selection: oSel.Clear
 
     Dim imsg, filter(0), iSel
       imsg = "请选择父集": filter(0) = "Product"
@@ -24,7 +24,7 @@ Sub DeleteChildren()
     If iSel Is Nothing Then Exit Sub
     Dim prd
     For Each prd In iSel.Products
-      osel.Add prd
+      oSel.Add prd
     Next
     
       Dim btn, bTitle, bResult
@@ -35,8 +35,8 @@ Sub DeleteChildren()
               Case 7: Exit Sub '===选择“否”====
               Case 6  '===选择“是”,进行产品选择====
                   On Error Resume Next
-                       osel.Delete
-                       osel.Clear
+                       oSel.Delete
+                       oSel.Clear
                   On Error GoTo 0
           End Select
 

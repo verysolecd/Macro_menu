@@ -8,10 +8,10 @@ Attribute VB_Name = "ASM_closePartWindows"
 '{背景颜色: 12648447}
 
 Sub CLSpart()
-Dim CATIA, wds, wd
+Dim wds, wd
  On Error Resume Next
-    Set CATIA = GetObject(, "CATIA.Application")
-    Set wds = CATIA.Windows
+   wds = catia.Windows
+
     If wds.count < 1 Then
            MsgBox "没有打开的窗口"
            Exit Sub

@@ -16,7 +16,7 @@ Sub ex2stp_zip()
   On Error Resume Next ' 临时开启错误处理
   Err.Number = 0
     Dim odoc As Document
-    Set odoc = CATIA.ActiveDocument
+    Set odoc = catia.ActiveDocument
     Dim outputpath As String
     askdir.Show
     outputpath = GetOutputPath(odoc)
@@ -33,11 +33,11 @@ Sub ex2stp_zip()
     
         stpname = KCL.strbf1st(odoc.Product.PartNumber, "_") & "_" & ttp
         Dim stpfilepath As String
-        Dim opath(2) '0=路径，1=name，2=extname
-            opath(0) = outputpath
-            opath(1) = stpname
-            opath(2) = "stp"
-        stpfilepath = KCL.JoinPathName(opath)
+        Dim oPath(2) '0=路径，1=name，2=extname
+            oPath(0) = outputpath
+            oPath(1) = stpname
+            oPath(2) = "stp"
+        stpfilepath = KCL.JoinPathName(oPath)
      '================导出stp
         odoc.ExportData stpfilepath, "stp"
          '================检查文件存在性
@@ -47,7 +47,7 @@ Sub ex2stp_zip()
         Else
             '============生成导出日志
             If export_CFG(3) <> "" Then
-                logpath = opath(0) & "\" & "stp_export_log.md"
+                logpath = oPath(0) & "\" & "stp_export_log.md"
                 loginfo = "## " & KCL.timestamp("day") & "  " & stpname & ".stp" & vbCrLf & _
                         "  " & export_CFG(3)
                 KCL.Appendtext KCL.getmd(logpath), loginfo

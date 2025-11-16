@@ -15,7 +15,7 @@ Sub CATMain()
      End If
      
      Dim Views As DrawingViews
-     Set Views = CATIA.ActiveDocument.Sheets.ActiveSheet.Views
+     Set Views = catia.ActiveDocument.Sheets.ActiveSheet.Views
      If Views.count < 3 Then
                  Exit Sub
       End If

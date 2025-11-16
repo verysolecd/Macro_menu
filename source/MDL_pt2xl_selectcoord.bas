@@ -9,18 +9,18 @@ Attribute VB_Name = "MDL_pt2xl_selectcoord"
 
 Sub pt2xl()
 
-    If CATIA.Windows.count < 1 Then
+    If catia.Windows.count < 1 Then
         MsgBox "没有打开的窗口"
         Exit Sub
     End If
     
     Dim odoc
     On Error Resume Next
-        Set odoc = CATIA.ActiveDocument
+        Set odoc = catia.ActiveDocument
     On Error GoTo 0
-    Dim Str
-    Str = TypeName(odoc)
-    If Not Str = "PartDocument" Then
+    Dim str
+    str = TypeName(odoc)
+    If Not str = "PartDocument" Then
     MsgBox "没有打开的part"
     Exit Sub
     End If
@@ -28,8 +28,8 @@ Sub pt2xl()
     
     Dim HSF:  Set HSF = odoc.part.HybridShapeFactory
     Dim HBS: Set HBS = odoc.part.HybridBodies
-    Dim osel: Set osel = odoc.Selection
-    osel.Clear
+    Dim oSel: Set oSel = odoc.Selection
+    oSel.Clear
     
     '=======要求选择点集和坐标
     Dim imsg, filter(0)
@@ -59,17 +59,17 @@ Sub pt2xl()
         For i = 1 To ct
             Set opt = oshapes.item(i)
    
-            Str = HSF.GetGeometricalFeatureType(opt)
-            If Str = 1 Then
+            str = HSF.GetGeometricalFeatureType(opt)
+            If str = 1 Then
                 Dim fakept
                 Set fakept = HSF.AddNewPointCoordWithReference(0, 0, 0, opt)
                 oHB.AppendHybridShape fakept
                 odoc.part.Update
                fakept.GetCoordinates absCoord
                
-                  osel.Clear
-                  osel.Add fakept
-                  osel.Delete
+                  oSel.Clear
+                  oSel.Add fakept
+                  oSel.Delete
                   odoc.part.Update
                 If Not oAxi Is Nothing Then
                     fincoord = TransAxi(absCoord, oAxi)
@@ -125,22 +125,22 @@ Function TransAxi(acoor As Variant, axi1) As Variant
 End Function
 
 Function mysel(prompt, filter())
-    Dim osel
-    Set osel = CATIA.ActiveDocument.Selection
-    osel.Clear
+    Dim oSel
+    Set oSel = catia.ActiveDocument.Selection
+    oSel.Clear
     Dim iType(0)
 '
 '    Dim status
 '    status = osel.SelectElement2(filter, prompt, False)
 
-    If osel.SelectElement2(filter, prompt, False) = "Normal" Then
-        If osel.count = 1 Then
-            Set mysel = osel.item(1)
+    If oSel.SelectElement2(filter, prompt, False) = "Normal" Then
+        If oSel.count = 1 Then
+            Set mysel = oSel.item(1)
         End If
     Else
     Set mysel = Nothing
     End If
-    osel.Clear
+    oSel.Clear
 End Function
 ' = 0 , Unknown
 ' = 1 , Point

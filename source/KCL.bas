@@ -16,7 +16,7 @@ Private mSW& ' 秒表开始时间
 Sub CATMain()
     Dim msg$: msg = "请选择项目 : 按ESC键退出"
     Dim SI As AnyObject
-    Dim doc As Document: Set doc = CATIA.ActiveDocument
+    Dim doc As Document: Set doc = catia.ActiveDocument
     Do
         Set SI = SelectItem(msg)
         If IsNothing(SI) Then Exit Do
@@ -29,7 +29,7 @@ End Sub
 ''' @return:Boolean
 Function CanExecute(ByVal docTypes As Variant) As Boolean
     CanExecute = False
-    If CATIA.Windows.count < 1 Then
+    If catia.Windows.count < 1 Then
         MsgBox "没有打开的窗口"
         Exit Function
     End If
@@ -46,7 +46,7 @@ Function checkDocType(ByVal docTypes As Variant)
     If Not checkFilterType(docTypes) Then Exit Function '过滤器检查，非数组则退出
     Dim ActDoc As Document
     On Error Resume Next
-        Set ActDoc = CATIA.ActiveDocument
+        Set ActDoc = catia.ActiveDocument
     On Error GoTo 0
     If ActDoc Is Nothing Then
         MsgBox "无打开的文档"
@@ -81,7 +81,7 @@ Function SelectElement(ByVal msg$, _
     If IsEmpty(filter) Then filter = Array("AnyObject")
     If VarType(filter) = vbString Then filter = strToAry(filter)
     If Not checkFilterType(filter) Then Exit Function
-    Dim sel As Variant: Set sel = CATIA.ActiveDocument.Selection
+    Dim sel As Variant: Set sel = catia.ActiveDocument.Selection
     sel.Clear
     Select Case sel.SelectElement2(filter, msg, False)
         Case "Cancel", "Undo", "Redo"
@@ -304,9 +304,13 @@ End Function
 ''' @param:Path-Variant(Of Array(Of String)) (0-路径 1-文件名 2-扩展名)
 ''' @return:完整路径
 Function JoinPathName$(ByVal path As Variant)
+
     If Not IsArray(path) Then Stop ' 输入错误
+    
     If Not UBound(path) = 2 Then Stop ' 输入错误
+    
     JoinPathName = path(0) + "\" + path(1) + "." + path(2)
+    
 End Function
 
 ' 检查路径是否存在
@@ -314,38 +318,102 @@ End Function
 ''' @return:Boolean
 Function isExists(ByVal path$) As Boolean
     isExists = False
-    Dim fso As Object: Set fso = GetFso
-    If fso.FileExists(path) Then
+    Dim FSO As Object: Set FSO = GetFso
+    If FSO.FileExists(path) Then
         isExists = True: Exit Function ' 文件
-    ElseIf fso.FolderExists(path) Then
+    ElseIf FSO.FolderExists(path) Then
         isExists = True: Exit Function ' 文件夹
     End If
-    Set fso = Nothing
+    Set FSO = Nothing
 End Function
-Function DeleteMe(ByVal path$) As Boolean
-    DeleteMe = False
-    On Error Resume Next
-    Dim fso As Object: Set fso = GetFso
-    If fso.FileExists(path) Then
-        fso.DeleteFile path, True
+Function GetPath(ByVal path$)
+    GetPath = ""
+     Dim FSO As Object: Set FSO = GetFso
+     If isExists(path) Then
+         GetPath = path
+     Else
+         GetPath = FSO.CreateFolder(path)
+     End If
+     Set FSO = Nothing
+End Function
+
+Sub ClearDir(folderPath As String)
+    Dim FSO As Object
+    Set FSO = GetFso()
+    ' 检查目录是否存在
+    If FSO.FolderExists(folderPath) Then
+        Dim folder As Object
+        Set folder = FSO.GetFolder(folderPath)
+        
+        ' 删除目录中的所有文件
+        Dim file As Object
+        For Each file In folder.Files
+            FSO.DeleteFile file.path, True ' True表示强制删除只读文件
+        Next
     End If
+    
+    ' 释放对象
+    Set FSO = Nothing
+End Sub
+
+
+Function ex2thisdir()
+
+Dim FSO As Object
+    Set FSO = GetFso()
+If FSO.FolderExists(folderPath) Then
+        Dim folder As Object
+        Set folder = FSO.GetFolder(folderPath)
+        
+  Dim file As Object
+  
+    Set file = folder.Files.item(1)
+    
+    ex2thisdir=
+
+End Function
+
+
+
+Function DeleteMe(ByVal path$) As Boolean
+DeleteMe = False
+On Error Resume Next
+    Dim FSO As Object: Set FSO = GetFso
+    
+    If FSO.FileExists(path) Then
+        FSO.DeleteFile path, True
+    End If
+    
     If Error.Number = 0 Then
         DeleteMe = True
     Else
         Error.Clear
-    End If
-    Set fso = Nothing
+    End
+    
+    Set FSO = Nothing
     Error.Clear
-     On Error GoTo 0
+    
+On Error GoTo 0
+     
 End Function
+
+
+
+
+
+
 ' 获取新文件名
 ''' @param:Path-完整路径
 ''' @return:新的完整路径
 Function GetNewName$(ByVal oldPath$)
     Dim path As Variant
+    
     path = SplitPathName(oldPath)
+    
     path(2) = "." & path(2)
+    
     Dim newPath$: newPath = path(0) + "\" + path(1)
+    
     If Not isExists(newPath + path(2)) Then
         GetNewName = newPath + path(2)
         Exit Function
@@ -404,13 +472,13 @@ End Function
 
 '@@param: oPath-路径
 '获取输入路径父级
-Public Function ofParentPath(ByVal opath$)
+Public Function ofParentPath(ByVal oPath$)
     Dim idx
-    idx = InStrRev(opath, "\")
+    idx = InStrRev(oPath, "\")
 If idx > 0 Then
-        ofParentPath = Left(opath, idx)
+        ofParentPath = Left(oPath, idx)
     Else
-        ofParentPath = opath
+        ofParentPath = oPath
     End If
 End Function
 ' 检查字符串中是否包含指定关键字
@@ -480,13 +548,13 @@ Function isPathchn(pathToCheck) As Boolean
 End Function
 '@iStr string
 '获得字符串最后一个"iext"之前的字符或返回原字符
-Function strbflast(Str, iext)
+Function strbflast(str, iext)
 Dim idx
-idx = InStrRev(Str, iext)
+idx = InStrRev(str, iext)
 If idx > 0 Then
-        strbflast = Left(Str, idx)
+        strbflast = Left(str, idx)
     Else
-        strbflast = Str
+        strbflast = str
     End If
 End Function
 
@@ -526,16 +594,17 @@ End Function
 
 '创建md文件
 Function getmd(ByVal ipath_name As String)
-Dim fso
-    Set fso = CreateObject("Scripting.FileSystemObject")
+     Dim FSO
+    Set FSO = GetFso()
     Dim mdfile
     If Not KCL.isExists(ipath_name) Then
-        Set mdfile = fso.CreateTextFile(ipath_name, False) '不存在则创建
+        Set mdfile = FSO.CreateTextFile(ipath_name, False) '不存在则创建
     Else
-        Set mdfile = fso.OpenTextFile(ipath_name, ForAppending, TristateFalse) '存在则
+        Set mdfile = FSO.OpenTextFile(ipath_name, ForAppending, TristateFalse) '存在则
     End If
     Set getmd = mdfile
     Set mdfile = Nothing
+
 End Function
 '文本文件写入
 Sub Appendtext(ByVal tfile As Object, _
@@ -551,10 +620,10 @@ End Sub
 'https://ja.wikipedia.org/wiki/ISO_639-1%E3%82%B3%E3%83%BC%E3%83%89%E4%B8%80%E8%A6%A7
 Function GetLanguage() As String
     GetLanguage = "non"
-    If CATIA.Windows.count < 1 Then Exit Function
+    If catia.Windows.count < 1 Then Exit Function
     GetLanguage = "other"
-    CATIA.ActiveDocument.Selection.Clear
-    Dim st As String: st = CATIA.StatusBar
+    catia.ActiveDocument.Selection.Clear
+    Dim st As String: st = catia.StatusBar
     Select Case True
         Case ExistsKey(st, "object")
             GetLanguage = "en"
@@ -580,4 +649,28 @@ Function GetLanguage() As String
                     ' 其他情况
             End Select
     End Select
+End Function
+
+Function getVbaDir() As String
+    Dim oApc As Object
+    Set oApc = GetApc()
+    Dim projFilePath As String
+    projFilePath = oApc.ExecutingProject.VBProject.Filename
+     getVbaDir = GetFso.GetParentFolderName(projFilePath)
+End Function
+Function GetApc() As Object
+    Dim COMObjectName As String
+    #If VBA7 Then
+        COMObjectName = "MSAPC.Apc.7.1"
+    #ElseIf VBA6 Then
+        COMObjectName = "MSAPC.Apc.6.2"
+    #End If
+    Dim oApc As Object
+    On Error Resume Next
+    Set oApc = CreateObject(COMObjectName)
+    On Error GoTo 0
+    If oApc Is Nothing Then
+        Set oApc = CreateObject("MSAPC.Apc")
+    End If
+    Set GetApc = oApc
 End Function

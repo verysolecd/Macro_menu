@@ -19,7 +19,7 @@ Attribute VB_Exposed = False
 ' 对于零件发布谁？ usrp.mass part_info.thickness part_info.density usrp.material
 Option Explicit
 Public bigbom As Variant
-Private osel
+Private oSel
 Private imsg
 Private Att(1 To 10)
 Private Const xx = "测试成功"
@@ -30,16 +30,18 @@ Private Const eklstr = "let lst(list) set lst=Part_info\iBodys   let V (Volume) 
 Private Sub Class_Initialize()
     iniarr
         On Error GoTo ErrorHandler
-        If CATIA.Documents.count = 0 Then
+        
+        If catia.Documents.count = 0 Then
             Err.Raise 1001, , "未检测到打开的CATIA文档"
             Exit Sub
         End If
-            Set rootprd = CATIA.ActiveDocument.Product
+            Set rootDoc = catia.ActiveDocument
+            Set rootprd = catia.ActiveDocument.Product
         On Error GoTo 0
         If Not rootprd Is Nothing Then
             rootprd.ApplyWorkMode (3)
         End If
-        Set osel = CATIA.ActiveDocument.Selection: osel.Clear
+        Set oSel = catia.ActiveDocument.Selection: oSel.Clear
 ErrorHandler:
     If Err.Number <> 0 Then
         Err.Clear
@@ -359,7 +361,7 @@ Private Sub iniPrt(oprd)
                    '---创建EKL
             oRule.Reset
             oRule.SetNT "sum_all_Vol", "Program"
-            oRule.Str = eklstr
+            oRule.str = eklstr
             oRule.Desc = "汇总体积"
             checkPara oRule, colls
                     '---创建Cal_mass
@@ -367,28 +369,28 @@ Private Sub iniPrt(oprd)
             oRule.SetNT "cal_Mass", "Formula"
             oRule.Desc = "链接重量"
     
-            oRule.Str = "round(Part_info\sumVol *Part_info\Density,""kg"",3)"   ''''"Part_info\sumVol *Part_info\Density"
+            oRule.str = "round(Part_info\sumVol *Part_info\Density,""kg"",3)"   ''''"Part_info\sumVol *Part_info\Density"
             Set oRule.Target = infoPara(3).obj
             checkPara oRule, colls
                     '---创建link_mass
             oRule.Reset
             oRule.SetNT "link_Mass", "Formula"
             oRule.Desc = "链接重量"
-            oRule.Str = "Part_info\Mass"
+            oRule.str = "Part_info\Mass"
             Set oRule.Target = refPrd.UserRefProperties.item("Mass")
             checkPara oRule, colls
                     '---创建link_thickness
             oRule.Reset
             oRule.SetNT "link_Thickness", "Formula"
             oRule.Desc = "链接厚度"
-            oRule.Str = "Part_info\Thickness"
+            oRule.str = "Part_info\Thickness"
             Set oRule.Target = refPrd.UserRefProperties.item("Thickness")
             checkPara oRule, colls
                     '---创建link_Density
             oRule.Reset
             oRule.SetNT "link_Density", "Formula"
             oRule.Desc = "链接密度"
-            oRule.Str = "Part_info\Density"
+            oRule.str = "Part_info\Density"
             Set oRule.Target = refPrd.UserRefProperties.item("Density")
             checkPara oRule, colls
             oRule.Reset
@@ -402,8 +404,8 @@ Private Function checkPara(thispara, colls)
         Set thispara.obj = getPara(thispara, colls)(0) '已有参数和公式，校验默认值'
         Select Case thispara.iType  '只有formula和rule才需要校核其内容
             Case "Program", "Formula"
-                If thispara.obj.value <> thispara.Str Then
-                 thispara.obj.Modify thispara.Str
+                If thispara.obj.value <> thispara.str Then
+                 thispara.obj.Modify thispara.str
 '                  Debug.Print "已经修改" & thispara.obj.Name
                 End If
                 thispara.obj.Hidden = True
@@ -417,15 +419,15 @@ Private Function paraCreatobj(thispara, colls)
             Case "list"
                 Set thispara.obj = colls.CreateList(thispara.Name)
             Case "Mass", "Density", "Length", "Volume" '所有dimension参数
-                Set thispara.obj = colls.CreateDimension(thispara.Name, thispara.iType, thispara.Str)
+                Set thispara.obj = colls.CreateDimension(thispara.Name, thispara.iType, thispara.str)
             Case "String"
-                Set thispara.obj = colls.CreateString(thispara.Name, thispara.Str)
+                Set thispara.obj = colls.CreateString(thispara.Name, thispara.str)
             Case "Formula"
-                Set thispara.obj = colls.CreateFormula(thispara.Name, thispara.Desc, thispara.Target, thispara.Str)
+                Set thispara.obj = colls.CreateFormula(thispara.Name, thispara.Desc, thispara.Target, thispara.str)
                  thispara.obj.Hidden = True
             Case "Program"
                   On Error Resume Next
-                    Set thispara.obj = colls.CreateProgram(thispara.Name, thispara.Desc, thispara.Str)
+                    Set thispara.obj = colls.CreateProgram(thispara.Name, thispara.Desc, thispara.str)
                     thispara.obj.Hidden = True
                   If Error.Number <> 0 Then
                     Debug.Print "缺少KWA lisence, 无法创建rule单位"
@@ -480,29 +482,29 @@ Private Function count_me(oprd)  '获取兄弟字典
     count_me = QTy
 End Function
 Public Function catSel1(prompt As String) As Object
-    osel.Clear
+    oSel.Clear
     Dim iType(0)
     iType(0) = "Product"
         MsgBox prompt
-    If osel.SelectElement2(iType, prompt, False) = "Normal" Then
-        If osel.count = 1 Then
-            Set catSel1 = osel.item(1).LeafProduct
+    If oSel.SelectElement2(iType, prompt, False) = "Normal" Then
+        If oSel.count = 1 Then
+            Set catSel1 = oSel.item(1).LeafProduct
         End If
     End If
-    osel.Clear
+    oSel.Clear
 End Function
 Public Function catSelx(prompt As String) As collection
     Set catSelx = New collection
-    osel.Clear
+    oSel.Clear
     Dim iType(0)
     iType(0) = "Product"
-    If osel.SelectElement3(iType, prompt, True, 2, True) = "Normal" Then
+    If oSel.SelectElement3(iType, prompt, True, 2, True) = "Normal" Then
         Dim i As Integer
-        For i = 1 To osel.count
-            catSelx.Add osel.item(i).LeafProduct
+        For i = 1 To oSel.count
+            catSelx.Add oSel.item(i).LeafProduct
         Next
     End If
-    osel.Clear
+    oSel.Clear
 End Function
 Public Function defgprd()    '获取要读取或修改的  全局变量 gPrd定义
 
@@ -514,7 +516,7 @@ Public Function defgprd()    '获取要读取或修改的  全局变量 gPrd定义
       bResult = MsgBox(imsg, btn, "bTitle")  ' Yes(6),No(7),cancel(2)
            Select Case bResult
               Case 7 '===选择“否”====
-                Set rootprd = CATIA.ActiveDocument.Product
+                Set rootprd = catia.ActiveDocument.Product
                 Set oprd = rootprd
               Case 6  '===选择“是”,进行产品选择====
                  On Error Resume Next

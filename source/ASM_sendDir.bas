@@ -7,13 +7,13 @@ Attribute VB_Name = "ASM_sendDir"
 '{BackColor:}
 
 Sub sendDir()
-    CATIA.DisplayFileAlerts = True
-    Dim odoc: Set odoc = CATIA.ActiveDocument
+    catia.DisplayFileAlerts = True
+    Dim odoc: Set odoc = catia.ActiveDocument
     
     ipath_name = odoc.path & "\" & odoc.Name
     
-    Dim opath
-        opath = KCL.ofParentPath(odoc.path)
+    Dim oPath
+        oPath = KCL.ofParentPath(odoc.path)
     Dim pn
         If KCL.isobjtype(odoc, "DrawingDocument") Then
             pn = strbflast(odoc.Name, ".")
@@ -24,7 +24,7 @@ Sub sendDir()
     Dim bckFolderName As String
     fname = KCL.rmchn(pn)    '将零件号所有中文字符替换为" "
     bckFolderName = KCL.strbflast(fname, "_") & "_" & KCL.timestamp("min")
-    bckpath = opath & bckFolderName
+    bckpath = oPath & bckFolderName
     
     If KCL.isExists(odoc.path) Then
     
@@ -37,7 +37,7 @@ Sub sendDir()
         Case 2: Exit Sub '===选择“取消”====
         Case 6  '===选择“是”====
             If Not KCL.isPathchn(bckpath) Then
-                Set Send = CATIA.CreateSendTo()
+                Set Send = catia.CreateSendTo()
                 Send.KeepDirectory (1)  '1 keepdir ， 0 no keep dir
                 Send.SetInitialFile ipath_name
                 Send.SetDirectoryFile bckpath
@@ -72,7 +72,7 @@ End Sub
 Sub mdlog()
 
     Dim odoc, currPath
-    Set odoc = CATIA.ActiveDocument
+    Set odoc = catia.ActiveDocument
     currPath = IIf(odoc.path = "", "", odoc.path)
     mdocPath = currPath & ".md"
     

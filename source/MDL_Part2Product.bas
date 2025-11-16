@@ -11,7 +11,7 @@ Option Explicit
 
 Sub CATMain()
     If Not CanExecute("PartDocument") Then Exit Sub
-    Dim BaseDoc As PartDocument: Set BaseDoc = CATIA.ActiveDocument
+    Dim BaseDoc As PartDocument: Set BaseDoc = catia.ActiveDocument
     Dim BasePath As Variant: BasePath = Array(BaseDoc.FullName)
     Dim pt As part: Set pt = BaseDoc.part
     Dim LeafItems As collection: Set LeafItems = Get_LeafItemLst(pt.bodies)
@@ -37,7 +37,7 @@ Sub CATMain()
     End Select
     KCL.SW_Start
     Dim BaseScene As Variant: BaseScene = GetScene3D(GetViewPnt3D())
-    Dim TopDoc As ProductDocument: Set TopDoc = CATIA.Documents.Add("Product")
+    Dim TopDoc As ProductDocument: Set TopDoc = catia.Documents.Add("Product")
     Call ToProduct(TopDoc, LeafItems, PasteType)
     Call UpdateScene(BaseScene)
     TopDoc.Product.Update
@@ -57,7 +57,7 @@ Private Sub ToProduct(ByVal TopDoc As ProductDocument, _
     Dim itm As AnyObject
     Dim TgtDoc As PartDocument
     Dim ProdsNameDic As Object: Set ProdsNameDic = KCL.InitDic()
-    CATIA.HSOSynchronized = False
+    catia.HSOSynchronized = False
     For Each itm In LeafItems
         If ProdsNameDic.Exists(itm.Name) Then
             Set TgtDoc = ProdsNameDic.item(itm.Name)
@@ -78,7 +78,7 @@ Private Sub ToProduct(ByVal TopDoc As ProductDocument, _
     Next
     BaseSel.Clear
     TopSel.Clear
-    CATIA.HSOSynchronized = True
+    catia.HSOSynchronized = True
 End Sub
 
 Private Sub Preparing_Copy(ByVal sel As Selection, ByVal itm As AnyObject)
@@ -136,7 +136,7 @@ Private Function Get_LeafItemLst(ByVal pt As part) As collection
     filter = "(CATPrtSearch.BodyFeature.Visibility=Shown " & _
             "+ CATPrtSearch.OpenBodyFeature.Visibility=Shown" & _
             "+ CATPrtSearch.MMOrderedGeometricalSet.Visibility=Shown),sel"
-    CATIA.HSOSynchronized = False
+    catia.HSOSynchronized = False
     With sel
         .Clear
         .Add pt
@@ -146,7 +146,7 @@ Private Function Get_LeafItemLst(ByVal pt As part) As collection
         Next
         .Clear
     End With
-    CATIA.HSOSynchronized = True
+    catia.HSOSynchronized = True
     If TmpLst.count < 1 Then Exit Function
     Dim LeafHBdys As Object: Set LeafHBdys = KCL.InitDic()
     Dim Hbdy As AnyObject
@@ -178,7 +178,7 @@ Private Function Is_LeafHybridBody(ByVal Hbdy As AnyObject, _
                                    ByVal Dic As Object) As Boolean
     Is_LeafHybridBody = False
     If Not Dic.Exists(Hbdy) Then Exit Function
-    CATIA.HSOSynchronized = False
+    catia.HSOSynchronized = False
     Dim sel As Selection
     Set sel = KCL.GetParent_Of_T(Hbdy, "PartDocument").Selection
     Dim cnt As Long
@@ -189,7 +189,7 @@ Private Function Is_LeafHybridBody(ByVal Hbdy As AnyObject, _
         cnt = .Count2
         .Clear
     End With
-    CATIA.HSOSynchronized = True
+    catia.HSOSynchronized = True
     If cnt > 1 Then Is_LeafHybridBody = True
 End Function
 
@@ -203,7 +203,7 @@ Private Function Init_Part(ByVal prods As Variant, _
 End Function
 
 Private Sub UpdateScene(ByVal Scene As Variant)
-    Dim viewer As Viewer3D: Set viewer = CATIA.ActiveWindow.ActiveViewer
+    Dim viewer As Viewer3D: Set viewer = catia.ActiveWindow.ActiveViewer
     Dim VPnt3D As Variant
     Set VPnt3D = viewer.Viewpoint3D
     Dim ary As Variant
@@ -232,7 +232,7 @@ Private Function GetScene3D(ViewPnt3D As Viewpoint3D) As Variant
 End Function
 
 Private Function GetViewPnt3D() As Viewpoint3D
-    Set GetViewPnt3D = CATIA.ActiveWindow.ActiveViewer.Viewpoint3D
+    Set GetViewPnt3D = catia.ActiveWindow.ActiveViewer.Viewpoint3D
 End Function
 
 

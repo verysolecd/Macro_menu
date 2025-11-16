@@ -2,9 +2,9 @@ Attribute VB_Name = "TBD_getsize1"
 Sub getSize()
 'If Not KCL.CanExecute("PartDocument") Then Exit Sub
 
-CATIA.HSOSynchronized = False
+catia.HSOSynchronized = False
 
-Set doc = CATIA.ActiveDocument
+Set doc = catia.ActiveDocument
 Set oprt = doc.part 'Product.Products.item(1).ReferenceProduct.Parent.part
 Set MBD = oprt.bodies.item(1)
 Set HB = oprt.HybridBodies.Add
@@ -131,7 +131,7 @@ doc.Selection.Delete
 doc.Selection.Add eles(0)
 doc.Selection.VisProperties.SetRealOpacity 100, 1
 doc.Selection.Clear
-CATIA.HSOSynchronized = True
+catia.HSOSynchronized = True
 
 'resp = MsgBox("X direction size is " & Round(DisX, 3) & vbCrLf & _
 '        "Y direction size is " & Round(DisY, 3) & vbCrLf & _

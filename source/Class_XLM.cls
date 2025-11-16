@@ -168,7 +168,7 @@ Sub inject_ary(ByVal idata As Variant, _
       
       
       
-CleanUp:     ' ª÷∏¥Excel…Ë÷√
+Cleanup:     ' ª÷∏¥Excel…Ë÷√
     With xlAPP
         .ScreenUpdating = True
         .Calculation = xlCalculationAutomatic 'xlCalculationmanual

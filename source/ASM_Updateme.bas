@@ -10,7 +10,7 @@ Sub Upall()
 
     Dim part
     Dim doc
-    For Each doc In CATIA.Documents
+    For Each doc In catia.Documents
         If TypeName(doc) = "PartDocument" Then
             Set part = doc.part
             Exit For
@@ -18,7 +18,7 @@ Sub Upall()
     Next
 'tosave =doc.saved
 'if tosave =false then
-    For Each doc In CATIA.Documents
+    For Each doc In catia.Documents
       isupdated = True
       If TypeName(doc) = "PartDocument" Then
           isupdated = part.IsUpToDate(doc.part)

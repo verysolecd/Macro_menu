@@ -81,7 +81,7 @@ Private Sub mBtn_Click()
     If mInfo(TAG_MDLNAME) = "OTH_Color" Then
         On Error Resume Next
         Dim MyViewer
-        Set MyViewer = CATIA.ActiveWindow.ActiveViewer
+        Set MyViewer = catia.ActiveWindow.ActiveViewer
          Dim currentColor(2)
         MyViewer.GetBackgroundColor currentColor
         On Error GoTo 0
@@ -94,7 +94,7 @@ Private Sub mBtn_Click()
     End If
     
     Dim ary: ary = Array()
-    Dim ss: Set ss = CATIA.SystemService
+    Dim ss: Set ss = catia.SystemService
     
     Call ss.ExecuteScript(mInfo(TAG_PJTPATH), _
                           catScriptLibraryTypeVBAProject, _

@@ -11,7 +11,7 @@ Sub initme()
  If pdm Is Nothing Then Set pdm = New class_PDM
  Set allPN = KCL.InitDic(vbTextCompare): allPN.RemoveAll  'allPn 是全局变量，不需要传递
  
-If KCL.checkDocType("PartDocument") Then Call pdm.initPrd(CATIA.ActiveDocument.Product)
+If KCL.checkDocType("PartDocument") Then Call pdm.initPrd(catia.ActiveDocument.Product)
 
  Dim iprd: Set iprd = pdm.defgprd()
  If Not iprd Is Nothing Then

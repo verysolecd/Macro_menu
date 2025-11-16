@@ -16,9 +16,9 @@ Exit Sub
  Dim i, oRowNb
   RC(0) = 3: RC(1) = 3
     On Error Resume Next
-    Set CATIA = GetObject(, "CATIA.Application") '获取catia程序
-    Dim odoc: Set odoc = CATIA.ActiveDocument
-    Set rootprd = CATIA.ActiveDocument.Product
+    Set catia = GetObject(, "CATIA.Application") '获取catia程序
+    Dim odoc: Set odoc = catia.ActiveDocument
+    Set rootprd = catia.ActiveDocument.Product
          If Err.Number <> 0 Then
             MsgBox "请打开CATIA并打开你的产品，再运行本程序": Err.Clear
             Exit Sub
@@ -29,21 +29,21 @@ Exit Sub
 
 Dim oWindow, oViewer
 Dim file_type As String
-Set oWindow = CATIA.ActiveWindow
+Set oWindow = catia.ActiveWindow
 oWindow.Layout = catWindowGeomOnly
 Set oViewer = oWindow.ActiveViewer
 oViewer.Reframe
 
 '====修改背景颜色=====
 Dim MyViewer, oColor(2)
-Set MyViewer = CATIA.ActiveWindow.ActiveViewer
+Set MyViewer = catia.ActiveWindow.ActiveViewer
 MyViewer.GetBackgroundColor oColor
 MyViewer.PutBackgroundColor Array(1, 1, 1) ' Change background color to WHITE
 
 '====修改背景颜色=====
 file_type = "tiff"
 Dim oName, CapturePath, oType
-  CapturePath = CATIA.FileSelectionBox("输入文件名", file_type, CatFileSelectionModeSave)
+  CapturePath = catia.FileSelectionBox("输入文件名", file_type, CatFileSelectionModeSave)
   oName = CapturePath & "." & file_type
 oType = catCaptureFormatTIFF 'catCaptureFormatBMP catCaptureFormatJPEG
 MyViewer.CaptureToFile oType, oName ' MAIN SENTENCE!! STORE THE PICTURE IN ANY FORMAT
@@ -59,9 +59,9 @@ Function shotme()
     Dim i, oRowNb
      RC(0) = 3: RC(1) = 3
        On Error Resume Next
-       Set CATIA = GetObject(, "CATIA.Application") '获取catia程序
-       Dim odoc: Set odoc = CATIA.ActiveDocument
-       Set rootprd = CATIA.ActiveDocument.Product
+       Set catia = GetObject(, "CATIA.Application") '获取catia程序
+       Dim odoc: Set odoc = catia.ActiveDocument
+       Set rootprd = catia.ActiveDocument.Product
             If Err.Number <> 0 Then
                MsgBox "请打开CATIA并打开你的产品，再运行本程序": Err.Clear
                Exit Sub
@@ -72,14 +72,14 @@ Function shotme()
 
     Dim oWindow, oViewer
     Dim file_type As String
-    Set oWindow = CATIA.ActiveWindow
+    Set oWindow = catia.ActiveWindow
     oWindow.Layout = catWindowGeomOnly
     Set oViewer = oWindow.ActiveViewer
     oViewer.Reframe
 
 '====修改背景颜色=====
     Dim MyViewer, oColor(2)
-    Set MyViewer = CATIA.ActiveWindow.ActiveViewer
+    Set MyViewer = catia.ActiveWindow.ActiveViewer
     MyViewer.GetBackgroundColor oColor
     MyViewer.PutBackgroundColor Array(1, 1, 1) ' Change background color to WHITE
 
@@ -91,7 +91,7 @@ Function shotme()
     
     MyViewer.CaptureToClipboard
     
-      CapturePath = CATIA.FileSelectionBox("输入文件名", file_type, CatFileSelectionModeSave)
+      CapturePath = catia.FileSelectionBox("输入文件名", file_type, CatFileSelectionModeSave)
       oName = CapturePath & "." & file_type
       
     oType = catCaptureFormatTIFF 'catCaptureFormatBMP catCaptureFormatJPEG

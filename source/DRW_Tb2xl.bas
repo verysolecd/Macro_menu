@@ -14,7 +14,7 @@ Sub Tb2xl()
      End If
 
     Dim odoc As DrawingDocument
-    Set odoc = CATIA.ActiveDocument
+    Set odoc = catia.ActiveDocument
     
 
     Dim oSHT As DrawingSheet

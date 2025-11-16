@@ -9,14 +9,14 @@ Attribute VB_Name = "MDL_Holecenter"
 
 Sub ctrhole()
 
- If CATIA.Windows.count < 1 Then
+ If catia.Windows.count < 1 Then
         MsgBox "没有打开的窗口"
         Exit Sub
     End If
     
   If Not CanExecute("PartDocument") Then Exit Sub
 
-    Set odoc = CATIA.ActiveDocument
+    Set odoc = catia.ActiveDocument
     Set oPart = odoc.part
     Set HSF = oPart.HybridShapeFactory
     '======= 要求选择body

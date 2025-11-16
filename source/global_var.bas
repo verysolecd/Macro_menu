@@ -1,5 +1,6 @@
 Attribute VB_Name = "global_var"
 Public gPrd As Object
+Public rootDoc
 Public rootprd  As Object  '全局产品obj
 Public startrow, lastRow  '全局excel行定义
 Public xlAPP As Object  '全局excelcom组件
