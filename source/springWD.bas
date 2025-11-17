@@ -55,11 +55,11 @@ Public Sub ShowSimpleForm(controls As collection, formTitle As String, callback 
         ' 创建控件并设置位置和尺寸
         Set ctl = CreateControl(frm, ctlConfig, currentTop)
         ' 更新当前顶部坐标（下一个控件的位置）
-        currentTop = currentTop + ctl.height + CONTROL_SPACING
+        currentTop = currentTop + ctl.Height + CONTROL_SPACING
     Next
     
     ' 3. 调整窗体高度（最后一个控件底部+底部边距）
-    frm.height = currentTop + TOP_START ' 底部留同样的边距
+    frm.Height = currentTop + TOP_START ' 底部留同样的边距
     
     ' 4. 绑定事件（按钮点击）
     BindEvents frm, callback
@@ -76,7 +76,7 @@ Private Function CreateControl(frm As Object, cfg As clsControlConfig, top As In
             Set ctl = frm.controls.Add("Forms.Label.1", cfg.Name)
             With ctl
                 .Caption = cfg.Caption
-                .height = LABEL_HEIGHT
+                .Height = LABEL_HEIGHT
                 .AutoSize = True ' 标签宽度自适应文本
             End With
         
@@ -85,7 +85,7 @@ Private Function CreateControl(frm As Object, cfg As clsControlConfig, top As In
             With ctl
                 .Caption = cfg.Caption
                 .Width = BTN_WIDTH
-                .height = BTN_HEIGHT
+                .Height = BTN_HEIGHT
                 .BackColor = BTN_BACKCOLOR
             End With
         
@@ -94,7 +94,7 @@ Private Function CreateControl(frm As Object, cfg As clsControlConfig, top As In
             With ctl
                 .Text = cfg.DefaultValue
                 .Width = INPUT_WIDTH
-                .height = IIf(cfg.MultiLine, INPUT_HEIGHT_MULTI, INPUT_HEIGHT_SINGLE)
+                .Height = IIf(cfg.MultiLine, INPUT_HEIGHT_MULTI, INPUT_HEIGHT_SINGLE)
                 .MultiLine = cfg.MultiLine
                 .BorderStyle = 1
             End With
@@ -103,7 +103,7 @@ Private Function CreateControl(frm As Object, cfg As clsControlConfig, top As In
             Set ctl = frm.controls.Add("Forms.OptionButton.1", cfg.Name)
             With ctl
                 .Caption = cfg.Caption
-                .height = OPTION_HEIGHT
+                .Height = OPTION_HEIGHT
                 .value = (cfg.DefaultValue = cfg.Caption) ' 默认选中项
             End With
         
@@ -111,7 +111,7 @@ Private Function CreateControl(frm As Object, cfg As clsControlConfig, top As In
             Set ctl = frm.controls.Add("Forms.CheckBox.1", cfg.Name)
             With ctl
                 .Caption = cfg.Caption
-                .height = OPTION_HEIGHT
+                .Height = OPTION_HEIGHT
                 .value = cfg.DefaultValue
             End With
     End Select

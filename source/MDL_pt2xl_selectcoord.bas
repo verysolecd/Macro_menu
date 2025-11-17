@@ -9,14 +9,14 @@ Attribute VB_Name = "MDL_pt2xl_selectcoord"
 
 Sub pt2xl()
 
-    If catia.Windows.count < 1 Then
+    If CATIA.Windows.count < 1 Then
         MsgBox "没有打开的窗口"
         Exit Sub
     End If
     
     Dim odoc
     On Error Resume Next
-        Set odoc = catia.ActiveDocument
+        Set odoc = CATIA.ActiveDocument
     On Error GoTo 0
     Dim str
     str = TypeName(odoc)
@@ -126,7 +126,7 @@ End Function
 
 Function mysel(prompt, filter())
     Dim oSel
-    Set oSel = catia.ActiveDocument.Selection
+    Set oSel = CATIA.ActiveDocument.Selection
     oSel.Clear
     Dim iType(0)
 '

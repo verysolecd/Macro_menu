@@ -21,7 +21,7 @@ Sub CATMain()
     For i = 0 To 18
         Select Case i
             Case 0      '创建根产品
-                Set odoc = catia.Documents.Add("Product")
+                Set odoc = CATIA.Documents.Add("Product")
                 Set rootprd = odoc.Product
                 Set oprd = rootprd
             Case 1
@@ -59,13 +59,13 @@ Sub CATMain()
      ' Set product4 = products1.AddNewProduct("")
     ' 新增产品= oprd.products.AddNewComponent("Part", "")
     Dim oSel
-    Set oSel = catia.ActiveDocument.Selection
+    Set oSel = CATIA.ActiveDocument.Selection
     oSel.Clear
     oSel.Add ref
     oSel.Copy
     oSel.Clear
     Dim otp
-    Set otp = catia.ActiveDocument.Selection
+    Set otp = CATIA.ActiveDocument.Selection
     otp.Clear
     otp.Add fast
     otp.Paste

@@ -96,7 +96,7 @@ continue:
         .top = FrmMargin(0)
         .Left = 2
         .Width = MPgs.Width - 20
-        .height = lb_H
+        .Height = lb_H
         .Font.Size = lb_frontsize
         .BackColor = vbGreen
         .TextAlign = fmTextAlignCenter
@@ -108,10 +108,10 @@ continue:
     Set lblAuthor = Me.controls.Add("Forms.Label.1", "lblAuthor", True)
     With lblAuthor
         .Caption = itl ' 使用常量显示作者信息
-        .top = MPgs.top + MPgs.height + FrmMargin(1) + 15 ' 放置在多页控件下方
+        .top = MPgs.top + MPgs.Height + FrmMargin(1) + 15 ' 放置在多页控件下方
         .Left = lblProductInfo.Left + 5 ' 与顶部信息栏左对齐
         .Width = lblProductInfo.Width ' 与顶部信息栏同宽
-        .height = lb_H
+        .Height = lb_H
         .Font.Size = lb_frontsize - 1 ' 字体可以稍小一些
         .TextAlign = fmTextAlignCenter
          .WordWrap = False              ' 不换行
@@ -125,8 +125,8 @@ End Sub
 Private Sub Set_Form(ByVal MPgs As MultiPage, ByVal Cap As String)
     With Me
         Dim requiredInsideHeight
-        requiredInsideHeight = MPgs.top + MPgs.height + ADJUST_F_H + lb_H  '+ FrmMargin(2)
-        .height = requiredInsideHeight + (Me.height - Me.InsideHeight)
+        requiredInsideHeight = MPgs.top + MPgs.Height + ADJUST_F_H + lb_H  '+ FrmMargin(2)
+        .Height = requiredInsideHeight + (Me.Height - Me.InsideHeight)
         .Width = MPgs.Width + 2 * ADJUST_F_W + 2 * FrmMargin(2)
         .Caption = Cap
     End With
@@ -152,7 +152,7 @@ Private Sub Set_MPage(ByVal MPgs As MultiPage)
         BtnCnt = Pg.controls.count
         MaxBtnCnt = IIf(BtnCnt > MaxBtnCnt, BtnCnt, MaxBtnCnt)
     Next
-    MPgs.height = FrmMargin(0) + (BTN_H * MaxBtnCnt * 1) + FrmMargin(2) + ADJUST_M_H
+    MPgs.Height = FrmMargin(0) + (BTN_H * MaxBtnCnt * 1) + FrmMargin(2) + ADJUST_M_H
     ' 设置多页控件背景颜色
 End Sub
 ' 初始化按钮
@@ -168,7 +168,7 @@ Private Function Init_Button(ByVal Ctls As controls, _
     With btn
         .top = (Ctls.count - 1) * BTN_H - 1 '+ (Ctls.Count - 1)+ FrmMargin(0) +
         .Left = FrmMargin(2)
-        .height = BTN_H
+        .Height = BTN_H
         .Width = BTN_W
         ' 设置按钮字体
         .Font.Name = "Arial"

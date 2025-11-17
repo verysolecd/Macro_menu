@@ -25,3 +25,21 @@ Sub Cal_Mass()
    End If
 
 End Sub
+
+Sub Cal_Mass2()
+
+    If pdm Is Nothing Then
+        Set pdm = New class_PDM
+    End If
+   On Error Resume Next
+            If Not gPrd Is Nothing Then
+                Call pdm.Assmass(gPrd)
+            Else
+                Call setgprd
+                Err.Clear
+                Call pdm.Assmass(gPrd)
+            End If
+End Sub
+   
+
+

@@ -17,18 +17,18 @@ End Sub
 
 Sub CATMain()
     On Error GoTo ErrorHandler
-    If catia.Windows.count < 1 Then
+    If CATIA.Windows.count < 1 Then
         MsgBox "没有打开的窗口"
         Exit Sub
     End If
         
     Dim oWindow, oViewer
-    Set oWindow = catia.ActiveWindow
+    Set oWindow = CATIA.ActiveWindow
     Set oViewer = oWindow.ActiveViewer
     
     oWindow.Layout = catWindowGeomOnly
     oViewer.Reframe
-    Dim MyViewer: Set MyViewer = catia.ActiveWindow.ActiveViewer
+    Dim MyViewer: Set MyViewer = CATIA.ActiveWindow.ActiveViewer
     Dim currentColor(2)
     MyViewer.GetBackgroundColor currentColor
     ' 根据当前背景色直接切换

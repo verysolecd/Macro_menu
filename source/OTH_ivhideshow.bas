@@ -8,7 +8,7 @@ Attribute VB_Name = "OTH_ivhideshow"
 
 Sub CATMain()
 Dim odoc
-Set odoc = catia.ActiveDocument
+Set odoc = CATIA.ActiveDocument
 Dim cGroups
 Set cGroups = odoc.Product.GetTechnologicalObject("Groups")
 Dim oGroup As Group

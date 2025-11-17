@@ -16,7 +16,7 @@ Private mSW& ' 秒表开始时间
 Sub CATMain()
     Dim msg$: msg = "请选择项目 : 按ESC键退出"
     Dim SI As AnyObject
-    Dim doc As Document: Set doc = catia.ActiveDocument
+    Dim doc As Document: Set doc = CATIA.ActiveDocument
     Do
         Set SI = SelectItem(msg)
         If IsNothing(SI) Then Exit Do
@@ -29,7 +29,7 @@ End Sub
 ''' @return:Boolean
 Function CanExecute(ByVal docTypes As Variant) As Boolean
     CanExecute = False
-    If catia.Windows.count < 1 Then
+    If CATIA.Windows.count < 1 Then
         MsgBox "没有打开的窗口"
         Exit Function
     End If
@@ -46,7 +46,7 @@ Function checkDocType(ByVal docTypes As Variant)
     If Not checkFilterType(docTypes) Then Exit Function '过滤器检查，非数组则退出
     Dim ActDoc As Document
     On Error Resume Next
-        Set ActDoc = catia.ActiveDocument
+        Set ActDoc = CATIA.ActiveDocument
     On Error GoTo 0
     If ActDoc Is Nothing Then
         MsgBox "无打开的文档"
@@ -81,7 +81,7 @@ Function SelectElement(ByVal msg$, _
     If IsEmpty(filter) Then filter = Array("AnyObject")
     If VarType(filter) = vbString Then filter = strToAry(filter)
     If Not checkFilterType(filter) Then Exit Function
-    Dim sel As Variant: Set sel = catia.ActiveDocument.Selection
+    Dim sel As Variant: Set sel = CATIA.ActiveDocument.Selection
     sel.Clear
     Select Case sel.SelectElement2(filter, msg, False)
         Case "Cancel", "Undo", "Redo"
@@ -337,6 +337,42 @@ Function GetPath(ByVal path$)
      Set FSO = Nothing
 End Function
 
+Sub explorepath(ByVal ipath)
+ Dim thisdir, shell, cmd
+    thisdir = ""
+    Dim FSO As Object: Set FSO = GetFso
+        If FSO.FileExists(ipath) Then
+            thisdir = ipath
+        ElseIf FSO.FolderExists(ipath) Then
+        Dim Fdl, file
+            Set Fdl = FSO.GetFolder(ipath)
+            For Each file In Fdl.Files
+                thisdir = file.path
+            Exit For
+            Next
+        End If
+    If thisdir <> "" Then
+         Set shell = CreateObject("WScript.Shell")
+         cmd = "explorer.exe /select, """ & thisdir & """"
+         shell.Run (cmd)
+    End If
+    Set FSO = Nothing
+    Set shell = Nothing
+End Sub
+
+Public Function selFdl()
+    selFdl = ""
+    Dim shellApp, Fdl
+    Set shellApp = CreateObject("Shell.Application")
+    Set Fdl = shellApp.BrowseForFolder(0, "选择文件夹", 16, 0)
+    
+    If Not Fdl Is Nothing Then
+        selFdl = Fdl.Self.path
+    End If
+End Function
+
+
+
 Sub ClearDir(folderPath As String)
     Dim FSO As Object
     Set FSO = GetFso()
@@ -344,36 +380,14 @@ Sub ClearDir(folderPath As String)
     If FSO.FolderExists(folderPath) Then
         Dim folder As Object
         Set folder = FSO.GetFolder(folderPath)
-        
         ' 删除目录中的所有文件
         Dim file As Object
         For Each file In folder.Files
             FSO.DeleteFile file.path, True ' True表示强制删除只读文件
         Next
     End If
-    
-    ' 释放对象
-    Set FSO = Nothing
+    Set FSO = Nothing     ' 释放对象
 End Sub
-
-
-Function ex2thisdir()
-
-Dim FSO As Object
-    Set FSO = GetFso()
-If FSO.FolderExists(folderPath) Then
-        Dim folder As Object
-        Set folder = FSO.GetFolder(folderPath)
-        
-  Dim file As Object
-  
-    Set file = folder.Files.item(1)
-    
-    ex2thisdir=
-
-End Function
-
-
 
 Function DeleteMe(ByVal path$) As Boolean
 DeleteMe = False
@@ -382,24 +396,20 @@ On Error Resume Next
     
     If FSO.FileExists(path) Then
         FSO.DeleteFile path, True
+        DeleteMe = True
     End If
     
     If Error.Number = 0 Then
         DeleteMe = True
     Else
         Error.Clear
-    End
+    End If
     
     Set FSO = Nothing
     Error.Clear
-    
 On Error GoTo 0
      
 End Function
-
-
-
-
 
 
 ' 获取新文件名
@@ -407,13 +417,9 @@ End Function
 ''' @return:新的完整路径
 Function GetNewName$(ByVal oldPath$)
     Dim path As Variant
-    
     path = SplitPathName(oldPath)
-    
     path(2) = "." & path(2)
-    
     Dim newPath$: newPath = path(0) + "\" + path(1)
-    
     If Not isExists(newPath + path(2)) Then
         GetNewName = newPath + path(2)
         Exit Function
@@ -620,10 +626,10 @@ End Sub
 'https://ja.wikipedia.org/wiki/ISO_639-1%E3%82%B3%E3%83%BC%E3%83%89%E4%B8%80%E8%A6%A7
 Function GetLanguage() As String
     GetLanguage = "non"
-    If catia.Windows.count < 1 Then Exit Function
+    If CATIA.Windows.count < 1 Then Exit Function
     GetLanguage = "other"
-    catia.ActiveDocument.Selection.Clear
-    Dim st As String: st = catia.StatusBar
+    CATIA.ActiveDocument.Selection.Clear
+    Dim st As String: st = CATIA.StatusBar
     Select Case True
         Case ExistsKey(st, "object")
             GetLanguage = "en"

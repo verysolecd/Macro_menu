@@ -21,7 +21,7 @@ Sub CATMain()
     Dim prod As Product
 
     If KCL.CanExecute("PartDocument") Then
-        Set prod = catia.ActiveDocument.Product
+        Set prod = CATIA.ActiveDocument.Product
     Else
         Set prod = KCL.SelectItem(msg, "Product")
      
@@ -262,9 +262,9 @@ Private Function getBodies( _
     Set getBodies = Nothing
     
     Dim sel As Selection
-    Set sel = catia.ActiveDocument.Selection
+    Set sel = CATIA.ActiveDocument.Selection
     
-    catia.HSOSynchronized = False
+    CATIA.HSOSynchronized = False
     
     sel.Clear
     sel.Add prod
@@ -287,7 +287,7 @@ Private Function getBodies( _
 
     sel.Clear
     
-    catia.HSOSynchronized = True
+    CATIA.HSOSynchronized = True
     
     Dim msg As String
     If lst.count < 1 Then

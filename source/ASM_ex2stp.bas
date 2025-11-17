@@ -8,117 +8,114 @@ Attribute VB_Name = "ASM_ex2stp"
 '{BackColor:}
 ' 定义模块级变量
 Private ErrorMessage As String
-Private formTitle
-Private textbox
+Private zippath
 
 Sub ex2stp_zip()
     If Not CanExecute("ProductDocument") Then Exit Sub
   On Error Resume Next ' 临时开启错误处理
-  Err.Number = 0
-    Dim odoc As Document
-    Set odoc = catia.ActiveDocument
-    Dim outputpath As String
+    Err.Number = 0
+    ErrorMessage = ""
+    Dim odoc: Set odoc = CATIA.ActiveDocument
+    Dim outputpath As String: outputpath = ""
     askdir.Show
-    outputpath = GetOutputPath(odoc)
-    If outputpath = "" Then
-        ErrorMessage = "缺少导出路径，操作取消！"
-        GoTo ShowMessage
-    Else
-    '==================零件号和路径相关
-        Dim pn: pn = odoc.Product.PartNumber
-        Dim ttp: ttp = KCL.timestamp(export_CFG(1))
-        If export_CFG(0) = 1 Then  '若更新时间戳' 零件号更新
-            odoc.Product.PartNumber = KCL.strbflast(pn, "_") & ttp
+    Select Case export_CFG(2)
+        Case 0  ' 用户选择自定义路径
+              outputpath = KCL.selFdl()
+        Case 1  ' 使用当前文档路径
+            outputpath = IIf(odoc.path = "", "", odoc.path)
+        Case others ' 用户取消操作
+            outputpath = ""
+    End Select
+        If outputpath = "" Then
+            ErrorMessage = "缺少导出路径，操作取消！"
+            GoTo ShowMessage
         End If
-    
-        stpname = KCL.strbf1st(odoc.Product.PartNumber, "_") & "_" & ttp
-        Dim stpfilepath As String
+        '==================零件号和路径
+     
+        
+        Dim ttp: ttp = KCL.timestamp(export_CFG(1))
+         Dim pn
+            If export_CFG(0) = 1 Then  '若更新时间戳 ' 零件号更新
+                pn = KCL.strbflast(odoc.Product.PartNumber, "_")
+                If KCL.ExistsKey(pn, "_") Then
+                    odoc.Product.PartNumber = pn & ttp
+                Else
+                    odoc.Product.PartNumber = pn & "_" & ttp
+                End If
+            End If
+            pn = odoc.Product.PartNumber
+        
+            stpname = KCL.strbf1st(pn, "_") & "_" & ttp
+            
         Dim oPath(2) '0=路径，1=name，2=extname
             oPath(0) = outputpath
             oPath(1) = stpname
             oPath(2) = "stp"
-        stpfilepath = KCL.JoinPathName(oPath)
-     '================导出stp
-        odoc.ExportData stpfilepath, "stp"
-         '================检查文件存在性
-        If Not KCL.isExists(stpfilepath) Then
-            ErrorMessage = "STP 文件导出后未找到：" & stpfilepath
+       Dim stpfilepath As String: stpfilepath = KCL.JoinPathName(oPath)
+       
+        odoc.ExportData stpfilepath, "stp"     '=======导出stp
+        If Not KCL.isExists(stpfilepath) Then '=======检查文件存在性
+            ErrorMessage = "未找到STP文件：" & stpfilepath
             GoTo ShowMessage
-        Else
-            '============生成导出日志
-            If export_CFG(3) <> "" Then
-                logpath = oPath(0) & "\" & "stp_export_log.md"
-                loginfo = "## " & KCL.timestamp("day") & "  " & stpname & ".stp" & vbCrLf & _
-                        "  " & export_CFG(3)
-                KCL.Appendtext KCL.getmd(logpath), loginfo
-            End If
-            If Not ex2zip(stpfilepath) Then
-                GoTo ShowMessage
-            End If
-            If Err.Number <> 0 Then
+        End If
+        
+        If Not ex2zip(stpfilepath) Then GoTo ShowMessage
+            KCL.DeleteMe stpfilepath ' 删除原始 STP 文件
+        
+        If export_CFG(3) <> "" Then '============生成导出日志
+            logpath = oPath(0) & "\" & "stp_export_log.md"
+            loginfo = "## " & KCL.timestamp("day") & "  " & stpname & ".stp" & vbCrLf & _
+                    "  " & export_CFG(3)
+            KCL.Appendtext KCL.getmd(logpath), loginfo
+        End If
+        If Err.Number <> 0 Then
                 ErrorMessage = "STP 导出失败：" & Err.Description
                 GoTo ShowMessage
-            End If
         End If
-    End If
 ShowMessage:
     If ErrorMessage <> "" Then
         MsgBox ErrorMessage, vbCritical
+        Err.Clear
+        Exit Sub
     Else
         MsgBox "导出成功" & vbCrLf & _
                 stpfilepath & "文件已压缩" & vbCrLf & _
                 "原始文件已删除。", vbInformation
+        KCL.explorepath (zippath)
     End If
     Set odoc = Nothing
     On Error GoTo 0 ' 关闭错误处理
     ErrorMessage = "" ' 重置错误信息
-    
 End Sub
 
 Function ex2zip(oFilepath) As Boolean
-    Dim zipPath, result, shell, cmd, path7z
-    path7z = "D:\for use\7-Zip\7z.exe"
-    
-    If KCL.isExists(path7z) Then
-        zipPath = oFilepath & ".7z" ' 构建 7z 压缩包路径
-        cmd = """" & path7z & """ a -t7z -mx=9 """ & zipPath & """ """ & oFilepath & """"
-    Else
-        zipPath = oFilepath & ".zip" ' 构建 ZIP 压缩包路径
-        cmd = "powershell -Command ""Compress-Archive -Path '""" & oFilepath & """' -DestinationPath '""" & zipPath & """' -CompressionLevel Optimal -Force"""
-    End If
- Set shell = CreateObject("WScript.Shell")
-    result = shell.Run(cmd, 0, True)
+ On Error GoTo seterror
     ex2zip = False
-    
+    Dim result, shell, cmd, path7z
+    '=======================
+        path7z = "D:\for use\7-Zip\7z.exe"
+        If KCL.isExists(path7z) Then
+            zippath = oFilepath & ".7z" ' 构建 7z 压缩包路径
+            cmd = """" & path7z & """ a -t7z -mx=9 """ & zippath & """ """ & oFilepath & """"
+        Else
+            zippath = oFilepath & ".zip" ' 构建 ZIP 压缩包路径
+            cmd = "powershell -Command ""Compress-Archive -Path '""" & oFilepath & """' -DestinationPath '""" & zippath & """' -CompressionLevel Optimal -Force"""
+        End If
+    '=======================
+    Set shell = CreateObject("WScript.Shell")
+    result = shell.Run(cmd, 0, True)
     If result <> 0 Then
-        ErrorMessage = "压缩失败！请确保 PowerShell 版本不低于 5.0 或 7-Zip 已经安装。"
         Err.Clear
     End If
-    If KCL.isExists(zipPath) Then
+    If KCL.isExists(zippath) Then
             ex2zip = True
-            KCL.DeleteMe oFilepath ' 删除原始 STP 文件
-        cmd = "explorer.exe /select, """ & zipPath & """"
-        shell.Run (cmd)
+            Exit Function
     End If
-
-End Function
-
-Private Function GetOutputPath(ByVal doc As Document) As String
-    Select Case export_CFG(2)
-        Case 0  ' 用户选择自定义路径
-            Dim shellApp, folderBrowser
-            Set shellApp = CreateObject("Shell.Application")
-            Set folderBrowser = shellApp.BrowseForFolder(0, "选择STP输出文件夹", 16, 0)
-            If Not folderBrowser Is Nothing Then
-                GetOutputPath = folderBrowser.Self.path
-            Else
-              GetOutputPath = ""
-            End If
-        Case 1  ' 使用当前文档路径
-            GetOutputPath = IIf(doc.path = "", "", doc.path)
-        Case others ' 用户取消操作
-            GetOutputPath = ""
-    End Select
+seterror:
+        ErrorMessage = "压缩失败！请确保 PowerShell 版本不低于 5.0 或 7-Zip 已经安装。"
+        ex2zip = fasle
+    On Error GoTo 0
+    
 End Function
 
 

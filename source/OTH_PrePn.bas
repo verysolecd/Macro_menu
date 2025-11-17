@@ -10,7 +10,7 @@ Private prj
 Sub CATMain()
 
 If Not KCL.CanExecute("ProductDocument") Then Exit Sub
-Set rootprd = catia.ActiveDocument.Product
+Set rootprd = CATIA.ActiveDocument.Product
 If Not rootprd Is Nothing Then
  Dim imsg
           imsg = "请输入你的项目名称"

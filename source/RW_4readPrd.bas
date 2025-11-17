@@ -27,8 +27,10 @@ Sub readPrd()
             Prd2Read.ApplyWorkMode (3)
         idx = Array(0, 1, 2, 3, 4, 5, 6, 7, 8) ' 需提取的属性索引（0-based）
         idcol = Array(0, 1, 3, 5, 7, 9, 11, 13, 14) ' 目标列号, 0号元素不占位置
+        
         Dim idata()
         idata = pdm.attLv2Prd(Prd2Read)
+        
             ReDim resultAry(1 To UBound(idata, 1), 1 To UBound(idx))
         For i = 1 To UBound(idata, 1)
              For j = 1 To UBound(resultAry, 2)

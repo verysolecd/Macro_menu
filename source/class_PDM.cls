@@ -31,17 +31,17 @@ Private Sub Class_Initialize()
     iniarr
         On Error GoTo ErrorHandler
         
-        If catia.Documents.count = 0 Then
+        If CATIA.Documents.count = 0 Then
             Err.Raise 1001, , "未检测到打开的CATIA文档"
             Exit Sub
         End If
-            Set rootDoc = catia.ActiveDocument
-            Set rootprd = catia.ActiveDocument.Product
+            Set rootDoc = CATIA.ActiveDocument
+            Set rootprd = CATIA.ActiveDocument.Product
         On Error GoTo 0
         If Not rootprd Is Nothing Then
             rootprd.ApplyWorkMode (3)
         End If
-        Set oSel = catia.ActiveDocument.Selection: oSel.Clear
+        Set oSel = CATIA.ActiveDocument.Selection: oSel.Clear
 ErrorHandler:
     If Err.Number <> 0 Then
         Err.Clear
@@ -516,7 +516,7 @@ Public Function defgprd()    '获取要读取或修改的  全局变量 gPrd定义
       bResult = MsgBox(imsg, btn, "bTitle")  ' Yes(6),No(7),cancel(2)
            Select Case bResult
               Case 7 '===选择“否”====
-                Set rootprd = catia.ActiveDocument.Product
+                Set rootprd = CATIA.ActiveDocument.Product
                 Set oprd = rootprd
               Case 6  '===选择“是”,进行产品选择====
                  On Error Resume Next

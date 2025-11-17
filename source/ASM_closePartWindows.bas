@@ -10,7 +10,7 @@ Attribute VB_Name = "ASM_closePartWindows"
 Sub CLSpart()
 Dim wds, wd
  On Error Resume Next
-   wds = catia.Windows
+   wds = CATIA.Windows
 
     If wds.count < 1 Then
            MsgBox "没有打开的窗口"

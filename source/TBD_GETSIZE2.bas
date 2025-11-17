@@ -22,7 +22,7 @@ Sub CATMain()
     Dim prod As Product
 '    Set prod = KCL.SelectItem(msg, "Product")
 '    If prod Is Nothing Then Exit Sub
-Set prod = catia.ActiveDocument.Product
+Set prod = CATIA.ActiveDocument.Product
 
     
     
@@ -252,9 +252,9 @@ Private Function getBodies( _
     Set getBodies = Nothing
     
     Dim sel As Selection
-    Set sel = catia.ActiveDocument.Selection
+    Set sel = CATIA.ActiveDocument.Selection
     
-    catia.HSOSynchronized = False
+    CATIA.HSOSynchronized = False
     
     sel.Clear
     sel.Add prod
@@ -275,7 +275,7 @@ Private Function getBodies( _
 
     sel.Clear
     
-    catia.HSOSynchronized = True
+    CATIA.HSOSynchronized = True
     
     Dim msg As String
     If lst.count < 1 Then

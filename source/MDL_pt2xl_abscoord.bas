@@ -11,7 +11,7 @@ Sub pt2xl()
     If Not CanExecute("PartDocument") Then
         Exit Sub
     End If
-    Dim odoc: Set odoc = catia.ActiveDocument
+    Dim odoc: Set odoc = CATIA.ActiveDocument
     Dim HSF:  Set HSF = odoc.part.HybridShapeFactory
     Dim HBS: Set HBS = odoc.part.HybridBodies
     Dim oSel: Set oSel = odoc.Selection

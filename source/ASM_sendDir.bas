@@ -7,11 +7,11 @@ Attribute VB_Name = "ASM_sendDir"
 '{BackColor:}
 
 Sub sendDir()
-    catia.DisplayFileAlerts = True
-    Dim odoc: Set odoc = catia.ActiveDocument
-    
+
+    If Not CanExecute("ProductDocument") Then Exit Sub
+    CATIA.DisplayFileAlerts = True
+    Dim odoc: Set odoc = CATIA.ActiveDocument
     ipath_name = odoc.path & "\" & odoc.Name
-    
     Dim oPath
         oPath = KCL.ofParentPath(odoc.path)
     Dim pn
@@ -37,7 +37,7 @@ Sub sendDir()
         Case 2: Exit Sub '===选择“取消”====
         Case 6  '===选择“是”====
             If Not KCL.isPathchn(bckpath) Then
-                Set Send = catia.CreateSendTo()
+                Set Send = CATIA.CreateSendTo()
                 Send.KeepDirectory (1)  '1 keepdir ， 0 no keep dir
                 Send.SetInitialFile ipath_name
                 Send.SetDirectoryFile bckpath
@@ -72,7 +72,7 @@ End Sub
 Sub mdlog()
 
     Dim odoc, currPath
-    Set odoc = catia.ActiveDocument
+    Set odoc = CATIA.ActiveDocument
     currPath = IIf(odoc.path = "", "", odoc.path)
     mdocPath = currPath & ".md"
     

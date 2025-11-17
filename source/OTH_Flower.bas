@@ -266,7 +266,7 @@ Sub Flower(Optional ByVal pp As Double)
     Alfa7End = 357.19
     
     Dim myPart As part
-    Set myPart = catia.ActiveDocument.part
+    Set myPart = CATIA.ActiveDocument.part
     Dim HB1s As HybridBodies
     Set HB1s = myPart.HybridBodies
     Dim mySF As ShapeFactory
@@ -456,7 +456,7 @@ Sub Flower(Optional ByVal pp As Double)
    
     'Step 3 - 3: Sweep Color
         Dim MyList As Selection
-        Set MyList = catia.ActiveDocument.Selection
+        Set MyList = CATIA.ActiveDocument.Selection
         MyList.Clear
         'Dim myObj As Object
         'Set myObj = myRef
@@ -751,7 +751,7 @@ Sub Flower(Optional ByVal pp As Double)
             
             'Step 4-12: Fillet Color
                 Dim MyList2 As Selection
-                Set MyList2 = catia.ActiveDocument.Selection
+                Set MyList2 = CATIA.ActiveDocument.Selection
                 MyList2.Clear
                 'Dim myObj As Object
                 'Set myObj = myRef
@@ -1213,7 +1213,7 @@ Sub Flower(Optional ByVal pp As Double)
                 myPart.Update
             'Step 5 - 11-1: Petal  Color
                 Dim MyListPetal0 As Selection
-                Set MyListPetal0 = catia.ActiveDocument.Selection
+                Set MyListPetal0 = CATIA.ActiveDocument.Selection
                 MyListPetal0.Clear
                 MyListPetal0.Add myFlowerLoft
                 MyListPetal0.VisProperties.SetRealColor R_Petal1, G_Petal1, B_Petal1, 1
@@ -1242,7 +1242,7 @@ Sub Flower(Optional ByVal pp As Double)
              
              'Step 5 - 12-1: Petal array Color
                 Dim MyListPetal1 As Selection
-                Set MyListPetal1 = catia.ActiveDocument.Selection
+                Set MyListPetal1 = CATIA.ActiveDocument.Selection
                 MyListPetal1.Clear
                 MyListPetal1.Add myCircPattern1
                 MyListPetal1.VisProperties.SetRealColor R_Petal1, G_Petal1, B_Petal1, 1
@@ -1317,7 +1317,7 @@ Sub Flower(Optional ByVal pp As Double)
             
          'Step 5 - 16: Petal2 Color
                 Dim MyListPetal2 As Selection
-                Set MyListPetal2 = catia.ActiveDocument.Selection
+                Set MyListPetal2 = CATIA.ActiveDocument.Selection
                 MyListPetal2.Clear
                 MyListPetal2.Add HybridShapePetalRotate
                 MyListPetal2.VisProperties.SetRealColor R_Petal2, G_Petal2, B_Petal2, 1
@@ -1346,7 +1346,7 @@ Sub Flower(Optional ByVal pp As Double)
              
             'Step 5 - 18: Petal2 array Color
                 Dim MyListPetal3 As Selection
-                Set MyListPetal3 = catia.ActiveDocument.Selection
+                Set MyListPetal3 = CATIA.ActiveDocument.Selection
                 MyListPetal3.Clear
                 MyListPetal3.Add myCircPattern3
                 MyListPetal3.VisProperties.SetRealColor R_Petal2, G_Petal2, B_Petal2, 1
@@ -1356,7 +1356,7 @@ Sub Flower(Optional ByVal pp As Double)
                 
        'HSF.GSMVisibility myHB, 0
        Dim MyListGS As Selection
-                Set MyListGS = catia.ActiveDocument.Selection
+                Set MyListGS = CATIA.ActiveDocument.Selection
                 MyListGS.Clear
                 MyListGS.Add myHB
                 MyListGS.VisProperties.SetShow catVisPropertyNoShowAttr

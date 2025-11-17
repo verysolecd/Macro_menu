@@ -22,39 +22,30 @@ Attribute VB_Name = "OTH_capture"
 '    Private Declare Function LoadImage Lib "user32" Alias "LoadImageA" (ByVal hInst As Long, ByVal lpsz As String, ByVal un1 As Long, ByVal n1 As Long, ByVal n2 As Long, ByVal un2 As Long) As Long
 '#End If
 Const CF_BITMAP = 2
-Private Const Fdis = 0.8
-
+Private Const Fdis = 0.82
 Private thisdir
-
 
 Sub CaptureToClipboard()
      MsgBox "没编呢"
-'    On Error GoTo ErrorHandler
-'
+'    On Error GoTo ErrorHandler'
 '    ' 获取CATIA应用和活动窗口
 '    Dim catia As Application
-'    Set catia = catia
-'
+'    Set catia = catia'
 '    If catia.ActiveWindow Is Nothing Then
 '        MsgBox "没有活动窗口可截图", vbExclamation
 '        Exit Sub
-'    End If
-'
+'    End If'
 '    ' 获取当前视图
 '    Dim viewer As viewer
-'    Set viewer = catia.ActiveWindow.ActiveViewer
-'
+'    Set viewer = catia.ActiveWindow.ActiveViewer'
 '    ' 临时文件路径
 '    Dim tempFile As String
 '    tempFile = Environ("TEMP") & "\CATIA_temp_capture.bmp"
-'
 '    ' 先保存为临时BMP文件
-'    viewer.CaptureToFile 0, tempFile ' 0 = catCaptureFormatBMP
-'
+'    viewer.CaptureToFile 0, tempFile ' 0 = catCaptureFormatBMP'
 '    ' 将BMP文件复制到剪贴板
 '    Dim hBitmap As Long
-'    hBitmap = LoadImage(0, tempFile, 0, 0, 0, &H10) ' LR_LOADFROMFILE
-'
+'    hBitmap = LoadImage(0, tempFile, 0, 0, 0, &H10) ' LR_LOADFROMFILE'
 '    If hBitmap <> 0 Then
 '        OpenClipboard 0
 '        EmptyClipboard
@@ -63,13 +54,10 @@ Sub CaptureToClipboard()
 '        MsgBox "截图已复制到剪贴板", vbInformation
 '    Else
 '        MsgBox "无法将图像复制到剪贴板", vbExclamation
-'    End If
-'
+'    End If'
 '    ' 删除临时文件
-'    Kill tempFile
-'
-'    Exit Sub
-'
+'    Kill tempFile'
+'    Exit Sub'
 'ErrorHandler:
 '    MsgBox "截图失败：" & Err.Description, vbCritical
 End Sub
@@ -80,45 +68,35 @@ Sub CaptureTopath()
         Set pdm = New class_PDM
  End If
      On Error Resume Next
-    
 '-----------设置显示样式模式-------------
-     catia.StartCommand ("* iso")
-        With catia.Application
-       .Width = 1080
-       .height = .Width * 0.618
+     CATIA.StartCommand ("* iso")
+     With CATIA.Application
+       .Width = 1920
+       .Height = 1080 '.Width * 0.618
      End With
      MsgBox "请点下确认iso视角"
-    catia.RefreshDisplay = True
+    CATIA.RefreshDisplay = True
     Call HideNonBody(rootDoc, 1)
-     catia.DisplayFileAlerts = False
-     catia.RefreshDisplay = 0
-    
-     
-     With catia.ActiveWindow
-          .WindowState = 0
-          .Width = 1080
-             .height = .Width * 0.618
+     CATIA.DisplayFileAlerts = False
+     CATIA.RefreshDisplay = False
+     With CATIA.ActiveWindow
+          .WindowState = 0  '   '0 catWindowStateMaximized 1   catWindowStateMinimized,2   catWindowStateNormal
+          .Width = 1080 * 0.8
+          .Height = .Width * 0.618
           .Layout = 1    ' 仅显示几何视图
-          
      End With
-     
-      Dim oViewer
-      
-     catia.ActiveWindow.WindowState = 0 '0 catWindowStateMaximized 1   catWindowStateMinimized,2   catWindowStateNormal
-
-     Set oViewer = catia.ActiveWindow.ActiveViewer
+ 
+     Dim oViewer
+     Set oViewer = CATIA.ActiveWindow.ActiveViewer
      With oViewer
-    
+        .RenderingMode = 1 ' catRenderShadingWithEdges
+        .Viewpoint3D.PutSightDirection Array(-1, -1, -1)
+        .Reframe
+        .Viewpoint3D.FocusDistance = oViewer.Viewpoint3D.FocusDistance * Fdis
+        .PutBackgroundColor Array(1, 1, 1) '白色背景
      End With
-     
-     oViewer.RenderingMode = 1 ' catRenderShadingWithEdges
-     
-     
-     oViewer.Viewpoint3D.PutSightDirection Array(-1, -1, -1)
-     oViewer.Reframe
-     oViewer.Viewpoint3D.FocusDistance = oViewer.Viewpoint3D.FocusDistance * Fdis
-     catia.StartCommand ("Compass")  '隐藏指南针
-     oViewer.PutBackgroundColor Array(1, 1, 1) '白色背景
+         
+    CATIA.StartCommand ("Compass")  '隐藏指南针
     
      Dim oprd
      Set oprd = rootprd
@@ -126,50 +104,45 @@ Sub CaptureTopath()
      oprd.ApplyWorkMode (3)  '3  DESIGN_MODE
      Dim oPath
      oPath = KCL.GetPath(KCL.getVbaDir & "\" & "oTemp")
-     
      KCL.ClearDir (oPath)
-     
+     If gPic_Path = "" Then
+            gPic_Path = oPath
+     End If
      
      allPN.Remove all
      CaptureMe oprd, oPath
 '-----------恢复显示样式模式-------------
-     catia.DisplayFileAlerts = True
+     CATIA.DisplayFileAlerts = True
      owd.WindowState = 0
-     
      oViewer.PutBackgroundColor Array(0.2, 0.2, 0.4)
-     catia.RefreshDisplay = True
-     catia.ActiveWindow.Layout = 2 ' catWindowSpecsAndGeom
-     catia.StartCommand ("Compass")
+     CATIA.RefreshDisplay = True
+     CATIA.ActiveWindow.Layout = 2 ' catWindowSpecsAndGeom
+     CATIA.StartCommand ("Compass")
      allPN.Remove all
      Set oprd = Nothing
+'     KCL.explorepath (oPath)
 On Error GoTo 0
-     Dim shell
-     Set shell = CreateObject("WScript.Shell")
-     
-     cmd = "explorer.exe /select, """ & thisdir & """"
-        shell.Run (cmd)
 
 End Sub
 Sub CaptureMe(iprd, oFolder)
     On Error Resume Next
      Dim oViewer
-     Set oViewer = catia.ActiveWindow.ActiveViewer
+     Set oViewer = CATIA.ActiveWindow.ActiveViewer
      oViewer.RenderingMode = 1 ' catRenderShadingWithEdges
      oViewer.Viewpoint3D.PutSightDirection Array(-1, -1, -1)
      oViewer.Reframe
      oViewer.Viewpoint3D.FocusDistance = oViewer.Viewpoint3D.FocusDistance * Fdis
     
-     If allPN.Exists(oprd.PartNumber) = False Then  '对产品截图并遍历
-       allPN(oprd.PartNumber) = 1
+     If allPN.Exists(iprd.PartNumber) = False Then  '对产品截图并遍历
+       allPN(iprd.PartNumber) = 1
          imgfilename = oFolder & "\" & iprd.ReferenceProduct.PartNumber & ".jpg"
           oViewer.CaptureToFile 5, imgfilename
      End If
      If thisdir = "" Then
           thisdir = imgfilename
      End If
-     
-     
-    Dim oSel: Set oSel = catia.ActiveDocument.Selection
+          
+    Dim oSel: Set oSel = CATIA.ActiveDocument.Selection
     oSel.Clear
     Dim VisPoSel: Set VisPoSel = oSel.VisProperties
     Dim children, i

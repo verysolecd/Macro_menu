@@ -7,10 +7,9 @@ Attribute VB_Name = "ASM_Updateme"
 '{BackColor:}
 
 Sub Upall()
-
-    Dim part
-    Dim doc
-    For Each doc In catia.Documents
+   If Not CanExecute("ProductDocument") Then Exit Sub
+    Dim part, doc
+    For Each doc In CATIA.Documents
         If TypeName(doc) = "PartDocument" Then
             Set part = doc.part
             Exit For
@@ -18,7 +17,7 @@ Sub Upall()
     Next
 'tosave =doc.saved
 'if tosave =false then
-    For Each doc In catia.Documents
+    For Each doc In CATIA.Documents
       isupdated = True
       If TypeName(doc) = "PartDocument" Then
           isupdated = part.IsUpToDate(doc.part)

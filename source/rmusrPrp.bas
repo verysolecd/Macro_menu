@@ -1,6 +1,6 @@
 Attribute VB_Name = "rmusrPrp"
 Sub CATMain()
-Set oprd = catia.ActiveDocument.Product
+Set oprd = CATIA.ActiveDocument.Product
 rm oprd
 End Sub
 Sub rm(oprd)
@@ -15,7 +15,7 @@ Sub rm(oprd)
     colls.Remove ("iMaterial")
      Set colls = refPrd.Parent.part.Parameters.RootParameterSet.ParameterSets
         Set cm = colls.GetItem("cm")
-        Set oSel = catia.ActiveDocument.Selection
+        Set oSel = CATIA.ActiveDocument.Selection
         oSel.Clear
         oSel.Add cm
         oSel.Delete

@@ -8,12 +8,12 @@ Attribute VB_Name = "MDL_holecenter2"
 '{BackColor:12648447}
 
 Sub Faceholecenter()
-    If catia.Windows.count < 1 Then
+    If CATIA.Windows.count < 1 Then
         MsgBox "没有打开的窗口"
         Exit Sub
     End If
   If Not CanExecute("PartDocument") Then Exit Sub
-    Set odoc = catia.ActiveDocument
+    Set odoc = CATIA.ActiveDocument
     Set oPart = odoc.part
     Set HSF = oPart.HybridShapeFactory
 '======= 选择要识别的面
@@ -38,13 +38,13 @@ Sub Faceholecenter()
         oHB.AppendHybridShape oBdry
         oPart.Update
         Dim oSel
-        Set oSel = catia.ActiveDocument.Selection
+        Set oSel = CATIA.ActiveDocument.Selection
         oSel.Clear
         oSel.Add oBdry
-        catia.StartCommand ("Disassemble")
-        catia.RefreshDisplay = True
+        CATIA.StartCommand ("Disassemble")
+        CATIA.RefreshDisplay = True
         MsgBox "请拆解窗口选择only domain后点击ok，再点击本窗口的ok"
-          catia.RefreshDisplay = True
+          CATIA.RefreshDisplay = True
         oSel.Clear
         i = 1
         For Each Hole In oHB.HybridShapes

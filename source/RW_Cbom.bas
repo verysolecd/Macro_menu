@@ -14,31 +14,35 @@ Sub cBom()
         Set gPrd = pdm.defgprd()
         Set ProductObserver.CurrentProduct = gPrd ' 这会自动触发事件
       End If
-      
-    If gws Is Nothing Then
-     Set xlm = New Class_XLM
-    End If
-        Call Cal_Mass
-    
+
+        Call Cal_Mass2
       Set iprd = gPrd
-      
             counter = 1
           If Not iprd Is Nothing Then
-          counter = 1
+            counter = 1
 '           xlm.inject_bom pdm.collsAttPrd(iprd, 1)
-''              idx = Array(0, 5, 4, 3, 2, 8, 56, 23, 56) ' 需提取的属性索引（0-based）
-''                 idcols = Array(0, 1, 3, 5, 7) ' 目标列号, 0号元素不占位置
-''
+''          idx = Array(0, 5, 4, 3, 2, 8, 56, 23, 56) ' 需提取的属性索引（0-based）
+''           idcols = Array(0, 1, 3, 5, 7) ' 目标列号, 0号元素不占位置''
 ''          Dim mapping
-''                mapping = Array(0, 0, 0, 1, 2, 3, 4, 9, 7, 0, 5, 8, 0, 5, 6, 0, 0, 0)
-''
-''     Call xlm.inject_ary(pdm.collsAttPrd(iprd, 1), idx, idy)
-          
+''            mapping = Array(0, 0, 0, 1, 2, 3, 4, 9, 7, 0, 5, 8, 0, 5, 6, 0, 0, 0)
+''          Call xlm.inject_ary(pdm.collsAttPrd(iprd, 1), idx, idy)
+            Call CaptureTopath
+            If gws Is Nothing Then
+             Set xlm = New Class_XLM
+            End If
           xlm.inject_bom pdm.recurPrd(iprd, 1)
+          col_pn = 3
+          col_pic = 6
+            Call xlm.inject_pic(gPic_Path, col_pn, col_pic)
      End If
      Set iprd = Nothing
-     xlm.freesheet
      
+   Call xlm.xlshow
+   KCL.ClearDir (gPic_Path)
+   gPic_Path = ""
+   xlm.freesheet
 End Sub
+
+
 
 
