@@ -3,8 +3,8 @@ Begin {C62A69F0-16DC-11CE-9E98-00AA00574A4F} askdir
    Caption         =   "springWD"
    ClientHeight    =   3840
    ClientLeft      =   120
-   ClientTop       =   465
-   ClientWidth     =   6015
+   ClientTop       =   470
+   ClientWidth     =   6020
    OleObjectBlob   =   "askdir.frx":0000
    StartUpPosition =   1  'CenterOwner
 End

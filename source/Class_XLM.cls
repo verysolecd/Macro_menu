@@ -106,110 +106,94 @@ Private Sub set_Header(header, idxrow)
     .Range(.Cells(idxrow, 1), .Cells(idxrow, lastCol)).value = header
     .Range(.Cells(idxrow, 1), .Cells(idxrow, lastCol)).Interior.color = RGB(190, 190, 190)
     End With
+    
+     Dim mapcells: mapcells = Array(0, 1, 3, 5, 7, 9, 11, 13, 14)
+    For rowNb = 2 To UBound(idata, 1) + startrow - 1
+        For i = 1 To UBound(mapcells)
+                ws.Cells(rowNb, mapcells(i)).Interior.color = RGB(190, 190, 190)
+        Next i
+        Next rowNb
+ Call xlshow
+    
+    
+    
+    
 End Sub
 
 Public Sub clear_table()
     ws.UsedRange.ClearContents
 End Sub
 
-Sub inject_ary(ByVal idata As Variant, Optional ByVal idcols As Variant)
-    ws.UsedRange.ClearContents
+Sub inject_ary(ByVal idata As Variant, Optional ByVal idcols As Variant, Optional ByVal idx As Variant)
+ 
     Call xlhide
-    startrow = 2 ' 起始行
-        If IsArray(idcols) Then
+     startrow = 2 ' 起始行
+        If IsArray(idcols) And IsArray(idx) Then
             For j = 1 To UBound(idcols)
-                ws.Cells(startrow, idcols(j)).Resize(UBound(idata, 1)).value = Application.Index(idata, , j)
+                ws.Cells(startrow, idcols(j)).Resize(UBound(idata, 1)).value = Application.Index(idata, , idx(j))
             Next j
-
-ws.Cells(startrow, idcols(j)).Resize(UBound(idata, 1)).value = Application.Index(idata, , j)
-' 左边（目标单元格区域）：
-' ws.Cells(startrow, idcols(j))：定位到工作表ws中 “第startrow行、第idcols(j)列” 的单元格（写入的起始位置）。
-' .Resize(UBound(idata, 1))：将起始单元格向下扩展，形成一个 “单列多行” 的区域。扩展的行数等于idata数组的行数（UBound(idata, 1)是idata第一维的最大下标，即行数）。
-' 右边（数据源）：Application.Index(idata, , j)：从二维数组idata中提取第j列的所有数据（Index函数的第二个参数省略表示 “所有行”，第三个参数j表示 “第j列”），得到一个单列数组。
-' 整体效果：将idata数组的第j列数据，批量写入到工作表ws中 “第startrow行、第idcols(j)列” 开始的对应区域（行数与idata的行数一致）。
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        Else
-            startrow = 2: lastRow = UBound(idata, 1) + startrow - 1
-            cols = UBound(idata, 2)
-                With ws
-                .Range(.Cells(startrow, 1), .Cells(lastRow, cols)).value = idata
-              End With
+'        Else
+'            startrow = 2:  lastRow = UBound(idata, 1) + startrow - 1
+'            cols = UBound(idata, 2)
+'              With ws
+'                .Range(.Cells(startrow, 1), .Cells(lastRow, cols)).value = idata
+'              End With
       End If
-            If ws.Cells(1, 1).value <> "零件号" & Chr(10) & "Partnumber" Then
-        Call set_Header(header_rv, 1)
-    End If
-    Dim mapcells
-     mapcells = Array(0, 1, 3, 5, 7, 9, 11, 13, 14)
-    For rowNb = 2 To UBound(idata, 1) + startrow - 1
-        For i = 1 To UBound(mapcells)
-                ws.Cells(rowNb, mapcells(i)).Interior.color = RGB(190, 190, 190)
-        Next i
-        Next rowNb
+    
       
 Cleanup:     ' 恢复Excel设置
-   Call xlshow
+
     On Error GoTo 0
 End Sub
-
-Public Sub inject_data(rowNb, Data)
-    Call xlhide
-    ws.Name = "revise prd"
-    Dim i As Long
-      If ws.Cells(1, 1).value <> "零件号" & Chr(10) & "Partnumber" Then
-        Call set_Header(header_rv, 1)
-    End If
-    Dim mapdata, osize
-    mapdata = Array(0, 1, 2, 3, 4, 5, 6, 7, 8)
-    '====获取区域====
-    Dim mapcells
-        mapcells = Array(0, 1, 3, 5, 7, 9, 11, 13, 14)
-    Dim rng As Range
-        Set rng = Nothing
-    For i = 1 To UBound(mapcells)
-            ws.Cells(rowNb, mapcells(i)).value = Data(mapdata(i))
-            ws.Cells(rowNb, mapcells(i)).Interior.color = RGB(190, 190, 190)
-    Next
- Call xlshow
- 
-End Sub
-
-Public Sub inject_bom(Data)
- ws.Name = "BOM_xx"
- Call xlhide
-    startrow = 2
-     Call set_Header(header_bom, startrow - 1)
-     lastRow = counter + startrow - 1
-     Dim cols
-     cols = UBound(Data, 2)
-     With ws
-          ws.Range(.Cells(startrow, 1), .Cells(lastRow, cols)).value = Data
-        If lastRow >= 2 Then
-            With ws.Range(.Cells(startrow, 9), .Cells(lastRow, 9))
+Sub inject_bom(ByVal idata As Variant, Optional ByVal idcols As Variant, Optional ByVal idx As Variant)
+     Call inject_ary(idata, idcols, idx)
+         Dim bomrowcnt: bomrowcnt = UBound(idata, 1)
+         startrow = 2
+         lastRow = bomrowcnt + startrow - 1
+          If lastRow >= 2 Then
+          With ws
+            With .Range(.Cells(startrow, 9), .Cells(lastRow, 9))
                 .Formula = "=G2*H2"  ' G列=第7列，H列=第8列
                 .NumberFormat = "0.00"  ' 设置数字格式
             End With
+          End With
         End If
-         End With
-     counter = 0
-    Call LvMg
-  Call xlshow
+        Call setxlHead("bom")
+        Call LvMg
 End Sub
+
+
+
+Public Sub setxlHead(ByVal s$)
+Select Case s
+    Case "bom": Call set_Header(header_bom, 1)
+    Case "rv": Call set_Header(header_rv, 1)
+    Case "gxbom": Call set_Header(hdgx, 4)
+ End Select
+End Sub
+
+
+'Public Sub inject_bom(Data)
+' ws.Name = "BOM_xx"
+' Call xlhide
+'    startrow = 2
+'     Call set_Header(header_bom, startrow - 1)
+'     lastRow = counter + startrow - 1
+'     Dim cols
+'     cols = UBound(Data, 2)
+'     With ws
+'          ws.Range(.Cells(startrow, 1), .Cells(lastRow, cols)).value = Data
+'        If lastRow >= 2 Then
+'            With ws.Range(.Cells(startrow, 9), .Cells(lastRow, 9))
+'                .Formula = "=G2*H2"  ' G列=第7列，H列=第8列
+'                .NumberFormat = "0.00"  ' 设置数字格式
+'            End With
+'        End If
+'         End With
+'     counter = 0
+'    Call LvMg
+'  Call xlshow
+'End Sub
 Public Sub freesheet()
 Set ws = Nothing
 Set gws = Nothing

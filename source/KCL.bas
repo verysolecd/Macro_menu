@@ -550,7 +550,7 @@ Function isPathchn(pathToCheck) As Boolean
 End Function
 ''替换字符串的所有中文为空格
 Function rmchn(ByVal inputString$) As String
-    Dim regex: Set regex = getRegex
+    Dim regex: Set regex = getRegex()
     regex.Pattern = "[\u4e00-\u9fa5]"
     regex.Global = True
     rmchn = regex.Replace(inputString, " ")
@@ -677,5 +677,6 @@ End Function
 
 Public Function getRegex() As Object
  Dim regex: Set regex = CreateObject("VBScript.RegExp")
+ Set getRegex = regex
 End Function
    

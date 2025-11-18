@@ -24,7 +24,9 @@ On Error GoTo ErrorHandler
       Dim iCols
     iCols = Array(0, 2, 4, 6, 8, 10, 12)
     Dim outputArr As Variant, temparr(1 To 6)
+    
     ReDim outputArr(1 To UBound(odata, 1), 1 To UBound(iCols))
+    
     For i = 1 To UBound(outputArr, 1)
         For j = 1 To UBound(outputArr, 2)
              outputArr(i, j) = ""
@@ -35,6 +37,7 @@ On Error GoTo ErrorHandler
         Next j
         
         Select Case i
+            Case 1
             Case 2
             Call pdm.modatt(Prd2rv, temparr)
             Case Else

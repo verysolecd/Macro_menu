@@ -25,44 +25,22 @@ Const CF_BITMAP = 2
 Private Const Fdis = 0.82
 Private thisdir
 
-Sub CaptureToClipboard()
-     MsgBox "没编呢"
-'    On Error GoTo ErrorHandler'
-'    ' 获取CATIA应用和活动窗口
-'    Dim catia As Application
-'    Set catia = catia'
-'    If catia.ActiveWindow Is Nothing Then
-'        MsgBox "没有活动窗口可截图", vbExclamation
-'        Exit Sub
-'    End If'
-'    ' 获取当前视图
-'    Dim viewer As viewer
-'    Set viewer = catia.ActiveWindow.ActiveViewer'
-'    ' 临时文件路径
-'    Dim tempFile As String
-'    tempFile = Environ("TEMP") & "\CATIA_temp_capture.bmp"
-'    ' 先保存为临时BMP文件
-'    viewer.CaptureToFile 0, tempFile ' 0 = catCaptureFormatBMP'
-'    ' 将BMP文件复制到剪贴板
-'    Dim hBitmap As Long
-'    hBitmap = LoadImage(0, tempFile, 0, 0, 0, &H10) ' LR_LOADFROMFILE'
-'    If hBitmap <> 0 Then
-'        OpenClipboard 0
-'        EmptyClipboard
-'        SetClipboardData CF_BITMAP, hBitmap
-'        CloseClipboard
-'        MsgBox "截图已复制到剪贴板", vbInformation
-'    Else
-'        MsgBox "无法将图像复制到剪贴板", vbExclamation
-'    End If'
-'    ' 删除临时文件
-'    Kill tempFile'
-'    Exit Sub'
-'ErrorHandler:
-'    MsgBox "截图失败：" & Err.Description, vbCritical
+Sub Capturetopath()
+On Error Resume Next
+     Call Capme
+  If Err.Number = 0 Then
+       
+     MsgBox "完成截图到" & gPic_Path
+     
+     KCL.explorepath (thisdir)
+     End If
+     Err.Clear
+On Error GoTo 0
+  
+
 End Sub
 
-Sub CaptureTopath()
+Sub Capme()
  If Not KCL.CanExecute("ProductDocument,PartDocument") Then Exit Sub
  If pdm Is Nothing Then
         Set pdm = New class_PDM
@@ -120,7 +98,7 @@ Sub CaptureTopath()
      CATIA.StartCommand ("Compass")
      allPN.Remove all
      Set oprd = Nothing
-'     KCL.explorepath (oPath)
+
 On Error GoTo 0
 
 End Sub

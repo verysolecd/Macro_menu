@@ -115,60 +115,65 @@ Public Function attLv2Prd(oprd)
                    Next
                 Next
             End If
-  ReDim finalbom(1 To counter, 0 To UBound(tempdata))
+  ReDim finalbom(1 To counter, 1 To UBound(tempdata))
       For i = 1 To UBound(finalbom, 1)
-        For j = 0 To UBound(finalbom, 2)
-            finalbom(i, j) = bigbom(i, j)
+        For j = 1 To UBound(finalbom, 2)
+          
+          finalbom(i, j) = bigbom(i, j)
+      
         Next
       Next
         attLv2Prd = finalbom
         counter = 1
 End Function
 
-Public Function collsAttPrd(oprd, LV)
+Public Function recurInfoPrd(oprd, LV)
+
     Dim tempdata, i, j
-    tempdata = infoPrd(oprd)
-    If counter = 1 Then
-        ReDim bigbom(1 To gfn, 0 To UBound(tempdata)) '初始化所有bigbom元素为""
+    tempdata = infoPrd(oprd) '此数组是1-9
+    
+    If counter = 1 Then  '初始化所有bigbom元素为""
+        ReDim bigbom(1 To gfn, 0 To UBound(tempdata))
             For i = 1 To gfn
                 For j = 0 To UBound(tempdata)
                     bigbom(i, j) = ""
                 Next j
             Next i
     End If
-   For i = 0 To UBound(tempdata)
+    '===================
+   For i = 0 To UBound(tempdata)   'tempdata 数组是1-9
         Select Case i
              Case 0: bigbom(counter, i) = LV
              Case Else:
                  bigbom(counter, i) = tempdata(i)
              End Select
-    Next
-       Dim children As Products
-            Set children = oprd.Products
+   Next
+       Dim children: Set children = oprd.Products
             If children.count > 0 Then
-                    Dim bdict
-                    Set bdict = KCL.InitDic
+                    Dim bdict: Set bdict = KCL.InitDic
                 For i = 1 To children.count
                     If bdict.Exists(children.item(i).PartNumber) = False Then
                        bdict(children.item(i).PartNumber) = 1
                        counter = counter + 1
-                       collsAttPrd children.item(i), LV + 1
+                       recurInfoPrd children.item(i), LV + 1
                     End If
                 Next
             End If
-  ReDim finalbom(1 To counter, 0 To UBound(tempdata))
+            
+    ReDim finalbom(1 To counter, 0 To UBound(tempdata))
       For i = 1 To UBound(finalbom, 1)
         For j = 0 To UBound(finalbom, 2)
             finalbom(i, j) = bigbom(i, j)
         Next
       Next
-        collsAttPrd = finalbom
+    recurInfoPrd = finalbom
 End Function
 
 
 Public Function recurPrd(oprd, LV)
     Dim mapping As Variant
     mapping = Array(0, 0, 0, 1, 2, 3, 4, 9, 7, 0, 5, 8, 0, 5, 6, 0, 0, 0)
+    
     Dim bomsize
         bomsize = UBound(mapping)
     Dim i, j
@@ -183,7 +188,6 @@ Public Function recurPrd(oprd, LV)
     Dim tempdata
     tempdata = infoPrd(oprd)
    '=====生成行数据 === bom行数据直接按最大列处理得到一行数据
-   
         For i = 1 To UBound(bigbom, 2)  '从1到最大列
             bigbom(counter, i) = ""  '默认赋值为空
             Select Case i
@@ -273,9 +277,9 @@ Public Sub initPrd(oprd)
     On Error GoTo 0
     
     If Not oprt Is Nothing Then
-    On Error Resume Next
-            Call iniPrt(oprd)
-    On Error GoTo 0
+        On Error Resume Next
+                Call iniPrt(oprd)
+        On Error GoTo 0
     Else
             Dim k
             k = 0
@@ -355,7 +359,7 @@ Private Sub iniPrt(oprd)
                    Set oPub = pubs.Add(infoPara(k).Name)
                    pubs.SetDirect infoPara(k).Name, oref
                Else
-              Debug.Print "不需要发布" & infoPara(k).Name
+                    Debug.Print "不需要发布" & infoPara(k).Name
                 End If
            Next
     '创建所有relations

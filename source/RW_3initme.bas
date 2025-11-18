@@ -11,7 +11,7 @@ Sub initme()
  If Not KCL.CanExecute("ProductDocument,PartDocument") Then Exit Sub
  If pdm Is Nothing Then Set pdm = New class_PDM
  Set allPN = KCL.InitDic(vbTextCompare): allPN.RemoveAll  'allPn 是全局变量，不需要传递
- 
+  Dim iprd
  If KCL.checkDocType("PartDocument") Then
  Set iprd = CATIA.ActiveDocument.Product
  
@@ -19,7 +19,7 @@ Sub initme()
  Exit Sub
  End If
 
- Dim iprd: Set iprd = pdm.defgprd()
+ Set iprd = pdm.defgprd()
  If Not iprd Is Nothing Then
      On Error Resume Next
             Call recurInitPrd(iprd)
