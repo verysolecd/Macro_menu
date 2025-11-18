@@ -21,6 +21,7 @@ Private Const itemgap = 2
 Private Const fmargin = 6
 Private Const bmargin = 6
 Private Const txtWidth = 236
+
 ' Use WithEvents to handle events for dynamically created controls.
 Private WithEvents chk_TM As MSForms.CheckBox
 Attribute chk_TM.VB_VarHelpID = -1
@@ -36,7 +37,6 @@ Private WithEvents txt_log As MSForms.textbox
 Attribute txt_log.VB_VarHelpID = -1
 Private WithEvents chk_log As MSForms.CheckBox
 Attribute chk_log.VB_VarHelpID = -1
-
 
 
 Private colls As New collection
@@ -97,7 +97,7 @@ Dim thistop
             .top = thistop: .Height = 40
             thistop = .top + .Height + itemgap
         End With
-        Debug.Print "log意境创建"
+'        Debug.Print "log已经创建"
    
     Set cmdOK = Me.controls.Add("Forms.CommandButton.1")
         With cmdOK

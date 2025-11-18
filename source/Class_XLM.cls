@@ -35,21 +35,14 @@ On Error Resume Next
         Set WB = gwb
         Set ws = gws
     End If
-     If Error.Number <> 0 Then
+    
+If Error.Number <> 0 Then
         Err.Clear
-'         MsgBox "excel sheet 错误"
-'     '    Exit Sub
      End If
-    On Error GoTo 0
-
-'
-'    xlAPP.Visible = False
-
-    On Error GoTo 0
+On Error GoTo 0
     Set wsEVT = New Ws_Evt
     wsEVT.Init WB
-  iniarr
-    
+    iniarr
 End Sub
 Private Sub iniarr()
     inject_cols = Array(1, 3, 5, 7, 13, 9, 14, 11)
@@ -119,20 +112,38 @@ Public Sub clear_table()
     ws.UsedRange.ClearContents
 End Sub
 
-Sub inject_ary(ByVal idata As Variant, _
-                Optional ByVal idcols As Variant)
+Sub inject_ary(ByVal idata As Variant, Optional ByVal idcols As Variant)
     ws.UsedRange.ClearContents
-     With xlAPP
-        .ScreenUpdating = False
-        .Calculation = xlCalculationManual 'xlCalculationmanual
-        .EnableEvents = False
-    End With
-   
+    Call xlhide
     startrow = 2 ' 起始行
         If IsArray(idcols) Then
             For j = 1 To UBound(idcols)
                 ws.Cells(startrow, idcols(j)).Resize(UBound(idata, 1)).value = Application.Index(idata, , j)
             Next j
+
+ws.Cells(startrow, idcols(j)).Resize(UBound(idata, 1)).value = Application.Index(idata, , j)
+' 左边（目标单元格区域）：
+' ws.Cells(startrow, idcols(j))：定位到工作表ws中 “第startrow行、第idcols(j)列” 的单元格（写入的起始位置）。
+' .Resize(UBound(idata, 1))：将起始单元格向下扩展，形成一个 “单列多行” 的区域。扩展的行数等于idata数组的行数（UBound(idata, 1)是idata第一维的最大下标，即行数）。
+' 右边（数据源）：Application.Index(idata, , j)：从二维数组idata中提取第j列的所有数据（Index函数的第二个参数省略表示 “所有行”，第三个参数j表示 “第j列”），得到一个单列数组。
+' 整体效果：将idata数组的第j列数据，批量写入到工作表ws中 “第startrow行、第idcols(j)列” 开始的对应区域（行数与idata的行数一致）。
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
         Else
             startrow = 2: lastRow = UBound(idata, 1) + startrow - 1
             cols = UBound(idata, 2)
@@ -140,11 +151,9 @@ Sub inject_ary(ByVal idata As Variant, _
                 .Range(.Cells(startrow, 1), .Cells(lastRow, cols)).value = idata
               End With
       End If
-      
             If ws.Cells(1, 1).value <> "零件号" & Chr(10) & "Partnumber" Then
         Call set_Header(header_rv, 1)
     End If
-    
     Dim mapcells
      mapcells = Array(0, 1, 3, 5, 7, 9, 11, 13, 14)
     For rowNb = 2 To UBound(idata, 1) + startrow - 1
@@ -154,31 +163,13 @@ Sub inject_ary(ByVal idata As Variant, _
         Next rowNb
       
 Cleanup:     ' 恢复Excel设置
-    With xlAPP
-        .ScreenUpdating = True
-        .Calculation = xlCalculationAutomatic 'xlCalculationmanual
-        .EnableEvents = True
-    End With
+   Call xlshow
     On Error GoTo 0
 End Sub
 
 Public Sub inject_data(rowNb, Data)
-
-    With xlAPP
-        .ScreenUpdating = False
-        .Calculation = xlCalculationManual 'xlCalculationmanual
-        .EnableEvents = False
-    End With
-    
-'    With xlAPP
-'        .ScreenUpdating = True
-'        .Calculation = xlCalculationAutomatic 'xlCalculationmanual
-'        .EnableEvents = True
-'    End With
-
-
+    Call xlhide
     ws.Name = "revise prd"
-'     xlAPP.Visible = False
     Dim i As Long
       If ws.Cells(1, 1).value <> "零件号" & Chr(10) & "Partnumber" Then
         Call set_Header(header_rv, 1)
@@ -194,32 +185,13 @@ Public Sub inject_data(rowNb, Data)
             ws.Cells(rowNb, mapcells(i)).value = Data(mapdata(i))
             ws.Cells(rowNb, mapcells(i)).Interior.color = RGB(190, 190, 190)
     Next
-    
-    With xlAPP
-        .ScreenUpdating = True
-        .Calculation = xlCalculationAutomatic 'xlCalculationmanual
-        .EnableEvents = True
-    End With
-    
-    
-    
-    
+ Call xlshow
+ 
 End Sub
 
 Public Sub inject_bom(Data)
-
-    With xlAPP
-        .ScreenUpdating = False
-        .Calculation = xlCalculationManual 'xlCalculationmanual
-        .EnableEvents = False
-    End With
-    
-'    With xlAPP
-'        .ScreenUpdating = True
-'        .Calculation = xlCalculationAutomatic 'xlCalculationmanual
-'        .EnableEvents = True
-'    End With
-     ws.Name = "BOM_xx"
+ ws.Name = "BOM_xx"
+ Call xlhide
     startrow = 2
      Call set_Header(header_bom, startrow - 1)
      lastRow = counter + startrow - 1
@@ -236,23 +208,14 @@ Public Sub inject_bom(Data)
          End With
      counter = 0
     Call LvMg
-    
-        With xlAPP
-        .ScreenUpdating = True
-        .Calculation = xlCalculationAutomatic 'xlCalculationmanual
-        .EnableEvents = True
-    End With
-  
-    
+  Call xlshow
 End Sub
-
 Public Sub freesheet()
 Set ws = Nothing
 Set gws = Nothing
 Set gwb = Nothing
 Set xlAPP = Nothing
 End Sub
- 
 Public Function extract_data(indRow)
     Dim iCols
     iCols = Array(0, 2, 4, 6, 8, 10, 12)
@@ -275,12 +238,13 @@ Public Function extract_ary()
     cntx = ws.Cells(ws.Rows.count, 1).End(xlUp).Row
     cnty = 14
  ReDim resultAry(1 To cntx, 1 To cnty)
+ 
   For idrow = 2 To cntx
          Dim temparr As Variant
             temparr = ws.Rows(idrow).Resize(1, cnty).value
         For j = 1 To cnty
             resultAry(idrow, j) = temparr(1, j)
-          Next j
+        Next j
    Next idrow
     extract_ary = resultAry ' 返回提取的数据
 End Function
@@ -293,9 +257,10 @@ Private Sub LvMg()
             .Outline.AutomaticStyles = False
             .Outline.SummaryRow = xlAbove
             .Outline.SummaryColumn = xlRight
+            Set LVcol = .Columns(2)
+            LVcol.HorizontalAlignment = xlLeft
     End With
-    
-    For row_num = 2 To ws.Cells(ws.Rows.count, 1).End(xlUp).Row ' 使用 xlApp.xlUp
+    For row_num = 2 To ws.Cells(ws.Rows.count, 2).End(xlUp).Row ' 使用 xlApp.xlUp
         Dim cell_value As Variant
         cell_value = ws.Cells(row_num, 2).value
         If Not IsEmpty(cell_value) Then
@@ -311,35 +276,14 @@ Private Sub LvMg()
             End If
         End If
     Next
+'   lastRow = ws.Cells(Rows.count, 3).End(xlUp).Row
+'   ws.Rows(lastRow + 3 & ":" & Rows.count).EntireRow.Hidden = True
+'   Columns("Q:Q").Select
+'   Range(Selection, Selection.End(xlToRight)).Select
+'   Selection.EntireColumn.Hidden = True
 End Sub
-
-Public Sub LvMg2()
-    Dim lastRow, i, LVcol
-    With ws
-            .Cells.ClearOutline
-            .Outline.AutomaticStyles = False
-            .Outline.SummaryRow = xlAbove
-            .Outline.SummaryColumn = xlRight
-            Set LVcol = .Columns(2)
-            LVcol.HorizontalAlignment = xlLeft
-            lastRow = .Cells(.Rows.count, 2).End(xlUp).Row
-            
-        For i = 4 To lastRow
-            If LVcol.Cells(i).value <> "" Then
-                .Rows(i).OutlineLevel = LVcol.Cells(i).value ' 设置当前行的大纲级别
-                .Rows(i).Height = 20
-                LVcol.Cells(i).IndentLevel = LVcol.Cells(i).value - 1 ' 设置当前单元格的缩进级别
-            End If
-        Next
-    End With
-    lastRow = ws.Cells(Rows.count, 3).End(xlUp).Row
-    ws.Rows(lastRow + 3 & ":" & Rows.count).EntireRow.Hidden = True
-    Columns("Q:Q").Select
-    Range(Selection, Selection.End(xlToRight)).Select
-    Selection.EntireColumn.Hidden = True
-End Sub
-
 Public Sub inject_gxbom(Data)
+xlhide
      ws.Name = "BOM_xx" & Format(Now, "yymmdd_hhmm")
       startrow = 5
      Call set_Header(hdgx, startrow - 1)
@@ -356,11 +300,9 @@ Public Sub inject_gxbom(Data)
         End If
          End With
      counter = 0
-    xlAPP.Visible = True
+xlshow
 End Sub
 Sub inject_pic(ipath, pncol, Piccol)
-
-
         Dim i&, rng As Range
         Dim iPic As Shape
         ws.Rows.RowHeight = 25
@@ -375,13 +317,11 @@ Sub inject_pic(ipath, pncol, Piccol)
                     '先插入图片：路径，不链接，保存图片，-1保留原有高度宽度
                     Set iPic = ws.Shapes.AddPicture(picpath, False, True, 0, 0, -1, -1)
                     Set rng = ws.Cells(i, Piccol)
-                    
                 With iPic ' 保持纵横比
                     .LockAspectRatio = msoTrue  '计算最佳尺寸以适应单元格
                     Dim cellRatio, imgRatio
                     cellRatio = rng.Width / rng.Height
                     imgRatio = .Width / .Height
-                    
                     If imgRatio > cellRatio Then  '图片较宽，以单元格宽度为准
                         .Width = rng.Width * 0.9
                         .top = rng.top + (rng.Height - .Height) / 2 '垂直居中

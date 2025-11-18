@@ -1,9 +1,6 @@
 Attribute VB_Name = "KCL"
 'Attribute VB_Name = "KCL"
-'vba Kantoku_CATVBA_Library ver0.1.0
-'KCL.bas - 自定义VBA库
 Option Explicit
-
 Private mSW& ' 秒表开始时间
 
 #If VBA7 And Win64 Then
@@ -23,7 +20,9 @@ Sub CATMain()
         Stop
     Loop
 End Sub
-'*****CATIA相关函数*****
+
+
+'*****CATIA相关函数*****=================================================================================================
 ' 检查是否可以执行操作
 ''' @param:DocTypes-array(string),string 指定可执行操作的文档类型
 ''' @return:Boolean
@@ -91,6 +90,19 @@ Function SelectElement(ByVal msg$, _
     Set SelectElement = sel.item(1)
     sel.Clear
 End Function
+
+
+' ==  一些其他的选择方式
+'  Dim iType(0)
+'    iType(0) = "Product"
+'        MsgBox prompt
+'    If oSel.SelectElement2(iType, prompt, False) = "Normal" Then
+'        If oSel.count = 1 Then
+'            Set catSel1 = oSel.item(1).LeafProduct
+'        End If
+'    End If
+' ===================================
+
 ' 获取内部名称
 ''' @param:AOj-AnyObject
 ''' @return:String
@@ -126,18 +138,11 @@ Function GetParent_Of_T( _
         Set GetParent_Of_T = GetParent_Of_T(anyObj.Parent, t)
     End If
 End Function
+
 Private Function asDisp(o As INFITF.CATBaseDispatch) As INFITF.CATBaseDispatch
     Set asDisp = o
 End Function
-' 获取Brep名称
-''' @param:MyBRepName-String
-''' @return:String
-Function GetBrepName(MyBRepName As String) As String
-    MyBRepName = Replace(MyBRepName, "Selection_", "")
-    MyBRepName = Left(MyBRepName, InStrRev(MyBRepName, "));"))
-    MyBRepName = MyBRepName + ");WithPermanentBody;WithoutBuildError;WithSelectingFeatureSupport;MFBRepVersion_CXR15)"
-    GetBrepName = MyBRepName
-End Function
+
 ' 获取数组指定范围的元素
 ''' @param:Ary-Variant(Of Array)
 ''' @param:StartIdx-Long
@@ -194,20 +199,7 @@ End Function
 Function IsNothing(ByVal oj As Variant) As Boolean
     IsNothing = oj Is Nothing
 End Function
-' 创建Scripting.Dictionary对象
-''' @param:CompareMode-Long
-''' @return:Object(Of Dictionary)
-Function InitDic(Optional compareMode As Long = vbBinaryCompare) As Object
-    Dim Dic As Object
-    Set Dic = CreateObject("Scripting.Dictionary")
-    Dic.compareMode = compareMode
-    Set InitDic = Dic
-End Function
-' 创建ArrayList对象
-''' @return:Object(Of ArrayList)Public
-Function InitLst() As Object
-    Set InitLst = CreateObject("System.Collections.ArrayList")
-End Function
+
 ' 检查对象是否为指定类型
 ''' @param:OJ-Object
 ''' @param:T-String
@@ -286,6 +278,21 @@ End Function
 Function GetFso() As Object
     Set GetFso = CreateObject("Scripting.FileSystemObject")
 End Function
+' 创建Scripting.Dictionary对象
+''' @param:CompareMode-Long
+''' @return:Object(Of Dictionary)
+Function InitDic(Optional compareMode As Long = vbBinaryCompare) As Object
+    Dim Dic As Object
+    Set Dic = CreateObject("Scripting.Dictionary")
+    Dic.compareMode = compareMode
+    Set InitDic = Dic
+End Function
+' 创建ArrayList对象
+''' @return:Object(Of ArrayList)Public
+Function InitLst() As Object
+    Set InitLst = CreateObject("System.Collections.ArrayList")
+End Function
+
 
 ' 分割路径名
 ''' @param:FullPath-完整路径
@@ -360,6 +367,7 @@ Sub explorepath(ByVal ipath)
     Set shell = Nothing
 End Sub
 
+'获取用户选择路径
 Public Function selFdl()
     selFdl = ""
     Dim shellApp, Fdl
@@ -371,7 +379,17 @@ Public Function selFdl()
     End If
 End Function
 
-
+'@@param: oPath-路径
+'获取输入路径父级
+Public Function ofParentPath(ByVal oPath$)
+    Dim idx
+    idx = InStrRev(oPath, "\")
+If idx > 0 Then
+        ofParentPath = Left(oPath, idx)
+    Else
+        ofParentPath = oPath
+    End If
+End Function
 
 Sub ClearDir(folderPath As String)
     Dim FSO As Object
@@ -476,17 +494,7 @@ Public Function GetInput(msg) As String
     End If
 End Function
 
-'@@param: oPath-路径
-'获取输入路径父级
-Public Function ofParentPath(ByVal oPath$)
-    Dim idx
-    idx = InStrRev(oPath, "\")
-If idx > 0 Then
-        ofParentPath = Left(oPath, idx)
-    Else
-        ofParentPath = oPath
-    End If
-End Function
+
 ' 检查字符串中是否包含指定关键字
 ' 忽略大小写进行检查
 Public Function ExistsKey(ByVal Txt As String, ByVal Key As String) As Boolean
@@ -508,50 +516,47 @@ End Function
 Function isEngPath(ByVal path As String) As Boolean
     Dim i As Long, charCode As Long
     Dim validChars As String
-    ' 定义允许的英文符号（包括路径分隔符）
-    validChars = "!@#$%^&*()-_=+[]{};:'"",.<>/?\|~\/"
-    ' 遍历路径中的每个字符
-    For i = 1 To Len(path)
-        charCode = AscW(Mid(path, i, 1))
-        ' 检查是否为英文字母（A-Z, a-z）
+     validChars = "!@#$%^&*()-_=+[]{};:'"",.<>/?\|~\/"    ' 定义允许的英文符号（包括路径分隔符）
+    For i = 1 To Len(path)      ' 遍历路径中的每个字符
+        charCode = AscW(Mid(path, i, 1))  ' 检查是否为英文字母（A-Z, a-z）
         If (charCode >= 65 And charCode <= 90) Or _
            (charCode >= 97 And charCode <= 122) Then
             GoTo NextChar  ' 等同于 Continue For
         End If
-        ' 检查是否为数字（0-9）
-        If charCode >= 48 And charCode <= 57 Then
+        If charCode >= 48 And charCode <= 57 Then    ' 检查是否为数字（0-9）
             GoTo NextChar  ' 等同于 Continue For
         End If
-        ' 检查是否为允许的英文符号
-        If InStr(validChars, Mid(path, i, 1)) > 0 Then
+        If InStr(validChars, Mid(path, i, 1)) > 0 Then    ' 检查是否为允许的英文符号
             GoTo NextChar  ' 等同于 Continue For
         End If
-        ' 如果都不是，则路径包含非法字符
-        isEngPath = False
+        isEngPath = False          ' 如果都不是，则路径包含非法字符
         Exit Function
 NextChar:
     Next i
     ' 所有字符都通过检查
     isEngPath = True
 End Function
-
 ' 此函数用于检查输入的路径是否包含中文字符
-' 参数:
-'   pathToCheck - 需要检查的路径
-' 返回值:
-'   Boolean 类型，True 表示路径包含中文，False 表示不包含
+' 参数: pathToCheck - 需要检查的路径
+' 返回值: Boolean 类型，True 表示路径包含中文，False 表示不包含
 Function isPathchn(pathToCheck) As Boolean
     Dim regex As Object
-    Set regex = CreateObject("VBScript.RegExp")
-    
-    ' 设置正则表达式模式，匹配中文字符
-    regex.Pattern = "[\u4e00-\u9fa5]"
+    Set regex = getRegex
+    regex.Pattern = "[\u4e00-\u9fa5]"   ' 设置正则表达式模式，匹配中文字符
     regex.IgnoreCase = True
     regex.Global = True
-    ' 执行匹配并返回结果
-    isPathchn = regex.test(pathToCheck)
+    isPathchn = regex.test(pathToCheck)   ' 执行匹配并返回结果
     Set regex = Nothing
 End Function
+''替换字符串的所有中文为空格
+Function rmchn(ByVal inputString$) As String
+    Dim regex: Set regex = getRegex
+    regex.Pattern = "[\u4e00-\u9fa5]"
+    regex.Global = True
+    rmchn = regex.Replace(inputString, " ")
+    Set regex = Nothing
+End Function
+
 '@iStr string
 '获得字符串最后一个"iext"之前的字符或返回原字符
 Function strbflast(str, iext)
@@ -565,7 +570,7 @@ If idx > 0 Then
 End Function
 
 '@iStr string
-'获得字符串第一个"_"之前的字符或返回原字符
+'获得字符串第一个"iext"之前的字符或返回原字符
 Function strbf1st(iStr, iext)
     Dim oPrefix
         Dim underscorePos As Long
@@ -577,7 +582,8 @@ Function strbf1st(iStr, iext)
         End If
         strbf1st = oPrefix
 End Function
- 
+ '@iStr string
+'获得字符串第一个"iext"之后的字符或返回原字符
 Function straf1st(iStr, iext)
 Dim idx
 idx = InStr(iStr, iext)
@@ -587,17 +593,6 @@ If idx > 0 Then
         straf1st = iStr
     End If
 End Function
-
-''替换字符串的所有中文为空格
-Function rmchn(ByVal inputString$) As String
-    Dim regex: Set regex = CreateObject("VBScript.RegExp")
-    regex.Pattern = "[\u4e00-\u9fa5]"
-    regex.Global = True
-    rmchn = regex.Replace(inputString, " ")
-    Set regex = Nothing
-End Function
-
-
 '创建md文件
 Function getmd(ByVal ipath_name As String)
      Dim FSO
@@ -631,28 +626,18 @@ Function GetLanguage() As String
     CATIA.ActiveDocument.Selection.Clear
     Dim st As String: st = CATIA.StatusBar
     Select Case True
-        Case ExistsKey(st, "object")
-            GetLanguage = "en"
-        Case ExistsKey(st, "objet")
-            GetLanguage = "fr"
-        Case ExistsKey(st, "Objekt")
-            GetLanguage = "de"
-        Case ExistsKey(st, "oggetto")
-            GetLanguage = "it"
-        Case ExistsKey(st, "命令")
-            GetLanguage = "ja"
-        Case ExistsKey(st, "объект")
-            GetLanguage = "ru"
-        Case ExistsKey(st, "对象")
-            GetLanguage = "zh"
+        Case ExistsKey(st, "object"): GetLanguage = "en"
+        Case ExistsKey(st, "objet"):: GetLanguage = "fr"
+        Case ExistsKey(st, "Objekt"): GetLanguage = "de"
+        Case ExistsKey(st, "oggetto"): GetLanguage = "it"
+        Case ExistsKey(st, "命令"):    GetLanguage = "ja"
+        Case ExistsKey(st, "объект"):  GetLanguage = "ru"
+        Case ExistsKey(st, "对象"): GetLanguage = "zh"
         Case Else
             Select Case Len(st)
-                Case 13
-                    GetLanguage = "ko"
-                Case 23
-                    GetLanguage = "ja"
-                Case Else
-                    ' 其他情况
+                Case 13: GetLanguage = "ko"
+                Case 23: GetLanguage = "ja"
+                Case Else            ' 其他情况
             End Select
     End Select
 End Function
@@ -664,19 +649,33 @@ Function getVbaDir() As String
     projFilePath = oApc.ExecutingProject.VBProject.Filename
      getVbaDir = GetFso.GetParentFolderName(projFilePath)
 End Function
-Function GetApc() As Object
-    Dim COMObjectName As String
+'******* APC/VBE *********
+' 获取APC对象
+' 参数  :
+' 返回值: obj-IApc
+Public Function GetApc() As Object
+    Set GetApc = Nothing
+    Dim COMObjectName$     ' 获取VBA版本对应的COM对象名称
     #If VBA7 Then
         COMObjectName = "MSAPC.Apc.7.1"
     #ElseIf VBA6 Then
         COMObjectName = "MSAPC.Apc.6.2"
+    #Else
+        MsgBox "不支持当前VBA版本", vbExclamation + vbOKOnly
+        Exit Function
     #End If
-    Dim oApc As Object
+    Dim Apc As Object: Set Apc = Nothing   ' 获取APC对象
     On Error Resume Next
-    Set oApc = CreateObject(COMObjectName)
+        Set Apc = CreateObject(COMObjectName)
     On Error GoTo 0
-    If oApc Is Nothing Then
-        Set oApc = CreateObject("MSAPC.Apc")
+    If Apc Is Nothing Then
+        MsgBox "无法获取MSAPC.Apc对象", vbExclamation + vbOKOnly
+        Exit Function
     End If
-    Set GetApc = oApc
+    Set GetApc = Apc
 End Function
+
+Public Function getRegex() As Object
+ Dim regex: Set regex = CreateObject("VBScript.RegExp")
+End Function
+   

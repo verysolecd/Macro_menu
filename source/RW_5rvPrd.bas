@@ -33,9 +33,8 @@ On Error GoTo ErrorHandler
              End If
              temparr(j) = outputArr(i, j)
         Next j
+        
         Select Case i
-            Case 1
-            Debug.Print i
             Case 2
             Call pdm.modatt(Prd2rv, temparr)
             Case Else

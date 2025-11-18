@@ -11,7 +11,7 @@ Private ErrorMessage As String
 Private zippath
 
 Sub ex2stp_zip()
-    If Not CanExecute("ProductDocument") Then Exit Sub
+    If Not KCL.CanExecute("ProductDocument") Then Exit Sub
   On Error Resume Next ' 临时开启错误处理
     Err.Number = 0
     ErrorMessage = ""

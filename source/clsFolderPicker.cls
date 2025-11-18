@@ -24,22 +24,17 @@ Private Type BROWSEINFO
     lParam As LongPtr
     iImage As Long
 End Type
-
-
 '文件夹选择器显示
 'return: 文件夹路径
 Function show_folder_picker()
-
     Dim bi As BROWSEINFO
     Dim pidl As LongPtr
     Dim folderPath As String
-    
     With bi
         .hOwner = 0
         .lpszTitle = "请选择文件夹"
         .ulFlags = &H1
     End With
-    
     pidl = SHBrowseForFolder(bi)
     If pidl <> 0 Then
         folderPath = Space$(260)
@@ -47,5 +42,4 @@ Function show_folder_picker()
         folderPath = Left(folderPath, InStr(folderPath, Chr(0)) - 1)
         show_folder_picker = folderPath
     End If
-
 End Function
