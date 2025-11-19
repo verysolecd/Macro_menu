@@ -40,7 +40,7 @@ Sub Capturetopath()
             End Select
   
   If Err.Number = 0 Then
-     KCL.explorepath (thisdir)
+     KCL.openpath (thisdir)
    End If
      Err.Clear
 On Error GoTo 0
@@ -88,7 +88,9 @@ End With
      oprd.ApplyWorkMode (3)  '3  DESIGN_MODE
      Dim oPath
      oPath = KCL.GetPath(KCL.getVbaDir & "\" & "oTemp")
-     KCL.ClearDir (oPath)
+     KCL.ClearDir (oPath) '截图前先清空文件夹
+     
+     
      If gPic_Path = "" Then
             gPic_Path = oPath
      End If

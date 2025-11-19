@@ -3,10 +3,19 @@ Attribute VB_Name = "KCL"
 Option Explicit
 Private mSW& ' 秒表开始时间
 
+Private Declare PtrSafe Function OpenClipboard Lib "user32" (ByVal hwnd As LongPtr) As Long
+Private Declare PtrSafe Function EmptyClipboard Lib "user32" () As Long
+Private Declare PtrSafe Function CloseClipboard Lib "user32" () As Long
+Private Declare PtrSafe Function SetClipboardData Lib "user32" (ByVal wFormat As Long, ByVal hMem As LongPtr) As LongPtr
+
+' 声明 Windows API 函数，用于将窗口置于前台，这比 Visible=False/True 的技巧更可靠
+
 #If VBA7 And Win64 Then
     Private Declare PtrSafe Function timeGetTime Lib "winmm.dll" () As Long
+    Private Declare PtrSafe Function SetForegroundWindow Lib "user32" (ByVal hwnd As LongPtr) As Long
 #Else
     Private Declare Function timeGetTime Lib "winmm.dll" () As Long
+    Private Declare  Function SetForegroundWindow Lib "user32" (ByVal hwnd As Long) As Long
 #End If
 
 ' 主程序入口 - 循环选择项目
@@ -344,28 +353,7 @@ Function GetPath(ByVal path$)
      Set FSO = Nothing
 End Function
 
-Sub explorepath(ByVal ipath)
- Dim thisdir, shell, cmd
-    thisdir = ""
-    Dim FSO As Object: Set FSO = GetFso
-        If FSO.FileExists(ipath) Then
-            thisdir = ipath
-        ElseIf FSO.FolderExists(ipath) Then
-        Dim Fdl, file
-            Set Fdl = FSO.GetFolder(ipath)
-            For Each file In Fdl.Files
-                thisdir = file.path
-            Exit For
-            Next
-        End If
-    If thisdir <> "" Then
-         Set shell = CreateObject("WScript.Shell")
-         cmd = "explorer.exe /select, """ & thisdir & """"
-         shell.Run (cmd)
-    End If
-    Set FSO = Nothing
-    Set shell = Nothing
-End Sub
+
 
 '获取用户选择路径
 Public Function selFdl()
@@ -392,8 +380,7 @@ If idx > 0 Then
 End Function
 
 Sub ClearDir(folderPath As String)
-    Dim FSO As Object
-    Set FSO = GetFso()
+    Dim FSO As Object::  Set FSO = GetFso()
     ' 检查目录是否存在
     If FSO.FolderExists(folderPath) Then
         Dim folder As Object
@@ -545,7 +532,7 @@ Function isPathchn(pathToCheck) As Boolean
     regex.Pattern = "[\u4e00-\u9fa5]"   ' 设置正则表达式模式，匹配中文字符
     regex.IgnoreCase = True
     regex.Global = True
-    isPathchn = regex.test(pathToCheck)   ' 执行匹配并返回结果
+    isPathchn = regex.TEST(pathToCheck)   ' 执行匹配并返回结果
     Set regex = Nothing
 End Function
 ''替换字符串的所有中文为空格
@@ -679,4 +666,95 @@ Public Function getRegex() As Object
  Dim regex: Set regex = CreateObject("VBScript.RegExp")
  Set getRegex = regex
 End Function
+Public Function getshell()
+    Dim shellApp As Object
+    Set shellApp = CreateObject("Shell.Application")
+    Set getshell = shellApp
+
+End Function
+
+
+' 智能打开路径（优先激活已存在窗口）
+Sub openpath(ByVal strPath As String)
+    Dim FSO As Object: Set FSO = GetFso
+    If Len(strPath) > 3 And Right(strPath, 1) = "\" Then
+        strPath = Left(strPath, Len(strPath) - 1)
+    End If
+    
+    If Not (FSO.FileExists(strPath) Or FSO.FolderExists(strPath)) Then
+        MsgBox "路径不存在: " & strPath, vbExclamation
+        Exit Sub
+    End If
+    
+    ' 尝试激活已存在的窗口
+    If Not ActivateExistingWindow(strPath) Then
+        ' 未找到已存在窗口，执行新打开操作
+        If FSO.FileExists(strPath) Then
+            OpenFileLocation strPath
+        ElseIf FSO.FolderExists(strPath) Then
+            openDir strPath
+        End If
+    End If
+End Sub
+
+' 检查并激活已存在的窗口
+Function ActivateExistingWindow(ByVal strPath As String) As Boolean
+    On Error GoTo ErrorHandler
+    Dim shellApp As Object, window As Object
+    Set shellApp = getshell
    
+    For Each window In shellApp.Windows   ' 遍历所有资源管理器窗口
+        On Error Resume Next
+        If InStr(UCase(window.FullName), "EXPLORER.EXE") > 0 Then   ' 检查是否为资源管理器窗口
+            Dim windowPath As String
+            windowPath = window.Document.folder.Self.path      ' 获取窗口路径并比较（不区分大小写）
+            If LCase(windowPath) = LCase(strPath) Then
+                window.Visible = True    ' 激活已存在的窗口
+                AppActivate window.hwnd
+                ActivateExistingWindow = True
+                Exit Function
+            End If
+        End If
+        On Error GoTo ErrorHandler
+    Next window
+    ActivateExistingWindow = False
+    Exit Function
+ErrorHandler:
+    ActivateExistingWindow = False
+End Function
+
+' 打开文件夹
+Sub openDir(ByVal strPath As String)
+    On Error GoTo ErrorHandler
+    If InStr(strPath, " ") > 0 Then      ' 处理包含空格的路径
+        strPath = """" & strPath & """"
+    End If
+    shell "explorer.exe " & strPath, vbNormalFocus
+    Exit Sub
+ErrorHandler:
+    MsgBox "无法打开路径: " & strPath & vbCrLf & "错误: " & Err.Description, vbExclamation
+End Sub
+
+' 打开文件位置并选中文件
+Sub OpenFileLocation(ByVal strFilePath As String)
+    On Error GoTo ErrorHandler
+    strFilePath = """" & strFilePath & """"  ' 确保文件路径被引号包围
+    shell "explorer.exe /select," & strFilePath, vbNormalFocus
+    Exit Sub
+ErrorHandler:
+    MsgBox "无法打开文件位置: " & strFilePath & vbCrLf & "错误: " & Err.Description, vbExclamation
+End Sub
+
+' 批量打开多个路径
+Sub OpenMultiple(ParamArray Paths() As Variant)
+    Dim i As Long
+    For i = LBound(Paths) To UBound(Paths)
+        SmartOpen CStr(Paths(i))
+        DoEvents ' 允许系统处理其他事件
+    Next i
+End Sub
+
+
+
+
+

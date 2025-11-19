@@ -81,7 +81,7 @@ ShowMessage:
         MsgBox "导出成功" & vbCrLf & _
                 stpfilepath & "文件已压缩" & vbCrLf & _
                 "原始文件已删除。", vbInformation
-        KCL.explorepath (zippath)
+        KCL.openpath (zippath)
     End If
     Set odoc = Nothing
     On Error GoTo 0 ' 关闭错误处理

@@ -430,8 +430,8 @@ Private Sub remove_module_files( _
     Dim FSO As Object
     Set FSO = mUtil.GetFso()
     If Not FSO.FolderExists(dirPath) Then Exit Sub
-    Dim paths As collection
-    Set paths = get_target_file_path_list( _
+    Dim Paths As collection
+    Set Paths = get_target_file_path_list( _
         dirPath, _
         Array( _
             "cls", _
@@ -441,7 +441,7 @@ Private Sub remove_module_files( _
         ) _
     )
     Dim path As Variant ' String
-    For Each path In paths
+    For Each path In Paths
         On Error Resume Next
             FSO.DeleteFile path
         On Error GoTo 0

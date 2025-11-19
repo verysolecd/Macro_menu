@@ -43,16 +43,16 @@ Sub cBom()
         btn = vbYesNo + vbExclamation
         bResult = MsgBox(imsg, btn, "bTitle")  ' Yes(6),No(7),cancel(2)
         Select Case bResult
-            Case 7: GoTo cleanup '===选择“否”====
+            Case 7: GoTo CleanUp '===选择“否”====
             Case 2: Exit Sub '===选择“取消”====
             Case 6  '===选择“是”====
                 Call Capme
                 Dim Colpn, colPic
                 Colpn = 3: colPic = 6
                 Call xlm.inject_pic(gPic_Path, Colpn, colPic)
-                GoTo cleanup
+                GoTo CleanUp
             End Select
-cleanup::
+CleanUp::
    Call xlm.xlshow
    Set iprd = Nothing
        KCL.ClearDir (gPic_Path)
