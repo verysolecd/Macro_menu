@@ -108,16 +108,14 @@ Private Sub set_Header(header, idxrow)
     End With
     
      Dim mapcells: mapcells = Array(0, 1, 3, 5, 7, 9, 11, 13, 14)
-    For rowNb = 2 To UBound(idata, 1) + startrow - 1
+     
+     Dim lastrow: lastrow = ws.Cells(ws.Rows.count, 2).End(xlUp).Row
+     
+    For rowNb = 2 To lastrow
         For i = 1 To UBound(mapcells)
                 ws.Cells(rowNb, mapcells(i)).Interior.color = RGB(190, 190, 190)
         Next i
         Next rowNb
- Call xlshow
-    
-    
-    
-    
 End Sub
 
 Public Sub clear_table()
@@ -139,20 +137,17 @@ Sub inject_ary(ByVal idata As Variant, Optional ByVal idcols As Variant, Optiona
 '                .Range(.Cells(startrow, 1), .Cells(lastRow, cols)).value = idata
 '              End With
       End If
-    
-      
-Cleanup:     ' 恢复Excel设置
-
+cleanup:     ' 恢复Excel设置
     On Error GoTo 0
 End Sub
 Sub inject_bom(ByVal idata As Variant, Optional ByVal idcols As Variant, Optional ByVal idx As Variant)
      Call inject_ary(idata, idcols, idx)
          Dim bomrowcnt: bomrowcnt = UBound(idata, 1)
          startrow = 2
-         lastRow = bomrowcnt + startrow - 1
-          If lastRow >= 2 Then
+         lastrow = bomrowcnt + startrow - 1
+          If lastrow >= 2 Then
           With ws
-            With .Range(.Cells(startrow, 9), .Cells(lastRow, 9))
+            With .Range(.Cells(startrow, 9), .Cells(lastrow, 9))
                 .Formula = "=G2*H2"  ' G列=第7列，H列=第8列
                 .NumberFormat = "0.00"  ' 设置数字格式
             End With
@@ -162,8 +157,6 @@ Sub inject_bom(ByVal idata As Variant, Optional ByVal idcols As Variant, Optiona
         Call LvMg
 End Sub
 
-
-
 Public Sub setxlHead(ByVal s$)
 Select Case s
     Case "bom": Call set_Header(header_bom, 1)
@@ -172,28 +165,6 @@ Select Case s
  End Select
 End Sub
 
-
-'Public Sub inject_bom(Data)
-' ws.Name = "BOM_xx"
-' Call xlhide
-'    startrow = 2
-'     Call set_Header(header_bom, startrow - 1)
-'     lastRow = counter + startrow - 1
-'     Dim cols
-'     cols = UBound(Data, 2)
-'     With ws
-'          ws.Range(.Cells(startrow, 1), .Cells(lastRow, cols)).value = Data
-'        If lastRow >= 2 Then
-'            With ws.Range(.Cells(startrow, 9), .Cells(lastRow, 9))
-'                .Formula = "=G2*H2"  ' G列=第7列，H列=第8列
-'                .NumberFormat = "0.00"  ' 设置数字格式
-'            End With
-'        End If
-'         End With
-'     counter = 0
-'    Call LvMg
-'  Call xlshow
-'End Sub
 Public Sub freesheet()
 Set ws = Nothing
 Set gws = Nothing
@@ -271,13 +242,13 @@ xlhide
      ws.Name = "BOM_xx" & Format(Now, "yymmdd_hhmm")
       startrow = 5
      Call set_Header(hdgx, startrow - 1)
-     lastRow = counter + startrow - 1
+     lastrow = counter + startrow - 1
      Dim cols
      cols = UBound(Data, 2)
      With ws
-          ws.Range(.Cells(startrow, 1), .Cells(lastRow, cols)).value = Data
-        If lastRow >= 5 Then
-            With ws.Range(.Cells(startrow, 14), .Cells(lastRow, 14))
+          ws.Range(.Cells(startrow, 1), .Cells(lastrow, cols)).value = Data
+        If lastrow >= 5 Then
+            With ws.Range(.Cells(startrow, 14), .Cells(lastrow, 14))
                 .Formula = "=k5*m5"  ' G列=第7列，H列=第8列
                 .NumberFormat = "0.00"  ' 设置数字格式
             End With
@@ -289,6 +260,7 @@ End Sub
 Sub inject_pic(ipath, pncol, Piccol)
         Dim i&, rng As Range
         Dim iPic As Shape
+        Dim cntrow
         ws.Rows.RowHeight = 25
         cntrow = ws.Cells(ws.Rows.count, 1).End(xlUp).Row
                 For i = 2 To cntrow
@@ -319,7 +291,6 @@ Sub inject_pic(ipath, pncol, Piccol)
                 End With
             End If
     Next i
-   xlshow
 End Sub
 
 Public Sub xlshow()

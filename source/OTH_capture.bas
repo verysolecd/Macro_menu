@@ -22,18 +22,26 @@ Attribute VB_Name = "OTH_capture"
 '    Private Declare Function LoadImage Lib "user32" Alias "LoadImageA" (ByVal hInst As Long, ByVal lpsz As String, ByVal un1 As Long, ByVal n1 As Long, ByVal n2 As Long, ByVal un2 As Long) As Long
 '#End If
 Const CF_BITMAP = 2
-Private Const Fdis = 0.82
+Private Const Fdis = 0.9
 Private thisdir
 
 Sub Capturetopath()
-On Error Resume Next
-     Call Capme
+    On Error Resume Next
+     CATIA.StartCommand ("* iso")
+      Dim btn, bTitle, bResult
+      imsg = "如要截图，请等待ISO视角调整完毕后点击确认"
+        btn = vbYesNo + vbExclamation
+        bResult = MsgBox(imsg, btn, "bTitle")  ' Yes(6),No(7),cancel(2)
+        Select Case bResult
+            Case 7: Exit Sub '===选择“否”====
+            Case 2: Exit Sub '===选择“取消”====
+            Case 6  '===选择“是”====
+                Call Capme
+            End Select
+  
   If Err.Number = 0 Then
-       
-     MsgBox "完成截图到" & gPic_Path
-     
      KCL.explorepath (thisdir)
-     End If
+   End If
      Err.Clear
 On Error GoTo 0
   
@@ -45,25 +53,24 @@ Sub Capme()
  If pdm Is Nothing Then
         Set pdm = New class_PDM
  End If
-     On Error Resume Next
+On Error Resume Next
 '-----------设置显示样式模式-------------
-     CATIA.StartCommand ("* iso")
-     With CATIA.Application
-       .Width = 1920
-       .Height = 1080 '.Width * 0.618
-     End With
-     MsgBox "请点下确认iso视角"
+ Call HideNonBody(rootDoc, 1)
     CATIA.RefreshDisplay = True
-    Call HideNonBody(rootDoc, 1)
-     CATIA.DisplayFileAlerts = False
-     CATIA.RefreshDisplay = False
-     With CATIA.ActiveWindow
-          .WindowState = 0  '   '0 catWindowStateMaximized 1   catWindowStateMinimized,2   catWindowStateNormal
-          .Width = 1080 * 0.8
-          .Height = .Width * 0.618
-          .Layout = 1    ' 仅显示几何视图
-     End With
- 
+    CATIA.DisplayFileAlerts = False
+ With CATIA.Application
+   .Width = 1920 / 2
+   .Height = 1080 '.Width * 0.618
+ End With
+    
+With CATIA.ActiveWindow
+     .WindowState = 0  '   '0 catWindowStateMaximized 1   catWindowStateMinimized,2   catWindowStateNormal
+     .Width = 1080
+     .Height = .Width * 0.618
+     .Layout = 1    ' 仅显示几何视图
+End With
+
+  CATIA.RefreshDisplay = False
      Dim oViewer
      Set oViewer = CATIA.ActiveWindow.ActiveViewer
      With oViewer
@@ -75,7 +82,6 @@ Sub Capme()
      End With
          
     CATIA.StartCommand ("Compass")  '隐藏指南针
-    
      Dim oprd
      Set oprd = rootprd
      If oprd Is Nothing Then Exit Sub
@@ -86,8 +92,8 @@ Sub Capme()
      If gPic_Path = "" Then
             gPic_Path = oPath
      End If
-     
      allPN.Remove all
+     
      CaptureMe oprd, oPath
 '-----------恢复显示样式模式-------------
      CATIA.DisplayFileAlerts = True

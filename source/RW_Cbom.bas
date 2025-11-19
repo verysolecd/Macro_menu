@@ -19,13 +19,11 @@ Sub cBom()
      Call Cal_Mass2
      counter = 1
      LV = 1
-     
-     Dim idx, idcol
-  
-        Dim tmpData():  tmpData = pdm.recurInfoPrd(iprd, LV)
-               
+      If gws Is Nothing Then
+           Set xlm = New Class_XLM
+        End If
+    Dim tmpData():  tmpData = pdm.recurInfoPrd(iprd, LV)
         ReDim resultAry(1 To UBound(tmpData, 1), 1 To UBound(tmpData, 2) + 2)
-      
         For i = 1 To UBound(tmpData, 1)
              For j = 1 To UBound(resultAry, 2)
                Select Case j
@@ -34,28 +32,30 @@ Sub cBom()
                End Select
              Next j
         Next i
-        
-        If gws Is Nothing Then
-           Set xlm = New Class_XLM
-        End If
-        
-        
-      idcol = Array(0, 1, 3, 5, 7, 9, 13) ' 目标列号, 0号元素不占位置
-      idx = Array(0, 1, 2, 3, 4, 5, 6, 9, 7, 10, 7)  ' 需提取属性索引（0-based)
+   Dim idx, idcol
+      idcol = Array(0, 1, 2, 3, 4, 5, 7, 8, 10, 11, 13) ' 目标列号, 0号元素不占位置
+        idx = Array(0, 1, 2, 3, 4, 5, 11, 9, 7, 10, 7)  ' 需提取属性索引（0-based)
       xlm.inject_bom resultAry, idcol, idx
-      
-      
-          Call Capme
-            col_pn = 3
-            col_pic = 6
-          Call xlm.inject_pic(gPic_Path, col_pn, col_pic)
-          KCL.ClearDir (gPic_Path)
-          
-        Call xlm.xlshow
-      
-     
-  
+    Dim btn, bTitle, bResult
+        CATIA.StartCommand ("* iso")
+        bTitle = ""
+         imsg = "如要截图到BOM截图，请等待ISO视角调整完毕后点击确认"
+        btn = vbYesNo + vbExclamation
+        bResult = MsgBox(imsg, btn, "bTitle")  ' Yes(6),No(7),cancel(2)
+        Select Case bResult
+            Case 7: GoTo cleanup '===选择“否”====
+            Case 2: Exit Sub '===选择“取消”====
+            Case 6  '===选择“是”====
+                Call Capme
+                Dim Colpn, colPic
+                Colpn = 3: colPic = 6
+                Call xlm.inject_pic(gPic_Path, Colpn, colPic)
+                GoTo cleanup
+            End Select
+cleanup::
+   Call xlm.xlshow
    Set iprd = Nothing
+       KCL.ClearDir (gPic_Path)
    gPic_Path = ""
    xlm.freesheet
 End Sub
