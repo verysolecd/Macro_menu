@@ -29,8 +29,6 @@ Sub CATMain()
         Stop
     Loop
 End Sub
-
-
 '*****CATIA相关函数*****=================================================================================================
 ' 检查是否可以执行操作
 ''' @param:DocTypes-array(string),string 指定可执行操作的文档类型
@@ -41,17 +39,28 @@ Function CanExecute(ByVal docTypes As Variant) As Boolean
         MsgBox "没有打开的窗口"
         Exit Function
     End If
-    If VarType(docTypes) = vbString Then docTypes = Split(docTypes, ",") '过滤器转数组
+    If VarType(docTypes) = vbString Then
+      docTypes = LCase(docTypes)
+    docTypes = Split(docTypes, ",") '过滤器转数组
+    End If
     If Not checkFilterType(docTypes) Then Exit Function '过滤器检查，非数组则退出
     Dim ErrMsg As String
     ErrMsg = "不支持当前活动文档类型。" + vbNewLine + "(" + Join(docTypes, ",") + " 类型除外)"
     CanExecute = checkDocType(docTypes)
     If Not CanExecute Then MsgBox ErrMsg, vbExclamation + vbOKOnly
+    
+    
 End Function
 Function checkDocType(ByVal docTypes As Variant)
     checkDocType = False
-    If VarType(docTypes) = vbString Then docTypes = Split(docTypes, ",") '过滤器转数组
+    
+    
+    If VarType(docTypes) = vbString Then
+      
+        docTypes = Split(docTypes, ",") '过滤器转数组
+    End If
     If Not checkFilterType(docTypes) Then Exit Function '过滤器检查，非数组则退出
+    
     Dim ActDoc As Document
     On Error Resume Next
         Set ActDoc = CATIA.ActiveDocument
@@ -60,7 +69,7 @@ Function checkDocType(ByVal docTypes As Variant)
         MsgBox "无打开的文档"
         Exit Function
     End If
-     If UBound(filter(docTypes, TypeName(ActDoc))) < 0 Then '此处filter函数是VBA中比较厚返回数组的函数
+     If UBound(filter(docTypes, LCase(TypeName(ActDoc)))) < 0 Then '此处filter函数是VBA中比较后返回数组的函数
         Exit Function
     End If
     checkDocType = True
@@ -99,8 +108,6 @@ Function SelectElement(ByVal msg$, _
     Set SelectElement = sel.item(1)
     sel.Clear
 End Function
-
-
 ' ==  一些其他的选择方式
 '  Dim iType(0)
 '    iType(0) = "Product"
@@ -301,8 +308,6 @@ End Function
 Function InitLst() As Object
     Set InitLst = CreateObject("System.Collections.ArrayList")
 End Function
-
-
 ' 分割路径名
 ''' @param:FullPath-完整路径
 ''' @return:Variant(Of Array(Of String)) (0-路径 1-文件名 2-扩展名)
@@ -315,20 +320,14 @@ Function SplitPathName(ByVal fullpath$) As Variant
     End With
     SplitPathName = path
 End Function
-
 ' 合并路径名
 ''' @param:Path-Variant(Of Array(Of String)) (0-路径 1-文件名 2-扩展名)
 ''' @return:完整路径
 Function JoinPathName$(ByVal path As Variant)
-
     If Not IsArray(path) Then Stop ' 输入错误
-    
     If Not UBound(path) = 2 Then Stop ' 输入错误
-    
     JoinPathName = path(0) + "\" + path(1) + "." + path(2)
-    
 End Function
-
 ' 检查路径是否存在
 ''' @param:Path-路径
 ''' @return:Boolean
@@ -352,9 +351,28 @@ Function GetPath(ByVal path$)
      End If
      Set FSO = Nothing
 End Function
-
-
-
+Sub explorepath(ByVal ipath)
+ Dim thisdir, shell, cmd
+    thisdir = ""
+    Dim FSO As Object: Set FSO = GetFso
+        If FSO.FileExists(ipath) Then
+            thisdir = ipath
+        ElseIf FSO.FolderExists(ipath) Then
+          Dim Fdl, file
+            Set Fdl = FSO.GetFolder(ipath)
+            For Each file In Fdl.Files
+                thisdir = file.path
+            Exit For
+            Next
+        End If
+    If thisdir <> "" Then
+         Set shell = CreateObject("WScript.Shell")
+         cmd = "explorer.exe /select, """ & thisdir & """"
+         shell.Run (cmd)
+    End If
+    Set FSO = Nothing
+    Set shell = Nothing
+End Sub
 '获取用户选择路径
 Public Function selFdl()
     selFdl = ""
@@ -366,7 +384,6 @@ Public Function selFdl()
         selFdl = Fdl.Self.path
     End If
 End Function
-
 '@@param: oPath-路径
 '获取输入路径父级
 Public Function ofParentPath(ByVal oPath$)
@@ -393,17 +410,14 @@ Sub ClearDir(folderPath As String)
     End If
     Set FSO = Nothing     ' 释放对象
 End Sub
-
 Function DeleteMe(ByVal path$) As Boolean
 DeleteMe = False
 On Error Resume Next
     Dim FSO As Object: Set FSO = GetFso
-    
     If FSO.FileExists(path) Then
         FSO.DeleteFile path, True
         DeleteMe = True
     End If
-    
     If Error.Number = 0 Then
         DeleteMe = True
     Else
@@ -413,10 +427,7 @@ On Error Resume Next
     Set FSO = Nothing
     Error.Clear
 On Error GoTo 0
-     
 End Function
-
-
 ' 获取新文件名
 ''' @param:Path-完整路径
 ''' @return:新的完整路径
@@ -463,7 +474,6 @@ End Function
 Sub SW_Start()
     mSW = timeGetTime
 End Sub
-
 ' 获取计时时间
 ''' @return:Double(Unit:s)
 Function SW_GetTime#()
@@ -480,15 +490,12 @@ Public Function GetInput(msg) As String
         GetInput = UserInput
     End If
 End Function
-
-
 ' 检查字符串中是否包含指定关键字
 ' 忽略大小写进行检查
 Public Function ExistsKey(ByVal Txt As String, ByVal Key As String) As Boolean
     ExistsKey = IIf(InStr(LCase(Txt), LCase(Key)) > 0, True, False)
 End Function
 '@@ param:ostr-时间格式
-
 Public Function timestamp(Optional ByVal ostr) As String
     Dim FT As String  ' 显式声明变量
     Select Case True
@@ -680,16 +687,14 @@ Sub openpath(ByVal strPath As String)
     If Len(strPath) > 3 And Right(strPath, 1) = "\" Then
         strPath = Left(strPath, Len(strPath) - 1)
     End If
-    
     If Not (FSO.FileExists(strPath) Or FSO.FolderExists(strPath)) Then
         MsgBox "路径不存在: " & strPath, vbExclamation
         Exit Sub
     End If
-    
-    ' 尝试激活已存在的窗口
-    If Not ActivateExistingWindow(strPath) Then
-        ' 未找到已存在窗口，执行新打开操作
-        If FSO.FileExists(strPath) Then
+
+    If Not ActivateExistingWindow(strPath) Then     ' 尝试激活已存在的窗口
+       
+        If FSO.FileExists(strPath) Then  ' 未找到已存在窗口，执行新打开操作
             OpenFileLocation strPath
         ElseIf FSO.FolderExists(strPath) Then
             openDir strPath
@@ -702,13 +707,14 @@ Function ActivateExistingWindow(ByVal strPath As String) As Boolean
     On Error GoTo ErrorHandler
     Dim shellApp As Object, window As Object
     Set shellApp = getshell
-   
     For Each window In shellApp.Windows   ' 遍历所有资源管理器窗口
         On Error Resume Next
         If InStr(UCase(window.FullName), "EXPLORER.EXE") > 0 Then   ' 检查是否为资源管理器窗口
             Dim windowPath As String
             windowPath = window.Document.folder.Self.path      ' 获取窗口路径并比较（不区分大小写）
             If LCase(windowPath) = LCase(strPath) Then
+'
+'            Shell("C:\WINDOWS\CALC.EXE", 1)
                 window.Visible = True    ' 激活已存在的窗口
                 AppActivate window.hwnd
                 ActivateExistingWindow = True
@@ -729,7 +735,7 @@ Sub openDir(ByVal strPath As String)
     If InStr(strPath, " ") > 0 Then      ' 处理包含空格的路径
         strPath = """" & strPath & """"
     End If
-    shell "explorer.exe " & strPath, vbNormalFocus
+    shell "explorer.exe " & strPath, vbMaximizedFocus
     Exit Sub
 ErrorHandler:
     MsgBox "无法打开路径: " & strPath & vbCrLf & "错误: " & Err.Description, vbExclamation
@@ -739,7 +745,7 @@ End Sub
 Sub OpenFileLocation(ByVal strFilePath As String)
     On Error GoTo ErrorHandler
     strFilePath = """" & strFilePath & """"  ' 确保文件路径被引号包围
-    shell "explorer.exe /select," & strFilePath, vbNormalFocus
+    shell "explorer.exe /select," & strFilePath, vbMaximizedFocus
     Exit Sub
 ErrorHandler:
     MsgBox "无法打开文件位置: " & strFilePath & vbCrLf & "错误: " & Err.Description, vbExclamation
