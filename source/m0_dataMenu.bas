@@ -37,6 +37,10 @@ Private Const TAG_MDLNAME = "mdl_name"      ' 模块名称标签
 ' 菜单入口点
 Sub CATMain()
     Set PageMap = Get_KeyValue(groupName, True)  '获取page编号和名称对应map  ：1  R&W 2...
+    
+    
+        showdict PageMap
+    
     Dim ButtonInfos As Object
     Set ButtonInfos = Get_ButtonInfo() '获取所有的具有可执行按钮的模块信息dic
     If ButtonInfos Is Nothing Then
@@ -73,7 +77,7 @@ Private Function Get_ButtonInfo() As Object
     If AllComps Is Nothing Then Exit Function
     
     Dim comp As Object 'VBComponent
-    Dim Mdl As Object 'CodeModule
+    Dim mdl As Object 'CodeModule
     Dim DecCode As String
     Dim DecCnt As Long
     Dim MdlInfo As Object
@@ -82,10 +86,10 @@ Private Function Get_ButtonInfo() As Object
     Dim BtnInfos As Object: Set BtnInfos = KCL.InitLst()
     
     For Each comp In AllComps
-        Set Mdl = comp.CodeModule
-        DecCnt = Mdl.CountOfDeclarationLines ' 获取声明行数
+        Set mdl = comp.codemodule
+        DecCnt = mdl.CountOfDeclarationLines ' 获取声明行数
         If DecCnt < 1 Then GoTo continue
-        DecCode = Mdl.Lines(1, DecCnt) ' 获取声明代码
+        DecCode = mdl.Lines(1, DecCnt) ' 获取声明代码
         Set MdlInfo = Get_KeyValue(DecCode) ' 将声明与page pair对比，获取配置信息
         If MdlInfo Is Nothing Then GoTo continue
         If Not MdlInfo.Exists(TAG_GROUP) Then GoTo continue ' 检查分组信息
@@ -99,7 +103,7 @@ Private Function Get_ButtonInfo() As Object
         ' 检查入口点方法
         CanExecMethod = vbNullString
         If MdlInfo.Exists(TAG_ENTRYPNT) Then  '若module声明包含EP即函数入口则
-            If Exist_Method(Mdl, MdlInfo(TAG_ENTRYPNT)) Then   '，检查是否有入口函数，MdlInfo(TAG_ENTRYPNT)是获取对应ep的函数名字
+            If Exist_Method(mdl, MdlInfo(TAG_ENTRYPNT)) Then   '，检查是否有入口函数，MdlInfo(TAG_ENTRYPNT)是获取对应ep的函数名字
                 CanExecMethod = MdlInfo(TAG_ENTRYPNT) '获取可执行函数名
             Else
                 GoTo Try_TAG_ENTRY_DEF
@@ -107,7 +111,7 @@ Private Function Get_ButtonInfo() As Object
         Else
         
 Try_TAG_ENTRY_DEF:
-            If Exist_Method(Mdl, TAG_ENTRY_DEF) Then
+            If Exist_Method(mdl, TAG_ENTRY_DEF) Then
                  CanExecMethod = TAG_ENTRY_DEF
             End If
             
@@ -116,8 +120,7 @@ Try_TAG_ENTRY_DEF:
         If CanExecMethod = vbNullString Then GoTo continue
         Set MdlInfo = Push_Dic(MdlInfo, TAG_ENTRYPNT, CanExecMethod)
         Set MdlInfo = Push_Dic(MdlInfo, TAG_PJTPATH, PjtPath) '字典存储项目路径
-        Set MdlInfo = Push_Dic(MdlInfo, TAG_MDLNAME, Mdl.Name) '字典存储模块名称
-        
+        Set MdlInfo = Push_Dic(MdlInfo, TAG_MDLNAME, mdl.Name) '字典存储模块名称
         
         '一个具有可执行按钮的模块的例子
         ' MlInfo
@@ -130,14 +133,19 @@ Try_TAG_ENTRY_DEF:
         ' Item 5 “背景颜色
         ' Item 6 "pjt_path"
         ' Item 7 "mdl_name”
-     
         
         BtnInfos.Add MdlInfo
+        
+        
+        
+    Debug.Print showdict(MdlInfo)
+        
+        
+        
 continue:
     Next
     If BtnInfos.count < 1 Then Exit Function
     Set Get_ButtonInfo = BtnInfos  '获取所有的具有可执行按钮的模块信息dic
-    
     
 End Function
 ' 向字典中添加或更新键值对
@@ -157,7 +165,7 @@ End Function
 ' 参数  : str,Opt_bool
 ' 返回值: Dict
 Private Function Get_KeyValue( _
-                    ByVal Txt As String, _
+                    ByVal txt As String, _
                     Optional ByVal KeyToLong As Boolean = False) _
                     As Object
     Set Get_KeyValue = Nothing
@@ -168,18 +176,18 @@ Private Function Get_KeyValue( _
         .Global = True
     End With
     
-    Dim Matches As Object
-    Set Matches = Reg.Execute(Txt)
+    Dim matches As Object
+    Set matches = Reg.Execute(txt)
     Set Reg = Nothing
     
-    If Matches.count < 1 Then Exit Function
+    If matches.count < 1 Then Exit Function
     
     Dim Dic As Object: Set Dic = KCL.InitDic(vbTextCompare)
-    Dim Match As Object, SubMatchs As Object
+    Dim match As Object, SubMatchs As Object
     Dim Key As Variant, Var As Variant
     
-    For Each Match In Matches
-        Set SubMatchs = Match.SubMatches
+    For Each match In matches
+        Set SubMatchs = match.SubMatches
         If SubMatchs.count < 2 Then GoTo continue
         ' ==  获取编号
         Key = Trim(Replace(SubMatchs(0), """", "")) 'trim 取消前后空格， replace 删除中间空格
@@ -193,7 +201,11 @@ continue:
     Next
     
     If Dic.count < 1 Then Exit Function
+    
     Set Get_KeyValue = Dic
+    
+
+    
 End Function
 ' 将按钮信息按分组排序
 ' 参数  :lst(Dict)

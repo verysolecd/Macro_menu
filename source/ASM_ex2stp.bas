@@ -6,6 +6,14 @@ Attribute VB_Name = "ASM_ex2stp"
 '{Caption:导出stp}
 '{ControlTipText: 一键导出stp并压缩到指定路径或本身目录}
 '{BackColor:}
+
+
+'{imsg:}
+
+
+
+
+
 ' 定义模块级变量
 Private ErrorMessage As String
 Private zippath

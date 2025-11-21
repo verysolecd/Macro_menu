@@ -108,8 +108,6 @@ Private Sub mBtn_Click()
 '                    CATBSTR iFunctionName,
 '                    CATSafeArrayVariant iParameters) As CATVariant
                           
-                          
-                          
 End Sub
 ' 按钮点击事件处理
 'Private Sub mBtn_Click()

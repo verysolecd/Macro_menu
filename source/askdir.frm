@@ -31,9 +31,9 @@ Private WithEvents cmdOK As MSForms.CommandButton
 Attribute cmdOK.VB_VarHelpID = -1
 Private WithEvents cmdCancel As MSForms.CommandButton
 Attribute cmdCancel.VB_VarHelpID = -1
-Private WithEvents txt_TM As MSForms.textbox
+Private WithEvents txt_TM As MSForms.TextBox
 Attribute txt_TM.VB_VarHelpID = -1
-Private WithEvents txt_log As MSForms.textbox
+Private WithEvents txt_log As MSForms.TextBox
 Attribute txt_log.VB_VarHelpID = -1
 Private WithEvents chk_log As MSForms.CheckBox
 Attribute chk_log.VB_VarHelpID = -1
@@ -48,10 +48,9 @@ Private Sub UserForm_Initialize()
     Me.Width = 280
     Me.Height = 200
     Me.StartUpPosition = 1
-    Call initFrm
+    initFrmlog
 End Sub
 Sub initFrm()
-
 Dim thistop
     Set chk_Path = Me.controls.Add("Forms.CheckBox.1")
            With chk_Path
@@ -76,7 +75,7 @@ Dim thistop
             .top = thistop: .Height = 20
               thistop = .top + .Height + itemgap
         End With
-     Set class_ctrl.Txt = txt_TM
+     Set class_ctrl.txt = txt_TM
         class_ctrl.ohint = "日=d或day，时=hour或h，分=min或i，默认日"
         txt_TM.Text = class_ctrl.ohint
         txt_TM.ForeColor = &H808080
@@ -113,6 +112,35 @@ Dim thistop
             .top = cmdOK.top: .Height = 24
             .Cancel = True ' Allows Esc key to trigger this button
         End With
+End Sub
+
+Sub initFrmlog()
+
+Set txt_log = Me.controls.Add("Forms.TextBox.1", "txt_log", True)
+     With txt_log
+         .Name = "txt_log"
+         .Left = fmargin + 12: .Width = txtWidth
+            .top = fmargin:     .Height = 20
+            thistop = .top + .Height + itemgap
+     End With
+'        Debug.Print "log已经创建"
+
+ Set cmdOK = Me.controls.Add("Forms.CommandButton.1")
+     With cmdOK
+         .Name = "cmdOK":    .Caption = "确定"
+         .Left = (Me.InsideWidth - (80 * 2) - itemgap) / 2:     .Width = 60
+         .top = thistop:     .Height = 24
+         thistop = .top + .Height + itemgap
+     End With
+ Set cmdCancel = Me.controls.Add("Forms.CommandButton.1")
+     With cmdCancel
+         .Name = "cmdCancel": .Caption = "取消"
+         .Left = cmdOK.Left + cmdOK.Width + itemgap: .Width = 60
+         .top = cmdOK.top: .Height = 24
+         .Cancel = True ' Allows Esc key to trigger this button
+     End With
+
+
 End Sub
 Private Sub chk_TM_Click()
     txt_TM.Enabled = chk_TM.value
@@ -168,3 +196,11 @@ Private Sub Set_Form(ByVal MPgs As MultiPage, ByVal Cap As String)
         .Caption = Cap
     End With
 End Sub
+
+
+
+
+
+
+
+

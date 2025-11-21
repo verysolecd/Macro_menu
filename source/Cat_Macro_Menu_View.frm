@@ -59,14 +59,12 @@ Sub Set_FormInfo(ByVal InfoLst As Object, _
     Set MPgs = Me.controls.Add("Forms.MultiPage.1", "MPgs", True) ' 创建多页控件
     Dim Pgs As Pages
      Set Pgs = MPgs.Pages
-    Pgs.Clear
+     Pgs.Clear
     
-    Dim Key As Long, KeyStr As Variant
-    Dim Pg As Page, pName As String
+    Dim Key As Long, KeyStr As Variant:     Dim Pg As Page, pName As String
+
     Dim BtnInfos As Object, info As Variant
-    
     Dim Btns As Object: Set Btns = KCL.InitLst()
-    
     Dim btn As MSForms.CommandButton
     
     Dim BtnEvt As Button_Evt
@@ -74,8 +72,11 @@ Sub Set_FormInfo(ByVal InfoLst As Object, _
     For Each KeyStr In InfoLst
         Key = CLng(KeyStr)
         If Not PageMap.Exists(Key) Then GoTo continue
+        
         pName = PageMap(Key)
+        
         Set Pg = Get_Page(Pgs, pName)
+        
         Set BtnInfos = InfoLst(KeyStr)
         
         For Each info In BtnInfos
@@ -179,13 +180,13 @@ Private Function Init_Button(ByVal Ctls As controls, _
     Set Init_Button = btn
 End Function
 ' 尝试设置控件属性
-Private Sub Try_SetProperty(ByVal Ctrl As Object, _
+Private Sub Try_SetProperty(ByVal ctrl As Object, _
                             ByVal PptyName As String, _
                             ByVal value As Variant)
     On Error Resume Next
         Err.Number = 0
         Dim tmp As Variant
-        tmp = CallByName(Ctrl, PptyName, VbGet)
+        tmp = CallByName(ctrl, PptyName, VbGet)
         If Not Err.Number = 0 Then
             Debug.Print PptyName & ": 获取属性失败(" & Err.Number & ")"
             Exit Sub
@@ -204,7 +205,7 @@ Private Sub Try_SetProperty(ByVal Ctrl As Object, _
             Debug.Print value & ": 类型转换失败(" & Err.Number & ")"
             Exit Sub
         End If
-        Call CallByName(Ctrl, PptyName, VbLet, value)
+        Call CallByName(ctrl, PptyName, VbLet, value)
         If Not Err.Number = 0 Then
             Debug.Print value & ": 设置属性失败(" & Err.Number & ")"
             Exit Sub

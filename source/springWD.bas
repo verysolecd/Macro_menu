@@ -1,6 +1,6 @@
 Attribute VB_Name = "springWD"
 ' 类模块：clsControlConfig（简化版）
-Public ControlType As String ' 控件类型：Label/CommandButton/TextBox/OptionButton/CheckBox
+Public controlType As String ' 控件类型：Label/CommandButton/TextBox/OptionButton/CheckBox
 Public Name As String ' 唯一名称
 Public Caption As String ' 显示文本
 Public DefaultValue As Variant ' 默认值（输入/选择类）
@@ -71,7 +71,7 @@ End Sub
 ' 创建单个控件（使用默认尺寸和固定左对齐）
 Private Function CreateControl(frm As Object, cfg As clsControlConfig, top As Integer) As Object
     Dim ctl As Object
-    Select Case cfg.ControlType
+    Select Case cfg.controlType
         Case "Label"
             Set ctl = frm.controls.Add("Forms.Label.1", cfg.Name)
             With ctl
@@ -163,14 +163,14 @@ Sub TestSimpleForm()
     
     ' 1. 标题标签
     Set ctl = New clsControlConfig
-    ctl.ControlType = "Label"
+    ctl.controlType = "Label"
     ctl.Name = "lblTitle"
     ctl.Caption = "简单信息采集"
     controls.Add ctl
     
     ' 2. 单选框
     Set ctl = New clsControlConfig
-    ctl.ControlType = "OptionButton"
+    ctl.controlType = "OptionButton"
     ctl.Name = "opt1"
     ctl.Caption = "选项A"
     ctl.DefaultValue = "选项A"
@@ -178,7 +178,7 @@ Sub TestSimpleForm()
     
     ' 3. 输入框
     Set ctl = New clsControlConfig
-    ctl.ControlType = "TextBox"
+    ctl.controlType = "TextBox"
     ctl.Name = "txtInput"
     ctl.Caption = "（无需用到，文本框靠DefaultValue显示提示）"
     ctl.DefaultValue = "请输入内容"
@@ -186,7 +186,7 @@ Sub TestSimpleForm()
     
     ' 4. 按钮
     Set ctl = New clsControlConfig
-    ctl.ControlType = "CommandButton"
+    ctl.controlType = "CommandButton"
     ctl.Name = "btnOK"
     ctl.Caption = "确定"
     controls.Add ctl

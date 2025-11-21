@@ -453,9 +453,9 @@ End Function
 ' 写入文件
 ''' @param:Path-完整路径
 ''' @param:Txt-String
-Sub WriteFile(ByVal path$, ByVal Txt) '$)
+Sub WriteFile(ByVal path$, ByVal txt) '$)
     On Error Resume Next
-        Call GetFso.OpenTextFile(path, 2, True).Write(Txt)
+        Call GetFso.OpenTextFile(path, 2, True).Write(txt)
     On Error GoTo 0
 End Sub
 ' 读取文件
@@ -492,8 +492,8 @@ Public Function GetInput(msg) As String
 End Function
 ' 检查字符串中是否包含指定关键字
 ' 忽略大小写进行检查
-Public Function ExistsKey(ByVal Txt As String, ByVal Key As String) As Boolean
-    ExistsKey = IIf(InStr(LCase(Txt), LCase(Key)) > 0, True, False)
+Public Function ExistsKey(ByVal txt As String, ByVal Key As String) As Boolean
+    ExistsKey = IIf(InStr(LCase(txt), LCase(Key)) > 0, True, False)
 End Function
 '@@ param:ostr-时间格式
 Public Function timestamp(Optional ByVal ostr) As String
@@ -761,6 +761,56 @@ Sub OpenMultiple(ParamArray Paths() As Variant)
 End Sub
 
 
+' 从字符串中提取配置信息 - 键转换为长整型
+' 参数  : str,Opt_bool
+' 返回值: Dict
+Public Function getInfo_asDic( _
+                    ByVal txt As String, _
+                    ByVal regPtn As String, _
+                    Optional ByVal KeyToLong As Boolean = False) _
+                    As Object
+    Set getInfo_asDic = Nothing
+    Dim Reg As Object
+    Set Reg = CreateObject("VBScript.RegExp")
+    With Reg
+        .Pattern = regPtn  'TAG_S & "(.*?)" & TAG_D & "(.*?)" & TAG_E
+        .Global = True
+    End With
+    Dim matches As Object
+    Set matches = Reg.Execute(txt)
+    Set Reg = Nothing
+    If matches.count < 1 Then Exit Function
+    Dim Dic As Object: Set Dic = KCL.InitDic(vbTextCompare)
+    Dim match As Object, SubMatchs As Object
+    Dim Key As Variant, Var As Variant
+    
+    For Each match In matches
+        Set SubMatchs = match.SubMatches
+        If SubMatchs.count < 2 Then GoTo continue
+        ' ==  获取编号
+        Key = Trim(Replace(SubMatchs(0), """", "")) 'trim 取消前后空格， replace 删除中间空格
+        
+        If Len(Key) < 1 Then GoTo continue  '若key为空进入下一个循环
+        
+        If KeyToLong Then Key = CLng(Key)  'Clng转换为long类型
+            ' ==  获取编号对应page
+            Var = Trim(Replace(SubMatchs(1), """", ""))  'trim 取消前后空格， replace 删除中间空格
+        If Len(Var) < 1 Then GoTo continue
+        Set Dic = Push_Dic(Dic, Key, Var)
+continue:
+    Next
+    If Dic.count < 1 Then Exit Function
+    Set getInfo_asDic = Dic
 
-
+End Function
+Public Function Push_Dic(ByVal Dic As Object, _
+                          ByVal Key As Variant, _
+                          ByVal item As Variant) As Object
+    If Dic.Exists(Key) Then
+        Dic(Key) = item
+    Else
+        Dic.Add Key, item
+    End If
+    Set Push_Dic = Dic
+End Function
 

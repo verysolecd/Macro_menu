@@ -110,7 +110,7 @@ Private Function get_fanction_names( _
     Set lst = New collection
     Dim buf As String
     Dim i As Long
-    With comp.CodeModule
+    With comp.codemodule
         For i = 1 To .CountOfLines
             If buf <> .ProcOfLine(i, 0) Then
                 buf = .ProcOfLine(i, 0)
@@ -173,17 +173,17 @@ End Function
 '获取组件除去注释部分的字符数
 'param: vbComp-目标组件
 Private Function GetValidCharacterCount( _
-        ByVal vbComp As Object) As Long
-    Dim codeMod As Object ' CodeModule
+        ByVal VBComp As Object) As Long
+    Dim CodeMod As Object ' CodeModule
     Dim totalChars As Long
     Dim i As Long
     Dim codeLine As String
     ' 获取CodeModule对象
-    Set codeMod = vbComp.CodeModule
+    Set CodeMod = VBComp.codemodule
     totalChars = 0
     ' 检查每行并排除注释
-    For i = 1 To codeMod.CountOfLines
-        codeLine = Trim(codeMod.Lines(i, 1))
+    For i = 1 To CodeMod.CountOfLines
+        codeLine = Trim(CodeMod.Lines(i, 1))
         If Left(codeLine, 1) <> "'" Then
             totalChars = totalChars + Len(codeLine)
         End If

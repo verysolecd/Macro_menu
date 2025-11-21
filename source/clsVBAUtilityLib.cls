@@ -37,9 +37,9 @@ End Function
 'param:string
 'return:
 Sub Dump( _
-        ByVal Txt As String)
+        ByVal txt As String)
     If Not m_DebugMode Then Exit Sub
-    Debug.Print Txt
+    Debug.Print txt
 End Sub
 '变量的输出调试
 'param: v-变量
@@ -47,9 +47,9 @@ End Sub
 'return:
 Sub DumpV( _
         ByVal X As Variant, _
-        Optional ByVal Txt As String = "")
+        Optional ByVal txt As String = "")
     If Not m_DebugMode Then Exit Sub
-    Debug.Print Txt & DumpVariable(X)
+    Debug.Print txt & DumpVariable(X)
 End Sub
 ''' @param x As Variant
 ''' @return As String
@@ -656,13 +656,13 @@ End Function
 'param:IsAppending(opt)-追加时为True
 Sub WriteFile( _
         ByVal path As String, _
-        ByVal Txt As String, _
+        ByVal txt As String, _
         Optional ByVal IsAppending = False)
     Dim iIoMode As Integer
     iIoMode = IIf(IsAppending, 8, 2)
     With GetFso().OpenTextFile(path, iIoMode, True)
         On Error Resume Next
-        .Write Txt
+        .Write txt
         If Not Err.Number = 0 Then
             .Write "*** Write Errar ***"
         End If
