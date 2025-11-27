@@ -112,3 +112,20 @@ End Sub
 Private Sub UserForm_Click()
 
 End Sub
+ Call AttachEventToControl(ctr)
+        
+
+
+' **【重要修改】**
+' 这个新的私有 Sub 专门用于将控件与事件监听类绑定
+Private Sub AttachEventToControl(ctrl As MSForms.Control)
+    Dim objEventListener As clsControlEvents
+    
+    ' 只对 CommandButton 和 CheckBox 绑定事件
+    If TypeName(ctrl) = "CommandButton" Or TypeName(ctrl) = "CheckBox" Then
+        Set objEventListener = New clsControlEvents
+        Set objEventListener.Control = ctrl
+        ' 将类实例存入集合，以保持其引用
+        m_colEventListeners.Add objEventListener
+    End If
+End Sub
