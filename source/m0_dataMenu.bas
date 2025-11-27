@@ -37,8 +37,7 @@ Private Const TAG_MDLNAME = "mdl_name"      ' 模块名称标签
 ' 菜单入口点
 Sub CATMain()
     Set PageMap = Get_KeyValue(groupName, True)  '获取page编号和名称对应map  ：1  R&W 2...
-    
-    
+   
         showdict PageMap
     
     Dim ButtonInfos As Object

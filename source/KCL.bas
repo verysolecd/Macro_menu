@@ -41,7 +41,7 @@ Function CanExecute(ByVal docTypes As Variant) As Boolean
     End If
     If VarType(docTypes) = vbString Then
       docTypes = LCase(docTypes)
-    docTypes = Split(docTypes, ",") '过滤器转数组
+        docTypes = Split(docTypes, ",") '过滤器转数组
     End If
     If Not checkFilterType(docTypes) Then Exit Function '过滤器检查，非数组则退出
     Dim ErrMsg As String
@@ -56,7 +56,7 @@ Function checkDocType(ByVal docTypes As Variant)
     
     
     If VarType(docTypes) = vbString Then
-      
+         docTypes = LCase(docTypes)
         docTypes = Split(docTypes, ",") '过滤器转数组
     End If
     If Not checkFilterType(docTypes) Then Exit Function '过滤器检查，非数组则退出
@@ -814,3 +814,26 @@ Public Function Push_Dic(ByVal Dic As Object, _
     Set Push_Dic = Dic
 End Function
 
+Public Function showdict(ByVal oDic, Optional ByVal boolShowKeyIndex As Boolean = False)
+  Dim keys:   keys = oDic.keys
+  Dim i As Long
+  Dim stIndex As String
+  Dim stOutput As String
+  stOutput = vbNullString
+  
+  For i = 0 To oDic.count - 1
+    If boolShowKeyIndex Then
+      stIndex = "(" & i & ")"
+    End If
+    stOutput = stOutput & keys(i) & stIndex & "  :  "
+    If IsObject(oDic(keys(i))) Then
+      stOutput = stOutput & "[" & showdict(oDic(keys(i)), boolShowKeyIndex) & "]"
+    Else
+      stOutput = stOutput & oDic(keys(i))
+    End If
+    stOutput = stOutput & "; " & "_" & vbNewLine
+  Next i
+  showdict = stOutput
+  
+  Debug.Print showdict
+End Function

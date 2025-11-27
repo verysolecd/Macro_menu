@@ -14,18 +14,9 @@ Public Sub init(wbInstance)
 End Sub
 Private Sub pWb_BeforeClose(Cancel As Boolean)
     ' 清除实例并释放对象
-  
-    
-  
     Set gws = Nothing
     Set gwb = Nothing
      DoEvents
-   
    Set xlAPP = Nothing
- 
-
-   
     Exit Sub
-    
-
 End Sub

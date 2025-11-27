@@ -1,6 +1,6 @@
 Attribute VB_Name = "OTH_Flower"
 'Attribute VB_Name = "OTH_flower"
-'{GP:6}
+'{GP:4446}
 '{Ep:DF}
 '{Caption:天杀的小花}
 '{ControlTipText: 可以画一些花出来}

@@ -48,7 +48,7 @@ Private Sub UserForm_Initialize()
     Me.Width = 280
     Me.Height = 200
     Me.StartUpPosition = 1
-    initFrmlog
+    initFrm
 End Sub
 Sub initFrm()
 Dim thistop
@@ -75,6 +75,7 @@ Dim thistop
             .top = thistop: .Height = 20
               thistop = .top + .Height + itemgap
         End With
+        
      Set class_ctrl.txt = txt_TM
         class_ctrl.ohint = "日=d或day，时=hour或h，分=min或i，默认日"
         txt_TM.Text = class_ctrl.ohint

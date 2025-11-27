@@ -26,6 +26,8 @@ Private Const Fdis = 0.9
 Private thisdir
 
 Sub Capturetopath()
+
+If Not KCL.CanExecute("ProductDocument") Then Exit Sub
     On Error Resume Next
      CATIA.StartCommand ("* iso")
       Dim btn, bTitle, bResult

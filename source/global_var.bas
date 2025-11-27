@@ -32,26 +32,4 @@ End Sub
 'Case 2  '===Ñ¡Ôñ¡°È¡Ïû¡±====
 
 
-Public Function showdict(ByVal oDic, Optional ByVal boolShowKeyIndex As Boolean = False)
-  Dim keys:   keys = oDic.keys
-  Dim i As Long
-  Dim stIndex As String
-  Dim stOutput As String
-  stOutput = vbNullString
-  
-  For i = 0 To oDic.count - 1
-    If boolShowKeyIndex Then
-      stIndex = "(" & i & ")"
-    End If
-    stOutput = stOutput & keys(i) & stIndex & "  :  "
-    If IsObject(oDic(keys(i))) Then
-      stOutput = stOutput & "[" & showdict(oDic(keys(i)), boolShowKeyIndex) & "]"
-    Else
-      stOutput = stOutput & oDic(keys(i))
-    End If
-    stOutput = stOutput & "; " & "_" & vbNewLine
-  Next i
-  showdict = stOutput
-  
-  Debug.Print showdict
-End Function
+
