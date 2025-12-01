@@ -6,7 +6,7 @@ End Sub
 Sub rm(oprd)
     On Error Resume Next
      Set refPrd = oprd.ReferenceProduct
-     Set oprt = refPrd.Parent.part
+     Set oPrt = refPrd.Parent.part
     Set colls = refPrd.Publications
     colls.Remove ("Location")
     colls.Remove ("iMass")
@@ -15,10 +15,10 @@ Sub rm(oprd)
     colls.Remove ("iMaterial")
      Set colls = refPrd.Parent.part.Parameters.RootParameterSet.ParameterSets
         Set cm = colls.GetItem("cm")
-        Set oSel = CATIA.ActiveDocument.Selection
-        oSel.Clear
-        oSel.Add cm
-        oSel.Delete
+        Set osel = CATIA.ActiveDocument.Selection
+        osel.Clear
+        osel.Add cm
+        osel.Delete
                 
      Set colls = refPrd.Parent.part.relations
      colls.Remove ("CalM")

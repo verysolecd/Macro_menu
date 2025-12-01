@@ -503,18 +503,18 @@ Private Sub cleanUp_userdata()
     Dim dirPath As String
     Dim Key As Variant 'String
     For Each Key In mUserDict.keys()
-        If Key = "ver" Then GoTo continue
+        If Key = "ver" Then GoTo Continue
         filePath = Replace(Key, SEPARATOR, "\")
         If Not FSO.FileExists(filePath) Then
             removeLst.Add Key
-            GoTo continue
+            GoTo Continue
         End If
         dirPath = mUserDict(Key)("path")
         If Not FSO.FolderExists(dirPath) Then
             removeLst.Add Key
-            GoTo continue
+            GoTo Continue
         End If
-continue:
+Continue:
     Next
     For Each Key In removeLst
         mUserDict.Remove Key

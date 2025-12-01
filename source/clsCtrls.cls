@@ -8,15 +8,14 @@ Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
 
-Option Explicit
-
 ' 声明一个 WithEvents 变量，用于监听控件的事件
 ' 使用 MSForms.Control 可以监听不同类型控件的共同事件，如 Click
-Private WithEvents m_ctrl As MSForms.Control
-Attribute m_ctrl.VB_VarHelpID = -1
+
 
 Public WithEvents txt As MSForms.TextBox
 Attribute txt.VB_VarHelpID = -1
+Private WithEvents m_ctrl As MSForms.Control
+Attribute m_ctrl.VB_VarHelpID = -1
 Public ohint As String
 
 Public Caption As String ' 显示文本
@@ -24,8 +23,13 @@ Public DefaultValue As Variant ' 默认值（输入/选择类）
 Public MultiLine As Boolean ' 文本框是否多行（仅TextBox用）
 Private mform
 
+Option Explicit
+
 ' 这个属性用于将动态创建的控件传递给类实例
 Public Property Set Control(objCtrl As MSForms.Control)
+    Set m_ctrl = objCtrl
+End Property
+Public Property Get Control(objCtrl As MSForms.Control)
     Set m_ctrl = objCtrl
 End Property
 

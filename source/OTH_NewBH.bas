@@ -58,12 +58,12 @@ Sub CATMain()
         '===新增component
      ' Set product4 = products1.AddNewProduct("")
     ' 新增产品= oprd.products.AddNewComponent("Part", "")
-    Dim oSel
-    Set oSel = CATIA.ActiveDocument.Selection
-    oSel.Clear
-    oSel.Add ref
-    oSel.Copy
-    oSel.Clear
+    Dim osel
+    Set osel = CATIA.ActiveDocument.Selection
+    osel.Clear
+    osel.Add ref
+    osel.Copy
+    osel.Clear
     Dim otp
     Set otp = CATIA.ActiveDocument.Selection
     otp.Clear

@@ -130,61 +130,61 @@ Sub CaptureMe(iprd, oFolder)
           thisdir = imgfilename
      End If
           
-    Dim oSel: Set oSel = CATIA.ActiveDocument.Selection
-    oSel.Clear
-    Dim VisPoSel: Set VisPoSel = oSel.VisProperties
+    Dim osel: Set osel = CATIA.ActiveDocument.Selection
+    osel.Clear
+    Dim VisPoSel: Set VisPoSel = osel.VisProperties
     Dim children, i
     Set children = iprd.Products
     
     For Each cPrd In children
-    oSel.Add cPrd
+    osel.Add cPrd
     Next
     VisPoSel.SetShow 1
-    oSel.Clear      ' 隐藏所有子产品
+    osel.Clear      ' 隐藏所有子产品
     If children.count > 0 Then
                          For i = 1 To children.count     ' 递归处理每个子产品
-                              oSel.Add children.item(i)
+                              osel.Add children.item(i)
                               VisPoSel.SetShow 0
-                              oSel.Clear '显示当前子产品
+                              osel.Clear '显示当前子产品
                         
                         Call CaptureMe(children.item(i), oFolder)
                         
-                        oSel.Add children.item(i) ' 隐藏当前子产品
+                        osel.Add children.item(i) ' 隐藏当前子产品
                         VisPoSel.SetShow 1
-                        oSel.Clear
+                        osel.Clear
                     Next
    End If
    
      For Each cPrd In children ' 重新显示每个子产品
-       oSel.Add cPrd
+       osel.Add cPrd
      Next
        VisPoSel.SetShow 0
-       oSel.Clear
+       osel.Clear
        
 End Sub
 Sub HideNonBody(iDoc, catVisPropertyNoShowAttr As Integer)
      On Error Resume Next
-     Dim oSel As Selection
-     Set oSel = iDoc.Selection
-     oSel.Clear
-     oSel.Search "(((CATStFreeStyleSearch.Plane + CATPrtSearch.Plane) + CATGmoSearch.Plane) + CATSpdSearch.Plane),all"
-     oSel.VisProperties.SetShow catVisPropertyNoShowAttr
-     oSel.Clear
-     oSel.Search "(((CATStFreeStyleSearch.AxisSystem + CATPrtSearch.AxisSystem) + CATGmoSearch.AxisSystem) + CATSpdSearch.AxisSystem),all"
-     oSel.VisProperties.SetShow catVisPropertyNoShowAttr
-     oSel.Clear
-     oSel.Search "((((((CATStFreeStyleSearch.Point + CAT2DLSearch.2DPoint) + CATSketchSearch.2DPoint) + CATDrwSearch.2DPoint) + CATPrtSearch.Point) + CATGmoSearch.Point) + CATSpdSearch.Point),all"
-     oSel.VisProperties.SetShow catVisPropertyNoShowAttr
-     oSel.Clear
-     oSel.Search "((((((CATStFreeStyleSearch.Curve + CAT2DLSearch.2DCurve) + CATSketchSearch.2DCurve) + CATDrwSearch.2DCurve) + CATPrtSearch.Curve) + CATGmoSearch.Curve) + CATSpdSearch.Curve),all"
-     oSel.VisProperties.SetShow catVisPropertyNoShowAttr
-     oSel.Clear
-     oSel.Search "(((CATStFreeStyleSearch.Surface + CATPrtSearch.Surface) + CATGmoSearch.Surface) + CATSpdSearch.Surface),all"
-     oSel.VisProperties.SetShow catVisPropertyNoShowAttr
-     oSel.Clear
-     oSel.Search "(((((((CATProductSearch.MfConstraint + CATStFreeStyleSearch.MfConstraint) + CATAsmSearch.MfConstraint) + CAT2DLSearch.MfConstraint) + CATSketchSearch.MfConstraint) + CATDrwSearch.MfConstraint) + CATPrtSearch.MfConstraint) + CATSpdSearch.MfConstraint),all"
-     oSel.VisProperties.SetShow catVisPropertyNoShowAttr
-     oSel.Clear
+     Dim osel As Selection
+     Set osel = iDoc.Selection
+     osel.Clear
+     osel.Search "(((CATStFreeStyleSearch.Plane + CATPrtSearch.Plane) + CATGmoSearch.Plane) + CATSpdSearch.Plane),all"
+     osel.VisProperties.SetShow catVisPropertyNoShowAttr
+     osel.Clear
+     osel.Search "(((CATStFreeStyleSearch.AxisSystem + CATPrtSearch.AxisSystem) + CATGmoSearch.AxisSystem) + CATSpdSearch.AxisSystem),all"
+     osel.VisProperties.SetShow catVisPropertyNoShowAttr
+     osel.Clear
+     osel.Search "((((((CATStFreeStyleSearch.Point + CAT2DLSearch.2DPoint) + CATSketchSearch.2DPoint) + CATDrwSearch.2DPoint) + CATPrtSearch.Point) + CATGmoSearch.Point) + CATSpdSearch.Point),all"
+     osel.VisProperties.SetShow catVisPropertyNoShowAttr
+     osel.Clear
+     osel.Search "((((((CATStFreeStyleSearch.Curve + CAT2DLSearch.2DCurve) + CATSketchSearch.2DCurve) + CATDrwSearch.2DCurve) + CATPrtSearch.Curve) + CATGmoSearch.Curve) + CATSpdSearch.Curve),all"
+     osel.VisProperties.SetShow catVisPropertyNoShowAttr
+     osel.Clear
+     osel.Search "(((CATStFreeStyleSearch.Surface + CATPrtSearch.Surface) + CATGmoSearch.Surface) + CATSpdSearch.Surface),all"
+     osel.VisProperties.SetShow catVisPropertyNoShowAttr
+     osel.Clear
+     osel.Search "(((((((CATProductSearch.MfConstraint + CATStFreeStyleSearch.MfConstraint) + CATAsmSearch.MfConstraint) + CAT2DLSearch.MfConstraint) + CATSketchSearch.MfConstraint) + CATDrwSearch.MfConstraint) + CATPrtSearch.MfConstraint) + CATSpdSearch.MfConstraint),all"
+     osel.VisProperties.SetShow catVisPropertyNoShowAttr
+     osel.Clear
      Err.Clear
      On Error GoTo 0
 End Sub

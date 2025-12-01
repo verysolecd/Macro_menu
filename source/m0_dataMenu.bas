@@ -87,18 +87,18 @@ Private Function Get_ButtonInfo() As Object
     For Each comp In AllComps
         Set mdl = comp.codemodule
         DecCnt = mdl.CountOfDeclarationLines ' 获取声明行数
-        If DecCnt < 1 Then GoTo continue
+        If DecCnt < 1 Then GoTo Continue
         DecCode = mdl.Lines(1, DecCnt) ' 获取声明代码
         Set MdlInfo = Get_KeyValue(DecCode) ' 将声明与page pair对比，获取配置信息
-        If MdlInfo Is Nothing Then GoTo continue
-        If Not MdlInfo.Exists(TAG_GROUP) Then GoTo continue ' 检查分组信息
+        If MdlInfo Is Nothing Then GoTo Continue
+        If Not MdlInfo.Exists(TAG_GROUP) Then GoTo Continue ' 检查分组信息
         If IsNumeric(MdlInfo(TAG_GROUP)) Then   '这里 MdlInfo(TAG_GROUP)是字典检查taggroup对应的值
             MdlInfo(TAG_GROUP) = CLng(MdlInfo(TAG_GROUP))
         Else
-            GoTo continue
+            GoTo Continue
         End If
 '            Debug.Print TypeName(MdlInfo(TAG_GROUP)) & " : " & MdlInfo(TAG_GROUP)
-        If Not PageMap.Exists(MdlInfo(TAG_GROUP)) Then GoTo continue '若mpages编号不包含该分组值则下一个
+        If Not PageMap.Exists(MdlInfo(TAG_GROUP)) Then GoTo Continue '若mpages编号不包含该分组值则下一个
         ' 检查入口点方法
         CanExecMethod = vbNullString
         If MdlInfo.Exists(TAG_ENTRYPNT) Then  '若module声明包含EP即函数入口则
@@ -116,7 +116,7 @@ Try_TAG_ENTRY_DEF:
             
         End If
         
-        If CanExecMethod = vbNullString Then GoTo continue
+        If CanExecMethod = vbNullString Then GoTo Continue
         Set MdlInfo = Push_Dic(MdlInfo, TAG_ENTRYPNT, CanExecMethod)
         Set MdlInfo = Push_Dic(MdlInfo, TAG_PJTPATH, PjtPath) '字典存储项目路径
         Set MdlInfo = Push_Dic(MdlInfo, TAG_MDLNAME, mdl.Name) '字典存储模块名称
@@ -141,7 +141,7 @@ Try_TAG_ENTRY_DEF:
         
         
         
-continue:
+Continue:
     Next
     If BtnInfos.count < 1 Then Exit Function
     Set Get_ButtonInfo = BtnInfos  '获取所有的具有可执行按钮的模块信息dic
@@ -187,16 +187,16 @@ Private Function Get_KeyValue( _
     
     For Each match In matches
         Set SubMatchs = match.SubMatches
-        If SubMatchs.count < 2 Then GoTo continue
+        If SubMatchs.count < 2 Then GoTo Continue
         ' ==  获取编号
         Key = Trim(Replace(SubMatchs(0), """", "")) 'trim 取消前后空格， replace 删除中间空格
-        If Len(Key) < 1 Then GoTo continue  '若key为空进入下一个循环
+        If Len(Key) < 1 Then GoTo Continue  '若key为空进入下一个循环
         If KeyToLong Then Key = CLng(Key)  'Clng转换为long类型
             ' ==  获取编号对应page
         Var = Trim(Replace(SubMatchs(1), """", ""))  'trim 取消前后空格， replace 删除中间空格
-        If Len(Var) < 1 Then GoTo continue
+        If Len(Var) < 1 Then GoTo Continue
         Set Dic = Push_Dic(Dic, Key, Var)
-continue:
+Continue:
     Next
     
     If Dic.count < 1 Then Exit Function
@@ -277,9 +277,9 @@ Private Function GetModuleLst(ByVal Itms As Object) As Object
     Dim lst As Object: Set lst = KCL.InitLst()
     Dim itm As Object
     For Each itm In Itms
-        If Not itm.Type = 1 Then GoTo continue 'vbext_ComponentType
+        If Not itm.Type = 1 Then GoTo Continue 'vbext_ComponentType
         lst.Add itm
-continue:
+Continue:
     Next
     If lst.count < 1 Then Exit Function
     Set GetModuleLst = lst

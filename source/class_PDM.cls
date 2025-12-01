@@ -19,7 +19,7 @@ Attribute VB_Exposed = False
 ' 对于零件发布谁？ usrp.mass part_info.thickness part_info.density usrp.material
 Option Explicit
 Public bigbom As Variant
-Private oSel
+Private osel
 Private imsg
 Private Att(1 To 10)
 Private Const xx = "测试成功"
@@ -40,7 +40,7 @@ Private Sub Class_Initialize()
         If Not rootprd Is Nothing Then
             rootprd.ApplyWorkMode (3)
         End If
-        Set oSel = CATIA.ActiveDocument.Selection: oSel.Clear
+        Set osel = CATIA.ActiveDocument.Selection: osel.Clear
 ErrorHandler:
     If Err.Number <> 0 Then
         Err.Clear
@@ -268,15 +268,15 @@ Public Sub initPrd(oprd)
     Next
     
     On Error Resume Next
-         Dim oprt
-         Set oprt = refPrd.Parent.part
+         Dim oPrt
+         Set oPrt = refPrd.Parent.part
         If Err.Number <> 0 Then
             Err.Clear
-            Set oprt = Nothing
+            Set oPrt = Nothing
         End If
     On Error GoTo 0
     
-    If Not oprt Is Nothing Then
+    If Not oPrt Is Nothing Then
         On Error Resume Next
                 Call iniPrt(oprd)
         On Error GoTo 0
@@ -300,7 +300,7 @@ Private Sub iniPrt(oprd)
     Dim refPrd, colls
     Dim i
     Set refPrd = oprd.ReferenceProduct
-    Dim oprt: Set oprt = refPrd.Parent.part
+    Dim oPrt: Set oPrt = refPrd.Parent.part
 
 '============创建usrp属性=================
         Dim NT As Variant
@@ -322,7 +322,7 @@ Private Sub iniPrt(oprd)
         Dim infoset
         Set infoset = New Class_para
         infoset.SetNT "Part_info", "ParameterSet"
-        Set colls = oprt.Parameters.RootParameterSet.ParameterSets
+        Set colls = oPrt.Parameters.RootParameterSet.ParameterSets
         checkPara infoset, colls
         Set colls = infoset.obj.DirectParameters
      '====创建part_info内参数====
@@ -330,8 +330,8 @@ Private Sub iniPrt(oprd)
         Set iBodys = New Class_para
         iBodys.SetNT "iBodys", "list"
         checkPara iBodys, colls
-        If getPara(oprt.mainbody, iBodys.obj.valuelist)(0) Is Nothing Then
-            iBodys.obj.valuelist.Add oprt.mainbody
+        If getPara(oPrt.mainbody, iBodys.obj.valuelist)(0) Is Nothing Then
+            iBodys.obj.valuelist.Add oPrt.mainbody
         End If
         
         Dim infoPara(0 To 3)
@@ -363,7 +363,7 @@ Private Sub iniPrt(oprd)
                 End If
            Next
     '创建所有relations
-            Set colls = oprt.relations
+            Set colls = oPrt.relations
             Dim oRule
             Set oRule = New Class_para
                    '---创建EKL
@@ -492,16 +492,16 @@ End Function
 
 Public Function catSelx(prompt As String) As collection
     Set catSelx = New collection
-    oSel.Clear
+    osel.Clear
     Dim iType(0)
     iType(0) = "Product"
-    If oSel.SelectElement3(iType, prompt, True, 2, True) = "Normal" Then
+    If osel.SelectElement3(iType, prompt, True, 2, True) = "Normal" Then
         Dim i As Integer
-        For i = 1 To oSel.count
-            catSelx.Add oSel.item(i).LeafProduct
+        For i = 1 To osel.count
+            catSelx.Add osel.item(i).LeafProduct
         Next
     End If
-    oSel.Clear
+    osel.Clear
 End Function
 Public Function getiPrd()    '获取要读取或修改的  全局变量 gPrd定义
   Dim oprd: Set oprd = Nothing

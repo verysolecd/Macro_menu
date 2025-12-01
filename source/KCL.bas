@@ -786,18 +786,18 @@ Public Function getInfo_asDic( _
     
     For Each match In matches
         Set SubMatchs = match.SubMatches
-        If SubMatchs.count < 2 Then GoTo continue
+        If SubMatchs.count < 2 Then GoTo Continue
         ' ==  获取编号
         Key = Trim(Replace(SubMatchs(0), """", "")) 'trim 取消前后空格， replace 删除中间空格
         
-        If Len(Key) < 1 Then GoTo continue  '若key为空进入下一个循环
+        If Len(Key) < 1 Then GoTo Continue  '若key为空进入下一个循环
         
         If KeyToLong Then Key = CLng(Key)  'Clng转换为long类型
             ' ==  获取编号对应page
             Var = Trim(Replace(SubMatchs(1), """", ""))  'trim 取消前后空格， replace 删除中间空格
-        If Len(Var) < 1 Then GoTo continue
+        If Len(Var) < 1 Then GoTo Continue
         Set Dic = Push_Dic(Dic, Key, Var)
-continue:
+Continue:
     Next
     If Dic.count < 1 Then Exit Function
     Set getInfo_asDic = Dic

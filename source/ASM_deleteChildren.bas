@@ -16,7 +16,7 @@ Sub DeleteChildren()
   End If
     If Not CanExecute("ProductDocument") Then Exit Sub
     
-    Dim oSel: Set oSel = CATIA.ActiveDocument.Selection: oSel.Clear
+    Dim osel: Set osel = CATIA.ActiveDocument.Selection: osel.Clear
 
     Dim imsg, filter(0), iSel
       imsg = "请选择父集": filter(0) = "Product"
@@ -24,7 +24,7 @@ Sub DeleteChildren()
     If iSel Is Nothing Then Exit Sub
     Dim prd
     For Each prd In iSel.Products
-      oSel.Add prd
+      osel.Add prd
     Next
     
       Dim btn, bTitle, bResult
@@ -35,8 +35,8 @@ Sub DeleteChildren()
               Case 7: Exit Sub '===选择“否”====
               Case 6  '===选择“是”,进行产品选择====
                   On Error Resume Next
-                       oSel.Delete
-                       oSel.Clear
+                       osel.Delete
+                       osel.Clear
                   On Error GoTo 0
           End Select
 

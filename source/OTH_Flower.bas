@@ -1224,10 +1224,10 @@ Sub Flower(Optional ByVal pp As Double)
                 Dim anyObject1 As AnyObject
                 Set anyObject1 = myOffsetPlane
                 
-                Set Reference1 = myPart.CreateReferenceFromName("")
-                Set Reference2 = myPart.CreateReferenceFromName("")
+                Set reference1 = myPart.CreateReferenceFromName("")
+                Set reference2 = myPart.CreateReferenceFromName("")
                 Dim myCircPattern1
-                Set myCircPattern1 = mySF.AddNewSurfacicCircPattern(anyObject1, 1, QtyPetal, 20#, 360 / QtyPetal, 1, 1, Reference1, Reference2, True, 0#, True, False)
+                Set myCircPattern1 = mySF.AddNewSurfacicCircPattern(anyObject1, 1, QtyPetal, 20#, 360 / QtyPetal, 1, 1, reference1, reference2, True, 0#, True, False)
                 myCircPattern1.CircularPatternParameters = catInstancesandAngularSpacing
                 
                 Dim anyObject2 As AnyObject
@@ -1235,8 +1235,8 @@ Sub Flower(Optional ByVal pp As Double)
                 
                 myCircPattern1.ItemToCopy = anyObject2
                 Set hybridShapePlaneOffset1 = myOffsetPlane
-                Set Reference3 = myPart.CreateReferenceFromObject(hybridShapePlaneOffset1)
-                myCircPattern1.SetRotationAxis Reference3
+                Set reference3 = myPart.CreateReferenceFromObject(hybridShapePlaneOffset1)
+                myCircPattern1.SetRotationAxis reference3
             
              myPart.UpdateObject myCircPattern1
              
@@ -1339,8 +1339,8 @@ Sub Flower(Optional ByVal pp As Double)
                 
                 myCircPattern3.ItemToCopy = anyObject222
                 Set hybridShapePlaneOffset1 = myOffsetPlane
-                Set Reference3 = myPart.CreateReferenceFromObject(hybridShapePlaneOffset1)
-                myCircPattern3.SetRotationAxis Reference3
+                Set reference3 = myPart.CreateReferenceFromObject(hybridShapePlaneOffset1)
+                myCircPattern3.SetRotationAxis reference3
             
              myPart.UpdateObject myCircPattern3
              

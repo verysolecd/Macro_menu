@@ -28,8 +28,8 @@ Sub pt2xl()
     
     Dim HSF:  Set HSF = odoc.part.HybridShapeFactory
     Dim HBS: Set HBS = odoc.part.HybridBodies
-    Dim oSel: Set oSel = odoc.Selection
-    oSel.Clear
+    Dim osel: Set osel = odoc.Selection
+    osel.Clear
     
     '=======要求选择点集和坐标
     Dim imsg, filter(0)
@@ -67,9 +67,9 @@ Sub pt2xl()
                 odoc.part.Update
                fakept.GetCoordinates absCoord
                
-                  oSel.Clear
-                  oSel.Add fakept
-                  oSel.Delete
+                  osel.Clear
+                  osel.Add fakept
+                  osel.Delete
                   odoc.part.Update
                 If Not oAxi Is Nothing Then
                     fincoord = TransAxi(absCoord, oAxi)
@@ -125,22 +125,22 @@ Function TransAxi(acoor As Variant, axi1) As Variant
 End Function
 
 Function mysel(prompt, filter())
-    Dim oSel
-    Set oSel = CATIA.ActiveDocument.Selection
-    oSel.Clear
+    Dim osel
+    Set osel = CATIA.ActiveDocument.Selection
+    osel.Clear
     Dim iType(0)
 '
 '    Dim status
 '    status = osel.SelectElement2(filter, prompt, False)
 
-    If oSel.SelectElement2(filter, prompt, False) = "Normal" Then
-        If oSel.count = 1 Then
-            Set mysel = oSel.item(1)
+    If osel.SelectElement2(filter, prompt, False) = "Normal" Then
+        If osel.count = 1 Then
+            Set mysel = osel.item(1)
         End If
     Else
     Set mysel = Nothing
     End If
-    oSel.Clear
+    osel.Clear
 End Function
 ' = 0 , Unknown
 ' = 1 , Point

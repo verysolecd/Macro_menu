@@ -17,7 +17,7 @@ Attribute VB_Exposed = False
 ' 布局常量（核心简化点）
 Private Const FrmTitle As String = "我请问你？？"
 Private Const Frm_WIDTH As Integer = 300 ' 窗体固定宽度
-Private Const Frm_LH_gap As Integer = 12 ' 所有控件左对齐的左边距
+Private Const Frm_LH_gap As Integer = 6 ' 所有控件左对齐的左边距
 Private Const itemgap As Integer = 1
 ' 控件默认尺寸
 Private Const cls_H As Integer = 20 ' 高度
@@ -32,21 +32,17 @@ Private Const INPUT_HEIGHT_MULTI As Integer = 60 ' 多行输入框高度
 Private Const OPTION_HEIGHT As Integer = 18 ' 单选/复选框高度
 Private bttop As Integer
 Private currTop As Long
-Private WithEvents ctr As Control
-Attribute ctr.VB_VarHelpID = -1
 
 ' 样式常量（保持美观）
 Private Const FONT_NAME As String = "Thoma"
 Private Const FONT_SIZE As Integer = 10
 Private Const Frm_BACKCOLOR As Long = &H8000000F ' 浅灰背景
 Private Const BTN_BACKCOLOR As Long = &H8000000E ' 按钮灰蓝
-
-
-Private WithEvents mBtn As MSForms.CommandButton
-Attribute mBtn.VB_VarHelpID = -1
-Private WithEvents mchk As MSForms.CheckBox
-Attribute mchk.VB_VarHelpID = -1
+'
+'Private WithEvents ctr As Control
 Private lst
+
+Option Explicit
 
 
 Sub setFrm(inf)
@@ -62,7 +58,9 @@ Sub setFrm(inf)
     bttop = 0
    Set lst = inf
     currTop = 4
-'    wd.Show modeless
+    Me.Show vbModeless
+Dim cfg, thisleft, ctr
+
 For Each cfg In lst
     Set ctr = Me.controls.Add(cfg("Type"), cfg("Name"), True)
              With ctr
@@ -70,43 +68,37 @@ For Each cfg In lst
                     .Name = cfg("Name")
                     .Left = Frm_LH_gap
                     .Width = cls_W
-              Select Case cfg("Type")
+                Select Case cfg("Type")
                     Case "Forms.CommandButton.1"
+                         .Width = Btn_W
                              If bttop = 0 Then
-                                  bttop = currTop
-                                  .top = bttop  '98
+                                  bttop = currTop: .top = bttop:      Debug.Print .top
                                   thisleft = .Left + Btn_W + itemgap
-                                  Debug.Print .top
                              Else
-                                  .top = bttop
-                  
-                                  Debug.Print "第二按钮高度" & .top
+                                  .top = bttop:     Debug.Print "第二按钮高度" & .top
                                  .Left = thisleft
                              End If
-                             .Width = Btn_W
-                        Case Else
+                     Case Else
                             .top = currTop
-                     End Select
+                  End Select
+                  
                     .Height = cls_H
-                     currTop = .top + .Height + itemgap
-                      Debug.Print currTop
-                   If cfg("Type") <> "Forms.TextBox.1" Then
+                     If cfg("Type") <> "Forms.TextBox.1" Then
                        .Caption = cfg("Caption")
                      Else
                        .Text = cfg("Caption")
                         .Width = Me.Width - 3 * Frm_LH_gap
+                        .Height = 2 * cls_H
                     End If
+                    
+                     currTop = .top + .Height + itemgap: Debug.Print currTop
+                  
             End With
         Next
-        
-        Me.Height = (lst.count + 1) * (cls_H + itemgap)
-End Sub
-Private Sub mChk_Click()
-
-Me.controls.item ("lst.")
-
-  txt_TM.Enabled = chk_TM.value
-
+        Me.Height = (lst.count + 3) * (cls_H + itemgap)
+        Dim Cvt
+        Set Cvt = New clsCtrls
+         Set Cvt.Control = ctr
 End Sub
 
 Private Sub UserForm_Click()

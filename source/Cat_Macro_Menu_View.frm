@@ -70,7 +70,7 @@ Sub Set_FormInfo(ByVal InfoLst As Object, _
     
     For Each KeyStr In InfoLst
         Key = CLng(KeyStr)
-        If Not PageMap.Exists(Key) Then GoTo continue
+        If Not PageMap.Exists(Key) Then GoTo Continue
         pName = PageMap(Key)
         Set Pg = Get_Page(Pgs, pName)
         Set BtnInfos = InfoLst(KeyStr)
@@ -80,7 +80,7 @@ Sub Set_FormInfo(ByVal InfoLst As Object, _
             Call BtnEvt.set_ButtonEvent(btn, info, Me, CloseType)
             Btns.Add BtnEvt
         Next
-continue:
+Continue:
     Next
     Set mBtns = Btns
     Call Set_MPage(MPgs)
