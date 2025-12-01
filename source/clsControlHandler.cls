@@ -33,20 +33,20 @@ Attribute Evt_TextBox.VB_VarHelpID = -1
 
 ' 通用的“附加”方法
 ' 它接收主窗体的引用和要处理的控件
-Public Sub Attach(ByVal ParentForm As Object, ByVal control As MSForms.control)
+Public Sub Attach(ByVal ParentForm As Object, ByVal Control As MSForms.Control)
     ' 保存对主窗体的引用，以便后续回调
     Set m_ParentForm = ParentForm
     
     ' 根据传入控件的类型，将其赋值给对应的WithEvents变量
-    Select Case TypeName(control)
+    Select Case TypeName(Control)
         Case "CommandButton"
-            Set Evt_Button = control
+            Set Evt_Button = Control
         Case "CheckBox"
-            Set Evt_CheckBox = control
+            Set Evt_CheckBox = Control
         Case "Label"
-            Set Evt_Label = control
+            Set Evt_Label = Control
         Case "TextBox"
-            Set Evt_TextBox = control
+            Set Evt_TextBox = Control
     End Select
 End Sub
 

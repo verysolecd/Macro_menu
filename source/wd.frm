@@ -32,7 +32,7 @@ Private Const INPUT_HEIGHT_MULTI As Integer = 60 ' 多行输入框高度
 Private Const OPTION_HEIGHT As Integer = 18 ' 单选/复选框高度
 Private bttop As Integer
 Private currTop As Long
-Private WithEvents ctr As control
+Private WithEvents ctr As Control
 Attribute ctr.VB_VarHelpID = -1
 
 ' 样式常量（保持美观）
@@ -101,7 +101,7 @@ For Each cfg In lst
         
         Me.Height = (lst.count + 1) * (cls_H + itemgap)
 End Sub
-Private Sub mchk_Click()
+Private Sub mChk_Click()
 
 Me.controls.item ("lst.")
 
@@ -111,21 +111,4 @@ End Sub
 
 Private Sub UserForm_Click()
 
-End Sub
- Call AttachEventToControl(ctr)
-        
-
-
-' **【重要修改】**
-' 这个新的私有 Sub 专门用于将控件与事件监听类绑定
-Private Sub AttachEventToControl(ctrl As MSForms.Control)
-    Dim objEventListener As clsControlEvents
-    
-    ' 只对 CommandButton 和 CheckBox 绑定事件
-    If TypeName(ctrl) = "CommandButton" Or TypeName(ctrl) = "CheckBox" Then
-        Set objEventListener = New clsControlEvents
-        Set objEventListener.Control = ctrl
-        ' 将类实例存入集合，以保持其引用
-        m_colEventListeners.Add objEventListener
-    End If
 End Sub

@@ -46,7 +46,7 @@ Sub set_ButtonEvent(ByVal btn As MSForms.CommandButton, _
     Set mParentForm = ParentForm
     mCloseType = CloseType
 End Sub
-Private Sub mBtn_Click()
+Private Sub mBtn_click()
     If Not mCloseType Then Unload mParentForm  ' 如果是颜色切换按钮，在执行前更新按钮文字
     
     If mInfo(TAG_MDLNAME) = "OTH_Color" Then

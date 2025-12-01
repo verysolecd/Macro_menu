@@ -7,19 +7,18 @@ Attribute VB_Name = "RW_3initme"
 '{BackColor:1229803}
 
 Sub initme()
-
  If Not KCL.CanExecute("ProductDocument,PartDocument") Then Exit Sub
  If pdm Is Nothing Then Set pdm = New class_PDM
  Set allPN = KCL.InitDic(vbTextCompare): allPN.RemoveAll  'allPn 是全局变量，不需要传递
   Dim iprd
  If KCL.checkDocType("PartDocument") Then
- Set iprd = CATIA.ActiveDocument.Product
- 
- Call pdm.initPrd(rootprd)
+    Set iprd = CATIA.ActiveDocument.Product
+    Call pdm.initPrd(rootprd)
+     Set pdm = Nothing
  Exit Sub
  End If
 
- Set iprd = pdm.defgprd()
+ Set iprd = pdm.getiPrd()
  If Not iprd Is Nothing Then
      On Error Resume Next
             Call recurInitPrd(iprd)
@@ -34,6 +33,7 @@ Sub initme()
     MsgBox "没有要初始化的产品或零件，将退出"
  End If
  
+
 End Sub
 Sub recurInitPrd(oprd)
         If allPN.Exists(oprd.PartNumber) = False Then

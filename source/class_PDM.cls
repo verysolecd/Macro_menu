@@ -503,7 +503,7 @@ Public Function catSelx(prompt As String) As collection
     End If
     oSel.Clear
 End Function
-Public Function defgprd()    '获取要读取或修改的  全局变量 gPrd定义
+Public Function getiPrd()    '获取要读取或修改的  全局变量 gPrd定义
   Dim oprd: Set oprd = Nothing
     Dim btn, bTitle, bResult
         bTitle = "请选择产品"
@@ -522,7 +522,7 @@ Public Function defgprd()    '获取要读取或修改的  全局变量 gPrd定义
                     Exit Function
                 End If
           End Select
-        Set defgprd = oprd
+        Set getiPrd = oprd
         Set oprd = Nothing
 End Function
 Public Sub freePrd()
