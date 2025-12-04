@@ -10,7 +10,7 @@ Attribute VB_Name = "A000000000000_test"
 
 Option Explicit
 
-Sub TEST()
+Sub test()
 Dim mdl, DecCnt, DecCode
 'regPtn = TAG_S & "(.*?)" & TAG_D & "(.*?)" & TAG_E
 'Set inf = KCL.getInfo_asDic(Ctrlinf, regPtn)
@@ -77,7 +77,7 @@ Private Function ParseCts(ByVal code As String) As Object
     End With
     Dim lst
     Set lst = InitLst
-    If regex.TEST(code) Then
+    If regex.test(code) Then
         Set matches = regex.Execute(code)
         For Each match In matches
             Set Cls_property = KCL.InitDic
@@ -91,4 +91,19 @@ Private Function ParseCts(ByVal code As String) As Object
     End If
     Set ParseCts = lst
 End Function
+
+
+
+End Function
+
+
+
+End Function
+
+
+
+
+
+
+
 

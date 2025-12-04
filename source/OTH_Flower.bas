@@ -358,8 +358,8 @@ Sub Flower(Optional ByVal pp As Double)
     
     ' Create H,V constraint of Arc1 Center Point
     Set Axis2D = mySketch.GeometricElements.item("AbsoluteAxis")
-    Set Hdir = Axis2D.GetItem("HDirection")
-    Set Vdir = Axis2D.GetItem("VDirection")
+    Set Hdir = Axis2D.getItem("HDirection")
+    Set Vdir = Axis2D.getItem("VDirection")
     
     
     Dim RefCenter1 As Reference

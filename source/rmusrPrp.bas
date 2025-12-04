@@ -14,7 +14,7 @@ Sub rm(oprd)
     colls.Remove ("iThickness")
     colls.Remove ("iMaterial")
      Set colls = refPrd.Parent.part.Parameters.RootParameterSet.ParameterSets
-        Set cm = colls.GetItem("cm")
+        Set cm = colls.getItem("cm")
         Set osel = CATIA.ActiveDocument.Selection
         osel.Clear
         osel.Add cm
