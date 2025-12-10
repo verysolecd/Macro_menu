@@ -79,12 +79,6 @@ Sub CATMain()
 XXX 
 end sub
 ```
+## 异常处理：
 
-
-***
-[・要添加的宏（模块）标签的详细信息](https://kantoku.hatenablog.com/entry/2017/10/17/152746)
-
-[・菜单设置相关](https://kantoku.hatenablog.com/entry/2017/10/19/125107)
-
-***
-
+runtime error: 一般是引用库或dll错误，请配置CATIA的引用库和常用的VBA引用库，例如.net excel依赖等
