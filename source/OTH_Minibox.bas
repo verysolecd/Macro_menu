@@ -25,10 +25,12 @@ Sub CATMain()
     msg = "请选择产品"
     Dim prod As Product
       '如果是零件 直接为当前零件创建
+    If Not KCL.CanExecute("ProductDocument,partdocument") Then Exit Sub
+    
     If KCL.checkDocType("PartDocument") Then
         Set prod = CATIA.ActiveDocument.Product
         Set workDoc = CATIA.ActiveDocument
-    Else
+    ElseIf KCL.checkDocType("ProductDocument") Then
         Set prod = KCL.SelectItem(msg, "Product")
             If prod Is Nothing Then Exit Sub
             

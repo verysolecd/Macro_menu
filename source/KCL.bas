@@ -537,7 +537,7 @@ Function isPathchn(pathToCheck) As Boolean
     regex.Pattern = "[\u4e00-\u9fa5]"   ' 设置正则表达式模式，匹配中文字符
     regex.IgnoreCase = True
     regex.Global = True
-    isPathchn = regex.test(pathToCheck)   ' 执行匹配并返回结果
+    isPathchn = regex.TEST(pathToCheck)   ' 执行匹配并返回结果
     Set regex = Nothing
 End Function
 ''替换字符串的所有中文为空格
