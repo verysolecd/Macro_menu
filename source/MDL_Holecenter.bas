@@ -1,7 +1,7 @@
 Attribute VB_Name = "MDL_Holecenter"
 'Attribute VB_Name = "M25_Holecenter"
 ' 获得识别特征下的所有孔中心
-'{GP:4}
+'{GP:}
 '{EP:ctrhole}
 '{Caption:get孔中心点}
 '{ControlTipText: 提示选择实体后导出所有孔中心，必须是识别孔特征后的实体}
@@ -24,7 +24,7 @@ Sub ctrhole()
     imsg = "请选择body"
     filter(0) = "Body"
     Dim obdy
-    Set obdy = KCL.SelectElement(imsg, filter).value
+    Set obdy = KCL.SelectItem(imsg, filter)
     Set targetHB = oPart.HybridBodies.Add()
     targetHB.Name = "extracted points"
     If Not obdy Is Nothing Then

@@ -36,12 +36,17 @@ Sub pt2xl()
     imsg = "请选择点所在的几何图形集"
     filter(0) = "HybridBody"
     
-    Set oHB = mysel(imsg, filter).value
-   
+'    Set oHB = mysel(imsg, filter).value
+    Set oHB = KCL.SelectItem(imsg, filter)
+    
     Dim oAxi
     imsg = "请再选择坐标系"
     filter(0) = "AxisSystem"
-    Set oAxi = mysel(imsg, filter).value
+    
+'    Set oAxi = mysel(imsg, filter).value
+     Set oAxi = KCL.SelectItem(imsg, filter)
+    
+     
      If Not oHB Is Nothing Then
         Dim i, irow, ct
         Set oshapes = oHB.HybridShapes
@@ -55,10 +60,8 @@ Sub pt2xl()
         arr(irow, 4) = "Z"
         irow = 1
          ReDim fincoord(2), absCoord(2)
-        
         For i = 1 To ct
             Set opt = oshapes.item(i)
-   
             str = HSF.GetGeometricalFeatureType(opt)
             If str = 1 Then
                 Dim fakept
@@ -66,7 +69,6 @@ Sub pt2xl()
                 oHB.AppendHybridShape fakept
                 odoc.part.Update
                fakept.GetCoordinates absCoord
-               
                   osel.Clear
                   osel.Add fakept
                   osel.Delete
@@ -124,24 +126,7 @@ Function TransAxi(acoor As Variant, axi1) As Variant
     TransAxi = result
 End Function
 
-Function mysel(prompt, filter())
-    Dim osel
-    Set osel = CATIA.ActiveDocument.Selection
-    osel.Clear
-    Dim iType(0)
-'
-'    Dim status
-'    status = osel.SelectElement2(filter, prompt, False)
 
-    If osel.SelectElement2(filter, prompt, False) = "Normal" Then
-        If osel.count = 1 Then
-            Set mysel = osel.item(1)
-        End If
-    Else
-    Set mysel = Nothing
-    End If
-    osel.Clear
-End Function
 ' = 0 , Unknown
 ' = 1 , Point
 ' = 2 , Curve

@@ -22,7 +22,7 @@ Sub Faceholecenter()
     filter(0) = "Face"
     On Error Resume Next
     Set iSel = Nothing
-    Set iSel = KCL.SelectElement(imsg, filter).value
+    Set iSel = KCL.SelectItem(imsg, filter)
     On Error GoTo 0
     If Not iSel Is Nothing Then
         Set oHB = oPart.HybridBodies.Add()

@@ -60,9 +60,9 @@ Function checkDocType(ByVal docTypes As Variant)
     If Not checkFilterType(docTypes) Then Exit Function '过滤器检查，非数组则退出
     
     Dim ActDoc As Document
-    On Error Resume Next
-        Set ActDoc = CATIA.ActiveDocument
-    On Error GoTo 0
+        On Error Resume Next
+            Set ActDoc = CATIA.ActiveDocument
+        On Error GoTo 0
     If ActDoc Is Nothing Then
         MsgBox "无打开的文档"
         Exit Function
@@ -221,6 +221,18 @@ End Function
 Function isobjtype(ByVal oj As Object, ByVal t$) As Boolean
     isobjtype = IIf(TypeName(oj) = t, True, False)
 '    MsgBox TypeName(oj)
+End Function
+
+Public Function getItem(iName, colls)
+ Dim itm ' 正确声明数组
+    Set itm = Nothing
+    On Error Resume Next
+        Set itm = colls.item(iName)
+            Err.Clear
+            Err.Number = 0
+    On Error GoTo 0
+   Set getItem = itm
+    Set itm = Nothing
 End Function
 
 '*****数组相关函数*****
@@ -677,17 +689,7 @@ Public Function getshell()
     Set getshell = shellApp
 
 End Function
-Public Function getItem(iName, colls)
- Dim itm ' 正确声明数组
-    Set itm = Nothing
-    On Error Resume Next
-        Set itm = colls.item(iName)
-            Err.Clear
-            Err.Number = 0
-    On Error GoTo 0
-   Set getItem = itm
-    Set itm = Nothing
-End Function
+
 
 ' 智能打开路径（优先激活已存在窗口）
 Sub openpath(ByVal strPath As String)
@@ -822,22 +824,22 @@ Public Function Push_Dic(ByVal Dic As Object, _
     Set Push_Dic = Dic
 End Function
 
-Public Function showdict(ByVal oDic, Optional ByVal boolShowKeyIndex As Boolean = False)
-  Dim keys:   keys = oDic.keys
+Public Function showdict(ByVal odic, Optional ByVal boolShowKeyIndex As Boolean = False)
+  Dim keys:   keys = odic.keys
   Dim i As Long
   Dim stIndex As String
   Dim stOutput As String
   stOutput = vbNullString
   
-  For i = 0 To oDic.count - 1
+  For i = 0 To odic.count - 1
     If boolShowKeyIndex Then
       stIndex = "(" & i & ")"
     End If
     stOutput = stOutput & keys(i) & stIndex & "  :  "
-    If IsObject(oDic(keys(i))) Then
-      stOutput = stOutput & "[" & showdict(oDic(keys(i)), boolShowKeyIndex) & "]"
+    If IsObject(odic(keys(i))) Then
+      stOutput = stOutput & "[" & showdict(odic(keys(i)), boolShowKeyIndex) & "]"
     Else
-      stOutput = stOutput & oDic(keys(i))
+      stOutput = stOutput & odic(keys(i))
     End If
     stOutput = stOutput & "; " & "_" & vbNewLine
   Next i
@@ -846,5 +848,13 @@ Public Function showdict(ByVal oDic, Optional ByVal boolShowKeyIndex As Boolean 
   Debug.Print showdict
 End Function
 
-
+' 获取Brep名称
+''' @param:MyBRepName-String
+''' @return:String
+Public Function GetBrepName(MyBRepName As String) As String
+    MyBRepName = Replace(MyBRepName, "Selection_", "")
+    MyBRepName = Left(MyBRepName, InStrRev(MyBRepName, "));"))
+    MyBRepName = MyBRepName + ");WithPermanentBody;WithoutBuildError;WithSelectingFeatureSupport;MFBRepVersion_CXR15)"
+    GetBrepName = MyBRepName
+End Function
 

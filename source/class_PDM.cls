@@ -268,15 +268,15 @@ Public Sub initPrd(oprd)
     Next
     
     On Error Resume Next
-         Dim oPrt
-         Set oPrt = refPrd.Parent.part
+         Dim oprt
+         Set oprt = refPrd.Parent.part
         If Err.Number <> 0 Then
             Err.Clear
-            Set oPrt = Nothing
+            Set oprt = Nothing
         End If
     On Error GoTo 0
     
-    If Not oPrt Is Nothing Then
+    If Not oprt Is Nothing Then
         On Error Resume Next
                 Call iniPrt(oprd)
         On Error GoTo 0
@@ -300,7 +300,7 @@ Private Sub iniPrt(oprd)
     Dim refPrd, colls
     Dim i
     Set refPrd = oprd.ReferenceProduct
-    Dim oPrt: Set oPrt = refPrd.Parent.part
+    Dim oprt: Set oprt = refPrd.Parent.part
 
 '============创建usrp属性=================
         Dim NT As Variant
@@ -322,7 +322,7 @@ Private Sub iniPrt(oprd)
         Dim infoset
         Set infoset = New Class_para
         infoset.SetNT "Part_info", "ParameterSet"
-        Set colls = oPrt.Parameters.RootParameterSet.ParameterSets
+        Set colls = oprt.Parameters.RootParameterSet.ParameterSets
         checkPara infoset, colls
         Set colls = infoset.obj.DirectParameters
      '====创建part_info内参数====
@@ -330,8 +330,8 @@ Private Sub iniPrt(oprd)
         Set iBodys = New Class_para
         iBodys.SetNT "iBodys", "list"
         checkPara iBodys, colls
-        If getPara(oPrt.mainbody, iBodys.obj.valuelist)(0) Is Nothing Then
-            iBodys.obj.valuelist.Add oPrt.mainbody
+        If getPara(oprt.mainbody, iBodys.obj.valuelist)(0) Is Nothing Then
+            iBodys.obj.valuelist.Add oprt.mainbody
         End If
         
         Dim infoPara(0 To 3)
@@ -363,19 +363,19 @@ Private Sub iniPrt(oprd)
                 End If
            Next
     '创建所有relations
-            Set colls = oPrt.relations
+            Set colls = oprt.relations
             Dim oRule
             Set oRule = New Class_para
                    '---创建EKL
             oRule.Reset
             oRule.SetNT "sum_all_Vol", "Program"
             oRule.str = eklstr
-            oRule.Desc = "汇总体积"
+            oRule.Desc = "计算体积"
             checkPara oRule, colls
                     '---创建Cal_mass
             oRule.Reset
             oRule.SetNT "cal_Mass", "Formula"
-            oRule.Desc = "链接重量"
+            oRule.Desc = "计算重量"
     
             oRule.str = "round(Part_info\sumVol *Part_info\Density,""kg"",3)"   ''''"Part_info\sumVol *Part_info\Density"
             Set oRule.Target = infoPara(3).obj
@@ -588,12 +588,4 @@ Public Function gxBom(oprd, LV)
         gxBom = finalbom
 End Function
 
-' 获取Brep名称
-''' @param:MyBRepName-String
-''' @return:String
-Function GetBrepName(MyBRepName As String) As String
-    MyBRepName = Replace(MyBRepName, "Selection_", "")
-    MyBRepName = Left(MyBRepName, InStrRev(MyBRepName, "));"))
-    MyBRepName = MyBRepName + ");WithPermanentBody;WithoutBuildError;WithSelectingFeatureSupport;MFBRepVersion_CXR15)"
-    GetBrepName = MyBRepName
-End Function
+

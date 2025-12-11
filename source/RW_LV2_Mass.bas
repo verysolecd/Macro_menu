@@ -1,5 +1,5 @@
 Attribute VB_Name = "RW_LV2_Mass"
-'{GP:1}
+'{GP:}
 '{Ep:L2Mass}
 '{Caption:迭代重量L2}
 '{ControlTipText:只计算第二级产品重量}

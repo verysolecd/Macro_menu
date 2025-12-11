@@ -26,7 +26,6 @@ Sub CATMain()
     Dim prod As Product
       '如果是零件 直接为当前零件创建
     If Not KCL.CanExecute("ProductDocument,partdocument") Then Exit Sub
-    
     If KCL.checkDocType("PartDocument") Then
         Set prod = CATIA.ActiveDocument.Product
         Set workDoc = CATIA.ActiveDocument
@@ -35,14 +34,14 @@ Sub CATMain()
             If prod Is Nothing Then Exit Sub
             
                 On Error Resume Next
-                    Dim oPrt:    Set oPrt = Nothing
-                    Set oPrt = prod.ReferenceProduct.Parent.part
+                    Dim oprt:    Set oprt = Nothing
+                    Set oprt = prod.ReferenceProduct.Parent.part
                     If Err.Number <> 0 Then
                         Err.Clear
                     End If
                 On Error GoTo 0
             
-            If Not oPrt Is Nothing Then
+            If Not oprt Is Nothing Then
                 Set workDoc = prod.ReferenceProduct.Parent
             Else
                 Set workDoc = initPartDoc(prod)

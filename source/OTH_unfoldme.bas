@@ -11,13 +11,13 @@ Sub CATMain()
 If Not CanExecute("PartDocument") Then Exit Sub
 Dim osel: Set osel = CATIA.ActiveDocument.Selection
 osel.Clear
-Set oPrt = CATIA.ActiveDocument.part
-Set HSF = oPrt.HybridShapeFactory: Set HBS = oPrt.HybridBodies
+Set oprt = CATIA.ActiveDocument.part
+Set HSF = oprt.HybridShapeFactory: Set HBS = oprt.HybridBodies
 Dim uFold As HybridShapeUnfold: Set uFold = HSF.AddNewUnfold()
 Dim imsg, filter(0)
 imsg = "请先选择body，再选择平面"
 filter(0) = "HybridBody"
-Set itm = KCL.SelectElement(imsg, filter).value
+Set itm = KCL.SelectItem(imsg, filter)
 If Not itm Is Nothing Then
     Set oHB = itm
     Set oshapes = oHB.HybridShapes
@@ -25,25 +25,25 @@ Else
     Exit Sub
 End If
     filter(0) = "Plane"
-    Set itm = KCL.SelectElement(imsg, filter).value
+    Set itm = KCL.SelectItem(imsg, filter)
 If Not itm Is Nothing Then
     Set oPlane = itm
-    Set refplane = oPrt.CreateReferenceFromObject(oPlane)
+    Set refplane = oprt.CreateReferenceFromObject(oPlane)
 Else
     Exit Sub
 End If
-oPrt.Update
+oprt.Update
 Dim targetshape, ref
 For i = 1 To oshapes.count
     Set targetshape = oshapes.item(i)
-    oPrt.Update
+    oprt.Update
 
 FT = HSF.GetGeometricalFeatureType(targetshape)
 If FT <> 5 Then
 
-    oPrt.Update
+    oprt.Update
 Else
-    Set ref = oPrt.CreateReferenceFromObject(targetshape)
+    Set ref = oprt.CreateReferenceFromObject(targetshape)
     uFold.SurfaceToUnfold = ref
     Set dir1 = HSF.AddNewDirectionByCoord(1#, 0#, 0#)
     Set dir2 = HSF.AddNewDirectionByCoord(0#, 1#, 0#)
@@ -54,32 +54,32 @@ Else
     extm.ExtremumType2 = 1
     extm.Direction3 = dir3
     extm.ExtremumType3 = 1
-    Set reforg = oPrt.CreateReferenceFromObject(extm)
+    Set reforg = oprt.CreateReferenceFromObject(extm)
     uFold.OriginToUnfold = reforg
-    Set refDir = oPrt.CreateReferenceFromObject(dir1)
+    Set refDir = oprt.CreateReferenceFromObject(dir1)
     uFold.DirectionToUnfold = refDir
     uFold.TargetPlane = refplane
     uFold.SurfaceType = 0 '0
     uFold.TargetOrientationMode = 0
     uFold.EdgeToTearPositioningOrientation = 0
     uFold.Name = "unfold_" & targetshape.Name
-    oPrt.Update
+    oprt.Update
     osel.Clear
     osel.Add uFold
     osel.Copy
     osel.Clear
-    oPrt.Update
+    oprt.Update
     Set targetHB = HBS.Add()
     targetHB.Name = "unfold result" & i
-    oPrt.Update
+    oprt.Update
     osel.Add targetHB
     osel.Paste
     osel.Clear
-    oPrt.Update
-    oPrt.InWorkObject = targetHB
+    oprt.Update
+    oprt.InWorkObject = targetHB
 End If
 Next
-oPrt.Update
+oprt.Update
 
 End Sub
 
