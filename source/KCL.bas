@@ -235,6 +235,23 @@ Public Function getItem(iName, colls)
     Set itm = Nothing
 End Function
 
+Public Function getSearch(ByRef iDoc, ByRef ifilter As Variant)
+    Set getSearch = Nothing
+      On Error Resume Next
+             Dim osel As Selection, i
+             Set osel = iDoc.Selection
+              osel.Clear
+    Select Case TypeName(ifilter)
+        Case "string"
+        With osel
+            .Clear
+            .Search (ifilter)
+            .VisProperties.SetShow 1
+        End With
+    End Select
+        Set getSearch = osel
+End Function
+
 '*****数组相关函数*****
 ' 合并两个数组
 ''' @param:Ary1-Variant(Of Array)
@@ -824,22 +841,22 @@ Public Function Push_Dic(ByVal Dic As Object, _
     Set Push_Dic = Dic
 End Function
 
-Public Function showdict(ByVal odic, Optional ByVal boolShowKeyIndex As Boolean = False)
-  Dim keys:   keys = odic.keys
+Public Function showdict(ByVal oDic, Optional ByVal boolShowKeyIndex As Boolean = False)
+  Dim keys:   keys = oDic.keys
   Dim i As Long
   Dim stIndex As String
   Dim stOutput As String
   stOutput = vbNullString
   
-  For i = 0 To odic.count - 1
+  For i = 0 To oDic.count - 1
     If boolShowKeyIndex Then
       stIndex = "(" & i & ")"
     End If
     stOutput = stOutput & keys(i) & stIndex & "  :  "
-    If IsObject(odic(keys(i))) Then
-      stOutput = stOutput & "[" & showdict(odic(keys(i)), boolShowKeyIndex) & "]"
+    If IsObject(oDic(keys(i))) Then
+      stOutput = stOutput & "[" & showdict(oDic(keys(i)), boolShowKeyIndex) & "]"
     Else
-      stOutput = stOutput & odic(keys(i))
+      stOutput = stOutput & oDic(keys(i))
     End If
     stOutput = stOutput & "; " & "_" & vbNewLine
   Next i

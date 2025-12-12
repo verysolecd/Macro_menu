@@ -24,9 +24,9 @@ Attribute VB_Name = "OTH_capture"
 Const CF_BITMAP = 2
 Private Const Fdis = 0.9
 Private thisdir
+Private oDic
 
 Sub Capturetopath()
-
 If Not KCL.CanExecute("ProductDocument") Then Exit Sub
     On Error Resume Next
      CATIA.StartCommand ("* iso")
@@ -40,13 +40,11 @@ If Not KCL.CanExecute("ProductDocument") Then Exit Sub
             Case 6  '===选择“是”====
                 Call Capme
             End Select
-  
   If Err.Number = 0 Then
      KCL.openpath (thisdir)
    End If
      Err.Clear
 On Error GoTo 0
-  
 
 End Sub
 
@@ -57,20 +55,20 @@ Sub Capme()
  End If
 On Error Resume Next
 '-----------设置显示样式模式-------------
- Call HideNonBody(rootDoc, 1)
+    Call HideNonBody(rootDoc)
     CATIA.RefreshDisplay = True
     CATIA.DisplayFileAlerts = False
- With CATIA.Application
-   .Width = 1920 / 2
-   .Height = 1080 '.Width * 0.618
- End With
+    With CATIA.Application
+      .Width = 1920 / 2
+      .Height = 1080 '.Width * 0.618
+    End With
     
-With CATIA.ActiveWindow
-     .WindowState = 0  '   '0 catWindowStateMaximized 1   catWindowStateMinimized,2   catWindowStateNormal
-     .Width = 1080
-     .Height = .Width * 0.618
-     .Layout = 1    ' 仅显示几何视图
-End With
+    With CATIA.ActiveWindow
+         .WindowState = 0  '   '0 catWindowStateMaximized 1   catWindowStateMinimized,2   catWindowStateNormal
+         .Width = 1080
+         .Height = .Width * 0.618
+         .Layout = 1    ' 仅显示几何视图
+    End With
 
   CATIA.RefreshDisplay = False
      Dim oViewer
@@ -84,21 +82,23 @@ End With
      End With
          
     CATIA.StartCommand ("Compass")  '隐藏指南针
-     Dim oprd
-     Set oprd = rootprd
+    
+    oDic = KCL.InitDic
+    
+     Dim oprd: Set oprd = rootprd
      If oprd Is Nothing Then Exit Sub
+     
      oprd.ApplyWorkMode (3)  '3  DESIGN_MODE
-     Dim oPath
-     oPath = KCL.GetPath(KCL.getVbaDir & "\" & "oTemp")
+     Dim oPath: oPath = KCL.GetPath(KCL.getVbaDir & "\" & "oTemp")
      KCL.ClearDir (oPath) '截图前先清空文件夹
-     
-     
      If gPic_Path = "" Then
             gPic_Path = oPath
      End If
-     allPN.Remove all
      
+     oDic.Remove all
      CaptureMe oprd, oPath
+     oDic.Remove all
+     Set oprd = Nothing
 '-----------恢复显示样式模式-------------
      CATIA.DisplayFileAlerts = True
      owd.WindowState = 0
@@ -106,25 +106,27 @@ End With
      CATIA.RefreshDisplay = True
      CATIA.ActiveWindow.Layout = 2 ' catWindowSpecsAndGeom
      CATIA.StartCommand ("Compass")
-     allPN.Remove all
-     Set oprd = Nothing
+    
 
 On Error GoTo 0
 
 End Sub
 Sub CaptureMe(iprd, oFolder)
     On Error Resume Next
-     Dim oViewer
-     Set oViewer = CATIA.ActiveWindow.ActiveViewer
-     oViewer.RenderingMode = 1 ' catRenderShadingWithEdges
-     oViewer.Viewpoint3D.PutSightDirection Array(-1, -1, -1)
-     oViewer.Reframe
-     oViewer.Viewpoint3D.FocusDistance = oViewer.Viewpoint3D.FocusDistance * Fdis
-    
-     If allPN.Exists(iprd.PartNumber) = False Then  '对产品截图并遍历
-       allPN(iprd.PartNumber) = 1
-         imgfilename = oFolder & "\" & iprd.ReferenceProduct.PartNumber & ".jpg"
-          oViewer.CaptureToFile 5, imgfilename
+    '--调整视角和显示
+     Dim oViewer: Set oViewer = CATIA.ActiveWindow.ActiveViewer
+     With oViewer
+         .RenderingMode = 1 ' catRenderShadingWithEdges
+        .Viewpoint3D.PutSightDirection Array(-1, -1, -1)
+         .Reframe
+         .Viewpoint3D.FocusDistance = oViewer.Viewpoint3D.FocusDistance * Fdis
+     End With
+     
+      '--递归产品截图
+     If oDic.Exists(iprd.PartNumber) = False Then  '递归产品截图
+        oDic(iprd.PartNumber) = 1
+        imgfilename = oFolder & "\" & iprd.ReferenceProduct.PartNumber & ".jpg"
+        oViewer.CaptureToFile 5, imgfilename
      End If
      If thisdir = "" Then
           thisdir = imgfilename
@@ -132,59 +134,49 @@ Sub CaptureMe(iprd, oFolder)
           
     Dim osel: Set osel = CATIA.ActiveDocument.Selection
     osel.Clear
-    Dim VisPoSel: Set VisPoSel = osel.VisProperties
+    Dim Visp: Set Visp = osel.VisProperties
+    
     Dim children, i
     Set children = iprd.Products
     
-    For Each cPrd In children
-    osel.Add cPrd
-    Next
-    VisPoSel.SetShow 1
-    osel.Clear      ' 隐藏所有子产品
-    If children.count > 0 Then
-                         For i = 1 To children.count     ' 递归处理每个子产品
-                              osel.Add children.item(i)
-                              VisPoSel.SetShow 0
-                              osel.Clear '显示当前子产品
-                        
-                        Call CaptureMe(children.item(i), oFolder)
-                        
-                        osel.Add children.item(i) ' 隐藏当前子产品
-                        VisPoSel.SetShow 1
-                        osel.Clear
-                    Next
-   End If
-   
-     For Each cPrd In children ' 重新显示每个子产品
-       osel.Add cPrd
-     Next
-       VisPoSel.SetShow 0
-       osel.Clear
+    '---- 隐藏所有子产品
+        For Each cPrd In children
+            osel.Add cPrd
+        Next
+        Visp.SetShow 1: osel.Clear
+        
+     '---- 逐一显示子产品-截图-隐藏子产品
+         If children.count > 0 Then
+              For i = 1 To children.count     ' 递归处理每个子产品
+                   osel.Add children.item(i): Visp.SetShow 0: osel.Clear '显示当前子产品
+                     Call CaptureMe(children.item(i), oFolder)
+                   osel.Add children.item(i): Visp.SetShow 1: osel.Clear  ' 隐藏当前子产品
+              Next
+        End If
+   ' 重新显示每个子产品
+        For Each cPrd In children
+          osel.Add cPrd
+        Next
+          Visp.SetShow 0: osel.Clear
        
 End Sub
-Sub HideNonBody(iDoc, catVisPropertyNoShowAttr As Integer)
+Sub HideNonBody(iDoc)
      On Error Resume Next
-     Dim osel As Selection
-     Set osel = iDoc.Selection
-     osel.Clear
-     osel.Search "(((CATStFreeStyleSearch.Plane + CATPrtSearch.Plane) + CATGmoSearch.Plane) + CATSpdSearch.Plane),all"
-     osel.VisProperties.SetShow catVisPropertyNoShowAttr
-     osel.Clear
-     osel.Search "(((CATStFreeStyleSearch.AxisSystem + CATPrtSearch.AxisSystem) + CATGmoSearch.AxisSystem) + CATSpdSearch.AxisSystem),all"
-     osel.VisProperties.SetShow catVisPropertyNoShowAttr
-     osel.Clear
-     osel.Search "((((((CATStFreeStyleSearch.Point + CAT2DLSearch.2DPoint) + CATSketchSearch.2DPoint) + CATDrwSearch.2DPoint) + CATPrtSearch.Point) + CATGmoSearch.Point) + CATSpdSearch.Point),all"
-     osel.VisProperties.SetShow catVisPropertyNoShowAttr
-     osel.Clear
-     osel.Search "((((((CATStFreeStyleSearch.Curve + CAT2DLSearch.2DCurve) + CATSketchSearch.2DCurve) + CATDrwSearch.2DCurve) + CATPrtSearch.Curve) + CATGmoSearch.Curve) + CATSpdSearch.Curve),all"
-     osel.VisProperties.SetShow catVisPropertyNoShowAttr
-     osel.Clear
-     osel.Search "(((CATStFreeStyleSearch.Surface + CATPrtSearch.Surface) + CATGmoSearch.Surface) + CATSpdSearch.Surface),all"
-     osel.VisProperties.SetShow catVisPropertyNoShowAttr
-     osel.Clear
-     osel.Search "(((((((CATProductSearch.MfConstraint + CATStFreeStyleSearch.MfConstraint) + CATAsmSearch.MfConstraint) + CAT2DLSearch.MfConstraint) + CATSketchSearch.MfConstraint) + CATDrwSearch.MfConstraint) + CATPrtSearch.MfConstraint) + CATSpdSearch.MfConstraint),all"
-     osel.VisProperties.SetShow catVisPropertyNoShowAttr
-     osel.Clear
-     Err.Clear
+         Dim osel As Selection, i
+         Dim filter(1 To 6) As Variant
+         filter(1) = "(((CATStFreeStyleSearch.Plane + CATPrtSearch.Plane) + CATGmoSearch.Plane) + CATSpdSearch.Plane),all"
+         filter(2) = "(((CATStFreeStyleSearch.AxisSystem + CATPrtSearch.AxisSystem) + CATGmoSearch.AxisSystem) + CATSpdSearch.AxisSystem),all"
+         filter(3) = "((((((CATStFreeStyleSearch.Point + CAT2DLSearch.2DPoint) + CATSketchSearch.2DPoint) + CATDrwSearch.2DPoint) + CATPrtSearch.Point) + CATGmoSearch.Point) + CATSpdSearch.Point),all"
+         filter(4) = "((((((CATStFreeStyleSearch.Curve + CAT2DLSearch.2DCurve) + CATSketchSearch.2DCurve) + CATDrwSearch.2DCurve) + CATPrtSearch.Curve) + CATGmoSearch.Curve) + CATSpdSearch.Curve),all"
+         filter(5) = "(((CATStFreeStyleSearch.Surface + CATPrtSearch.Surface) + CATGmoSearch.Surface) + CATSpdSearch.Surface),all"
+         filter(6) = "(((((((CATProductSearch.MfConstraint + CATStFreeStyleSearch.MfConstraint) + CATAsmSearch.MfConstraint) + CAT2DLSearch.MfConstraint) + CATSketchSearch.MfConstraint) + CATDrwSearch.MfConstraint) + CATPrtSearch.MfConstraint) + CATSpdSearch.MfConstraint),all"
+         For i = LBound(filter) To UBound(filter)
+               KCL.getSearch(iDoc, filter(i)).VisProperties.SetShow 1
+         Next
+          Err.Clear
      On Error GoTo 0
 End Sub
+
+
+
+

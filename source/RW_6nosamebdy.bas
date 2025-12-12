@@ -51,16 +51,16 @@ Sub nosamebdy_prds(oprd)
 End Sub
 
 Sub nosamebdy_bdylst(oprt)
-    Dim lstPara, lstbdys, colls, odic, keeplst, currobj, objkey, itm, bdy
+    Dim lstPara, lstbdys, colls, oDic, keeplst, currobj, objkey, itm, bdy
     Set lstPara = oprt.Parameters.RootParameterSet.ParameterSets.item("Part_info")
     Set lstbdys = lstPara.DirectParameters.item("iBodys")
   Set colls = lstbdys.valuelist
-    Set odic = KCL.InitDic
+    Set oDic = KCL.InitDic
     Set keeplst = KCL.InitDic
     For Each currobj In colls
         objkey = KCL.GetInternalName(currobj)
-        If Not odic.Exists(objkey) Then
-          odic(objkey) = 1
+        If Not oDic.Exists(objkey) Then
+          oDic(objkey) = 1
           keeplst(objkey) = 1
           End If
      Next
