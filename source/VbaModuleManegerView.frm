@@ -63,7 +63,7 @@ End Sub
 '** 支持 **
 '结束
 Private Sub finish()
-    Me.Hide
+    Me.hide
     Unload Me
 End Sub
 '模块列表的更新

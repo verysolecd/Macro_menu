@@ -1,6 +1,6 @@
 Attribute VB_Name = "OTH_designlog"
 'Attribute VB_Name = "OTH_designlog"
-'{GP:6}
+'{GP:}
 '{Ep:designlog}
 '{Caption:设计日志更新}
 '{ControlTipText:选择要被读取或修改的产品}
@@ -11,7 +11,7 @@ Sub designlog()
 
     If Not KCL.CanExecute("ProductDocument") Then Exit Sub
     If pdm Is Nothing Then Set pdm = New class_PDM
-    Dim oprd:  Set oprd = rootprd
+    Dim oPrd:  Set oPrd = rootprd
     Dim str1: str1 = rootprd.DescriptionRef
     Dim tm: tm = KCL.timestamp("i")
     Dim imsg

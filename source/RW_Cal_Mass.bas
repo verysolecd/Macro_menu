@@ -4,6 +4,7 @@ Attribute VB_Name = "RW_Cal_Mass"
 '{Caption:迭代重量}
 '{ControlTipText:选择要被读取或修改的产品}
 '{BackColor:}
+
 Sub Cal_Mass_m()
     If Not KCL.CanExecute("ProductDocument") Then Exit Sub
     If pdm Is Nothing Then

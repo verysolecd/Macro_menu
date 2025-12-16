@@ -14,21 +14,21 @@ Sub pt2xl()
         Exit Sub
     End If
     
-    Dim odoc
+    Dim oDoc
     On Error Resume Next
-        Set odoc = CATIA.ActiveDocument
+        Set oDoc = CATIA.ActiveDocument
     On Error GoTo 0
     Dim str
-    str = TypeName(odoc)
+    str = TypeName(oDoc)
     If Not str = "PartDocument" Then
     MsgBox "没有打开的part"
     Exit Sub
     End If
     
     
-    Dim HSF:  Set HSF = odoc.part.HybridShapeFactory
-    Dim HBS: Set HBS = odoc.part.HybridBodies
-    Dim osel: Set osel = odoc.Selection
+    Dim HSF:  Set HSF = oDoc.part.HybridShapeFactory
+    Dim HBS: Set HBS = oDoc.part.HybridBodies
+    Dim osel: Set osel = oDoc.Selection
     osel.Clear
     
     '=======要求选择点集和坐标
@@ -67,12 +67,12 @@ Sub pt2xl()
                 Dim fakept
                 Set fakept = HSF.AddNewPointCoordWithReference(0, 0, 0, opt)
                 oHB.AppendHybridShape fakept
-                odoc.part.Update
+                oDoc.part.Update
                fakept.GetCoordinates absCoord
                   osel.Clear
                   osel.Add fakept
                   osel.Delete
-                  odoc.part.Update
+                  oDoc.part.Update
                 If Not oAxi Is Nothing Then
                     fincoord = TransAxi(absCoord, oAxi)
                 Else

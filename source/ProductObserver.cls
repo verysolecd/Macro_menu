@@ -23,7 +23,6 @@ Public Event ProductChanged()
 ' 私有变量存储当前产品
 Private mProduct As Object
 
-
 ' 属性：当前产品
 Public Property Get CurrentProduct() As Object
     Set CurrentProduct = mProduct

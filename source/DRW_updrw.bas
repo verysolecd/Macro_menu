@@ -1,7 +1,7 @@
 Attribute VB_Name = "DRW_updrw"
 Sub DRA()
-Set odoc = CATIA.ActiveDocument
-Set oShts = odoc.Sheets
+Set oDoc = CATIA.ActiveDocument
+Set oShts = oDoc.Sheets
 k = oShts.count
 i = 5
     Dim oSHT As DrawingSheet

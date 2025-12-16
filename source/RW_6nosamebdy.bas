@@ -2,8 +2,8 @@ Attribute VB_Name = "RW_6nosamebdy"
 'Attribute VB_Name = "RW_6nosamebdy"
 '{GP:1}
 '{Ep:nosamebdy}
-'{Caption:初始化模板}
-'{ControlTipText:将选择的产品和子产品文档按模板格式化}
+'{Caption:计重实体去重}
+'{ControlTipText:将零件计算重量的实体清单中重复的实体删除}
 '{BackColor:1229803}
 Option Explicit
 
@@ -37,19 +37,36 @@ Sub nosamebdy()
  
  allPN.RemoveAll
 End Sub
-Sub nosamebdy_prds(oprd)
+Sub nosamebdy_prds(oPrd)
     Dim Product
-        If allPN.Exists(oprd.PartNumber) = False Then
-            allPN(oprd.PartNumber) = 1
-            Call nosamebdy_prd(oprd)
+        If allPN.Exists(oPrd.PartNumber) = False Then
+            allPN(oPrd.PartNumber) = 1
+            Call nosamebdy_prd(oPrd)
         End If
-    If oprd.Products.count > 0 Then
-            For Each Product In oprd.Products
+    If oPrd.Products.count > 0 Then
+            For Each Product In oPrd.Products
                 Call nosamebdy_prds(Product)
              Next
     End If
 End Sub
+Public Sub nosamebdy_prd(oPrd)
+    Dim colls, oprt
 
+    On Error Resume Next
+         Set oprt = oPrd.ReferenceProduct.Parent.part
+        If Err.Number <> 0 Then
+            Err.Clear
+            Set oprt = Nothing
+        End If
+    On Error GoTo 0
+    
+    If Not oprt Is Nothing Then
+        On Error Resume Next
+                Call nosamebdy_bdylst(oPrd)
+                Err.Clear
+        On Error GoTo 0
+    End If
+End Sub
 Sub nosamebdy_bdylst(oprt)
     Dim lstPara, lstbdys, colls, oDic, keeplst, currobj, objkey, itm, bdy
     Set lstPara = oprt.Parameters.RootParameterSet.ParameterSets.item("Part_info")
@@ -72,21 +89,4 @@ Sub nosamebdy_bdylst(oprt)
     Next
 End Sub
 
-Public Sub nosamebdy_prd(oprd)
-    Dim colls, oprt
 
-    On Error Resume Next
-         Set oprt = oprd.ReferenceProduct.Parent.part
-        If Err.Number <> 0 Then
-            Err.Clear
-            Set oprt = Nothing
-        End If
-    On Error GoTo 0
-    
-    If Not oprt Is Nothing Then
-        On Error Resume Next
-                Call nosamebdy_bdylst(oprd)
-                Err.Clear
-        On Error GoTo 0
-    End If
-End Sub

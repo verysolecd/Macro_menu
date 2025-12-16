@@ -28,14 +28,16 @@ Private WithEvents btn As MSForms.CommandButton
 Attribute btn.VB_VarHelpID = -1
 
 Private mParentForm As MSForms.UserForm
+Private mInfo As Object
+Private mCloseType As Boolean
+
 
 Private Const TAG_ENTRYPNT = "ep"           ' 入口点标签
 Private Const TAG_PJTPATH = "pjt_path"      ' 项目路径标签
 Private Const TAG_MDLNAME = "mdl_name"      ' 模块名称标签
 
 
-Private mInfo As Object
-Private mCloseType As Boolean
+
 
 Sub set_ButtonEvent(ByVal btn As MSForms.CommandButton, _
                     ByVal BtnInfo As Object, _
@@ -55,13 +57,19 @@ Private Sub mBtn_click()
          Dim currentColor(2)
             MyViewer.GetBackgroundColor currentColor
         On Error GoTo 0
-   
         Dim willBeWhite As Boolean      ' 根据当前背景色判断即将切换到的状态
         willBeWhite = (currentColor(0) <> 1 Or currentColor(1) <> 1 Or currentColor(2) <> 1)
-        
         Call UpdateButtonText(mBtn, willBeWhite)  ' 调用M60_Color模块的函数更新按钮文字
-        
     End If
+    
+     If mInfo(TAG_MDLNAME) = "OTH_ivhideshow" Then
+        On Error Resume Next
+        
+         ' 根据当前背景色判断即将切换到的状态
+        willBeWhite = (currentColor(0) <> 1 Or currentColor(1) <> 1 Or currentColor(2) <> 1)
+        Call UpdateButtonText(mBtn, willBeWhite)  ' 调用M60_Color模块的函数更新按钮文字
+    End If
+    
     Dim ary: ary = Array()  '这里按照传入按钮信息执行按钮对应的module宏
     Dim ss: Set ss = CATIA.SystemService
     Call ss.ExecuteScript(mInfo(TAG_PJTPATH), _
@@ -72,6 +80,14 @@ Private Sub mBtn_click()
 End Sub
 
 Private Sub UpdateButtonText(ByVal btn As MSForms.CommandButton, ByVal isWhiteBackground As Boolean)
+    If isWhiteBackground Then
+        btn.Caption = "默认背景"
+    Else
+        btn.Caption = "白色背景"
+    End If
+End Sub
+
+Private Sub UpdateButtonText2(ByVal btn As MSForms.CommandButton, ByVal isWhiteBackground As Boolean)
     If isWhiteBackground Then
         btn.Caption = "默认背景"
     Else

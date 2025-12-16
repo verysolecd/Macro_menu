@@ -134,13 +134,7 @@ Try_TAG_ENTRY_DEF:
         ' Item 7 "mdl_name¡±
         
         BtnInfos.Add MdlInfo
-        
-        
-        
     Debug.Print showdict(MdlInfo)
-        
-        
-        
 Continue:
     Next
     If BtnInfos.count < 1 Then Exit Function

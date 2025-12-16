@@ -1,11 +1,11 @@
 Attribute VB_Name = "rmusrPrp"
 Sub CATMain()
-Set oprd = CATIA.ActiveDocument.Product
-rm oprd
+Set oPrd = CATIA.ActiveDocument.Product
+rm oPrd
 End Sub
-Sub rm(oprd)
+Sub rm(oPrd)
     On Error Resume Next
-     Set refPrd = oprd.ReferenceProduct
+     Set refPrd = oPrd.ReferenceProduct
      Set oprt = refPrd.Parent.part
     Set colls = refPrd.Publications
     colls.Remove ("Location")
@@ -29,9 +29,9 @@ Sub rm(oprd)
      colls.Remove ("iMass")
      colls.Remove ("iMaterial")
      colls.Remove ("iThickness")
-    If oprd.Products.count > 0 Then
-        For i = 1 To oprd.Products.count
-          rm (oprd.Products.item(i))
+    If oPrd.Products.count > 0 Then
+        For i = 1 To oPrd.Products.count
+          rm (oPrd.Products.item(i))
         Next
     End If
 On Error GoTo 0

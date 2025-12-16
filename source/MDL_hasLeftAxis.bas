@@ -1,5 +1,5 @@
 Attribute VB_Name = "MDL_hasLeftAxis"
-'Attribute VB_Name = "m2_hasLeftAxis"
+'Attribute VB_Name = "MDL_hasLeftAxis"
 
 ' 检查零件文档中是否存在左手坐标系
 '{Gp:999}

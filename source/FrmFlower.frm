@@ -15,7 +15,7 @@ Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
 
 Private Sub CmbHide_Click()
-    Me.Hide
+    Me.hide
 End Sub
 
 Private Sub CmdDraw_Click()

@@ -413,13 +413,13 @@ Public Function selFdl()
 End Function
 '@@param: oPath-路径
 '获取输入路径父级
-Public Function ofParentPath(ByVal oPath$)
+Public Function ofParentPath(ByVal opath$)
     Dim idx
-    idx = InStrRev(oPath, "\")
+    idx = InStrRev(opath, "\")
 If idx > 0 Then
-        ofParentPath = Left(oPath, idx)
+        ofParentPath = Left(opath, idx)
     Else
-        ofParentPath = oPath
+        ofParentPath = opath
     End If
 End Function
 
@@ -569,12 +569,12 @@ Function isPathchn(pathToCheck) As Boolean
     isPathchn = regex.TEST(pathToCheck)   ' 执行匹配并返回结果
     Set regex = Nothing
 End Function
-''替换字符串的所有中文为空格
+''替换字符串的所有中文为横线
 Function rmchn(ByVal inputString$) As String
     Dim regex: Set regex = getRegex()
     regex.Pattern = "[\u4e00-\u9fa5]"
     regex.Global = True
-    rmchn = regex.Replace(inputString, " ")
+    rmchn = regex.Replace(inputString, "_")
     Set regex = Nothing
 End Function
 

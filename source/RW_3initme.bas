@@ -35,13 +35,13 @@ Sub initme()
  
 
 End Sub
-Sub recurInitPrd(oprd)
-        If allPN.Exists(oprd.PartNumber) = False Then
-            allPN(oprd.PartNumber) = 1
-            Call pdm.initPrd(oprd)
+Sub recurInitPrd(oPrd)
+        If allPN.Exists(oPrd.PartNumber) = False Then
+            allPN(oPrd.PartNumber) = 1
+            Call pdm.initPrd(oPrd)
         End If
-    If oprd.Products.count > 0 Then
-            For Each Product In oprd.Products
+    If oPrd.Products.count > 0 Then
+            For Each Product In oPrd.Products
                 Call recurInitPrd(Product)
              Next
     End If

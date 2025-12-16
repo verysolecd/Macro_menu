@@ -18,14 +18,14 @@ Sub ex2stp_zip()
   On Error Resume Next ' 临时开启错误处理
     Err.Number = 0
     ErrorMessage = ""
-    Dim odoc: Set odoc = CATIA.ActiveDocument
+    Dim oDoc: Set oDoc = CATIA.ActiveDocument
     Dim outputpath As String: outputpath = ""
     askdir.Show
     Select Case export_CFG(2)
         Case 0  ' 用户选择自定义路径
               outputpath = KCL.selFdl()
         Case 1  ' 使用当前文档路径
-            outputpath = IIf(odoc.path = "", "", odoc.path)
+            outputpath = IIf(oDoc.path = "", "", oDoc.path)
         Case others ' 用户取消操作
             outputpath = ""
     End Select
@@ -39,24 +39,24 @@ Sub ex2stp_zip()
         Dim ttp: ttp = KCL.timestamp(export_CFG(1))
          Dim pn
             If export_CFG(0) = 1 Then  '若更新时间戳 ' 零件号更新
-                pn = KCL.strbflast(odoc.Product.PartNumber, "_")
+                pn = KCL.strbflast(oDoc.Product.PartNumber, "_")
                 If KCL.ExistsKey(pn, "_") Then
-                    odoc.Product.PartNumber = pn & ttp
+                    oDoc.Product.PartNumber = pn & ttp
                 Else
-                    odoc.Product.PartNumber = pn & "_" & ttp
+                    oDoc.Product.PartNumber = pn & "_" & ttp
                 End If
             End If
-            pn = odoc.Product.PartNumber
+            pn = oDoc.Product.PartNumber
         
             stpname = KCL.strbf1st(pn, "_") & "_" & ttp
             
-        Dim oPath(2) '0=路径，1=name，2=extname
-            oPath(0) = outputpath
-            oPath(1) = stpname
-            oPath(2) = "stp"
-       Dim stpfilepath As String: stpfilepath = KCL.JoinPathName(oPath)
+        Dim opath(2) '0=路径，1=name，2=extname
+            opath(0) = outputpath
+            opath(1) = stpname
+            opath(2) = "stp"
+       Dim stpfilepath As String: stpfilepath = KCL.JoinPathName(opath)
        
-        odoc.ExportData stpfilepath, "stp"     '=======导出stp
+        oDoc.ExportData stpfilepath, "stp"     '=======导出stp
         If Not KCL.isExists(stpfilepath) Then '=======检查文件存在性
             ErrorMessage = "未找到STP文件：" & stpfilepath
             GoTo ShowMessage
@@ -66,7 +66,7 @@ Sub ex2stp_zip()
             KCL.DeleteMe stpfilepath ' 删除原始 STP 文件
         
         If export_CFG(3) <> "" Then '============生成导出日志
-            logpath = oPath(0) & "\" & "stp_export_log.md"
+            logpath = opath(0) & "\" & "stp_export_log.md"
             loginfo = "## " & KCL.timestamp("day") & "  " & stpname & ".stp" & vbCrLf & _
                     "  " & export_CFG(3)
             KCL.Appendtext KCL.getmd(logpath), loginfo
@@ -86,7 +86,7 @@ ShowMessage:
                 "原始文件已删除。", vbInformation
         KCL.openpath (zippath)
     End If
-    Set odoc = Nothing
+    Set oDoc = Nothing
     On Error GoTo 0 ' 关闭错误处理
     ErrorMessage = "" ' 重置错误信息
 End Sub

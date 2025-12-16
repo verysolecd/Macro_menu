@@ -35,9 +35,7 @@ Private Const lb_W = 62 ' 宽度
 Private Const lb_H = 20 ' 高度
 Private Const lb_frontsize = 10 ' 字体大小
 Private Const itl = "公众号:键盘造车手"
-
 ' 按钮事件集合
-
 Private mBtns As Object
 Private WithEvents prdObserver As ProductObserver
 Attribute prdObserver.VB_VarHelpID = -1
@@ -47,7 +45,6 @@ Private WithEvents lblAuthor As MSForms.Label
 Attribute lblAuthor.VB_VarHelpID = -1
 Private WithEvents MPgs As MSForms.MultiPage
 Attribute MPgs.VB_VarHelpID = -1
-
 Option Explicit
 ' 设置窗体信息
 Sub Set_FormInfo(ByVal InfoLst As Object, _
@@ -55,19 +52,15 @@ Sub Set_FormInfo(ByVal InfoLst As Object, _
                  ByVal formTitle As String, _
                  ByVal CloseType As Boolean)
     Set prdObserver = ProductObserver  ' 连接到全局产品观察器
-    
     FrmMargin = Array(2, 2, 2, 2) ' 上, 右, 下, 左 窗体边距调整值
     Set MPgs = Me.controls.Add("Forms.MultiPage.1", "MPgs", True) ' 创建多页控件
     Dim Pgs As Pages
      Set Pgs = MPgs.Pages: Pgs.Clear
-    
     Dim Key As Long, KeyStr As Variant, Pg As Page, pName As String
-
     Dim BtnInfos As Object, info As Variant
     Dim Btns As Object: Set Btns = KCL.InitLst()
     Dim btn As MSForms.CommandButton
     Dim BtnEvt As Button_Evt
-    
     For Each KeyStr In InfoLst
         Key = CLng(KeyStr)
         If Not PageMap.Exists(Key) Then GoTo Continue
@@ -85,10 +78,10 @@ Continue:
     Set mBtns = Btns
     Call Set_MPage(MPgs)
     Call Set_Form(MPgs, formTitle)
-    Set lblProductInfo = getNewLbl(Me)     ' 新增：创建底部的作者信息栏
-    Set lblAuthor = getNewLbl(Me)
-    ' 初始更新产品信息
-    UpdateProductInfo
+   
+    Set lblProductInfo = getNewLbl(Me)
+    Set lblAuthor = getMeinfo(Me) ' 创建底部的作者信息栏
+    UpdateProductInfo    ' 初始更新产品信息
 End Sub
 ' 设置窗体属性
 Private Sub Set_Form(ByVal MPgs As MultiPage, ByVal Cap As String)
@@ -130,6 +123,7 @@ Private Function Init_Button(ByVal Ctls As controls, _
                              ByVal BtnInfo As Variant) As MSForms.CommandButton
     Dim btn As MSForms.CommandButton
     Set btn = Ctls.Add("Forms.CommandButton.1", idx, True)
+    
     Dim Pty As Variant
     For Each Pty In BtnInfo.keys
         Call Try_SetProperty(btn, Pty, BtnInfo.item(Pty))
@@ -139,11 +133,9 @@ Private Function Init_Button(ByVal Ctls As controls, _
         .Left = FrmMargin(2)
         .Height = BTN_H
         .Width = Btn_W
-        ' 设置按钮字体
-        .Font.Name = "Arial"
+        .Font.Name = "Arial"   ' 设置按钮字体
         .Font.Size = BTN_frontsize
-        ' 设置按钮背景颜色
-       ' .BackColor = RGB(220, 220, 220)
+       ' .BackColor = RGB(220, 220, 220)  ' 设置按钮背景颜色
     End With
     Set Init_Button = btn
 End Function
@@ -154,14 +146,11 @@ Private Sub Try_SetProperty(ByVal ctrl As Object, _
     On Error Resume Next
         Err.Number = 0
         Dim tmp As Variant
-        
         tmp = CallByName(ctrl, PptyName, VbGet)
-        
         If Not Err.Number = 0 Then
             Debug.Print PptyName & ": 获取属性失败(" & Err.Number & ")"
             Exit Sub
         End If
-        
         Select Case TypeName(tmp)
             Case "Empty"
                 Exit Sub
@@ -172,20 +161,16 @@ Private Sub Try_SetProperty(ByVal ctrl As Object, _
             Case "Currency"
                 value = CCur(value)
         End Select
-        
         If Not Err.Number = 0 Then
             Debug.Print value & ": 类型转换失败(" & Err.Number & ")"
             Exit Sub
         End If
-        
         Call CallByName(ctrl, PptyName, VbLet, value)
-        
         If Not Err.Number = 0 Then
             Debug.Print value & ": 设置属性失败(" & Err.Number & ")"
             Exit Sub
         End If
     On Error GoTo 0
-    
 End Sub
 ' 获取页面 - 若不存在则创建
 Private Function Get_Page(ByVal Pgs As Pages, ByVal Name As String) As Page
@@ -206,8 +191,8 @@ End Sub
 ' 更新产品信息的方法
 Private Sub UpdateProductInfo()
     Dim msg, mcolor
-   mcolor = vbRed
-    msg = "产品待选择"
+    mcolor = vbRed
+    msg = "待选择"
     If Not prdObserver.CurrentProduct Is Nothing Then
           msg = prdObserver.CurrentProduct.PartNumber & "待修改"
           mcolor = vbGreen
@@ -243,10 +228,10 @@ Private Sub MPgs_MouseDown(ByVal Index As Long, ByVal Button As Integer, ByVal S
 End Sub
 
 Private Function getNewLbl(mFrm)
-Dim mLbl
+    Dim mLbl
     Set mLbl = mFrm.controls.Add("Forms.Label.1", "lblProductInfo", True)
         With mLbl
-             .Caption = "产品待选择"
+             .Caption = "待选择"
              .top = FrmMargin(0): .Height = lb_H
              .Left = 2: .Width = MPgs.Width - 20
              .Font.Size = lb_frontsize
@@ -259,11 +244,10 @@ Dim mLbl
    Set getNewLbl = mLbl
 End Function
 
-
 Private Function getMeinfo(mFrm)
     Dim mLbl
     Set mLbl = mFrm.controls.Add("Forms.Label.1", "lblAuthor", True)
-        With lblAuthor
+        With mLbl
             .Caption = itl ' 使用常量显示作者信息
             .top = MPgs.top + MPgs.Height + FrmMargin(1) + 15 ' 放置在多页控件下方
             .Left = lblProductInfo.Left + 5 ' 与顶部信息栏左对齐
@@ -275,11 +259,8 @@ Private Function getMeinfo(mFrm)
              .AutoSize = True
               .BorderStyle = fmBorderStyleSingle
         End With
-        
    Set getMeinfo = mLbl
 End Function
-
-
 
 'Private Function getNewCls(mFrm, ByVal ClCfg As Dictionary)
 'Dim mCl

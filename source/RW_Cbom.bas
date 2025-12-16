@@ -10,6 +10,7 @@ Sub cBom()
      If pdm Is Nothing Then
           Set pdm = New class_PDM
      End If
+     
      If gPrd Is Nothing Then
         Set gPrd = pdm.getiPrd()
         Set ProductObserver.CurrentProduct = gPrd ' 这会自动触发事件

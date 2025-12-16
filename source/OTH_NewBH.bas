@@ -8,7 +8,7 @@ Attribute VB_Name = "OTH_NewBH"
 Private Tree As Variant
 Private prj
 Sub CATMain()
-        Dim oprd, Tree, odoc, rootprd, cover, house, ref
+        Dim oPrd, Tree, oDoc, rootprd, cover, house, ref
           Dim imsg
           imsg = "请输入你的项目名称"
         prj = GetInput(imsg)
@@ -21,39 +21,39 @@ Sub CATMain()
     For i = 0 To 18
         Select Case i
             Case 0      '创建根产品
-                Set odoc = CATIA.Documents.Add("Product")
-                Set rootprd = odoc.Product
-                Set oprd = rootprd
+                Set oDoc = CATIA.Documents.Add("Product")
+                Set rootprd = oDoc.Product
+                Set oPrd = rootprd
             Case 1
-                Set oprd = rootprd.Products.AddNewComponent("Product", "")
+                Set oPrd = rootprd.Products.AddNewComponent("Product", "")
             Case 2
-                 Set oprd = rootprd.Products.AddNewComponent("Product", "")
+                 Set oPrd = rootprd.Products.AddNewComponent("Product", "")
             Case 3      '创建上箱体组件
                 Set cover = rootprd.Products.AddNewComponent("Product", "")
-                Set oprd = cover
+                Set oPrd = cover
            Case 4     '创建上箱体
-                Set oprd = cover.Products.AddNewComponent("Part", "")
+                Set oPrd = cover.Products.AddNewComponent("Part", "")
            Case 5     '创建下箱体
                 Set house = rootprd.Products.AddNewComponent("Product", "")
-                Set oprd = house
+                Set oPrd = house
             Case 6 '创建参考件
                 Set ref = house.Products.AddNewComponent("Part", "")
-                Set oprd = ref
+                Set oPrd = ref
             Case 12, 13, 14 '创建零件
-                Set oprd = house.Products.AddNewComponent("Part", "")
-                oprd.Name = Tree(i)(4)
+                Set oPrd = house.Products.AddNewComponent("Part", "")
+                oPrd.Name = Tree(i)(4)
             Case 15, 16:
-               Set oprd = house.Products.AddNewProduct("")
+               Set oPrd = house.Products.AddNewProduct("")
             Case 17
-               Set oprd = rootprd.Products.AddNewComponent("Product", "")
+               Set oPrd = rootprd.Products.AddNewComponent("Product", "")
             Case 18
                 Set fast = rootprd.Products.AddNewComponent("Product", "")
-                Set oprd = fast
+                Set oPrd = fast
         Case Else
-                Set oprd = house.Products.AddNewComponent("Product", "")
+                Set oPrd = house.Products.AddNewComponent("Product", "")
         End Select
-          Call newPn(oprd, Tree(i))
-          Set oprd = Nothing
+          Call newPn(oPrd, Tree(i))
+          Set oPrd = Nothing
     Next
         '===新增component
      ' Set product4 = products1.AddNewProduct("")
@@ -100,16 +100,16 @@ Sub iniTree(Tree)
     
 End Sub
 
-Sub newPn(oprd, arr)
-    oprd.Name = arr(4)
-    oprd.PartNumber = prj & arr(1)
-    oprd.nomenclature = arr(2)
-    oprd.definition = arr(3)
+Sub newPn(oPrd, arr)
+    oPrd.Name = arr(4)
+    oPrd.PartNumber = prj & arr(1)
+    oPrd.nomenclature = arr(2)
+    oPrd.definition = arr(3)
     On Error Resume Next
-    oprd.Name = arr(4)
+    oPrd.Name = arr(4)
     On Error GoTo 0
-    oprd.Name = arr(4)
-    oprd.Update
+    oPrd.Name = arr(4)
+    oPrd.Update
 End Sub
 
 Public Function GetInput(msg) As String
