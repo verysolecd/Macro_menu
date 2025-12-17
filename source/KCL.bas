@@ -43,6 +43,7 @@ Function CanExecute(ByVal docTypes As Variant) As Boolean
       docTypes = LCase(docTypes)
         docTypes = Split(docTypes, ",") '过滤器转数组
     End If
+    
     If Not checkFilterType(docTypes) Then Exit Function '过滤器检查，非数组则退出
     Dim ErrMsg As String
     ErrMsg = "不支持当前活动文档类型。" + vbNewLine + "(" + Join(docTypes, ",") + " 类型除外)"

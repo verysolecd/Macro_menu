@@ -8,10 +8,7 @@ Attribute VB_Name = "MDL_holecenter2"
 '{BackColor:12648447}
 
 Sub Faceholecenter()
-    If CATIA.Windows.count < 1 Then
-        MsgBox "没有打开的窗口"
-        Exit Sub
-    End If
+
   If Not CanExecute("PartDocument") Then Exit Sub
     Set oDoc = CATIA.ActiveDocument
     Set oprt = oDoc.part

@@ -9,8 +9,8 @@ i = 5
     oSHT.Activate
         oo = straf1st(oSHT.Name, " ")
         oSHT.Name = "SH" & i & oo
-    Set oviews = oSHT.Views
-    Set oView = oviews.item("Background View")
+    Set oViews = oSHT.Views
+    Set oView = oViews.item("Background View")
    oView.Activate
     Set ots = oView.Texts
     Set Pg = ots.getItem("gongxxzhang")

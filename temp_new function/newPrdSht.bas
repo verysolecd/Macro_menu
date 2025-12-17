@@ -1,216 +1,146 @@
-Attribute VB_Name = "模块3"
-Public selection1 As Selection, selection2 As Selection
+'Attribute VB_Name = "MDL_LayersMng"
+' 获得识别特征下的所有孔中心
+'{GP:4}
+'{EP:ctrhole}
+'{Caption:get孔中心点}
+'{ControlTipText: 提示选择实体后导出所有孔中心，必须是识别孔特征后的实体}
+'{BackColor:12648447}
+Private i
+Sub test22()
+If Not CanExecute("partDocument,productdocument") Then Exit Sub
 
-Sub CATMain()
- On Error Resume Next
-oPath = UserForm1.Path.Text
-EbomName = UserForm1.TextBox6.Text
 
-Set xlApp = CreateObject("Excel.Application")
-xlApp.Caption = "明细"
-xlApp.Workbooks.Open (EbomName)
-    If Err.Number = 0 Then
-'    xlApp.Visible = True
-    xlApp.ReferenceStyle = xlR1C1
-    Else
-    Exit Sub
-    End If
-Set xlSheet1 = xlApp.Workbooks.Item(1).Sheets(1)
-CATIA.DisplayFileAlerts = False
-Dim documents1 As Documents
-Set documents1 = CATIA.Documents
+Set rootDoc = CATIA.ActiveDocument
+Set rootprd = rootDoc.Product
 
-Dim productDocument1 As ProductDocument
-Set productDocument1 = documents1.Add("Product")
+Dim osel
+Set osel = CATIA.ActiveDocument.Selection
 
-Dim product1 As Product
-Set product1 = productDocument1.Product
-product1.PartNumber = xlSheet1.Cells(2, 3)
-product1.Definition = xlSheet1.Cells(2, 4)
-product1.Nomenclature = xlSheet1.Cells(2, 5)
-product1.Update
-
-Dim i%, iCount%, PrtName As String, PrtName_p As String, lev0%, lev1 As Range, Rng As Range, TRng As Ranges
-iCount = xlApp.CountA(xlSheet1.Columns(1))
-For i = 3 To iCount
-    PrtName = xlSheet1.Cells(i, 3)
-    Set lev1 = xlSheet1.Cells(i, 2)
-        lev0 = lev1 - 1
-        For R = i To 2 Step -1
-            If xlSheet1.Cells(R, 2) = lev0 Then
-            Rn = xlSheet1.Cells(R, 2).Row
-            Exit For
-            End If
-        Next
-        PrtName_p = xlSheet1.Cells(Rn, 3)
-    Dim products1 As Products
-    Set products1 = documents1.Item(PrtName_p & ".CATProduct").Product.Products
-    
-    If xlSheet1.Cells(i, 14) = "CATProduct" Then
-        ProductName = oPath & "\" & PrtName & ".CATProduct"
-        If Len(Dir(ProductName)) > 0 Then
-            Dim arrayOfVariantOfBSTR1(0)
-            arrayOfVariantOfBSTR1(0) = ProductName
-            Set products1Variant = products1
-            products1Variant.AddComponentsFromFiles arrayOfVariantOfBSTR1, "All"
-            Set products3 = documents1.Item(PrtName & ".CATProduct").Product.Products
-            i = i + products3.Count
-            
-        Else
-            Set part2 = products1.AddNewComponent("Product", PrtName)
-            part2.Definition = xlSheet1.Cells(i, 4)
-            part2.Nomenclature = xlSheet1.Cells(i, 5)
-            part2.Revision = xlSheet1.Cells(i, 10)
-            part2.DescriptionRef = xlSheet1.Cells(i, 19)
-            part2.Update    '更新文件
-            Set productDocument2 = CATIA.Documents.Item(PrtName & ".CATProduct")
-            productDocument2.SaveAs oPath & "\" & PrtName
-        End If
-    ElseIf xlSheet1.Cells(i, 14) = "CATPart" Then
-        PartName = oPath & "\" & PrtName & ".CATPart"
-
-        If Len(Dir(PartName)) > 0 Then
-            Dim arrayOfVariantOfBSTR2(0)
-            arrayOfVariantOfBSTR2(0) = PartName
-            Set products4Variant = products1
-            products4Variant.AddComponentsFromFiles arrayOfVariantOfBSTR2, "All"
-            Set part2 = products4Variant.Item(PrtName & ".1")
-        Else
-            Set part2 = products1.AddNewComponent("Part", PrtName)
-            part2.Definition = xlSheet1.Cells(i, 4)
-            part2.Nomenclature = xlSheet1.Cells(i, 5)
-            part2.Revision = xlSheet1.Cells(i, 10)
-            part2.DescriptionRef = xlSheet1.Cells(i, 19)
-            If InStr(PrtName, "W") = 0 Then
-                Set partDocument1 = CATIA.Documents.Item(PrtName & ".CATPart")
-                Set part1 = partDocument1.part
-                Set Product01 = partDocument1.Product
-                
-                Mtl001 = xlSheet1.Cells(i, 7)
-                Set parameters1 = part1.Parameters
-                Set strParam1 = parameters1.CreateString("Material", Mtl001)
-                Set parameters2 = Product01.UserRefProperties
-                Set strParam1 = parameters2.CreateString("Material", "")
-                Set relations1 = Product01.Relations
-                Set formula1 = relations1.CreateFormula("公式.9", "", strParam1, PrtName & "\Material")
-                
-                If InStr(PrtName, "Q") = 0 And InStr(PrtName, "J") = 0 And InStr(PrtName, "S") = 0 Then
-                    Tk01 = xlSheet1.Cells(i, 8)
-                    Set parameters3 = part1.Parameters
-                    Set length2 = parameters3.CreateDimension("Thickness", "LENGTH", Tk01)
-                    Set parameters4 = Product01.UserRefProperties
-                    Set length1 = parameters4.CreateDimension("Thickness", "LENGTH", 0#)
-                    Set relations1 = Product01.Relations
-                    Set formula1 = relations1.CreateFormula("公式.5", "", length1, PrtName & "\Thickness")
+ Set oDoc = rootDoc
+ '---显示过滤器管理管理
+ ily = ""
+ ly = oDoc.CurrentLayer
+ If ly <> "None" Then
+     Dim btn, bTitle, bResult
+      imsg = "只显示当前图层还是您输入一个图层？" & vbCrLf & vbCrLf
+      imsg = imsg & "选择 “是”: 只显示当前图层 " & vbCrLf
+      imsg = imsg & "选择 “否”: 输入一个显示图层" & vbCrLf
+      imsg = imsg & "选择 “取消”: 退出" & vbCrLf & vbCrLf
+       btn = vbYesNo + vbExclamation
+       bResult = MsgBox(imsg, btn, "bTitle")  ' Yes(6),No(7),cancel(2)
+       Select Case bResult
+           Case 2: Exit Sub '===选择“取消”====
+           Case 7:  '===选择“否”====
+                ipt = KCL.GetInput("请输入你想显示的图层，逗号分割")
+                If VarType(ipt) = vbString Then
+                    ipt = LCase(ipt)
+                    ipt = Split(ipt, ",") '过滤器转数组
                 End If
+                fstr = ""
+                For i = LBound(ipt) To UBound(ipt)
+                    ily = "Layer= " & CLng(ipt(i)) & "+ " & ily
+                Next i
+                fstr = ""
+                fstr = Left(ily, Len(ily) - 2)
+                    If fstr <> "" Then
+                        filterdef = fstr
+                         filtername = "only_" & fstr & "_shown"
+                         
+                           oDoc.CreateFilter filtername, filterdef
+                           oDoc.CurrentFilter = filtername
+                    End If
                 
-                Set parameters1 = part1.Parameters
-                Set dimension1 = parameters1.CreateDimension("Density", "DENSITY", 7860#)
-                
-                Set dimension1 = parameters1.CreateDimension("Volume", "VOLUME", 0#)
-                Set relations1 = part1.Relations
-                Set formula1 = relations1.CreateFormula("公式.1", "", dimension1, "smartVolume(`零件几何体` )")
-            
-                Set dimension1 = parameters1.CreateDimension("Weight", "MASS", 0#)
-                Set relations1 = part1.Relations
-                Set formula1 = relations1.CreateFormula("公式.3", "", dimension1, "Volume *Density ")
-                
-                Set parameters1 = Product01.UserRefProperties
-                Set dimension1 = parameters1.CreateDimension("Weight", "MASS", 0#)
-                Set relations1 = Product01.Relations
-                Set formula1 = relations1.CreateFormula("公式.7", "", dimension1, PrtName & "\Weight")
-                
-                Set hybridBodies1 = part1.HybridBodies
-                Set hybridBody1 = hybridBodies1.Add()
-                hybridBody1.Name = "Information"
-                
-                Set hybridBodies2 = hybridBody1.HybridBodies
-                Set hybridBody2 = hybridBodies2.Add()
-                hybridBody2.Name = "Boundary_box"
-                
-                Set hybridBody3 = hybridBodies2.Add()
-                hybridBody3.Name = "Material_direction"
-                
-                Set hybridBody4 = hybridBodies2.Add()
-                hybridBody4.Name = "Tooling_direction"
-                
-                Set hybridBody5 = hybridBodies2.Add()
-                hybridBody5.Name = "GD&T"
-                
-                Set hybridBody6 = hybridBodies1.Add()
-                hybridBody6.Name = "Input_data"
-                
-                Set hybridBodies3 = hybridBody6.HybridBodies
-                Set hybridBody7 = hybridBodies3.Add()
-                hybridBody7.Name = "Reference"
-                
-                Set hybridBody8 = hybridBodies3.Add()
-                hybridBody8.Name = "Styling"
-                
-                Set hybridBody9 = hybridBodies3.Add()
-                hybridBody9.Name = "Sections"
-                
-                Set hybridBody10 = hybridBodies1.Add()
-                hybridBody10.Name = "Part_definition"
-                
-                Set hybridBodies4 = hybridBody10.HybridBodies
-                Set hybridBody11 = hybridBodies4.Add()
-                hybridBody11.Name = "Basic_surface"
-                
-                Set hybridBody12 = hybridBodies4.Add()
-                hybridBody12.Name = "Flanges"
-                
-                Set hybridBody13 = hybridBodies4.Add()
-                hybridBody13.Name = "Depressions"
-                
-                Set hybridBody14 = hybridBodies4.Add()
-                hybridBody14.Name = "Cut"
-                
-                Set hybridBody15 = hybridBodies4.Add()
-                hybridBody15.Name = "Cutouts"
-                
-                Set hybridBody16 = hybridBodies4.Add()
-                hybridBody16.Name = "Holes"
-                
-                Set hybridBody17 = hybridBodies4.Add()
-                hybridBody17.Name = "Ribs/Rippen"
-                
-                
-                Set hybridBody18 = hybridBodies1.Add()
-                hybridBody18.Name = "Adapter"
-                
-                Set hybridBodies5 = hybridBody18.HybridBodies
-                Set hybridBody19 = hybridBodies5.Add()
-                hybridBody19.Name = "Unfillet_final"
-                
-                Set hybridBody20 = hybridBodies1.Add()
-                hybridBody20.Name = "Final"
-            End If
-            part2.Update    '更新文件
-            Set productDocument2 = CATIA.Documents.Item(PrtName & ".CATPart")
-            productDocument2.SaveAs oPath & "\" & PrtName
-        End If
-    End If
-    
-    If xlSheet1.Cells(i, 6) > 1 Then
-    n = xlSheet1.Cells(i, 6)
-        For i2 = 1 To n - 1
-            Set productDocument1i = CATIA.ActiveDocument
-            Set selection1 = productDocument1i.Selection
-            selection1.Clear
-            selection1.Add part2
-            selection1.Copy
-            Set selection2 = productDocument1i.Selection
-            selection2.Clear
-            selection2.Add products1
-            selection2.Paste
-        Next
-    End If
-    Set products1 = Nothing
-    Set products3 = Nothing
-    Set part2 = Nothing
-Next
-productDocument1.SaveAs oPath & "\" & CATIA.ActiveDocument.Name '& ".CATProduct"    '保存文件
-xlApp.Workbooks.Close
-CATIA.DisplayFileAlerts = True
+                Case 6  '===选择“是”====
+                 oDoc.CurrentFilter = "Only current layer visible"
+       End Select
+ End If
+    Call addDrw(rootprd)
+ '---显示管理
+'    '---图层管理
+'    Dim layer: layer = CLng(0)
+'    Dim layertype As CatVisLayerType
+'    Dim Visp, osel
+'
+'    Set osel = CATIA.ActiveDocument.Selection
+'    osel.Clear
+'    osel.Add mbd
+'    Set Visp = osel.VisProperties
+'
+'    Visp.GetLayer layertype, layer
+'    If (layertype = catVisLayerNone) Then
+'        layer = -1
+'    End If
+'    If (layertype = catVisLayerBasic) Then
+'        MsgBox "layer =" & layer
+'    End If
+'        MsgBox "layer =" & layer
+'        Visp.SetLayer catVisLayerBasic, 100
+''--- 隐藏\显示
+'
+'Visp.SetShow 0  '' 设置为可见
+'Visp.SetShow 1  '' 设置为不可见
+'
+'
+''--颜色\线型
+'
+'    Call Visp.SetRealColor(128, 64, 64, 1)
+'    Call Visp.SetRealOpacity(128, 1)
+'    Call Visp.SetRealWidth(1, 1)
+'    Call Visp.SetRealLineType(4, 1)
+'    Set bdys = oPrt.bodies
+'    Set bdy = getItem("Mini", bdys)
+'    Set osel = CATIA.ActiveDocument.Selection
+'    osel.Add bdy
+'    osel.Delete
+'oDoc.CurrentFilter = "All visible"
 End Sub
+Function addDrw(iprd)
+    Dim Docs As Documents
+    Dim Shts As DrawingSheets
+    Dim drwDoc As DrawingDocument
+    Dim sht As DrawingSheet
+    Dim oVs As DrawingViews
+    Dim oV As DrawingView
+    Dim ViewGen As DrawingViewGenerativeLinks
+    Dim ViewGBH As DrawingViewGenerativeBehavior
+    Set Docs = CATIA.Documents
+    Set drwDoc = Docs.Add("Drawing")
+    Set Shts = drwDoc.Sheets
+    Set sht = Shts.item("Sheet.1")
+    Set oVs = sht.Views
+ xdis = 200
+ i = 1
+If iprd.Products.count < 1 Then
+    On Error Resume Next
+     Set oprt = iprd.ReferenceProduct.Parent.part
+     If Not oprt Is Nothing Then
+        Set oV = oVs.Add("AutomaticNaming")
+            Set ViewGen = oV.GenerativeLinks
+            Set ViewGBH = oV.GenerativeBehavior
+                ViewGBH.Document = prd
+                ViewGBH.DefineFrontView 0#, 1#, 0#, 0#, 0#, 1#
+                oV.X = xdis * i
+                oV.y = 300
+                oV.[Scale] = 1#
+            ViewGBH.Update
+            oV.Activate
+            i = i + 1
+        End If
+    On Error Resume Next
+Else
+        For Each prd In iprd.Products
+            Set oV = oVs.Add("AutomaticNaming")
+            oV.Name = prd.PartNumber & "VIEW YZ"
+            Set ViewGen = oV.GenerativeLinks
+            Set ViewGBH = oV.GenerativeBehavior
+                ViewGBH.Document = prd
+                ViewGBH.DefineFrontView 0#, 1#, 0#, 0#, 0#, 1#
+                oV.X = xdis * i
+                oV.y = 300
+                oV.[Scale] = 1#
+            ViewGBH.Update
+            oV.Activate
+            i = i + 1
+        Next
+End If
+End Function
