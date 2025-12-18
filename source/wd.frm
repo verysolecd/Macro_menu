@@ -15,7 +15,7 @@ Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
 ' 模块：modStyle（简化版）
 ' 布局常量（核心简化点）
-Private Const FrmTitle As String = "我请问你？？"
+
 Private Const Frm_WIDTH As Integer = 300 ' 窗体固定宽度
 Private Const Frm_LH_gap As Integer = 6 ' 所有控件左对齐的左边距
 Private Const itemgap As Integer = 1
@@ -42,12 +42,13 @@ Private Const BTN_BACKCOLOR As Long = &H8000000E ' 按钮灰蓝
 'Private WithEvents ctr As Control
 Private lst
 
+Public wdCfg
+
 Option Explicit
 
-
-Sub setFrm(inf)
+Sub setFrm(ttl, inf)
   With Me
-        .Caption = FrmTitle
+        .Caption = ttl
         .Width = Frm_WIDTH
         .BackColor = Frm_BACKCOLOR
         .Font.Name = FONT_NAME
@@ -81,7 +82,6 @@ For Each cfg In lst
                      Case Else
                             .top = currTop
                   End Select
-                  
                     .Height = cls_H
                      If cfg("Type") <> "Forms.TextBox.1" Then
                        .Caption = cfg("Caption")
@@ -90,15 +90,10 @@ For Each cfg In lst
                         .Width = Me.Width - 3 * Frm_LH_gap
                         .Height = 2 * cls_H
                     End If
-                    
                      currTop = .top + .Height + itemgap: Debug.Print currTop
-                  
             End With
         Next
         Me.Height = (lst.count + 3) * (cls_H + itemgap)
-        Dim Cvt
-        Set Cvt = New clsCtrls
-         Set Cvt.Control = ctr
 End Sub
 
 Private Sub UserForm_Click()

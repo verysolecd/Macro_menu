@@ -7,19 +7,6 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
-'VERSION 1.0 CLASS
-'Begin
-'  MultiUse = -1  'True
-'End
-'Attribute VB_Name = "Button_Evt"
-'Attribute VB_GlobalNameSpace = False
-'Attribute VB_Creatable = False
-'Attribute VB_PredeclaredId = False
-'Attribute VB_Exposed = False
-'' Button_Evt.cls
-'Attribute mBtn.VB_VarHelpID = -1
-' Cat_Macro_Menu_Model.bas
-
 Option Explicit
 
 Private WithEvents mBtn As MSForms.CommandButton
@@ -31,12 +18,9 @@ Private mParentForm As MSForms.UserForm
 Private mInfo As Object
 Private mCloseType As Boolean
 
-
 Private Const TAG_ENTRYPNT = "ep"           ' 入口点标签
 Private Const TAG_PJTPATH = "pjt_path"      ' 项目路径标签
 Private Const TAG_MDLNAME = "mdl_name"      ' 模块名称标签
-
-
 
 
 Sub set_ButtonEvent(ByVal btn As MSForms.CommandButton, _

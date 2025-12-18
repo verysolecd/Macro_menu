@@ -25,9 +25,11 @@ Set colls = rootprd.Products
     imsg = "请依次选择旧版本、新版本零件"
     filter(0) = "Product"
     Set prd1 = KCL.SelectItem(imsg, filter)
+    If prd1 Is Nothing Then Exit Sub
     imsg = "请选择新版本零件"
     Set prd2 = KCL.SelectItem(imsg, filter)
-If Not IsNothing(prd1) And Not IsNothing(prd1) Then
+      If prd2 Is Nothing Then Exit Sub
+    If Not IsNothing(prd1) And Not IsNothing(prd1) Then
             Dim CMPR: Set CMPR = oComps.Add(prd1, prd2, 1#, 1#, 2)
                 pn2 = KCL.rmchn(prd2.PartNumber)
                 opath(0) = prd2.ReferenceProduct.Parent.path

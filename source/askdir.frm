@@ -17,7 +17,7 @@ Attribute VB_Exposed = False
 'Begin
 '  MultiUse = -1  'True
 'End
-Private Const itemgap = 2
+Private Const itemgap = 1
 Private Const fmargin = 6
 Private Const bmargin = 6
 Private Const txtWidth = 236
@@ -40,18 +40,18 @@ Attribute chk_log.VB_VarHelpID = -1
 
 
 Private colls As New collection
-Private class_ctrl As clsCtrls
+Private class_ctrl
 Private Sub UserForm_Initialize()
     'Call Set_Form
     ' 设置窗体基本属性
     Me.Caption = "零件号更新和路径选择"
     Me.Width = 280
-    Me.Height = 200
+    Me.Height = 180
     Me.StartUpPosition = 1
     initFrm
 End Sub
 Sub initFrm()
-Dim thistop
+    Dim thistop
     Set chk_Path = Me.controls.Add("Forms.CheckBox.1")
            With chk_Path
                .Name = "chk_Path":    .Caption = "是否导出到当前路径"
@@ -66,21 +66,6 @@ Dim thistop
             .top = thistop:   .Height = 20
              thistop = .top + .Height + itemgap
         End With
-    Set class_ctrl = New clsCtrls
-    Set txt_TM = Me.controls.Add("Forms.TextBox.1", "txt_TM", True)
-        With txt_TM
-            .Name = "txt_TM"
-            .Enabled = False
-            .Left = fmargin + 12: .Width = txtWidth
-            .top = thistop: .Height = 20
-              thistop = .top + .Height + itemgap
-        End With
-        
-     Set class_ctrl.txt = txt_TM
-        class_ctrl.ohint = "日=d或day，时=hour或h，分=min或i，默认日"
-        txt_TM.Text = class_ctrl.ohint
-        txt_TM.ForeColor = &H808080
-    colls.Add class_ctrl
     
    Set chk_log = Me.controls.Add("Forms.CheckBox.1", "chk_log", True)
     With chk_log
@@ -113,10 +98,11 @@ Dim thistop
             .top = cmdOK.top: .Height = 24
             .Cancel = True ' Allows Esc key to trigger this button
         End With
+        
+        Me.Height = thistop + 36
 End Sub
 
 Sub initFrmlog()
-
 Set txt_log = Me.controls.Add("Forms.TextBox.1", "txt_log", True)
      With txt_log
          .Name = "txt_log"
@@ -140,23 +126,9 @@ Set txt_log = Me.controls.Add("Forms.TextBox.1", "txt_log", True)
          .top = cmdOK.top: .Height = 24
          .Cancel = True ' Allows Esc key to trigger this button
      End With
-
-
 End Sub
 Private Sub chk_TM_Click()
     txt_TM.Enabled = chk_TM.value
-End Sub
-Private Sub txt_TM_gotfocus()
-    If txt_TM.Text = usrTXT Then
-        txt_TM.Text = " "
-        txt_TM.ForeColor = &H80
-    End If
-End Sub
-Private Sub txt_TM_Lostfocus()
-    If txt_TM.Text = "" Then
-        txt_TM.Text = usrTXT
-        txt_TM.ForeColor = &H80000012
-  End If
 End Sub
 Private Sub cmdOK_Click()
     Dim UpdateTimestamp As Boolean

@@ -1,33 +1,30 @@
-Attribute VB_Name = "A000000000000_test"
-'格式为 %UI <ControlType> <ControlName> <Caption/Text>
-' %UI Label lbL_jpzcs  键盘造车手出品
-' %UI CheckBox chk_path  是否导出到当前路径
-' %UI CheckBox  chk_tm  是否更新时间戳到CATIA零件号？
-' %UI CheckBox chk_log  本次导出是否更新日志？
-' %UI TextBox   txt_log  请输入更新内容(不必输入时间)
-' %UI Button btnOK  确定
-' %UI Button btncancel  取消
+Attribute VB_Name = "A00_mdl2wd"
+
 
 Option Explicit
 
-Sub TEST()
+Sub mdl2wd(imdl)
+
 Dim mdl, DecCnt, DecCode
 'regPtn = TAG_S & "(.*?)" & TAG_D & "(.*?)" & TAG_E
 'Set inf = KCL.getInfo_asDic(Ctrlinf, regPtn)
-    Dim Apc As Object: Set Apc = KCL.GetApc()
-    Dim ExecPjt As Object: Set ExecPjt = Apc.ExecutingProject
-    On Error Resume Next
-     Set mdl = ExecPjt.VBProject.VBE.Activecodepane.codemodule
-        Error.Clear
-    On Error GoTo 0
+'    Dim Apc As Object: Set Apc = KCL.GetApc()
+'    Dim ExecPjt As Object: Set ExecPjt = Apc.ExecutingProject
+'    On Error Resume Next
+'     Set mdl = ExecPjt.VBProject.VBE.Activecodepane.codemodule
+'        Error.Clear
+'    On Error GoTo 0
+Set mdl = imdl
     If mdl Is Nothing Then Exit Sub
     DecCnt = mdl.CountOfDeclarationLines ' 获取声明行数
         If DecCnt < 1 Then Exit Sub
         DecCode = mdl.Lines(1, DecCnt) ' 获取声明代码
-    Dim inf:   Set inf = ParseCts(DecCode)
+    Dim clscfg:   Set clscfg = ParseCts(DecCode)
+    Dim ttl: ttl = ParseTitle(DecCode)
     Dim frm: Set frm = wd
-    Call frm.setFrm(inf)
+    Call frm.setFrm(ttl, clscfg)
     frm.Show vbModeless
+'    resultAry = wdCfg()
 End Sub
 Function getmdlname()
    getmdlname = ""
@@ -75,6 +72,7 @@ Private Function ParseCts(ByVal code As String) As Object
         ' 格式: ' %UI <ControlType> <ControlName> <Caption/Text>
         .Pattern = "^\s*'\s*%UI\s+(\w+)\s+(\w+)\s+(.*)$"
     End With
+    
     Dim lst
     Set lst = InitLst
     If regex.TEST(code) Then
@@ -93,11 +91,27 @@ Private Function ParseCts(ByVal code As String) As Object
 End Function
 
 
-
-End Function
-
-
-
+Private Function ParseTitle(ByVal code As String) As String
+        Dim regex As Object
+        Dim matches As Object
+        Dim match As Object
+        Dim itl
+        Set regex = KCL.getRegexp
+    With regex
+        .Global = True
+        .MultiLine = True
+        ' 格式: ' %UI <Title> <Caption/Text>
+        .Pattern = "^\s*'\s*%Title\s+(.*)$"
+    End With
+    
+    itl = "请问你要如何执行配置"
+              If regex.TEST(code) Then
+                Set matches = regex.Execute(code)
+                For Each match In matches
+                 itl = match.SubMatches(0)
+                Next
+              End If
+    ParseTitle = itl
 End Function
 
 

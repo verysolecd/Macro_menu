@@ -563,7 +563,7 @@ End Function
 ' 返回值: Boolean 类型，True 表示路径包含中文，False 表示不包含
 Function isPathchn(pathToCheck) As Boolean
     Dim regex As Object
-    Set regex = getRegex
+    Set regex = getRegexp
     regex.Pattern = "[\u4e00-\u9fa5]"   ' 设置正则表达式模式，匹配中文字符
     regex.IgnoreCase = True
     regex.Global = True
@@ -572,7 +572,7 @@ Function isPathchn(pathToCheck) As Boolean
 End Function
 ''替换字符串的所有中文为横线
 Function rmchn(ByVal inputString$) As String
-    Dim regex: Set regex = getRegex()
+    Dim regex: Set regex = getRegexp()
     regex.Pattern = "[\u4e00-\u9fa5]"
     regex.Global = True
     rmchn = regex.Replace(inputString, "_")
@@ -697,9 +697,9 @@ Public Function GetApc() As Object
     Set GetApc = Apc
 End Function
 
-Public Function getRegex() As Object
- Dim regex: Set regex = CreateObject("VBScript.RegExp")
- Set getRegex = regex
+Public Function getRegexp() As Object
+    Dim regex: Set regex = CreateObject("VBScript.RegExp")
+    Set getRegexp = regex
 End Function
 Public Function getshell()
     Dim shellApp As Object
