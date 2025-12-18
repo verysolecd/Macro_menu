@@ -184,3 +184,66 @@ WD2 就像一个“总控室”。
 修改 mdl2wd 让其返回 Scripting.Dictionary。
 创建一个简单的事件类来处理按钮点击并填充字典。
 更新 WD2 来接收并使用这个字典。
+
+
+这是一个非常关键的技术点。在 VBA 中，动态创建的控件（如运行时生成的按钮）不像预先画好的控件那样可以直接双击写 Sub btnOK_Click()。
+
+要实现“点击按钮后运行功能”，我们需要利用 “类模块 (Class Module)” 作为事件监听器。
+
+以下是实现“确定”和“取消”按钮逻辑的完整方案构思：
+
+1. 核心机制：事件类 (Event Class)
+我们需要创建一个类模块（假设命名为 clsButtonEvents），专门用来“接管”动态按钮的点击动作。
+
+类模块内部逻辑：
+
+定义一个 WithEvents 变量来绑定按钮。
+在 Click 事件中，判断点击的是哪个按钮：
+如果是 btnOK：将窗体隐藏 (Me.Hide)。注意是 Hide 而不是 Unload，这样窗体还在内存里，控件里的值（勾选了什么、输入了什么）依然可以被读取。
+如果是 btnCancel：设置一个全局或公共标志位（比如 IsCancelled = True），然后隐藏窗体。
+2. 运行流程：从点击到执行
+为了让 WD2 能够“继续运行”，我们需要把过程拆解为：显示窗体 -> 等待交互 -> 收集数据 -> 执行逻辑。
+
+第一步：在 mdl2wd 中绑定事件
+当你的代码解析到 %UI Button btnOK 并创建控件时：
+
+实例化类模块：Set handler = New clsButtonEvents。
+将新创建的按钮对象赋值给类里的变量：Set handler.Control = cmdBtn。
+将这个 handler 对象存入一个集合（Collection），防止它因为变量作用域结束而消失。
+第二步：窗体的模态阻塞
+在 mdl2wd 中调用 UserForm.Show。
+
+因为是模态显示，代码会停在这一行。
+用户在界面上操作（打钩、输入文本）。
+第三步：点击“确定”后的数据回收
+用户点击 btnOK -> 触发类模块事件 -> 执行 UserForm.Hide。
+代码回到 mdl2wd 中 UserForm.Show 的下一行。
+关键动作：mdl2wd 遍历窗体上所有的控件，把 CheckBox 的 Value 和 TextBox 的 Text 存入你想要的数组或字典中。
+执行 Unload UserForm 彻底释放内存。
+第四步：返回 WD2 执行业务
+mdl2wd 将收集好的数据返回给 WD2。 WD2 拿到数组后，根据里面的内容决定调用哪个功能：
+
+vb
+ Show full code block 
+' WD2 中的伪代码逻辑
+Dim results As Variant
+results = mdl2wd(mdl) ' 获取返回的数组
+
+If results("btnOK") = True Then
+    If results("chk_path") = True Then Call ExportSTP()
+    If results("chk_log") = True Then Call UpdateLog(results("txt_log"))
+End If
+3. 为什么不直接在按钮事件里运行功能？
+你可能会问：为什么不在类模块的 btnOK_Click 里直接写导出 STP 的代码？
+
+原因有二：
+
+解耦（Decoupling）：mdl2wd 应该是一个通用的 UI 生成工具，它不应该知道什么是“导出 STP”。它只负责把用户填好的数据“打包”送回来。
+灵活性：如果你以后有另一个函数 WD3 也要用这个 UI，但点击确定后是执行“打印 PDF”，你不需要修改 UI 生成器的代码，只需要在 WD3 里处理返回的数组即可。
+总结方案架构
+类模块：充当“传声筒”，告诉程序用户点完了，可以收割数据了。
+Hide 机制：确保点击按钮后，数据不会随着窗体关闭而消失，留给主程序读取的时间。
+数据打包：将所有控件状态一次性封装进数组/字典返回。
+这种方案下，btnOK 的作用就像是**“确认提交”**，而真正的“运行功能”是在 WD2 接收到提交的数据后触发的。
+
+如果你准备好了，我可以为你展示如何编写这个类模块以及如何修改 mdl2wd 的返回逻辑。
