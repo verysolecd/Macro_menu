@@ -152,7 +152,7 @@ Private Sub btn_Click()
     Next
     ' ´¥·¢»Øµ÷
     If callback <> "" Then Application.Run callback, result
-    frm.hide
+    frm.Hide
 End Sub
 
 

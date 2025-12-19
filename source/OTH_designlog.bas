@@ -10,7 +10,7 @@ Option Explicit
 Sub designlog()
 
     If Not KCL.CanExecute("ProductDocument") Then Exit Sub
-    If pdm Is Nothing Then Set pdm = New class_PDM
+    If pdm Is Nothing Then Set pdm = New Cls_PDM
     Dim oPrd:  Set oPrd = rootprd
     Dim str1: str1 = rootprd.DescriptionRef
     Dim tm: tm = KCL.timestamp("i")

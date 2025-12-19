@@ -8,12 +8,12 @@ Attribute VB_Name = "RW_Cbom"
 Sub cBom()
     If Not KCL.CanExecute("ProductDocument") Then Exit Sub
      If pdm Is Nothing Then
-          Set pdm = New class_PDM
+          Set pdm = New Cls_PDM
      End If
      
      If gPrd Is Nothing Then
         Set gPrd = pdm.getiPrd()
-        Set ProductObserver.CurrentProduct = gPrd ' 这会自动触发事件
+        Set Cls_PrdOB.CurrentProduct = gPrd ' 这会自动触发事件
      End If
       Set iprd = gPrd
      If iprd Is Nothing Then Exit Sub
@@ -21,7 +21,7 @@ Sub cBom()
      counter = 1
      LV = 1
       If gws Is Nothing Then
-           Set xlm = New Class_XLM
+           Set xlm = New Cls_XLM
         End If
     Dim tmpData():  tmpData = pdm.recurInfoPrd(iprd, LV)
         ReDim resultAry(1 To UBound(tmpData, 1), 1 To UBound(tmpData, 2) + 2)

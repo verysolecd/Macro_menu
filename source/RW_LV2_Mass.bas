@@ -8,7 +8,7 @@ Attribute VB_Name = "RW_LV2_Mass"
 Sub L2Mass()
     If Not KCL.CanExecute("ProductDocument") Then Exit Sub
     If pdm Is Nothing Then
-        Set pdm = New class_PDM
+        Set pdm = New Cls_PDM
     End If
     If gPrd Is Nothing Then
         Call setgprd

@@ -10,7 +10,7 @@ Sub CATMain()
 
     If Not KCL.CanExecute("ProductDocument") Then Exit Sub
     If pdm Is Nothing Then
-        Set pdm = New class_PDM
+        Set pdm = New Cls_PDM
     End If
     
    Set M = pdm.osel

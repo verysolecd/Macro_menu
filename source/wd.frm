@@ -59,7 +59,7 @@ Sub setFrm(ttl, inf)
     bttop = 0
    Set lst = inf
     currTop = 4
-    Me.Show vbModeless
+'    Me.Show vbModeless
 Dim cfg, thisleft, ctr
 
 For Each cfg In lst

@@ -3,29 +3,61 @@ Attribute VB_Name = "A00_mdl2wd"
 
 Option Explicit
 
-Sub mdl2wd(imdl)
+Function mdl2wd(imdl)
 
 Dim mdl, DecCnt, DecCode
-'regPtn = TAG_S & "(.*?)" & TAG_D & "(.*?)" & TAG_E
-'Set inf = KCL.getInfo_asDic(Ctrlinf, regPtn)
-'    Dim Apc As Object: Set Apc = KCL.GetApc()
-'    Dim ExecPjt As Object: Set ExecPjt = Apc.ExecutingProject
-'    On Error Resume Next
-'     Set mdl = ExecPjt.VBProject.VBE.Activecodepane.codemodule
-'        Error.Clear
-'    On Error GoTo 0
+
 Set mdl = imdl
-    If mdl Is Nothing Then Exit Sub
+    If mdl Is Nothing Then Exit Function
     DecCnt = mdl.CountOfDeclarationLines ' 获取声明行数
-        If DecCnt < 1 Then Exit Sub
+        If DecCnt < 1 Then Exit Function
         DecCode = mdl.Lines(1, DecCnt) ' 获取声明代码
     Dim clscfg:   Set clscfg = ParseCts(DecCode)
     Dim ttl: ttl = ParseTitle(DecCode)
-    Dim frm: Set frm = wd
-    Call frm.setFrm(ttl, clscfg)
-    frm.Show vbModeless
+'    Dim frm: Set frm = wd
+    Load wd
+    Call wd.setFrm(ttl, clscfg)
+
+' --- 3. 绑定按钮事件 ---
+    Dim eventCol As New collection ' 必须保持这个集合存活，否则事件对象会被销毁
+    Dim ctl As Control
+    Dim evtHandler As Cls_Ctrl
+    For Each ctl In wd.controls
+        If TypeName(ctl) = "CommandButton" Then
+            Set evtHandler = New Cls_Ctrl
+            Set evtHandler.ControlBtn = ctl
+            Set evtHandler.ParentFrm = wd
+            evtHandler.ControlID = ctl.Name
+            eventCol.Add evtHandler
+        End If
+    Next
+    
+      ' --- 4. 显示窗体 (模态) ---
+    ' 代码会在这里暂停，直到窗体被 Hide
+    wd.Show vbModal
+    
+     ' --- 5. 收集返回值 ---
+    Dim res As Object
+    Set res = CreateObject("Scripting.Dictionary")
+    ' 记录点击了哪个按钮 (通过 Tag 传递)
+    res.Add "Status", wd.Tag
+    ' 遍历所有控件获取值
+    For Each ctl In wd.controls
+        On Error Resume Next ' 防止某些控件没有 Value 或 Text 属性
+        If TypeName(ctl) = "CheckBox" Then
+            res.Add ctl.Name, ctl.value
+        ElseIf TypeName(ctl) = "TextBox" Then
+            res.Add ctl.Name, ctl.Text
+        End If
+        On Error GoTo 0
+    Next
+    ' --- 6. 清理 ---
+    Unload wd
+    Set mdl2wd = res
+    
+    
 '    resultAry = wdCfg()
-End Sub
+End Function
 Function getmdlname()
    getmdlname = ""
     Dim Apc As Object: Set Apc = KCL.GetApc()

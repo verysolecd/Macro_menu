@@ -8,7 +8,7 @@ Attribute VB_Name = "RW_3initme"
 
 Sub initme()
  If Not KCL.CanExecute("ProductDocument,PartDocument") Then Exit Sub
- If pdm Is Nothing Then Set pdm = New class_PDM
+ If pdm Is Nothing Then Set pdm = New Cls_PDM
  Set allPN = KCL.InitDic(vbTextCompare): allPN.RemoveAll  'allPn 是全局变量，不需要传递
   Dim iprd
  If KCL.checkDocType("PartDocument") Then

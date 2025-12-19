@@ -12,15 +12,37 @@ Attribute VB_Name = "A00_WD"
 
 
 Sub WD2()
-    Set oDoc = CATIA.ActiveDocument
-       Dim Apc As Object: Set Apc = KCL.GetApc()
+    Dim Apc As Object: Set Apc = KCL.GetApc()
        Dim ExecPjt As Object: Set ExecPjt = Apc.ExecutingProject
        On Error Resume Next
           On Error Resume Next
             Set mdl = ExecPjt.VBProject.VBE.Activecodepane.codemodule
                Error.Clear
            On Error GoTo 0
-      Call mdl2wd(mdl)
+         
+   
+    ' 1. 调用 UI 生成器，获取返回值（字典）
+    Dim uiData As Object
+    Set uiData = mdl2wd(mdl)
+    
+    ' 2. 检查是否点击了确定 (btnOK)
+    If uiData("Status") <> "btnOK" Then
+        MsgBox "用户取消了操作"
+        Exit Sub
+    End If
+    
+    ' 3. 根据返回的字典执行业务逻辑
+    ' 示例：读取 chk_path
+    If uiData.Exists("chk_path") And uiData("chk_path") = True Then
+        MsgBox "执行功能：导出到当前路径"
+        ' Call ExportToCurrentPath()
+    End If
+    
+    ' 示例：读取 txt_log
+    If uiData.Exists("txt_log") Then
+        MsgBox "日志内容: " & uiData("txt_log")
+    End If
+    
  End Sub
 
 

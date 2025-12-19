@@ -8,7 +8,7 @@ Attribute VB_Name = "RW_Cal_Mass"
 Sub Cal_Mass_m()
     If Not KCL.CanExecute("ProductDocument") Then Exit Sub
     If pdm Is Nothing Then
-        Set pdm = New class_PDM
+        Set pdm = New Cls_PDM
     End If
    On Error Resume Next
             If Not gPrd Is Nothing Then
@@ -26,7 +26,7 @@ Sub Cal_Mass_m()
 End Sub
 Sub Cal_Mass2()
     If pdm Is Nothing Then
-        Set pdm = New class_PDM
+        Set pdm = New Cls_PDM
     End If
    On Error Resume Next
             If Not gPrd Is Nothing Then

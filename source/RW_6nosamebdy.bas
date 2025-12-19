@@ -17,7 +17,7 @@ Sub nosamebdy()
     Set pdm = Nothing
     Exit Sub
  End If
-  If pdm Is Nothing Then Set pdm = New class_PDM
+  If pdm Is Nothing Then Set pdm = New Cls_PDM
    
   Set allPN = KCL.InitDic(vbTextCompare): allPN.RemoveAll  'allPn 是全局变量，不需要传递
  Set iprd = pdm.getiPrd()

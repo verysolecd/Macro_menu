@@ -8,11 +8,11 @@ Attribute VB_Name = "RW_1setgprd"
 Sub setgprd()
     If Not CanExecute("ProductDocument") Then Exit Sub
     If pdm Is Nothing Then
-        Set pdm = New class_PDM
+        Set pdm = New Cls_PDM
     End If
 
     Set gPrd = pdm.getiPrd()
-    Set ProductObserver.CurrentProduct = gPrd ' 这会自动触发事件
+    Set Cls_PrdOB.CurrentProduct = gPrd ' 这会自动触发事件
 
         If Not gPrd Is Nothing Then
            imsg = "你选择的产品是" & gPrd.PartNumber

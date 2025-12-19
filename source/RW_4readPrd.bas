@@ -8,7 +8,7 @@ Attribute VB_Name = "RW_4readPrd"
 
 Sub readPrd()
     If pdm Is Nothing Then
-     Set pdm = New class_PDM
+     Set pdm = New Cls_PDM
     End If
  '---------获取待修改产品 '---------遍历修改产品及子产品
     If gPrd Is Nothing Then
@@ -16,7 +16,7 @@ Sub readPrd()
          Exit Sub
     Else
          If gws Is Nothing Then
-           Set xlm = New Class_XLM
+           Set xlm = New Cls_XLM
            End If
     End If
         Dim currRow: currRow = 2

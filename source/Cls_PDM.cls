@@ -2,7 +2,7 @@ VERSION 1.0 CLASS
 BEGIN
   MultiUse = -1  'True
 END
-Attribute VB_Name = "class_PDM"
+Attribute VB_Name = "Cls_PDM"
 Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
@@ -262,7 +262,7 @@ Public Sub initPrd(oPrd)
     Set colls = refPrd.UserRefProperties
     Dim i
     For i = 0 To 0
-        Set usrp(i) = New Class_para
+        Set usrp(i) = New Cls_Para
         usrp(i).SetNT NT(i)(0), NT(i)(1)
         checkPara usrp(i), colls
     Next
@@ -313,21 +313,21 @@ Private Sub iniPrt(oPrd)
         Dim usrp(0 To 3)
         Set colls = refPrd.UserRefProperties
         For i = 0 To 3
-            Set usrp(i) = New Class_para
+            Set usrp(i) = New Cls_Para
             usrp(i).SetNT NT(i)(0), NT(i)(1)
             checkPara usrp(i), colls
         Next
 '============创建part_info内参数=================
     '============创建参数集合=================
         Dim infoset
-        Set infoset = New Class_para
+        Set infoset = New Cls_Para
         infoset.SetNT "Part_info", "ParameterSet"
         Set colls = oprt.Parameters.RootParameterSet.ParameterSets
         checkPara infoset, colls
         Set colls = infoset.obj.DirectParameters
      '====创建part_info内参数====
         Dim iBodys
-        Set iBodys = New Class_para
+        Set iBodys = New Cls_Para
         iBodys.SetNT "iBodys", "list"
         checkPara iBodys, colls
         If getPara(oprt.mainbody, iBodys.obj.valuelist)(0) Is Nothing Then
@@ -343,7 +343,7 @@ Private Sub iniPrt(oPrd)
             Array("Mass", "Mass") _
         )
         For i = 0 To 3
-            Set infoPara(i) = New Class_para
+            Set infoPara(i) = New Cls_Para
             infoPara(i).SetNT PNT(i)(0), PNT(i)(1)
             checkPara infoPara(i), colls
         Next
@@ -365,7 +365,7 @@ Private Sub iniPrt(oPrd)
     '创建所有relations
             Set colls = oprt.relations
             Dim oRule
-            Set oRule = New Class_para
+            Set oRule = New Cls_Para
                    '---创建EKL
             oRule.Reset
             oRule.SetNT "sum_all_Vol", "Program"

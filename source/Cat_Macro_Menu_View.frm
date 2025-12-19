@@ -37,7 +37,7 @@ Private Const lb_frontsize = 10 ' 字体大小
 Private Const itl = "公众号:键盘造车手"
 ' 按钮事件集合
 Private mBtns As Object
-Private WithEvents prdObserver As ProductObserver
+Private WithEvents prdObserver As Cls_PrdOB
 Attribute prdObserver.VB_VarHelpID = -1
 Private WithEvents lblProductInfo As MSForms.Label
 Attribute lblProductInfo.VB_VarHelpID = -1
@@ -51,7 +51,7 @@ Sub Set_FormInfo(ByVal InfoLst As Object, _
                  ByVal PageMap As Object, _
                  ByVal formTitle As String, _
                  ByVal CloseType As Boolean)
-    Set prdObserver = ProductObserver  ' 连接到全局产品观察器
+    Set prdObserver = Cls_PrdOB  ' 连接到全局产品观察器
     FrmMargin = Array(2, 2, 2, 2) ' 上, 右, 下, 左 窗体边距调整值
     Set MPgs = Me.controls.Add("Forms.MultiPage.1", "MPgs", True) ' 创建多页控件
     Dim Pgs As Pages
@@ -60,7 +60,7 @@ Sub Set_FormInfo(ByVal InfoLst As Object, _
     Dim BtnInfos As Object, info As Variant
     Dim Btns As Object: Set Btns = KCL.InitLst()
     Dim btn As MSForms.CommandButton
-    Dim BtnEvt As Button_Evt
+    Dim BtnEvt As Cls_btEVT
     For Each KeyStr In InfoLst
         Key = CLng(KeyStr)
         If Not PageMap.Exists(Key) Then GoTo Continue
@@ -69,7 +69,7 @@ Sub Set_FormInfo(ByVal InfoLst As Object, _
         Set BtnInfos = InfoLst(KeyStr)
         For Each info In BtnInfos
             Set btn = Init_Button(Pg.controls, Key, info)
-            Set BtnEvt = New Button_Evt
+            Set BtnEvt = New Cls_btEVT
             Call BtnEvt.set_ButtonEvent(btn, info, Me, CloseType)
             Btns.Add BtnEvt
         Next

@@ -51,7 +51,7 @@ End Sub
 Sub Capme()
  If Not KCL.CanExecute("ProductDocument,PartDocument") Then Exit Sub
  If pdm Is Nothing Then
-        Set pdm = New class_PDM
+        Set pdm = New Cls_PDM
  End If
 On Error Resume Next
 '-----------设置显示样式模式-------------
