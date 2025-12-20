@@ -520,8 +520,8 @@ Public Function GetInput(msg) As String
 End Function
 ' 检查字符串中是否包含指定关键字
 ' 忽略大小写进行检查
-Public Function ExistsKey(ByVal txt As String, ByVal Key As String) As Boolean
-    ExistsKey = IIf(InStr(LCase(txt), LCase(Key)) > 0, True, False)
+Public Function ExistsKey(ByVal txt As String, ByVal key As String) As Boolean
+    ExistsKey = IIf(InStr(LCase(txt), LCase(key)) > 0, True, False)
 End Function
 '@@ param:ostr-时间格式
 Public Function timestamp(Optional ByVal ostr) As String
@@ -810,21 +810,21 @@ Public Function getInfo_asDic( _
     If matches.count < 1 Then Exit Function
     Dim Dic As Object: Set Dic = KCL.InitDic(vbTextCompare)
     Dim match As Object, SubMatchs As Object
-    Dim Key As Variant, Var As Variant
+    Dim key As Variant, Var As Variant
     
     For Each match In matches
         Set SubMatchs = match.SubMatches
         If SubMatchs.count < 2 Then GoTo Continue
         ' ==  获取编号
-        Key = Trim(Replace(SubMatchs(0), """", "")) 'trim 取消前后空格， replace 删除中间空格
+        key = Trim(Replace(SubMatchs(0), """", "")) 'trim 取消前后空格， replace 删除中间空格
         
-        If Len(Key) < 1 Then GoTo Continue  '若key为空进入下一个循环
+        If Len(key) < 1 Then GoTo Continue  '若key为空进入下一个循环
         
-        If KeyToLong Then Key = CLng(Key)  'Clng转换为long类型
+        If KeyToLong Then key = CLng(key)  'Clng转换为long类型
             ' ==  获取编号对应page
             Var = Trim(Replace(SubMatchs(1), """", ""))  'trim 取消前后空格， replace 删除中间空格
         If Len(Var) < 1 Then GoTo Continue
-        Set Dic = Push_Dic(Dic, Key, Var)
+        Set Dic = Push_Dic(Dic, key, Var)
 Continue:
     Next
     If Dic.count < 1 Then Exit Function
@@ -832,12 +832,12 @@ Continue:
 
 End Function
 Public Function Push_Dic(ByVal Dic As Object, _
-                          ByVal Key As Variant, _
+                          ByVal key As Variant, _
                           ByVal item As Variant) As Object
-    If Dic.Exists(Key) Then
-        Dic(Key) = item
+    If Dic.Exists(key) Then
+        Dic(key) = item
     Else
-        Dic.Add Key, item
+        Dic.Add key, item
     End If
     Set Push_Dic = Dic
 End Function
@@ -876,3 +876,12 @@ Public Function GetBrepName(MyBRepName As String) As String
     GetBrepName = MyBRepName
 End Function
 
+
+
+Function getFrmDic()
+   Dim oFrm: Set oFrm = New Cls_DynaFrm
+   Dim frmDic: Set frmDic = oFrm.Res
+    Set getFrmDic = frmDic
+    Set frmDic = Nothing
+    Set oFrm = Nothing
+End Function

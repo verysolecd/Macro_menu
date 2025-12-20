@@ -257,12 +257,12 @@ Function InitDictByArrayCount( _
         Optional compareMode As Long = vbBinaryCompare) As Object
     Dim dict As Object
     Set dict = InitDict(compareMode)
-    Dim Key As Variant
-    For Each Key In txtArray
-        If Not dict.Exists(Key) Then
-            dict(Key) = dict(Key) + 1
+    Dim key As Variant
+    For Each key In txtArray
+        If Not dict.Exists(key) Then
+            dict(key) = dict(key) + 1
         Else
-            Call dict.Add(Key, 0)
+            Call dict.Add(key, 0)
         End If
     Next
     Set InitDictByArrayCount = dict
@@ -278,23 +278,23 @@ Function IsEqualDict( _
         IsEqualDict = False
         Exit Function
     End If
-    Dim Key As Variant
-    For Each Key In dict1.keys
-        If Not dict2.Exists(Key) Then
+    Dim key As Variant
+    For Each key In dict1.keys
+        If Not dict2.Exists(key) Then
             IsEqualDict = False
             Exit Function
         End If
-        If TypeName(dict1(Key)) = "Dictionary" And TypeName(dict2(Key)) = "Dictionary" Then
+        If TypeName(dict1(key)) = "Dictionary" And TypeName(dict2(key)) = "Dictionary" Then
             ' 如果两个值都是字典，则递归比较它们
-            If Not IsEqualDict(dict1(Key), dict2(Key)) Then
+            If Not IsEqualDict(dict1(key), dict2(key)) Then
                 IsEqualDict = False
                 Exit Function
             End If
-        ElseIf dict1(Key) <> dict2(Key) Then
+        ElseIf dict1(key) <> dict2(key) Then
             IsEqualDict = False
             Exit Function
         End If
-    Next Key
+    Next key
     IsEqualDict = True
 End Function
 '字典的深拷贝
@@ -302,17 +302,17 @@ End Function
 'return:Object(Of Dictionary)
 Function DeepCopyDict( _
         ByVal source As Variant) As Object
-    Dim Key As Variant
+    Dim key As Variant
     Dim newDict As Object
     Dim value As Variant
     Set newDict = CreateObject("Scripting.Dictionary")
-    For Each Key In source.keys
-        value = source.item(Key)
+    For Each key In source.keys
+        value = source.item(key)
         If TypeName(value) = "Dictionary" Then
             Set value = DeepCopyDict(value)
         End If
-        newDict.Add Key, value
-    Next Key
+        newDict.Add key, value
+    Next key
     Set DeepCopyDict = newDict
 End Function
 '*****数组函数*****

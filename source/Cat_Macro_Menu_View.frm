@@ -56,19 +56,19 @@ Sub Set_FormInfo(ByVal InfoLst As Object, _
     Set MPgs = Me.controls.Add("Forms.MultiPage.1", "MPgs", True) ' 创建多页控件
     Dim Pgs As Pages
      Set Pgs = MPgs.Pages: Pgs.Clear
-    Dim Key As Long, KeyStr As Variant, Pg As Page, pName As String
+    Dim key As Long, KeyStr As Variant, Pg As Page, pName As String
     Dim BtnInfos As Object, info As Variant
     Dim Btns As Object: Set Btns = KCL.InitLst()
     Dim btn As MSForms.CommandButton
     Dim BtnEvt As Cls_btEVT
     For Each KeyStr In InfoLst
-        Key = CLng(KeyStr)
-        If Not PageMap.Exists(Key) Then GoTo Continue
-        pName = PageMap(Key)
+        key = CLng(KeyStr)
+        If Not PageMap.Exists(key) Then GoTo Continue
+        pName = PageMap(key)
         Set Pg = Get_Page(Pgs, pName)
         Set BtnInfos = InfoLst(KeyStr)
         For Each info In BtnInfos
-            Set btn = Init_Button(Pg.controls, Key, info)
+            Set btn = Init_Button(Pg.controls, key, info)
             Set BtnEvt = New Cls_btEVT
             Call BtnEvt.set_ButtonEvent(btn, info, Me, CloseType)
             Btns.Add BtnEvt

@@ -49,11 +49,7 @@ Sub sendDir()
               "你的产品零件号包含非法字符，无法备份，请检查!"
           End If
     End Select
-    
-    
-    
-    
-    
+
     
     
     Else

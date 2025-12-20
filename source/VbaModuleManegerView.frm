@@ -2,9 +2,9 @@ VERSION 5.00
 Begin {C62A69F0-16DC-11CE-9E98-00AA00574A4F} VbaModuleManegerView 
    Caption         =   "UserForm2"
    ClientHeight    =   6450
-   ClientLeft      =   45
-   ClientTop       =   375
-   ClientWidth     =   9195.001
+   ClientLeft      =   50
+   ClientTop       =   380
+   ClientWidth     =   9190.001
    OleObjectBlob   =   "VbaModuleManegerView.frx":0000
    StartUpPosition =   1  'CenterOwner
 End
@@ -30,10 +30,10 @@ Private Sub UserForm_Initialize()
 End Sub
 '** 事件 **
 Private Sub btnExport_Click()
-    Dim res As Boolean
-    res = export_project
+    Dim Res As Boolean
+    Res = export_project
     Call update_listbox
-    If res Then
+    If Res Then
         show_msg "导出完成"
     End If
 End Sub

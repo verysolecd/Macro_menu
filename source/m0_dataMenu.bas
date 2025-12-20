@@ -145,12 +145,12 @@ End Function
 ' 参数  : Dict,vri,vri
 ' 返回值: Dict
 Private Function Push_Dic(ByVal Dic As Object, _
-                          ByVal Key As Variant, _
+                          ByVal key As Variant, _
                           ByVal item As Variant) As Object
-    If Dic.Exists(Key) Then
-        Dic(Key) = item
+    If Dic.Exists(key) Then
+        Dic(key) = item
     Else
-        Dic.Add Key, item
+        Dic.Add key, item
     End If
     Set Push_Dic = Dic
 End Function
@@ -177,19 +177,19 @@ Private Function Get_KeyValue( _
     
     Dim Dic As Object: Set Dic = KCL.InitDic(vbTextCompare)
     Dim match As Object, SubMatchs As Object
-    Dim Key As Variant, Var As Variant
+    Dim key As Variant, Var As Variant
     
     For Each match In matches
         Set SubMatchs = match.SubMatches
         If SubMatchs.count < 2 Then GoTo Continue
         ' ==  获取编号
-        Key = Trim(Replace(SubMatchs(0), """", "")) 'trim 取消前后空格， replace 删除中间空格
-        If Len(Key) < 1 Then GoTo Continue  '若key为空进入下一个循环
-        If KeyToLong Then Key = CLng(Key)  'Clng转换为long类型
+        key = Trim(Replace(SubMatchs(0), """", "")) 'trim 取消前后空格， replace 删除中间空格
+        If Len(key) < 1 Then GoTo Continue  '若key为空进入下一个循环
+        If KeyToLong Then key = CLng(key)  'Clng转换为long类型
             ' ==  获取编号对应page
         Var = Trim(Replace(SubMatchs(1), """", ""))  'trim 取消前后空格， replace 删除中间空格
         If Len(Var) < 1 Then GoTo Continue
-        Set Dic = Push_Dic(Dic, Key, Var)
+        Set Dic = Push_Dic(Dic, key, Var)
 Continue:
     Next
     

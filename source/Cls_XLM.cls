@@ -14,7 +14,7 @@ Private inject_cols
 Private extract_cols
 Private bom_cols
 
-Private wsEVT  As Ws_Evt
+Private wsEVT
 Private WB As Object
 Private ws As Object
 Private bws As Object
@@ -40,7 +40,7 @@ If Error.Number <> 0 Then
         Err.Clear
      End If
 On Error GoTo 0
-    Set wsEVT = New Ws_Evt
+    Set wsEVT = New Cls_WsEvt
     wsEVT.init WB
     iniarr
 End Sub
@@ -313,6 +313,6 @@ Public Sub xlhide()
         .Calculation = xlCalculationManual 'xlCalculationmanual
         .EnableEvents = False
     End With
- xlAPP.Visible = fasle
+ xlAPP.Visible = Fasle
 End Sub
  
