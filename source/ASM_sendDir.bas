@@ -56,13 +56,8 @@ Sub sendDir()
         MsgBox bckFolder & vbNewLine & _
         "  " & vbNewLine & _
         "你的产品路径不存在，无法备份，请检查!"
-        
-        
     End If
-    
-    
-    
-    
+ 
 End Sub
 
 Sub mdlog()

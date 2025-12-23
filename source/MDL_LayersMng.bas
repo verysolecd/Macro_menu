@@ -3,7 +3,7 @@ Attribute VB_Name = "MDL_LayersMng"
 ' 获得识别特征下的所有孔中心
 '{GP:4}
 '{EP:LayersMng}
-'{Caption:设置只显示当前图层，然后创建YZ向图纸}
+'{Caption:当前层创建YZ向图纸}
 '{ControlTipText: 设置只显示当前图层，然后创建YZ向图纸}
 '{BackColor:12648447}
 Private i

@@ -1,14 +1,14 @@
 VERSION 5.00
-Begin {C62A69F0-16DC-11CE-9E98-00AA00574A4F} wd 
+Begin {C62A69F0-16DC-11CE-9E98-00AA00574A4F} WD 
    Caption         =   "UserForm1"
-   ClientHeight    =   3790
+   ClientHeight    =   3795
    ClientLeft      =   120
-   ClientTop       =   470
-   ClientWidth     =   4970
-   OleObjectBlob   =   "wd.frx":0000
+   ClientTop       =   465
+   ClientWidth     =   4965
+   OleObjectBlob   =   "WD.frx":0000
    StartUpPosition =   1  'CenterOwner
 End
-Attribute VB_Name = "wd"
+Attribute VB_Name = "WD"
 Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
@@ -69,7 +69,6 @@ Sub setFrm(ttl, inf)
             .Name = cfg("Name")
             .Left = Frm_LH_gap
             .Width = cls_W
-            
             Select Case cfg("Type")
                 Case "Forms.CommandButton.1"
                     ' -- 修正逻辑开始 --
@@ -89,7 +88,6 @@ Sub setFrm(ttl, inf)
                 Case Else
                     .top = currTop
             End Select
-            
             ' 这部分逻辑保持原样，但为了完整性包含在此
             .Height = cls_H
             If cfg("Type") <> "Forms.TextBox.1" Then
@@ -99,7 +97,6 @@ Sub setFrm(ttl, inf)
                 .Width = Me.Width - 5 * Frm_LH_gap
                 .Height = 2 * cls_H
             End If
-            
             currTop = .top + .Height + itemgap
             Debug.Print currTop
           lastH = .Height

@@ -30,7 +30,7 @@ Private Sub ControlBtn_Click()
 End Sub
 
 Function getUIres() 'imdl
-Dim DecCnt, DecCode
+    Dim DecCnt, DecCode
      Dim Apc As Object: Set Apc = KCL.GetApc()
          Dim ExecPjt As Object: Set ExecPjt = Apc.ExecutingProject
          On Error Resume Next
@@ -40,37 +40,40 @@ Dim DecCnt, DecCode
     If mdl Is Nothing Then Exit Function
     DecCnt = mdl.CountOfDeclarationLines ' 获取声明行数
         If DecCnt < 1 Then Exit Function
-        DecCode = mdl.Lines(1, DecCnt) ' 获取声明代码
-    Dim clscfg:   Set clscfg = ParseCts(DecCode)
+    DecCode = mdl.Lines(1, DecCnt) ' 获取声明代码
+    
+    
+    Dim clscfg
+    Set clscfg = ParseCts(DecCode)
     Dim ttl: ttl = ParseTitle(DecCode)
 '    Dim frm: Set frm = wd
-    Load wd
-    Call wd.setFrm(ttl, clscfg)
+    Load WD
+    Call WD.setFrm(ttl, clscfg)
 
 ' --- 3. 绑定按钮事件 ---
     Dim eventCol As New collection ' 必须保持这个集合存活，否则事件对象会被销毁
     Dim ctl As Control
     Dim evtHandler
-    For Each ctl In wd.controls
+    For Each ctl In WD.controls
         If TypeName(ctl) = "CommandButton" Then
             Set evtHandler = New Cls_DynaFrm
             Set evtHandler.ControlBtn = ctl
-            Set evtHandler.ParentFrm = wd
+            Set evtHandler.ParentFrm = WD
             evtHandler.ControlID = ctl.Name
             eventCol.Add evtHandler
         End If
     Next
     
       ' --- 4. 显示窗体 (模态) ---
-    wd.Show vbModal     ' 代码会在这里暂停，直到窗体被 Hide
+    WD.Show vbModal     ' 代码会在这里暂停，直到窗体被 Hide
     
      ' --- 5. 收集返回值 ---
     Dim Res As Object
     Set Res = CreateObject("Scripting.Dictionary")
     ' 记录点击了哪个按钮 (通过 Tag 传递)
-    Res.Add "Status", wd.Tag
+    Res.Add "Status", WD.Tag
     ' 遍历所有控件获取值
-    For Each ctl In wd.controls
+    For Each ctl In WD.controls
         On Error Resume Next ' 防止某些控件没有 Value 或 Text 属性
         If TypeName(ctl) = "CheckBox" Then
             Res.Add ctl.Name, ctl.value
@@ -80,7 +83,7 @@ Dim DecCnt, DecCode
         On Error GoTo 0
     Next
     ' --- 6. 清理 ---
-    Unload wd
+    Unload WD
     Set getUIres = Res
 
 End Function
@@ -97,10 +100,8 @@ Function getmdl()
 End Function
 ' getiType 函数（字典驱动版）
 Function getiType(ctrltypename As String) As String
-
     ' 使用 Static 关键字，字典在多次函数调用之间只会创建一次，提高性能
     Static mapping As Object
-    
     ' 如果是第一次调用，则创建并填充字典
     If mapping Is Nothing Then
         Set mapping = CreateObject("Scripting.Dictionary")
@@ -115,7 +116,6 @@ Function getiType(ctrltypename As String) As String
         mapping.Add "combobox,combo,cmb", "Forms.ComboBox.1"
         mapping.Add "multipage,multipages,mpg", "Forms.MultiPage.1"
     End If
-
     ' 遍历字典中的所有别名列表（Key）
     Dim key As Variant
     For Each key In mapping.keys
@@ -126,7 +126,6 @@ Function getiType(ctrltypename As String) As String
             Exit Function
         End If
     Next key
-
     ' 如果遍历完字典都没有找到匹配项，则返回默认类型
     getiType = "Forms.Label.1"
 End Function
@@ -135,16 +134,12 @@ End Function
 Private Function ContainsAny(ByVal mainString As String, ByVal substringsList As String) As Boolean
     Dim substrings() As String
     Dim substring As Variant
-    
     If substringsList = "" Then
         ContainsAny = False
         Exit Function
     End If
-    
     substrings = Split(substringsList, ",")
-    
     ContainsAny = False
-    
     For Each substring In substrings
         If InStr(1, mainString, Trim(substring), vbTextCompare) > 0 Then
             ContainsAny = True
@@ -168,7 +163,7 @@ Private Function ParseCts(ByVal code As String) As Object
     
     Dim lst
     Set lst = InitLst
-    If regex.TEST(code) Then
+    If regex.test(code) Then
         Set matches = regex.Execute(code)
         For Each match In matches
             Set Cls_property = KCL.InitDic
@@ -198,7 +193,7 @@ Private Function ParseTitle(ByVal code As String) As String
     End With
     
     itl = "请配置你要如何执行"
-              If regex.TEST(code) Then
+              If regex.test(code) Then
                 Set matches = regex.Execute(code)
                 For Each match In matches
                  itl = match.SubMatches(0)

@@ -1,7 +1,6 @@
 Attribute VB_Name = "A00_WD"
 '------宏信息------
 
-
 '------窗体标题------
 '标题格式为 %Title <Caption/Text>
 ' %%Title 现在要导出stp我请问你?
@@ -22,39 +21,26 @@ Attribute VB_Name = "A00_WD"
 Option Explicit
 
 Sub WD2()
-   
-'   Dim oFrm: Set oFrm = New Cls_DynaFrm
-   Dim frmDic: Set frmDic = getFrmDic ' oFrm.Res
-   
-   clName = ""
-   
-   '===首选按钮类执行类型
-    
-  If frmDic(clName) = " " Then  ' 2. 检查是否点击了确定 (btnOK)
-  
-     Select Case frmDic(clName)
-     
-     Case True:
-     Case False
-     
-     End Select
-  End If
-     
+    Dim frmDic: Set frmDic = getFrmDic ' oFrm.Res
+    Dim clName: clName = ""
+    If frmDic(clName) = " " Then  ' 2. 检查是否点击了确定 (btnOK)
+       Select Case frmDic(clName)
+          Case True:
+          Case False
+       End Select
     End If
+
     If frmDic("Status") <> "btnOK" Then   ' 2. 检查是否点击了确定 (btnOK)
         MsgBox "用户取消了操作"
         Exit Sub
     End If
     
     ' 3. 根据返回的字典执行业务逻辑
-
-    If frmDic.Exists("chk_path") And frmDic("chk_path") = True Then      ' 示例：读取 chk_path
-        MsgBox "执行功能：导出到当前路径"
-        ' Call ExportToCurrentPath()
+    If frmDic.Exists("chk_path") And frmDic("chk_path") = True Then ' 示例：读取 chk_path
+ 
     End If
-    
-    ' 示例：读取 txt_log
-    If frmDic.Exists("txt_log") Then
+
+    If frmDic.Exists("txt_log") Then      ' 示例：读取 txt_log
         MsgBox "日志内容: " & frmDic("txt_log")
     End If
     

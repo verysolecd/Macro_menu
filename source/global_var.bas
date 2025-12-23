@@ -12,7 +12,7 @@ Public allPN As Object
 Public counter As Integer
 Public Const gfn As Integer = 400
 Public Cls_PrdOB As New Cls_PrdOB
-Public export_CFG   ' 被定义为一个数组  Ary()  第一个元素是开
+
 Public gPic_Path
 
 

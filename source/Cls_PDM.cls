@@ -76,8 +76,8 @@ Public Function Assmass(oPrd)
         Dim arr(1 To 9)
             With oPrd.ReferenceProduct
                 arr(1) = .PartNumber
-                arr(2) = .nomenclature
-                arr(3) = .definition
+                arr(2) = .Nomenclature
+                arr(3) = .Definition
                 arr(4) = oPrd.Name
             End With
         Dim colls
@@ -230,8 +230,8 @@ Public Function modatt(oPrd, odata)
             On Error Resume Next
                 Select Case i
                     Case 1: refPrd.PartNumber = odata(i)
-                    Case 2: refPrd.nomenclature = odata(i)
-                    Case 3: refPrd.definition = odata(i)
+                    Case 2: refPrd.Nomenclature = odata(i)
+                    Case 3: refPrd.Definition = odata(i)
                     Case 4: oPrd.Name = odata(i)
                     Case 5:
                         Set colls = refPrd.UserRefProperties

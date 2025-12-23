@@ -511,7 +511,6 @@ End Function
 Public Function GetInput(msg) As String
     Dim UserInput As String
     UserInput = InputBox(msg, "输入提示")
-    ' 如果用户没有输入或点击取消，则返回默认值"XX"
     If UserInput = "" Or UserInput = "0" Then
         GetInput = ""
     Else
@@ -567,7 +566,7 @@ Function isPathchn(pathToCheck) As Boolean
     regex.Pattern = "[\u4e00-\u9fa5]"   ' 设置正则表达式模式，匹配中文字符
     regex.IgnoreCase = True
     regex.Global = True
-    isPathchn = regex.TEST(pathToCheck)   ' 执行匹配并返回结果
+    isPathchn = regex.test(pathToCheck)   ' 执行匹配并返回结果
     Set regex = Nothing
 End Function
 ''替换字符串的所有中文为横线

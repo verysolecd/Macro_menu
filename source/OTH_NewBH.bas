@@ -1,125 +1,278 @@
 Attribute VB_Name = "OTH_NewBH"
-'Attribute VB_Name = "m30_BH"
+
+'Attribute VB_Name = "OTH_NewBH"
 '{GP:6}
 '{Ep:CATMain}
-'{Caption:ĞÂµç³ØÏäÌå}
-'{ControlTipText:ĞÂ½¨Ò»¸öµç³ØÏäÌåµÄ½á¹¹Ê÷}
+'{Caption:æ–°ç”µæ± ç®±ä½“}
+'{ControlTipText:æ–°å»ºä¸€ä¸ªç”µæ± ç®±ä½“çš„ç»“æ„æ ‘}
 '{BackColor:}
-Private Tree As Variant
+'======é›¶ä»¶å·ä¿¡æ¯
+
+' %info Product,_Prj_Housing_Asm,Project_HousingAsm,ç®±ä½“ç»„ä»¶,HousingAsm
+' %info Product,_Pack,Pack_system,æ•´åŒ…æ–¹æ¡ˆ,Pack_system
+' %info Product,_Packaging,packaging,åŒ…ç»œå®šä¹‰,packaging
+' %info Product,_000,Upper_Housing_Asm,ä¸Šç®±ä½“æ€»æˆ,Upper_Housing_Asm
+' %info Part,_001,Upper_Housing,ä¸Šç®±ä½“,Upper_Housing
+' %info Product,_1000,Lower_Housing_Asm,ä¸‹ç®±ä½“æ€»æˆ,Lower_Housing_Asm
+' %info Part,_ref,Ref,å‚è€ƒ,Ref
+' %info Part,_1100,Frames,æ¡†æ¶ç»„ä»¶,Frames
+' %info Part,_1200,Brkts,æ”¯æ¶ç±»ç»„ä»¶,Brkts
+' %info Part,_1300,Cooling_system,æ¶²å†·ç»„ä»¶,Cooling_system
+' %info Part,_1400,Bottom_components,åº•éƒ¨ç»„ä»¶,Bottom_components
+' %info Part,_2001,Welding_Seams,ç„Šç¼,Welding_Seams
+' %info Part,_2002,SPot_Welding,ç‚¹ç„Š,Spot_Welding
+' %info Part,_2003,Adhesive,èƒ¶æ°´,adhesive
+' %info Product,_4000,Grou_fasteners,ç´§å›ºä»¶ç»„åˆ,Group_Fastener
+' %info Part,_5000,others,å…¶ä»–ç»„ä»¶,others
+' %info Product,_Abandon,Abandoned,åºŸæ¡ˆ,Abandoned
+' %info Product,_Patterns,Fasteners,ç´§å›ºä»¶é˜µåˆ—,Fasteners_Pattern
+
+
 Private prj
 Sub CATMain()
-        Dim oPrd, Tree, oDoc, rootprd, cover, house, ref
-          Dim imsg
-          imsg = "ÇëÊäÈëÄãµÄÏîÄ¿Ãû³Æ"
-        prj = GetInput(imsg)
-        If prj = "" Then
-            Exit Sub
-        End If
-        Set Tree = KCL.InitDic(vbTextCompare)
-        Call iniTree(Tree)
-        '====´´½¨²Î¿¼ºÍ°üÂç===
-    For i = 0 To 18
-        Select Case i
-            Case 0      '´´½¨¸ù²úÆ·
-                Set oDoc = CATIA.Documents.Add("Product")
-                Set rootprd = oDoc.Product
-                Set oPrd = rootprd
-            Case 1
-                Set oPrd = rootprd.Products.AddNewComponent("Product", "")
-            Case 2
-                 Set oPrd = rootprd.Products.AddNewComponent("Product", "")
-            Case 3      '´´½¨ÉÏÏäÌå×é¼ş
-                Set cover = rootprd.Products.AddNewComponent("Product", "")
-                Set oPrd = cover
-           Case 4     '´´½¨ÉÏÏäÌå
-                Set oPrd = cover.Products.AddNewComponent("Part", "")
-           Case 5     '´´½¨ÏÂÏäÌå
-                Set house = rootprd.Products.AddNewComponent("Product", "")
-                Set oPrd = house
-            Case 6 '´´½¨²Î¿¼¼ş
-                Set ref = house.Products.AddNewComponent("Part", "")
-                Set oPrd = ref
-            Case 12, 13, 14 '´´½¨Áã¼ş
-                Set oPrd = house.Products.AddNewComponent("Part", "")
-                oPrd.Name = Tree(i)(4)
-            Case 15, 16:
-               Set oPrd = house.Products.AddNewProduct("")
-            Case 17
-               Set oPrd = rootprd.Products.AddNewComponent("Product", "")
-            Case 18
-                Set fast = rootprd.Products.AddNewComponent("Product", "")
-                Set oPrd = fast
-        Case Else
-                Set oPrd = house.Products.AddNewComponent("Product", "")
-        End Select
-          Call newPn(oPrd, Tree(i))
-          Set oPrd = Nothing
+    Dim oPrd As Object, Tree As Object
+    Dim ref As Object, fast As Object
+    Dim imsg As String, kArray, i As Integer
+    Dim Tdict As Object
+    
+    imsg = "è¯·è¾“å…¥é¡¹ç›®åç§°": prj = KCL.GetInput(imsg)
+    If prj = "" Then Exit Sub
+    
+    Set Tree = initTree()
+    kArray = Tree.keys
+    
+    ' å®šä¹‰çˆ¶çº§å †æ ˆ
+    Dim ParentStack As Object
+    Set ParentStack = KCL.InitDic(1)
+    
+    '==== åŠ¨æ€å±‚çº§åˆ›å»ºé€»è¾‘ ===
+    For i = 0 To Tree.count - 1
+        Set Tdict = Tree(kArray(i))
+        
+        Set oPrd = AddNodeToTree(ParentStack, Tdict)
+        
+        ' æ•è·ç‰¹æ®Šå¯¹è±¡ç”¨äºåç»­æ“ä½œ
+        Dim keyName As String
+        keyName = CStr(kArray(i))
+        If InStr(1, keyName, "_ref", vbTextCompare) > 0 Then Set ref = oPrd
+        If InStr(1, keyName, "_Patterns", vbTextCompare) > 0 Then Set fast = oPrd
+        
+        Set oPrd = Nothing
     Next
-        '===ĞÂÔöcomponent
-     ' Set product4 = products1.AddNewProduct("")
-    ' ĞÂÔö²úÆ·= oprd.products.AddNewComponent("Part", "")
-    Dim osel
-    Set osel = CATIA.ActiveDocument.Selection
-    osel.Clear
-    osel.Add ref
-    osel.Copy
-    osel.Clear
-    Dim otp
-    Set otp = CATIA.ActiveDocument.Selection
-    otp.Clear
-    otp.Add fast
-    otp.Paste
     
-    Call initme
+    '=== åç»­å¤„ç†ï¼šRef å¤åˆ¶åˆ° Fastener ===
+    If (Not ref Is Nothing) And (Not fast Is Nothing) Then
+        Dim osel
+        Set osel = CATIA.ActiveDocument.Selection: osel.Clear
+        osel.Add ref: osel.Copy
+        osel.Clear
+        
+        Dim otp
+        Set otp = CATIA.ActiveDocument.Selection: otp.Clear
+        otp.Add fast: otp.Paste
+        otp.Clear
+    End If
     
-    
+    Set allPN = KCL.InitDic(vbTextCompare): allPN.RemoveAll
+    ' æ³¨æ„ï¼šè¿™é‡Œå¦‚æœ rootprd æ²¡æœ‰åœ¨ CATMain é‡Œæ˜¾å¼å®šä¹‰ï¼Œ recurInitPrd å¯èƒ½æ‰¾ä¸åˆ°å¯¹è±¡
+    ' ç”±äº AddNodeToTree ç¬¬ä¸€ä¸ªåˆ›å»ºçš„å°±æ˜¯ Rootï¼Œæˆ‘ä»¬å¯ä»¥ä» ParentStack(1) è·å–
+    If ParentStack.Exists(1) Then
+        Call recurInitPrd(ParentStack(1))
+    End If
 End Sub
 
-Sub iniTree(Tree)
-    Tree(0) = Array(0, "_Prj_Housing_Asm", "Project Housing Asm", "ÏäÌå×é¼ş", "Housing Asm")
-    Tree(1) = Array(0, "_Pack", "Pack system", "Õû°ü·½°¸", "Pack system")
-    Tree(2) = Array(0, "_Packaging", "packaging", "°üÂç¶¨Òå", "packaging")
-    Tree(3) = Array(0, "_000", "Upper Housing Asm", "ÉÏÏäÌå×Ü³É", "Upper Housing Asm")
-    Tree(4) = Array(0, "_001", "Upper Housing", "ÉÏÏäÌå", "Upper Housing")
-    Tree(5) = Array(0, "_1000", "Lower Housing Asm", "ÏÂÏäÌå×Ü³É", "Lower Housing Asm")
-    Tree(6) = Array(0, "_ref", "Ref", "²Î¿¼", "Ref")
-    Tree(7) = Array(0, "_1100", "Frames", "¿ò¼Ü×é¼ş", "Frames")
-    Tree(8) = Array(0, "_1200", "Members", "Áº×é¼ş", "Members")
-    Tree(9) = Array(0, "_1300", "Brkts", "Ö§¼Ü×é¼ş", "Brkts")
-    Tree(10) = Array(0, "_1400", "Bottom components", "µ×²¿×é¼ş", "Bottom components")
-    Tree(11) = Array(0, "_1500", "Cooling system", "ÒºÀä×é¼ş", "Cooling system")
-    Tree(12) = Array(0, "_2001", "Weldings Seams", "º¸·ì", "Weldings Seams")
-    Tree(13) = Array(0, "_2002", "SPot Welding", "µãº¸", "Spot Welding")
-    Tree(14) = Array(0, "_2003", "Adhesive", "½ºË®", "adhesive")
+' --- æ–°å¢ï¼šå¤„ç†èŠ‚ç‚¹åˆ›å»ºå’Œå †æ ˆç®¡ç†çš„ç‹¬ç«‹å‡½æ•° ---
+Function AddNodeToTree(ByRef ParentStack As Object, ByVal Tdict As Object) As Object
+    Dim curLevel As Integer
+    Dim oPrd As Object
+    Dim parentPrd As Object
+    Dim oDoc As Document
     
-    Tree(15) = Array(0, "_4000", "Grou_fasteners", "½ô¹Ì¼ş×éºÏ", "Group_Fastener.1")
-    Tree(16) = Array(0, "_5000", "others", "ÆäËû×é¼ş", "others")
+    ' 1. è·å–å±‚çº§
+    If Tdict.Exists("Level") Then
+        curLevel = CInt(Tdict("Level"))
+    Else
+        curLevel = 1
+    End If
+    If curLevel < 1 Then curLevel = 1
     
-    Tree(17) = Array(0, "_Abandon", "Abandoned", "·Ï°¸", "Abandoned")
-    Tree(18) = Array(0, "_Patterns", "Fasteners", "½ô¹Ì¼şÕóÁĞ", "Fasteners Pattern")
+    ' 2. åˆ›å»ºèŠ‚ç‚¹é€»è¾‘
+    If curLevel = 1 Then
+        ' Level 1: åˆ›å»ºæ ¹äº§å“
+        Set oDoc = CATIA.Documents.Add("Product")
+        Set oPrd = oDoc.Product
+        
+        ' å°†æ ¹èŠ‚ç‚¹å­˜å…¥å †æ ˆ Level 1
+        ParentStack.Add 1, oPrd
+    Else
+        ' Level > 1: ä»å †æ ˆæ‰¾çˆ¸çˆ¸
+        If ParentStack.Exists(curLevel - 1) Then
+            Set parentPrd = ParentStack(curLevel - 1)
+        Else
+            ' å›é€€ä¿æŠ¤: æ‰¾ä¸åˆ°çˆ¶çº§å°±æŒ‚åœ¨ Level 1
+            If ParentStack.Exists(1) Then
+                Set parentPrd = ParentStack(1)
+            Else
+                ' æç«¯æƒ…å†µï¼šè¿ Level 1 éƒ½æ²¡æœ‰ (ä¸åº”è¯¥å‘ç”Ÿ)
+                MsgBox "Error: Root product not found for " & Tdict("PartNumber")
+                Exit Function
+            End If
+        End If
+        
+        ' å†³å®šç±»å‹
+        Dim compType As String
+        compType = "Product" ' é»˜è®¤
+        If Tdict.Exists("Type") Then
+            If UCase(Trim(Tdict("Type"))) = "PART" Then
+                compType = "Part"
+            End If
+        End If
+        
+        Set oPrd = parentPrd.Products.AddNewComponent(compType, "")
+         
+        ' æ›´æ–°å †æ ˆ
+        If ParentStack.Exists(curLevel) Then
+            Set ParentStack(curLevel) = oPrd
+        Else
+            ParentStack.Add curLevel, oPrd
+        End If
+    End If
     
-End Sub
+    ' 3. è®¾ç½®å±æ€§
+    Call newPn(oPrd, Tdict)
+    
+    Set AddNodeToTree = oPrd
+End Function
 
-Sub newPn(oPrd, arr)
-    oPrd.Name = arr(4)
-    oPrd.PartNumber = prj & arr(1)
-    oPrd.nomenclature = arr(2)
-    oPrd.definition = arr(3)
+Function initTree()
+    DecCode = getDecCode()
+    Set initTree = ParsePn(DecCode)
+End Function
+
+Private Function ParsePn(ByVal code As String) As Object
+    Dim regex, matches, match, lst As Object
+    Dim compInfo As Object 
+    Set regex = CreateObject("VBScript.RegExp")
+    With regex
+        .Global = True
+        .MultiLine = True
+        ' åŒ¹é…æ ¼å¼: [ç¼©è¿›] ' %info <Type>,<Pn>,<Nomenclature>,<Definition>,<Name>
+        ' Group 1: (\s*) æ•è·è¡Œé¦–ç¼©è¿›ï¼Œç”¨äºè®¡ç®—å±‚çº§
+        ' Group 2: ([^,]+) æ•è· Type
+        ' ... åç»­å­—æ®µ
+        .Pattern = "^(\s*)'\s*%info\s+([^,]+),+([^,]+),+([^,]+),+([^,]+),+([^,\r\n]+).*$"
+    End With
+    If regex.Test(code) Then
+        Set matches = regex.Execute(code)
+        Set lst = KCL.InitDic(1)
+        
+        Dim i As Integer
+        Dim curIndent As Integer
+        Dim curLevel As Integer
+        
+        ' IndentHistory: ç´¢å¼•æ˜¯ Level, å€¼æ˜¯è¯¥ Level å¯¹åº”çš„ç¼©è¿›é•¿åº¦
+        ' Level 0 é¢„ç•™ä¸º -1 (æ¯”ä»»ä½•ç¼©è¿›éƒ½å°)
+        Dim IndentHistory(20) As Integer
+        IndentHistory(0) = -1
+        IndentHistory(1) = 0 ' é»˜è®¤ Level 1 ç¼©è¿›ä¸º 0 (æˆ–è€…ç¬¬ä¸€è¡Œçš„ç¼©è¿›)
+        
+        curLevel = 0 
+        
+        For Each match In matches
+            Dim matchIndentIdx
+            matchIndentIdx = 0 ' æ­£åˆ™ group 0 æ˜¯ç¼©è¿› (\s*)
+            
+            curIndent = Len(match.SubMatches(matchIndentIdx))
+            
+            If curLevel = 0 Then
+                ' ç¬¬ä¸€è¡Œï¼Œå¼ºåˆ¶å®šä¹‰ä¸º Level 1
+                curLevel = 1
+                IndentHistory(1) = curIndent
+            Else
+                If curIndent > IndentHistory(curLevel) Then
+                    ' ç¼©è¿›å¢åŠ  -> è¿›å…¥ä¸‹ä¸€å±‚
+                    curLevel = curLevel + 1
+                    IndentHistory(curLevel) = curIndent
+                ElseIf curIndent = IndentHistory(curLevel) Then
+                    ' ç¼©è¿›ç›¸åŒ -> åŒçº§
+                    ' curLevel ä¸å˜
+                Else
+                    ' ç¼©è¿›å‡å°‘ ->å›é€€æŸ¥æ‰¾ä¹‹å‰æ˜¯å“ªä¸€å±‚
+                    Dim j As Integer
+                    Dim found As Boolean
+                    found = False
+                    For j = curLevel - 1 To 1 Step -1
+                        If curIndent >= IndentHistory(j) Then 
+                            If curIndent = IndentHistory(j) Then
+                                curLevel = j
+                                found = True
+                                Exit For
+                            End If
+                        End If
+                    Next
+                    
+                    If Not found Then
+                        For j = curLevel - 1 To 1 Step -1
+                             If IndentHistory(j) <= curIndent Then
+                                curLevel = j
+                                Exit For
+                             End If
+                        Next
+                    End If
+                End If
+            End If
+            
+            Set compInfo = KCL.InitDic
+            compInfo.Add "Level", curLevel
+            ' ç§»é™¤äº† Sequence å­—æ®µ
+            compInfo.Add "Type", Trim(match.SubMatches(1))
+            compInfo.Add "PartNumber", Trim(match.SubMatches(2))
+            compInfo.Add "Nomenclature", Trim(match.SubMatches(3))
+            compInfo.Add "Definition", Trim(match.SubMatches(4))
+            compInfo.Add "Name", Trim(match.SubMatches(5))
+            
+            lst.Add compInfo("PartNumber"), compInfo
+        Next
+    End If
+    Set ParsePn = lst
+End Function
+Sub newPn(oPrd, Dic)
+    Call KCL.showdict(Dic)
+    
+    ' 1. å…ˆä¿®æ”¹ Instance Name (å®ä¾‹å)
+    ' å¯¹äºç¬¬ä¸‰å±‚æ·±åº¦çš„ç»„ä»¶ï¼Œå…ˆæ”¹è¿™ä¸ªé€šå¸¸æ›´ç¨³å¥
     On Error Resume Next
-    oPrd.Name = arr(4)
+        oPrd.Name = Dic("Name")
     On Error GoTo 0
-    oPrd.Name = arr(4)
+    
+    ' 2. å†è·å– ReferenceProduct ä¿®æ”¹é›¶ä»¶å·ç­‰å±æ€§
+    ' ä¿®æ”¹ Reference å±æ€§ä¸ä¼šå½±å“ Instance å¯¹è±¡çš„æœ‰æ•ˆæ€§ï¼Œä½†åè¿‡æ¥æœ‰æ—¶ä¼š
+    Dim refPrd
+    Set refPrd = oPrd.ReferenceProduct
+    
+    Dim k
+    k = "PartNumber"
+    refPrd.PartNumber = prj & Dic(k)
+    
+    k = "Nomenclature"
+    refPrd.Nomenclature = Dic(k)
+    
+    k = "Definition"
+    refPrd.Definition = Dic(k)
+    
     oPrd.Update
 End Sub
-
-Public Function GetInput(msg) As String
-    Dim UserInput As String
-    UserInput = InputBox(msg, "ÊäÈëÌáÊ¾")
-    
-    ' Èç¹ûÓÃ»§Ã»ÓĞÊäÈë»òµã»÷È¡Ïû£¬Ôò·µ»ØÄ¬ÈÏÖµ"XX"
-    If UserInput = "" Or UserInput = "0" Then
-        GetInput = ""
-    Else
-        GetInput = UserInput
-    End If
+Function getDecCode()
+    Dim DecCnt, DecCode
+     Dim Apc As Object: Set Apc = KCL.GetApc()
+         Dim ExecPjt As Object: Set ExecPjt = Apc.ExecutingProject
+         On Error Resume Next
+          Dim mdl: Set mdl = ExecPjt.VBProject.VBE.Activecodepane.codemodule
+             Error.Clear
+         On Error GoTo 0
+    If mdl Is Nothing Then Exit Function
+    DecCnt = mdl.CountOfDeclarationLines ' è·å–å£°æ˜è¡Œæ•°
+        If DecCnt < 1 Then Exit Function
+    DecCode = mdl.Lines(1, DecCnt) ' è·å–å£°æ˜ä»£ç 
+    getDecCode = DecCode
 End Function

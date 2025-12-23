@@ -8,7 +8,7 @@ Attribute VB_Name = "ASM_closePartWindows"
 '{背景颜色: 12648447}
 
 Sub CLSpart()
-Dim wds, wd
+Dim wds, WD
  On Error Resume Next
    wds = CATIA.Windows
 
@@ -16,10 +16,12 @@ Dim wds, wd
            MsgBox "没有打开的窗口"
            Exit Sub
     End If
+    
+    
     For i = 1 To wds.count
-        Set wd = wds.item(i)
-        If KCL.isobjtype(wd.Parent, "PartDocument") Then
-            wd.Close
+        Set WD = wds.item(i)
+        If KCL.isobjtype(WD.Parent, "PartDocument") Then
+            WD.Close
         End If
     Next
     On Error GoTo 0

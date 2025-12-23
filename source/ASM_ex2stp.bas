@@ -18,7 +18,7 @@ Attribute VB_Name = "ASM_ex2stp"
 ' %UI Label lbL_jpzcs  键盘造车手出品
 ' %UI CheckBox chk_path  是否导出到当前路径
 ' %UI CheckBox  chk_tm  是否更新时间戳到CATIA零件号？
-' %UI CheckBox chk_log  本次导出是否更新日志？
+' %UI CheckBox chk_log  是否更新本次导出日志？
 ' %UI TextBox   txt_log  请输入更新内容(不必输入时间)
 ' %UI Button btnOK  确定
 ' %UI Button btncancel  取消
@@ -38,10 +38,6 @@ Sub ex2stp_zip()
     Dim outputpath As String: outputpath = ""
     
      Dim frmDic: Set frmDic = getFrmDic ' oFrm.Res
-'
-'
-'    askdir.Show
-    
     
     If frmDic("Status") <> "btnOK" Then   ' 2. 检查是否点击了确定 (btnOK)
         MsgBox "用户取消了操作"
@@ -81,49 +77,7 @@ Sub ex2stp_zip()
           
         '==========STP文件名处理
           stpname = KCL.strbf1st(pn, "_") & "_" & ttp
-      
-      
-        
-'       If export_CFG(0) = 1 Then  '若更新时间戳 ' 零件号更新
-'                pn = KCL.strbflast(oDoc.Product.PartNumber, "_")
-'                If KCL.ExistsKey(pn, "_") Then
-'                    oDoc.Product.PartNumber = pn & ttp
-'                Else
-'                    oDoc.Product.PartNumber = pn & "_" & ttp
-'                End If
-'       End If
-'            pn = oDoc.Product.PartNumber
-'            stpname = KCL.strbf1st(pn, "_") & "_" & ttp
-'
-  
-    
-'    Select Case export_CFG(2)
-'        Case 0  ' 用户选择自定义路径
-'              outputpath = KCL.selFdl()
-'        Case 1  ' 使用当前文档路径
-'            outputpath = IIf(oDoc.path = "", "", oDoc.path)
-'        Case others ' 用户取消操作
-'            outputpath = ""
-'    End Select
 
-
-''
-''        '==================零件号和文件
-''
-''
-''        Dim ttp: ttp = KCL.timestamp(export_CFG(1))
-''         Dim pn
-''            If export_CFG(0) = 1 Then  '若更新时间戳 ' 零件号更新
-''                pn = KCL.strbflast(oDoc.Product.PartNumber, "_")
-''                If KCL.ExistsKey(pn, "_") Then
-''                    oDoc.Product.PartNumber = pn & ttp
-''                Else
-''                    oDoc.Product.PartNumber = pn & "_" & ttp
-''                End If
-''            End If
-''            pn = oDoc.Product.PartNumber
-''
-''            stpname = KCL.strbf1st(pn, "_") & "_" & ttp
             
         Dim opath(2) '0=路径，1=name，2=extname
             opath(0) = outputpath
@@ -138,12 +92,9 @@ Sub ex2stp_zip()
         
         If Not ex2zip(stpfilepath) Then GoTo ShowMessage
             KCL.DeleteMe stpfilepath ' 删除原始 STP 文件
-           
     
            
 '============生成导出日志
-
-
 
   If frmDic.Exists("chk_log") Then
      Select Case frmDic("chk_log")
@@ -160,7 +111,6 @@ Sub ex2stp_zip()
                 ErrorMessage = "STP 导出失败：" & Err.Description
                 GoTo ShowMessage
         End If
-        
 
 ShowMessage:
     If ErrorMessage <> "" Then
