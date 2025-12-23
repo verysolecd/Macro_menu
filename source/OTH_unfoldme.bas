@@ -34,8 +34,8 @@ Else
 End If
 oprt.Update
 Dim targetshape, ref
-For i = 1 To oshapes.count
-    Set targetshape = oshapes.item(i)
+For I = 1 To oshapes.count
+    Set targetshape = oshapes.item(I)
     oprt.Update
 
 FT = HSF.GetGeometricalFeatureType(targetshape)
@@ -70,7 +70,7 @@ Else
     osel.Clear
     oprt.Update
     Set targetHB = HBS.Add()
-    targetHB.Name = "unfold result" & i
+    targetHB.Name = "unfold result" & I
     oprt.Update
     osel.Add targetHB
     osel.Paste

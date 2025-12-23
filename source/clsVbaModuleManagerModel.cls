@@ -109,14 +109,14 @@ Private Function get_fanction_names( _
     Dim lst As collection
     Set lst = New collection
     Dim buf As String
-    Dim i As Long
+    Dim I As Long
     With comp.codemodule
-        For i = 1 To .CountOfLines
-            If buf <> .ProcOfLine(i, 0) Then
-                buf = .ProcOfLine(i, 0)
+        For I = 1 To .CountOfLines
+            If buf <> .ProcOfLine(I, 0) Then
+                buf = .ProcOfLine(I, 0)
                 lst.Add "  [" + buf + "]"
             End If
-        Next i
+        Next I
     End With
     get_fanction_names = Join( _
         mUtil.CollectionToArrayLet(lst), _
@@ -176,18 +176,18 @@ Private Function GetValidCharacterCount( _
         ByVal VBComp As Object) As Long
     Dim CodeMod As Object ' CodeModule
     Dim totalChars As Long
-    Dim i As Long
+    Dim I As Long
     Dim codeLine As String
     ' 获取CodeModule对象
     Set CodeMod = VBComp.codemodule
     totalChars = 0
     ' 检查每行并排除注释
-    For i = 1 To CodeMod.CountOfLines
-        codeLine = Trim(CodeMod.Lines(i, 1))
+    For I = 1 To CodeMod.CountOfLines
+        codeLine = Trim(CodeMod.Lines(I, 1))
         If Left(codeLine, 1) <> "'" Then
             totalChars = totalChars + Len(codeLine)
         End If
-    Next i
+    Next I
     ' 返回结果
     GetValidCharacterCount = totalChars
 End Function

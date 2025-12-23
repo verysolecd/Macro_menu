@@ -169,18 +169,18 @@ Function GetRangeAry(ByVal ary As Variant, ByVal startIdx&, ByVal endIdx&) As Va
     If startIdx < 0 Then Exit Function
     If endIdx > UBound(ary) Then Exit Function
     Dim rngAry() As Variant: ReDim rngAry(endIdx - startIdx)
-    Dim i&
-    For i = startIdx To endIdx
-        rngAry(i - startIdx) = ary(i)
+    Dim I&
+    For I = startIdx To endIdx
+        rngAry(I - startIdx) = ary(I)
     Next
     GetRangeAry = rngAry
 End Function ' 检查是否为字符串数组
 Private Function IsStringAry(ByVal ary As Variant) As Boolean
     IsStringAry = False
     If Not IsArray(ary) Then Exit Function
-    Dim i&
-    For i = 0 To UBound(ary)
-        If Not VarType(ary(i)) = vbString Then Exit Function
+    Dim I&
+    For I = 0 To UBound(ary)
+        If Not VarType(ary(I)) = vbString Then Exit Function
     Next
     IsStringAry = True
 End Function
@@ -189,9 +189,9 @@ Private Function strToAry(ByVal s$) As Variant
     Dim ary As Variant: ary = Split(s, ",")
     
     Dim oAry() As Variant: ReDim oAry(UBound(ary))
-    Dim i&
-    For i = 0 To UBound(ary)
-        oAry(i) = ary(i)
+    Dim I&
+    For I = 0 To UBound(ary)
+        oAry(I) = ary(I)
     Next
     strToAry = oAry
 End Function
@@ -239,7 +239,7 @@ End Function
 Public Function getSearch(ByRef iDoc, ByRef ifilter As Variant)
     Set getSearch = Nothing
       On Error Resume Next
-             Dim osel As Selection, i
+             Dim osel As Selection, I
              Set osel = iDoc.Selection
               osel.Clear
     Select Case TypeName(ifilter)
@@ -269,14 +269,14 @@ Function JoinAry(ByVal ary1 As Variant, ByVal ary2 As Variant)
     End Select
     Dim StCount&: StCount = UBound(ary1)
     ReDim Preserve ary1(UBound(ary1) + UBound(ary2) + 1)
-    Dim i&
+    Dim I&
     If IsObject(ary2(0)) Then
-        For i = StCount + 1 To UBound(ary1)
-            Set ary1(i) = ary2(i - StCount - 1)
+        For I = StCount + 1 To UBound(ary1)
+            Set ary1(I) = ary2(I - StCount - 1)
         Next
     Else
-        For i = StCount + 1 To UBound(ary1)
-            ary1(i) = ary2(i - StCount - 1)
+        For I = StCount + 1 To UBound(ary1)
+            ary1(I) = ary2(I - StCount - 1)
         Next
     End If
     JoinAry = ary1
@@ -309,9 +309,9 @@ Function IsAryEqual(ByVal ary1 As Variant, ByVal ary2 As Variant) As Boolean
     IsAryEqual = False
     If Not IsArray(ary1) Or Not IsArray(ary2) Then Exit Function
     If Not UBound(ary1) = UBound(ary2) Then Exit Function
-    Dim i&
-    For i = 0 To UBound(ary1)
-        If Not ary1(i) = ary2(i) Then Exit Function
+    Dim I&
+    For I = 0 To UBound(ary1)
+        If Not ary1(I) = ary2(I) Then Exit Function
     Next
     IsAryEqual = True
 End Function
@@ -468,10 +468,10 @@ Function GetNewName$(ByVal oldPath$)
         GetNewName = newPath + path(2)
         Exit Function
     End If
-    Dim tempName$, i&: i = 0
+    Dim tempName$, I&: I = 0
     Do
-        i = i + 1
-        tempName = newPath + "_" + CStr(i) + path(2)
+        I = I + 1
+        tempName = newPath + "_" + CStr(I) + path(2)
         If Not isExists(tempName) Then
             GetNewName = tempName
             Exit Function
@@ -535,11 +535,11 @@ Public Function timestamp(Optional ByVal ostr) As String
     timestamp = Format(Now, FT)
 End Function
 Function isEngPath(ByVal path As String) As Boolean
-    Dim i As Long, charCode As Long
+    Dim I As Long, charCode As Long
     Dim validChars As String
      validChars = "!@#$%^&*()-_=+[]{};:'"",.<>/?\|~\/"    ' 定义允许的英文符号（包括路径分隔符）
-    For i = 1 To Len(path)      ' 遍历路径中的每个字符
-        charCode = AscW(Mid(path, i, 1))  ' 检查是否为英文字母（A-Z, a-z）
+    For I = 1 To Len(path)      ' 遍历路径中的每个字符
+        charCode = AscW(Mid(path, I, 1))  ' 检查是否为英文字母（A-Z, a-z）
         If (charCode >= 65 And charCode <= 90) Or _
            (charCode >= 97 And charCode <= 122) Then
             GoTo NextChar  ' 等同于 Continue For
@@ -547,13 +547,13 @@ Function isEngPath(ByVal path As String) As Boolean
         If charCode >= 48 And charCode <= 57 Then    ' 检查是否为数字（0-9）
             GoTo NextChar  ' 等同于 Continue For
         End If
-        If InStr(validChars, Mid(path, i, 1)) > 0 Then    ' 检查是否为允许的英文符号
+        If InStr(validChars, Mid(path, I, 1)) > 0 Then    ' 检查是否为允许的英文符号
             GoTo NextChar  ' 等同于 Continue For
         End If
         isEngPath = False          ' 如果都不是，则路径包含非法字符
         Exit Function
 NextChar:
-    Next i
+    Next I
     ' 所有字符都通过检查
     isEngPath = True
 End Function
@@ -566,7 +566,7 @@ Function isPathchn(pathToCheck) As Boolean
     regex.Pattern = "[\u4e00-\u9fa5]"   ' 设置正则表达式模式，匹配中文字符
     regex.IgnoreCase = True
     regex.Global = True
-    isPathchn = regex.test(pathToCheck)   ' 执行匹配并返回结果
+    isPathchn = regex.TEST(pathToCheck)   ' 执行匹配并返回结果
     Set regex = Nothing
 End Function
 ''替换字符串的所有中文为横线
@@ -780,11 +780,11 @@ End Sub
 
 ' 批量打开多个路径
 Sub OpenMultiple(ParamArray Paths() As Variant)
-    Dim i As Long
-    For i = LBound(Paths) To UBound(Paths)
-        SmartOpen CStr(Paths(i))
+    Dim I As Long
+    For I = LBound(Paths) To UBound(Paths)
+        SmartOpen CStr(Paths(I))
         DoEvents ' 允许系统处理其他事件
-    Next i
+    Next I
 End Sub
 
 
@@ -843,23 +843,23 @@ End Function
 
 Public Function showdict(ByVal oDic, Optional ByVal boolShowKeyIndex As Boolean = False)
   Dim keys:   keys = oDic.keys
-  Dim i As Long
+  Dim I As Long
   Dim stIndex As String
   Dim stOutput As String
   stOutput = vbNullString
   
-  For i = 0 To oDic.count - 1
+  For I = 0 To oDic.count - 1
     If boolShowKeyIndex Then
-      stIndex = "(" & i & ")"
+      stIndex = "(" & I & ")"
     End If
-    stOutput = stOutput & keys(i) & stIndex & "  :  "
-    If IsObject(oDic(keys(i))) Then
-      stOutput = stOutput & "[" & showdict(oDic(keys(i)), boolShowKeyIndex) & "]"
+    stOutput = stOutput & keys(I) & stIndex & "  :  "
+    If IsObject(oDic(keys(I))) Then
+      stOutput = stOutput & "[" & showdict(oDic(keys(I)), boolShowKeyIndex) & "]"
     Else
-      stOutput = stOutput & oDic(keys(i))
+      stOutput = stOutput & oDic(keys(I))
     End If
-    stOutput = stOutput & "; " & "_" & vbNewLine
-  Next i
+        stOutput = stOutput & "; " & "_" & vbNewLine
+  Next I
   showdict = stOutput
   
   Debug.Print showdict

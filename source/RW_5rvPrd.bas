@@ -27,23 +27,23 @@ On Error GoTo ErrorHandler
     
     ReDim outputArr(1 To UBound(odata, 1), 1 To UBound(iCols))
     
-    For i = 1 To UBound(outputArr, 1)
+    For I = 1 To UBound(outputArr, 1)
         For j = 1 To UBound(outputArr, 2)
-             outputArr(i, j) = ""
-             If IsEmpty(odata(i, iCols(j))) = False Then
-                outputArr(i, j) = odata(i, iCols(j))
+             outputArr(I, j) = ""
+             If IsEmpty(odata(I, iCols(j))) = False Then
+                outputArr(I, j) = odata(I, iCols(j))
              End If
-             temparr(j) = outputArr(i, j)
+             temparr(j) = outputArr(I, j)
         Next j
         
-        Select Case i
+        Select Case I
             Case 1
             Case 2
             Call pdm.modatt(Prd2rv, temparr)
             Case Else
-            Call pdm.modatt(children.item(i - currRow), temparr)
+            Call pdm.modatt(children.item(I - currRow), temparr)
          End Select
-        Next i
+        Next I
           Set Prd2rv = Nothing
        MsgBox "已经修改产品"
 ErrorHandler:

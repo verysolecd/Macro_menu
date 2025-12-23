@@ -2,8 +2,8 @@ VERSION 5.00
 Begin {C62A69F0-16DC-11CE-9E98-00AA00574A4F} VbaModuleManegerView 
    Caption         =   "UserForm2"
    ClientHeight    =   7635
-   ClientLeft      =   45
-   ClientTop       =   375
+   ClientLeft      =   50
+   ClientTop       =   380
    ClientWidth     =   8970.001
    OleObjectBlob   =   "VbaModuleManegerView.frx":0000
    StartUpPosition =   1  'CenterOwner
@@ -119,9 +119,9 @@ Private Sub update_comboBox()
         Call finish
         Exit Sub
     End If
-    Dim i As Long
-    For i = 1 To projects.count
-        Call Me.ComboBox1.AddItem(projects.item(i))
+    Dim I As Long
+    For I = 1 To projects.count
+        Call Me.ComboBox1.AddItem(projects.item(I))
     Next
     ComboBox1.ListIndex = 0
 End Sub
@@ -132,10 +132,10 @@ End Sub
 Function get_index_by_list( _
         ByVal value As Variant, _
         ByVal lst As collection) As Long
-    Dim i As Long
-    For i = 1 To lst.count
-        If lst.item(i) = value Then
-            get_index_by_list = i - 1
+    Dim I As Long
+    For I = 1 To lst.count
+        If lst.item(I) = value Then
+            get_index_by_list = I - 1
             Exit Function
         End If
     Next

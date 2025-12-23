@@ -25,14 +25,14 @@ Sub cBom()
         End If
     Dim tmpData():  tmpData = pdm.recurInfoPrd(iprd, LV)
         ReDim resultAry(1 To UBound(tmpData, 1), 1 To UBound(tmpData, 2) + 2)
-        For i = 1 To UBound(tmpData, 1)
+        For I = 1 To UBound(tmpData, 1)
              For j = 1 To UBound(resultAry, 2)
                Select Case j
-                    Case 1: resultAry(i, j) = i
-                    Case Else: resultAry(i, j) = tmpData(i, (j - 2))
+                    Case 1: resultAry(I, j) = I
+                    Case Else: resultAry(I, j) = tmpData(I, (j - 2))
                End Select
              Next j
-        Next i
+        Next I
    Dim idx, idcol
       idcol = Array(0, 1, 2, 3, 4, 5, 7, 8, 10, 11, 13) ' 目标列号, 0号元素不占位置
         idx = Array(0, 1, 2, 3, 4, 5, 11, 9, 7, 10, 7)  ' 需提取属性索引（0-based)

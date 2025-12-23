@@ -18,8 +18,8 @@ Dim wds, WD
     End If
     
     
-    For i = 1 To wds.count
-        Set WD = wds.item(i)
+    For I = 1 To wds.count
+        Set WD = wds.item(I)
         If KCL.isobjtype(WD.Parent, "PartDocument") Then
             WD.Close
         End If

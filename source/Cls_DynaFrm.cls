@@ -163,7 +163,7 @@ Private Function ParseCts(ByVal code As String) As Object
     
     Dim lst
     Set lst = InitLst
-    If regex.test(code) Then
+    If regex.TEST(code) Then
         Set matches = regex.Execute(code)
         For Each match In matches
             Set Cls_property = KCL.InitDic
@@ -193,7 +193,7 @@ Private Function ParseTitle(ByVal code As String) As String
     End With
     
     itl = "请配置你要如何执行"
-              If regex.test(code) Then
+              If regex.TEST(code) Then
                 Set matches = regex.Execute(code)
                 For Each match In matches
                  itl = match.SubMatches(0)
