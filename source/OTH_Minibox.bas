@@ -189,19 +189,19 @@ Private Function initAxis( _
     Set axiss = pt.AxisSystems
     Dim ax As Variant ' AxisSystem
     Set ax = axiss.Add()
-    Dim ary As Variant
-    ary = Array(0#, 0#, 0#)
+    Dim Ary As Variant
+    Ary = Array(0#, 0#, 0#)
     ax.OriginType = catAxisSystemOriginByCoordinates
     Set ax = ax
-    ax.PutOrigin ary
-    ary = Array(1#, 0#, 0#)
+    ax.PutOrigin Ary
+    Ary = Array(1#, 0#, 0#)
     ax.XAxisType = catAxisSystemAxisByCoordinates
     Set ax = ax
-    ax.PutXAxis ary
-    ary = Array(0#, 1#, 0#)
+    ax.PutXAxis Ary
+    Ary = Array(0#, 1#, 0#)
     ax.YAxisType = catAxisSystemAxisByCoordinates
     Set ax = ax
-    ax.PutYAxis ary
+    ax.PutYAxis Ary
     ax.IsCurrent = True
     pt.Update
     Set initAxis = ax
@@ -265,9 +265,9 @@ Private Function createPlane( _
     ByVal B As Double, _
     ByVal C As Double) _
     As HybridShapePlaneEquation
-    Dim fact As HybridShapeFactory
-    Set fact = pt.HybridShapeFactory
-    Set createPlane = fact.AddNewPlaneEquation(A, B, C, DMYLNG)
+    Dim Fact As HybridShapeFactory
+    Set Fact = pt.HybridShapeFactory
+    Set createPlane = Fact.AddNewPlaneEquation(A, B, C, DMYLNG)
     If Not axRef Is Nothing Then
         createPlane.RefAxisSystem = axRef
     End If
@@ -398,7 +398,7 @@ Private Sub initConstraint( _
         cstType, _
         pt.CreateReferenceFromObject(itm1), _
         pt.CreateReferenceFromObject(itm2))
-    Cst.mode = catCstModeDrivingDimension
+    Cst.Mode = catCstModeDrivingDimension
     If dist < 0.001 Then Exit Sub 'IsMissing(Dist)????
     Dim Leng As Length
     Set Leng = Cst.Dimension
@@ -411,10 +411,10 @@ Private Sub initPad( _
     If Not UBound(poss) = 5 Then Exit Sub
     Dim pt As part
     Set pt = KCL.GetParent_Of_T(bdy, "Part")
-    Dim fact As ShapeFactory
-    Set fact = pt.ShapeFactory
+    Dim Fact As ShapeFactory
+    Set Fact = pt.ShapeFactory
     Dim pad As pad
-    Set pad = fact.AddNewPad(skt, poss(MINMAX.Maxz))
+    Set pad = Fact.AddNewPad(skt, poss(MINMAX.Maxz))
     pad.DirectionOrientation = catRegularOrientation
     Dim MinZ As Length
     Set MinZ = pad.SecondLimit.Dimension

@@ -128,7 +128,7 @@ Sub inject_ary(ByVal idata As Variant, Optional ByVal idcols As Variant, Optiona
      startrow = 2 ' ÆðÊ¼ÐÐ
         If IsArray(idcols) And IsArray(idx) Then
             For j = 1 To UBound(idcols)
-                ws.Cells(startrow, idcols(j)).Resize(UBound(idata, 1)).value = Application.Index(idata, , idx(j))
+                ws.Cells(startrow, idcols(j)).Resize(UBound(idata, 1)).value = Application.index(idata, , idx(j))
             Next j
 '        Else
 '            startrow = 2:  lastRow = UBound(idata, 1) + startrow - 1

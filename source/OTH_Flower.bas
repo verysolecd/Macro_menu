@@ -448,7 +448,7 @@ Sub Flower(Optional ByVal pp As Double)
         Dim mySweepCircle As HybridShapeSweepCircle
         Set mySweepCircle = HSF.AddNewSweepCircle(RefCurve)
         mySweepCircle.SetRadius 1, SweepR    'SweepR: Radius
-        mySweepCircle.mode = 6          '6: Center and Radius
+        mySweepCircle.Mode = 6          '6: Center and Radius
         ' Assign Arc to Geometrical Set --------------------------------
         
         myHB3.AppendHybridShape mySweepCircle

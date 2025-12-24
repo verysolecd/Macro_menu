@@ -27,8 +27,8 @@ End Sub
 Property Get DebugMode() As Boolean
     DebugMode = m_DebugMode
 End Property
-Property Let DebugMode(ByVal mode As Boolean)
-    m_DebugMode = mode
+Property Let DebugMode(ByVal Mode As Boolean)
+    m_DebugMode = Mode
 End Property
 Function GetVer() As String
     GetVer = VER
@@ -323,20 +323,20 @@ End Function
 Function InitArray( _
         ByVal count As Long, _
         Optional ByVal value As Variant = Empty) As Variant
-    Dim ary() As Variant
+    Dim Ary() As Variant
     If count < 0 Then
-        ary = Array()
+        Ary = Array()
     Else
-        ReDim ary(count)
+        ReDim Ary(count)
     End If
     If IsEmpty(value) Then
-        InitArray = ary
+        InitArray = Ary
     End If
     Dim I As Long
-    For I = 0 To UBound(ary)
-        ary(I) = value
+    For I = 0 To UBound(Ary)
+        Ary(I) = value
     Next
-    InitArray = ary
+    InitArray = Ary
 End Function
 '创建连接的数组 - 不是连接而是创建新的数组
 'param:ary1-Variant(Of Array)
@@ -344,37 +344,37 @@ End Function
 'return:Variant(Of Array)
 Function JointArray( _
         ByVal ary1 As Variant, _
-        ByVal ary2 As Variant) As Variant
+        ByVal Ary2 As Variant) As Variant
     Select Case True
-        Case Not IsArray(ary1) And Not IsArray(ary2)
+        Case Not IsArray(ary1) And Not IsArray(Ary2)
             JointArray = Array() 'Empty
             Exit Function
         Case Not IsArray(ary1)
-            JointArray = ary2
+            JointArray = Ary2
             Exit Function
-        Case Not IsArray(ary2)
+        Case Not IsArray(Ary2)
             JointArray = ary1
             Exit Function
-        Case UBound(ary1) < 0 And UBound(ary2) > -1
-            JointArray = ary2
+        Case UBound(ary1) < 0 And UBound(Ary2) > -1
+            JointArray = Ary2
             Exit Function
-        Case UBound(ary1) > -1 And UBound(ary2) < 0
+        Case UBound(ary1) > -1 And UBound(Ary2) < 0
             JointArray = ary1
             Exit Function
-        Case UBound(ary1) < 0 And UBound(ary2) < 0
+        Case UBound(ary1) < 0 And UBound(Ary2) < 0
             JointArray = Array() 'Empty
             Exit Function
         End Select
         Dim StCount&: StCount = UBound(ary1)
-        ReDim Preserve ary1(UBound(ary1) + UBound(ary2) + 1)
+        ReDim Preserve ary1(UBound(ary1) + UBound(Ary2) + 1)
         Dim I&
-        If IsObject(ary2(0)) Then
+        If IsObject(Ary2(0)) Then
             For I = StCount + 1 To UBound(ary1)
-                Set ary1(I) = ary2(I - StCount - 1)
+                Set ary1(I) = Ary2(I - StCount - 1)
             Next
         Else
             For I = StCount + 1 To UBound(ary1)
-                ary1(I) = ary2(I - StCount - 1)
+                ary1(I) = Ary2(I - StCount - 1)
             Next
         End If
         JointArray = ary1
@@ -385,18 +385,18 @@ End Function
 'param:endIdx-Long
 'return:Variant(Of Array)
 Function Slice( _
-        ByVal ary As Variant, _
+        ByVal Ary As Variant, _
         ByVal startIdx As Long, _
         ByVal endIdx As Long) As Variant
-    If Not IsArray(ary) Then Exit Function
+    If Not IsArray(Ary) Then Exit Function
     If endIdx - startIdx < 0 Then Exit Function
     If startIdx < 0 Then Exit Function
-    If endIdx > UBound(ary) Then Exit Function
+    If endIdx > UBound(Ary) Then Exit Function
     Dim rngAry() As Variant
     ReDim rngAry(endIdx - startIdx)
     Dim I As Long
     For I = startIdx To endIdx
-        rngAry(I - startIdx) = ary(I)
+        rngAry(I - startIdx) = Ary(I)
     Next
     Slice = rngAry
 End Function
@@ -404,9 +404,9 @@ End Function
 'param:ary-Variant(Of Array)
 'return:Variant(Of Array)
 Function DeepCopyArray( _
-        ByVal ary As Variant) As Variant
-    If Not IsArray(ary) Then Exit Function
-    DeepCopyArray = Slice(ary, 0, UBound(ary))
+        ByVal Ary As Variant) As Variant
+    If Not IsArray(Ary) Then Exit Function
+    DeepCopyArray = Slice(Ary, 0, UBound(Ary))
 End Function
 '数组是否一致？
 'param:ary1-Variant(Of Array)
@@ -414,13 +414,13 @@ End Function
 'return:Boolean
 Function IsEqualArray( _
         ByVal ary1 As Variant, _
-        ByVal ary2 As Variant) As Boolean
+        ByVal Ary2 As Variant) As Boolean
     IsEqualArray = False
-    If Not IsArray(ary1) Or Not IsArray(ary2) Then Exit Function
-    If Not UBound(ary1) = UBound(ary2) Then Exit Function
+    If Not IsArray(ary1) Or Not IsArray(Ary2) Then Exit Function
+    If Not UBound(ary1) = UBound(Ary2) Then Exit Function
     Dim I As Long
     For I = 0 To UBound(ary1)
-        If Not ary1(I) = ary2(I) Then Exit Function
+        If Not ary1(I) = Ary2(I) Then Exit Function
     Next
     IsEqualArray = True
 End Function
@@ -451,13 +451,13 @@ Function CollectionToArraySet( _
         CollectionToArraySet = Array()
         Exit Function
     End If
-    Dim ary() As Variant
-    ReDim ary(lstCount - 1)
+    Dim Ary() As Variant
+    ReDim Ary(lstCount - 1)
     Dim I As Long
     For I = 1 To lst.count
-        Set ary(I - 1) = lst(I)
+        Set Ary(I - 1) = lst(I)
     Next
-    CollectionToArraySet = ary
+    CollectionToArraySet = Ary
 End Function
 '-集合的数组化-let
 'param:lst-collection
@@ -470,24 +470,24 @@ Function CollectionToArrayLet( _
         CollectionToArrayLet = Array()
         Exit Function
     End If
-    Dim ary() As Variant
-    ReDim ary(lstCount - 1)
+    Dim Ary() As Variant
+    ReDim Ary(lstCount - 1)
     Dim I As Long
     For I = 1 To lst.count
-        Let ary(I - 1) = lst(I)
+        Let Ary(I - 1) = lst(I)
     Next
-    CollectionToArrayLet = ary
+    CollectionToArrayLet = Ary
 End Function
 '数组的集合化
 'param:Variant(Of Array)
 'return:collection
 Function ArrayToCollection( _
-        ByVal ary As Variant) As collection
+        ByVal Ary As Variant) As collection
     Dim lst As collection
     Set lst = New collection
-    If UBound(ary) < 0 Then Exit Function
+    If UBound(Ary) < 0 Then Exit Function
     Dim v As Variant
-    For Each v In ary
+    For Each v In Ary
         lst.Add v
     Next
     Set ArrayToCollection = lst

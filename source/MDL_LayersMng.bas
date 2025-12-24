@@ -10,9 +10,9 @@ Private I
 Sub LayersMng()
 If Not CanExecute("partDocument,productdocument") Then Exit Sub
 Set rootDoc = CATIA.ActiveDocument
-Set rootprd = rootDoc.Product
+Set rootPrd = rootDoc.Product
     Call appFilterLayer(rootDoc)
-    Call addDrw(rootprd)
+    Call addDrw(rootPrd)
  '---显示管理
 '    '---图层管理
 '    Dim layer: layer = CLng(0)
@@ -117,7 +117,7 @@ If iprd.Products.count < 1 Then
                 ViewGBH.Document = prd
                 ViewGBH.DefineFrontView 0#, 1#, 0#, 0#, 0#, 1#
                 oV.X = xdis * I
-                oV.y = 300
+                oV.Y = 300
                 oV.[Scale] = 1#
             ViewGBH.Update
             oV.Activate
@@ -133,7 +133,7 @@ Else
                 ViewGBH.Document = prd
                 ViewGBH.DefineFrontView 0#, 1#, 0#, 0#, 0#, 1#
                 oV.X = xdis * I
-                oV.y = 300
+                oV.Y = 300
                 oV.[Scale] = 1#
             ViewGBH.Update
             oV.Activate

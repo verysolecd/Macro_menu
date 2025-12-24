@@ -6,22 +6,30 @@ Attribute VB_Name = "OTH_NewBH"
 '{ControlTipText:新建一个电池箱体的结构树}
 '{BackColor:}
 '======零件号信息
-' %info P,_Prj_Housing_Asm, Project_HousingAsm,箱体组件,HousingAsm
+' %info P,_0000, _Housing_Asm,箱体组件,Housing_Asm
       ' %info P,_Pack,Pack_system,整包方案,Pack_system
       ' %info P,_Packaging, packaging,包络定义,packaging
-      ' %info P,_000, Upper_Housing_Asm,上箱体总成,Upper_Housing_Asm
+      ' %info P,_2000, Upper_Housing_Asm,上箱体总成,Upper_Housing_Asm
             '%info t,_001, Upper_Housing, 上箱体, Upper_Housing
       ' %info P,_1000,Lower_Housing_Asm,下箱体总成,Lower_Housing_Asm
            ' %info t,_ref, Ref,参考,Ref
-           ' %info t,_1100,Frames,框架组件,Frames
-           ' %info t,_1200,Brkts,支架类组件,Brkts
-           ' %info t,_1300,Cooling_system,液冷组件,Cooling_system
-           ' %info t,_1400,Bottom_components,底部组件,Bottom_components
-           ' %info t,_2001,Welding_Seams, 焊缝,Welding_Seams
-           ' %info t,_2002,SPot_Welding,点焊,Spot_Welding
-           ' %info t,_2003,Adhesive,胶水,adhesive
-           ' %info c,_4000,Grou_fasteners,紧固件组合,Group_Fastener
-           ' %info t,_5000,others,其他组件,others
+           ' %info P,_G100,Frames,框架组件,Frames
+                ' %info T,_101,FRONT FRAME,前边框,FRONT FRAME
+                ' %info T,_102,REAR FRAME,后边框,REAR FRAME
+                ' %info T,_103,RH FRAME,右边框,RH FRAME
+                ' %info T,_104,LH FRAME,左边框,LH FRAME
+                ' %info T,_111,Xmember 1,横梁1,Xmember 1
+                ' %info T,_112,Xmember 2,横梁2,Xmember 2
+                ' %info T,_113,Xmember 3,横梁3,Xmember 3
+           ' %info C,_G200,Brkts,支架类组件,Brkts
+           ' %info P,_G300,Cooling_system,液冷组件,Cooling_system
+           ' %info P,_G400,Bottom_components,底部组件,Bottom_components
+           ' %info t,_501,Welding_Seams, 焊缝,Welding_Seams
+           ' %info t,_502,SPot_Welding,点焊,Spot_Welding
+           ' %info t,_503,Adhesive,胶水,adhesive
+           ' %info C,_G600,Grou_fasteners,紧固件组合,Group_Fastener
+           ' %info C,_G700,others,其他组件,others
+           
       ' %info c,_Abandon,Abandoned,废案,Abandoned
       ' %info c,_Patterns,Fasteners,紧固件阵列,Fasteners_Pattern
 Private prj

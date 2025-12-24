@@ -220,7 +220,7 @@ End Sub
 Private Sub lblProductInfo_Click()
       toMP
 End Sub
-Private Sub MPgs_MouseDown(ByVal Index As Long, ByVal Button As Integer, ByVal Shift As Integer, ByVal X As Single, ByVal y As Single)
+Private Sub MPgs_MouseDown(ByVal index As Long, ByVal Button As Integer, ByVal Shift As Integer, ByVal X As Single, ByVal Y As Single)
     If Button <> 1 Then Exit Sub
       If X > Tab_W - 32 Then
       toMP

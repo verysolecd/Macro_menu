@@ -85,7 +85,7 @@ On Error Resume Next
     
     oDic = KCL.InitDic
     
-     Dim oPrd: Set oPrd = rootprd
+     Dim oPrd: Set oPrd = rootPrd
      If oPrd Is Nothing Then Exit Sub
      
      oPrd.ApplyWorkMode (3)  '3  DESIGN_MODE

@@ -198,22 +198,22 @@ Private Function initAxis( _
     Dim ax As Variant ' AxisSystem
     Set ax = axiss.Add()
 
-    Dim ary As Variant
-    ary = Array(0#, 0#, 0#)
+    Dim Ary As Variant
+    Ary = Array(0#, 0#, 0#)
     
     ax.OriginType = catAxisSystemOriginByCoordinates
     Set ax = ax
-    ax.PutOrigin ary
+    ax.PutOrigin Ary
 
-    ary = Array(1#, 0#, 0#)
+    Ary = Array(1#, 0#, 0#)
     ax.XAxisType = catAxisSystemAxisByCoordinates
     Set ax = ax
-    ax.PutXAxis ary
+    ax.PutXAxis Ary
 
-    ary = Array(0#, 1#, 0#)
+    Ary = Array(0#, 1#, 0#)
     ax.YAxisType = catAxisSystemAxisByCoordinates
     Set ax = ax
-    ax.PutYAxis ary
+    ax.PutYAxis Ary
 
     ax.IsCurrent = True
    ' pt.Update
@@ -473,7 +473,7 @@ Private Sub initConstraint( _
         pt.CreateReferenceFromObject(itm1), _
         pt.CreateReferenceFromObject(itm2))
 
-    Cst.mode = catCstModeDrivingDimension
+    Cst.Mode = catCstModeDrivingDimension
     If dist < 0.001 Then Exit Sub 'IsMissing(Dist)????
 
     Dim Leng As Length

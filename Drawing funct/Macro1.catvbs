@@ -1,0 +1,17 @@
+Sub CATMain()
+Dim rootPrd: Set rootPrd = CATIA.ActiveDocument.Product
+Dim Asm: Set Asm = rootPrd.getItem("BillOfMaterial")
+Dim Ary(7) 'change number if you have more custom columns/array...
+Ary(0) = "Quantity"
+Ary(1) = "Part Number"
+Ary(2) = "Type"
+Ary(3) = "Nomenclature"
+Ary(4) = "Revision"
+Ary(5) = "Mass" 'in addition of what is by default
+Ary(6) = "Density" 'in addition of what is by default
+Ary(7) = "Material" 'in addition of what is by default
+Asm.SetCurrentFormat Ary
+
+
+Asm.Print "XLS", "D:\bill.csv", rootPrd
+End Sub

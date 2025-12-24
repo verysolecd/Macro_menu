@@ -36,10 +36,10 @@ Private Sub Class_Initialize()
             Exit Sub
         End If
             Set rootDoc = CATIA.ActiveDocument
-            Set rootprd = CATIA.ActiveDocument.Product
+            Set rootPrd = CATIA.ActiveDocument.Product
         On Error GoTo 0
-        If Not rootprd Is Nothing Then
-            rootprd.ApplyWorkMode (3)
+        If Not rootPrd Is Nothing Then
+            rootPrd.ApplyWorkMode (3)
         End If
         Set msel = CATIA.ActiveDocument.Selection: msel.Clear
 ErrorHandler:

@@ -34,13 +34,13 @@ Sub initPrtdoc(doc)
     If pdm Is Nothing Then Set pdm = New Cls_PDM
     Dim iprd
     Set iprd = doc.Product
-    Call pdm.initPrd(rootprd)
+    Call pdm.initPrd(rootPrd)
 End Sub
 Sub initPrdDoc(doc)
     If pdm Is Nothing Then Set pdm = New Cls_PDM
     Dim iprd
     Set iprd = doc.Product
-    Call recurInitPrd(rootprd)
+    Call recurInitPrd(rootPrd)
 End Sub
 Sub recurInitPrd(oPrd)
     If pdm Is Nothing Then Set pdm = New Cls_PDM

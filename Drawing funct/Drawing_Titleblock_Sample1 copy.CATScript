@@ -1,4 +1,3 @@
-Attribute VB_Name = "Module1"
 'COPYRIGHT DASSAULT SYSTEMES 2001
 ' ****************************************************************************
 ' Purpose:       To draw a Frame and TitleBlock
@@ -26,7 +25,7 @@ Function Row(idx As Integer) As Variant
   Row = Array(4, 17, 30, 45, 60)(idx - 1)
 End Function
 Function GetRulerLength() As Double
-  GetRulerLength = 200#
+  GetRulerLength = 200
 End Function
 Function GetMacroID() As String
   GetMacroID = "Drawing_Titleblock_Sample1"
@@ -35,16 +34,16 @@ Function GetNbOfRevision() As Integer
   GetNbOfRevision = 9
 End Function
 Function GetRevRowHeight() As Double
-  GetRevRowHeight = 10#
+  GetRevRowHeight = 10
 End Function
 Function GetDisplayFormat() As String
   GetDisplayFormat = Array("Letter", "Legal", "A0", "A1", "A2", "A3", "A4", "A", "B", "C", "D", "E", "F", "User")(Sheet.PaperSize)
 End Function
 Function GetOffset() As Double
-  If Sheet.PaperSize = catPaperA0 Or Sheet.PaperSize = catPaperA1 Or (Sheet.PaperSize = catPaperUser And (GetWidth() > 594# Or GetHeight() > 594#)) Then
-    GetOffset = 20#
+  If Sheet.PaperSize = catPaperA0 Or Sheet.PaperSize = catPaperA1 Or (Sheet.PaperSize = catPaperUser And (GetWidth() > 594 Or GetHeight() > 594)) Then
+    GetOffset = 20
   Else
-    GetOffset = 10#
+    GetOffset = 10
   End If
 End Function
 Function GetWidth() As Double
@@ -400,11 +399,11 @@ Sub CATFrameCentringMark(Nb_CM_H As Integer, Nb_CM_V As Integer, Ruler As Intege
   '-------------------------------------------------------------------------------
   On Error Resume Next
     CreateLine 0.5 * GetWidth(), GetHeight() - GetOffset(), 0.5 * GetWidth(), GetHeight(), "Frame_CentringMark_Top"
-    CreateLine 0.5 * GetWidth(), GetOV(), 0.5 * GetWidth(), 0#, "Frame_CentringMark_Bottom"
-    CreateLine GetOV(), 0.5 * GetHeight(), 0#, 0.5 * GetHeight(), "Frame_CentringMark_Left"
+    CreateLine 0.5 * GetWidth(), GetOV(), 0.5 * GetWidth(), 0, "Frame_CentringMark_Bottom"
+    CreateLine GetOV(), 0.5 * GetHeight(), 0, 0.5 * GetHeight(), "Frame_CentringMark_Left"
     CreateLine GetWidth() - GetOffset(), 0.5 * GetHeight(), GetWidth(), 0.5 * GetHeight(), "Frame_CentringMark_Right"
     For I = Nb_CM_H To Ruler / 2 / Cst_1 Step -1
-      If (I * Cst_1 < 0.5 * GetWidth() - 1#) Then
+      If (I * Cst_1 < 0.5 * GetWidth() - 1) Then
         X = 0.5 * GetWidth() + I * Cst_1
         CreateLine X, GetOV(), X, 0.25 * GetOffset(), "Frame_CentringMark_Bottom_" & Int(X)
         X = 0.5 * GetWidth() - I * Cst_1
@@ -412,7 +411,7 @@ Sub CATFrameCentringMark(Nb_CM_H As Integer, Nb_CM_V As Integer, Ruler As Intege
       End If
     Next
     For I = 1 To Nb_CM_H
-      If (I * Cst_1 < 0.5 * GetWidth() - 1#) Then
+      If (I * Cst_1 < 0.5 * GetWidth() - 1) Then
         X = 0.5 * GetWidth() + I * Cst_1
         CreateLine X, GetHeight() - GetOffset(), X, GetHeight() - 0.25 * GetOffset(), "Frame_CentringMark_Top_" & Int(X)
         X = 0.5 * GetWidth() - I * Cst_1
@@ -420,7 +419,7 @@ Sub CATFrameCentringMark(Nb_CM_H As Integer, Nb_CM_V As Integer, Ruler As Intege
       End If
     Next
     For I = 1 To Nb_CM_V
-      If (I * Cst_2 < 0.5 * GetHeight() - 1#) Then
+      If (I * Cst_2 < 0.5 * GetHeight() - 1) Then
         Y = 0.5 * GetHeight() + I * Cst_2
         CreateLine GetOV(), Y, 0.25 * GetOffset(), Y, "Frame_CentringMark_Left_" & Int(Y)
         CreateLine GetOH(), Y, GetWidth() - 0.25 * GetOffset(), Y, "Frame_CentringMark_Right_" & Int(Y)
@@ -510,14 +509,14 @@ Sub CATCreateTitleBlockStandard()
   Dim R2   As Double
   Dim X(5) As Double
   Dim Y(7) As Double
-  R1 = 2#
-  R2 = 4#
-  X(1) = GetOH() + Col(2) + 2#
+  R1 = 2
+  R2 = 4
+  X(1) = GetOH() + Col(2) + 2
   X(2) = X(1) + 1.5
   X(3) = X(1) + 9.5
   X(4) = X(1) + 15.5
-  X(5) = X(1) + 21#
-  Y(1) = GetOV() + (Row(2) + Row(3)) / 2#
+  X(5) = X(1) + 21
+  Y(1) = GetOV() + (Row(2) + Row(3)) / 2
   Y(2) = Y(1) + R1
   Y(3) = Y(1) + R2
   Y(4) = Y(1) + 5.5
@@ -569,8 +568,8 @@ Sub CATTitleBlockText()
     Set Net = CreateObject("WScript.Network")
     Text_15 = Net.UserName
   End If
-  CreateTextAF Text_01, GetOH() + Col(1) + 1#, GetOV() + 0.5 * Row(1), "TitleBlock_Text_Rights", catMiddleLeft, 1.5
-  CreateTextAF Text_02, GetOH() + Col(1) + 1#, GetOV() + Row(2), "TitleBlock_Text_Scale", catTopLeft, 1.5
+  CreateTextAF Text_01, GetOH() + Col(1) + 1, GetOV() + 0.5 * Row(1), "TitleBlock_Text_Rights", catMiddleLeft, 1.5
+  CreateTextAF Text_02, GetOH() + Col(1) + 1, GetOV() + Row(2), "TitleBlock_Text_Scale", catTopLeft, 1.5
   ' Insert Text Attribute link on sheet's scale
   Set Text = CreateTextAF("", GetOH() + 0.5 * (Col(1) + Col(2)) - 4, GetOV() + Row(1), "TitleBlock_Text_Scale_1", catBottomCenter, 5)
   Select Case GetContext():
@@ -578,32 +577,32 @@ Sub CATTitleBlockText()
     Case "DRW": Text.InsertVariable 0, 0, ActiveDoc.DrawingRoot.Parameters.item("Drawing\" + Sheet.Name + "\ViewMakeUp.1\Scale")
     Case Else: Text.Text = "XX"
   End Select
-  CreateTextAF Text_04, GetOH() + Col(2) + 1#, GetOV() + Row(2), "TitleBlock_Text_Weight", catTopLeft, 1.5
+  CreateTextAF Text_04, GetOH() + Col(2) + 1, GetOV() + Row(2), "TitleBlock_Text_Weight", catTopLeft, 1.5
   CreateTextAF Text_05, GetOH() + 0.5 * (Col(2) + Col(3)), GetOV() + Row(1), "TitleBlock_Text_Weight_1", catBottomCenter, 5
-  CreateTextAF Text_06, GetOH() + Col(3) + 1#, GetOV() + Row(2), "TitleBlock_Text_Number", catTopLeft, 1.5
+  CreateTextAF Text_06, GetOH() + Col(3) + 1, GetOV() + Row(2), "TitleBlock_Text_Number", catTopLeft, 1.5
   CreateTextAF Text_05, GetOH() + 0.5 * (Col(3) + Col(4)), GetOV() + Row(1), "TitleBlock_Text_EnoviaV5_Effectivity", catBottomCenter, 4
-  CreateTextAF Text_07, GetOH() + Col(4) + 1#, GetOV() + Row(2), "TitleBlock_Text_Sheet", catTopLeft, 1.5
+  CreateTextAF Text_07, GetOH() + Col(4) + 1, GetOV() + Row(2), "TitleBlock_Text_Sheet", catTopLeft, 1.5
   CreateTextAF Text_05, GetOH() + 0.5 * (Col(4) + Col(5)), GetOV() + Row(1), "TitleBlock_Text_Sheet_1", catBottomCenter, 5
-  CreateTextAF Text_08, GetOH() + Col(1) + 1#, GetOV() + Row(3), "TitleBlock_Text_Size", catTopLeft, 1.5
+  CreateTextAF Text_08, GetOH() + Col(1) + 1, GetOV() + Row(3), "TitleBlock_Text_Size", catTopLeft, 1.5
   If (Sheet.PaperSize = 13) Then
     CreateTextAF Text_09, GetOH() + 0.5 * (Col(1) + Col(2)), GetOV() + Row(2) + 2, "TitleBlock_Text_Size_1", catBottomCenter, 5
   Else
     CreateTextAF Text_10, GetOH() + 0.5 * (Col(1) + Col(2)), GetOV() + Row(2) + 2, "TitleBlock_Text_Size_1", catBottomCenter, 5
   End If
   CreateTextAF Text_11, GetOH() + 0.5 * (Col(3) + Col(5)), GetOV() + 0.5 * (Row(2) + Row(3)), "TitleBlock_Text_Company", catMiddleCenter, 5
-  CreateTextAF Text_12, GetOH() + Col(1) + 1#, GetOV() + Row(4), "TitleBlock_Text_Controller", catTopLeft, 1.5
+  CreateTextAF Text_12, GetOH() + Col(1) + 1, GetOV() + Row(4), "TitleBlock_Text_Controller", catTopLeft, 1.5
   CreateTextAF Text_05, GetOH() + Col(2) + 2.5, GetOV() + 0.5 * (Row(3) + Row(4)), "TitleBlock_Text_Controller_1", catBottomCenter, 3
-  CreateTextAF Text_13, GetOH() + Col(1) + 1#, GetOV() + 0.5 * (Row(3) + Row(4)), "TitleBlock_Text_CDate", catTopLeft, 1.5
+  CreateTextAF Text_13, GetOH() + Col(1) + 1, GetOV() + 0.5 * (Row(3) + Row(4)), "TitleBlock_Text_CDate", catTopLeft, 1.5
   CreateTextAF Text_05, GetOH() + Col(2) + 2.5, GetOV() + Row(3), "TitleBlock_Text_CDate_1", catBottomCenter, 3
-  CreateTextAF Text_14, GetOH() + Col(1) + 1#, GetOV() + Row(5), "TitleBlock_Text_Designer", catTopLeft, 1.5
+  CreateTextAF Text_14, GetOH() + Col(1) + 1, GetOV() + Row(5), "TitleBlock_Text_Designer", catTopLeft, 1.5
   CreateTextAF Text_15, GetOH() + Col(2) + 2.5, GetOV() + 0.5 * (Row(4) + Row(5)), "TitleBlock_Text_Designer_1", catBottomCenter, 3
-  CreateTextAF Text_13, GetOH() + Col(1) + 1#, GetOV() + 0.5 * (Row(4) + Row(5)), "TitleBlock_Text_DDate", catTopLeft, 1.5
+  CreateTextAF Text_13, GetOH() + Col(1) + 1, GetOV() + 0.5 * (Row(4) + Row(5)), "TitleBlock_Text_DDate", catTopLeft, 1.5
   CreateTextAF "" & Date, GetOH() + Col(2) + 2.5, GetOV() + Row(4), "TitleBlock_Text_DDate_1", catBottomCenter, 3
   CreateTextAF Text_05, GetOH() + 0.5 * (Col(3) + Col(5)), GetOV() + Row(4), "TitleBlock_Text_Title_1", catMiddleCenter, 7
   For ii = 1 To GetNbOfRevision()
     iY = GetOV() + (ii - 0.5) * Row(5) / GetNbOfRevision()
     CreateTextAF GetRevLetter(ii), GetOH() + 0.5 * (Col(5) + Col(6)), iY, "TitleBlock_Text_Modif_" + GetRevLetter(ii), catMiddleCenter, 2.5
-    CreateTextAF "_", GetOH() + 0.5 * Col(6), iY, "TitleBlock_Text_MDate_" + GetRevLetter(ii), catMiddleCenter, 2#
+    CreateTextAF "_", GetOH() + 0.5 * Col(6), iY, "TitleBlock_Text_MDate_" + GetRevLetter(ii), catMiddleCenter, 2
   Next
   CATLinks
 End Sub
@@ -637,14 +636,14 @@ Sub CATAddRevisionBlockText()
   init = InputBox("This review has been done by:", "Reviewer's name", "XXX")
   Description = InputBox("Comment to be inserted:", "Description", "None")
   If Revision = 1 Then
-    CreateTextAF "REV", X + GetColRev(1) + 1#, Y, "RevisionBlock_Text_Rev", catMiddleLeft, 5
-    CreateTextAF "DATE", X + GetColRev(2) + 1#, Y, "RevisionBlock_Text_Date", catMiddleLeft, 5
-    CreateTextAF "DESCRIPTION", X + GetColRev(3) + 1#, Y, "RevisionBlock_Text_Description", catMiddleLeft, 5
-    CreateTextAF "INIT", X + GetColRev(4) + 1#, Y, "RevisionBlock_Text_Init", catMiddleLeft, 5
+    CreateTextAF "REV", X + GetColRev(1) + 1, Y, "RevisionBlock_Text_Rev", catMiddleLeft, 5
+    CreateTextAF "DATE", X + GetColRev(2) + 1, Y, "RevisionBlock_Text_Date", catMiddleLeft, 5
+    CreateTextAF "DESCRIPTION", X + GetColRev(3) + 1, Y, "RevisionBlock_Text_Description", catMiddleLeft, 5
+    CreateTextAF "INIT", X + GetColRev(4) + 1, Y, "RevisionBlock_Text_Init", catMiddleLeft, 5
   End If
   CreateTextAF GetRevLetter(Revision), X + 0.5 * (GetColRev(1) + GetColRev(2)), Y - GetRevRowHeight(), "RevisionBlock_Text_Rev_" + GetRevLetter(Revision), catMiddleCenter, 5
   CreateTextAF "" & Date, X + 0.5 * (GetColRev(2) + GetColRev(3)), Y - GetRevRowHeight(), "RevisionBlock_Text_Date_" + GetRevLetter(Revision), catMiddleCenter, 3.5
-  CreateTextAF Description, X + GetColRev(3) + 1#, Y - GetRevRowHeight(), "RevisionBlock_Text_Description_" + GetRevLetter(Revision), catMiddleLeft, 2.5
+  CreateTextAF Description, X + GetColRev(3) + 1, Y - GetRevRowHeight(), "RevisionBlock_Text_Description_" + GetRevLetter(Revision), catMiddleLeft, 2.5
   CreateTextAF init, X + 0.5 * GetColRev(4), Y - GetRevRowHeight(), "RevisionBlock_Text_Init_" + GetRevLetter(Revision), catMiddleCenter, 5
   On Error Resume Next
     Texts.getItem("TitleBlock_Text_MDate_" + GetRevLetter(Revision)).Text = "" & Date
@@ -652,8 +651,8 @@ Sub CATAddRevisionBlockText()
   On Error GoTo 0
 End Sub
 Sub ComputeTitleBlockTranslation(TranslationTab As Variant)
-  TranslationTab(0) = 0#
-  TranslationTab(1) = 0#
+  TranslationTab(0) = 0
+  TranslationTab(1) = 0
   On Error Resume Next
     Set Text = Texts.getItem("Reference_" + GetMacroID()) 'Get the reference text
     If Err.Number <> 0 Then
@@ -667,8 +666,8 @@ Sub ComputeTitleBlockTranslation(TranslationTab As Variant)
   On Error GoTo 0
 End Sub
 Sub ComputeRevisionBlockTranslation(TranslationTab As Variant)
-  TranslationTab(0) = 0#
-  TranslationTab(1) = 0#
+  TranslationTab(0) = 0
+  TranslationTab(1) = 0
   On Error Resume Next
     Set Text = Texts.getItem("RevisionBlock_Text_Init") 'Get the reference text
     If Err.Number <> 0 Then
@@ -786,7 +785,7 @@ Sub CATLinks()
   If Len(GetDisplayFormat()) > 4 Then
     textFormat.SetFontSize 0, 0, 3.5
   Else
-    textFormat.SetFontSize 0, 0, 5#
+    textFormat.SetFontSize 0, 0, 5
   End If
   '-------------------------------------------------------------------------------
   'Display sheet numbering

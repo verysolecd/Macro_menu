@@ -11,17 +11,17 @@ Sub designlog()
 
     If Not KCL.CanExecute("ProductDocument") Then Exit Sub
     If pdm Is Nothing Then Set pdm = New Cls_PDM
-    Dim oPrd:  Set oPrd = rootprd
-    Dim str1: str1 = rootprd.DescriptionRef
+    Dim oPrd:  Set oPrd = rootPrd
+    Dim str1: str1 = rootPrd.DescriptionRef
     Dim tm: tm = KCL.timestamp("i")
     Dim imsg
      imsg = "请简短描述本次更新的设计内容"
      
         str1 = str1 & vbCrLf & KCL.GetInput(imsg)
         
-        rootprd.DescriptionRef = str1
+        rootPrd.DescriptionRef = str1
         
-    Debug.Print rootprd.DescriptionRef
+    Debug.Print rootPrd.DescriptionRef
     askdir.Show
     askdir.initFrmlog
 

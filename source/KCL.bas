@@ -163,45 +163,45 @@ End Function
 ''' @param:StartIdx-Long
 ''' @param:EndIdx-Long
 ''' @return:Variant(Of Array)
-Function GetRangeAry(ByVal ary As Variant, ByVal startIdx&, ByVal endIdx&) As Variant
-    If Not IsArray(ary) Then Exit Function
+Function GetRangeAry(ByVal Ary As Variant, ByVal startIdx&, ByVal endIdx&) As Variant
+    If Not IsArray(Ary) Then Exit Function
     If endIdx - startIdx < 0 Then Exit Function
     If startIdx < 0 Then Exit Function
-    If endIdx > UBound(ary) Then Exit Function
+    If endIdx > UBound(Ary) Then Exit Function
     Dim rngAry() As Variant: ReDim rngAry(endIdx - startIdx)
     Dim I&
     For I = startIdx To endIdx
-        rngAry(I - startIdx) = ary(I)
+        rngAry(I - startIdx) = Ary(I)
     Next
     GetRangeAry = rngAry
 End Function ' 检查是否为字符串数组
-Private Function IsStringAry(ByVal ary As Variant) As Boolean
+Private Function IsStringAry(ByVal Ary As Variant) As Boolean
     IsStringAry = False
-    If Not IsArray(ary) Then Exit Function
+    If Not IsArray(Ary) Then Exit Function
     Dim I&
-    For I = 0 To UBound(ary)
-        If Not VarType(ary(I)) = vbString Then Exit Function
+    For I = 0 To UBound(Ary)
+        If Not VarType(Ary(I)) = vbString Then Exit Function
     Next
     IsStringAry = True
 End Function
 ' 将字符串转换为变体数组
 Private Function strToAry(ByVal s$) As Variant
-    Dim ary As Variant: ary = Split(s, ",")
+    Dim Ary As Variant: Ary = Split(s, ",")
     
-    Dim oAry() As Variant: ReDim oAry(UBound(ary))
+    Dim oAry() As Variant: ReDim oAry(UBound(Ary))
     Dim I&
-    For I = 0 To UBound(ary)
-        oAry(I) = ary(I)
+    For I = 0 To UBound(Ary)
+        oAry(I) = Ary(I)
     Next
     strToAry = oAry
 End Function
 ' 检查过滤器类型是否有效
-Private Function checkFilterType(ByVal ary As Variant) As Boolean
+Private Function checkFilterType(ByVal Ary As Variant) As Boolean
     checkFilterType = False
     Dim ErrMsg$: ErrMsg = "过滤器类型无效" + vbNewLine + _
                           "需要为Variant(String)类型的数组" + vbNewLine + _
                           "(具体请参考文档)"
-    If Not IsStringAry(ary) Then
+    If Not IsStringAry(Ary) Then
         MsgBox ErrMsg
         Exit Function
     End If
@@ -258,25 +258,25 @@ End Function
 ''' @param:Ary1-Variant(Of Array)
 ''' @param:Ary2-Variant(Of Array)
 ''' @return:Variant(Of Array)
-Function JoinAry(ByVal ary1 As Variant, ByVal ary2 As Variant)
+Function JoinAry(ByVal ary1 As Variant, ByVal Ary2 As Variant)
     Select Case True
-        Case Not IsArray(ary1) And Not IsArray(ary2)
+        Case Not IsArray(ary1) And Not IsArray(Ary2)
             JoinAry = Empty: Exit Function
         Case Not IsArray(ary1)
-            JoinAry = ary2: Exit Function
-        Case Not IsArray(ary2)
+            JoinAry = Ary2: Exit Function
+        Case Not IsArray(Ary2)
             JoinAry = ary1: Exit Function
     End Select
     Dim StCount&: StCount = UBound(ary1)
-    ReDim Preserve ary1(UBound(ary1) + UBound(ary2) + 1)
+    ReDim Preserve ary1(UBound(ary1) + UBound(Ary2) + 1)
     Dim I&
-    If IsObject(ary2(0)) Then
+    If IsObject(Ary2(0)) Then
         For I = StCount + 1 To UBound(ary1)
-            Set ary1(I) = ary2(I - StCount - 1)
+            Set ary1(I) = Ary2(I - StCount - 1)
         Next
     Else
         For I = StCount + 1 To UBound(ary1)
-            ary1(I) = ary2(I - StCount - 1)
+            ary1(I) = Ary2(I - StCount - 1)
         Next
     End If
     JoinAry = ary1
@@ -284,9 +284,9 @@ End Function
 ' mapping 数组
 ''' @param:Ary-Variant(Of Array)
 ''' @return:Variant(Of Array)
-Function mappedAry(ByVal ary As Variant, ByVal iMap As Variant) As Variant
-    If Not IsArray(ary) Or Not IsArray(iMap) Then Exit Function
-    CloneAry = GetRangeAry(ary, 0, UBound(ary))
+Function mappedAry(ByVal Ary As Variant, ByVal iMap As Variant) As Variant
+    If Not IsArray(Ary) Or Not IsArray(iMap) Then Exit Function
+    CloneAry = GetRangeAry(Ary, 0, UBound(Ary))
     Dim ele_Ary()
        mapdata = Array(0, 1, 2, 3, 4, 5, 6, 7, 8)
     '====获取区域====
@@ -296,22 +296,22 @@ End Function
 ' 克隆数组
 ''' @param:Ary-Variant(Of Array)
 ''' @return:Variant(Of Array)
-Function CloneAry(ByVal ary As Variant) As Variant
-    If Not IsArray(ary) Then Exit Function
-    CloneAry = GetRangeAry(ary, 0, UBound(ary))
+Function CloneAry(ByVal Ary As Variant) As Variant
+    If Not IsArray(Ary) Then Exit Function
+    CloneAry = GetRangeAry(Ary, 0, UBound(Ary))
 End Function
 
 ' 检查两个数组是否相等
 ''' @param:Ary1-Variant(Of Array)
 ''' @param:Ary2-Variant(Of Array)
 ''' @return:Boolean
-Function IsAryEqual(ByVal ary1 As Variant, ByVal ary2 As Variant) As Boolean
+Function IsAryEqual(ByVal ary1 As Variant, ByVal Ary2 As Variant) As Boolean
     IsAryEqual = False
-    If Not IsArray(ary1) Or Not IsArray(ary2) Then Exit Function
-    If Not UBound(ary1) = UBound(ary2) Then Exit Function
+    If Not IsArray(ary1) Or Not IsArray(Ary2) Then Exit Function
+    If Not UBound(ary1) = UBound(Ary2) Then Exit Function
     Dim I&
     For I = 0 To UBound(ary1)
-        If Not ary1(I) = ary2(I) Then Exit Function
+        If Not ary1(I) = Ary2(I) Then Exit Function
     Next
     IsAryEqual = True
 End Function

@@ -54,7 +54,7 @@ Private Sub mBtn_click()
         Call UpdateButtonText(mBtn, willBeWhite)  ' 调用M60_Color模块的函数更新按钮文字
     End If
     
-    Dim ary: ary = Array()  '这里按照传入按钮信息执行按钮对应的module宏
+    Dim Ary: Ary = Array()  '这里按照传入按钮信息执行按钮对应的module宏
     Dim ss: Set ss = CATIA.SystemService
     Call ss.ExecuteScript(mInfo(TAG_PJTPATH), _
                           catScriptLibraryTypeVBAProject, _

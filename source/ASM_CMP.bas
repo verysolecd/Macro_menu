@@ -8,7 +8,7 @@ Attribute VB_Name = "ASM_CMP"
 
 Sub myCMP()
  If Not CanExecute("ProductDocument") Then Exit Sub
-Dim rootprd As Product
+Dim rootPrd As Product
 Dim colls As Products
 Dim oWB As OptimizerWorkBench
 Dim oComps As PartComps
@@ -19,8 +19,8 @@ Set rtDoc = CATIA.ActiveDocument
 Set Docs = CATIA.Documents
 Set oWB = rtDoc.GetWorkbench("OptimizerWorkBench")
 Set oComps = oWB.PartComps
-Set rootprd = rtDoc.Product
-Set colls = rootprd.Products
+Set rootPrd = rtDoc.Product
+Set colls = rootPrd.Products
  Dim imsg, filter(0)
     imsg = "请依次选择旧版本、新版本零件"
     filter(0) = "Product"
