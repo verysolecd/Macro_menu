@@ -43,7 +43,7 @@ Sub Faceholecenter()
         MsgBox "请拆解窗口选择only domain后点击ok，再点击本窗口的ok"
           CATIA.RefreshDisplay = True
         osel.Clear
-        I = 1
+        i = 1
         For Each Hole In oHB.HybridShapes
             osel.Add Hole
             If TypeOf Hole Is HybridShapeCircleTritangent Then
@@ -52,10 +52,10 @@ Sub Faceholecenter()
                 oHB.AppendHybridShape oCtr
                 Set oref = oprt.CreateReferenceFromObject(oCtr)
                 oprt.Update
-                Set pt = HSF.AddNewPointDatum(oref): pt.Name = "pt_" & I
+                Set pt = HSF.AddNewPointDatum(oref): pt.Name = "pt_" & i
                 oHB.AppendHybridShape pt
                 osel.Add oCtr
-                I = I + 1
+                i = i + 1
               Else
                 osel.Add Hole
             End If

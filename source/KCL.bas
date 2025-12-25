@@ -169,18 +169,18 @@ Function GetRangeAry(ByVal Ary As Variant, ByVal startIdx&, ByVal endIdx&) As Va
     If startIdx < 0 Then Exit Function
     If endIdx > UBound(Ary) Then Exit Function
     Dim rngAry() As Variant: ReDim rngAry(endIdx - startIdx)
-    Dim I&
-    For I = startIdx To endIdx
-        rngAry(I - startIdx) = Ary(I)
+    Dim i&
+    For i = startIdx To endIdx
+        rngAry(i - startIdx) = Ary(i)
     Next
     GetRangeAry = rngAry
 End Function ' 检查是否为字符串数组
 Private Function IsStringAry(ByVal Ary As Variant) As Boolean
     IsStringAry = False
     If Not IsArray(Ary) Then Exit Function
-    Dim I&
-    For I = 0 To UBound(Ary)
-        If Not VarType(Ary(I)) = vbString Then Exit Function
+    Dim i&
+    For i = 0 To UBound(Ary)
+        If Not VarType(Ary(i)) = vbString Then Exit Function
     Next
     IsStringAry = True
 End Function
@@ -189,9 +189,9 @@ Private Function strToAry(ByVal s$) As Variant
     Dim Ary As Variant: Ary = Split(s, ",")
     
     Dim oAry() As Variant: ReDim oAry(UBound(Ary))
-    Dim I&
-    For I = 0 To UBound(Ary)
-        oAry(I) = Ary(I)
+    Dim i&
+    For i = 0 To UBound(Ary)
+        oAry(i) = Ary(i)
     Next
     strToAry = oAry
 End Function
@@ -239,7 +239,7 @@ End Function
 Public Function getSearch(ByRef iDoc, ByRef ifilter As Variant)
     Set getSearch = Nothing
       On Error Resume Next
-             Dim osel As Selection, I
+             Dim osel As Selection, i
              Set osel = iDoc.Selection
               osel.Clear
     Select Case TypeName(ifilter)
@@ -269,14 +269,14 @@ Function JoinAry(ByVal ary1 As Variant, ByVal Ary2 As Variant)
     End Select
     Dim StCount&: StCount = UBound(ary1)
     ReDim Preserve ary1(UBound(ary1) + UBound(Ary2) + 1)
-    Dim I&
+    Dim i&
     If IsObject(Ary2(0)) Then
-        For I = StCount + 1 To UBound(ary1)
-            Set ary1(I) = Ary2(I - StCount - 1)
+        For i = StCount + 1 To UBound(ary1)
+            Set ary1(i) = Ary2(i - StCount - 1)
         Next
     Else
-        For I = StCount + 1 To UBound(ary1)
-            ary1(I) = Ary2(I - StCount - 1)
+        For i = StCount + 1 To UBound(ary1)
+            ary1(i) = Ary2(i - StCount - 1)
         Next
     End If
     JoinAry = ary1
@@ -309,9 +309,9 @@ Function IsAryEqual(ByVal ary1 As Variant, ByVal Ary2 As Variant) As Boolean
     IsAryEqual = False
     If Not IsArray(ary1) Or Not IsArray(Ary2) Then Exit Function
     If Not UBound(ary1) = UBound(Ary2) Then Exit Function
-    Dim I&
-    For I = 0 To UBound(ary1)
-        If Not ary1(I) = Ary2(I) Then Exit Function
+    Dim i&
+    For i = 0 To UBound(ary1)
+        If Not ary1(i) = Ary2(i) Then Exit Function
     Next
     IsAryEqual = True
 End Function
@@ -361,33 +361,33 @@ End Function
 ''' @return:Boolean
 Function isExists(ByVal path$) As Boolean
     isExists = False
-    Dim FSO As Object: Set FSO = GetFso
-    If FSO.FileExists(path) Then
+    Dim fso As Object: Set fso = GetFso
+    If fso.FileExists(path) Then
         isExists = True: Exit Function ' 文件
-    ElseIf FSO.FolderExists(path) Then
+    ElseIf fso.FolderExists(path) Then
         isExists = True: Exit Function ' 文件夹
     End If
-    Set FSO = Nothing
+    Set fso = Nothing
 End Function
 Function GetPath(ByVal path$)
     GetPath = ""
-     Dim FSO As Object: Set FSO = GetFso
+     Dim fso As Object: Set fso = GetFso
      If isExists(path) Then
          GetPath = path
      Else
-         GetPath = FSO.CreateFolder(path)
+         GetPath = fso.CreateFolder(path)
      End If
-     Set FSO = Nothing
+     Set fso = Nothing
 End Function
 Sub explorepath(ByVal ipath)
  Dim thisdir, shell, cmd
     thisdir = ""
-    Dim FSO As Object: Set FSO = GetFso
-        If FSO.FileExists(ipath) Then
+    Dim fso As Object: Set fso = GetFso
+        If fso.FileExists(ipath) Then
             thisdir = ipath
-        ElseIf FSO.FolderExists(ipath) Then
+        ElseIf fso.FolderExists(ipath) Then
           Dim Fdl, file
-            Set Fdl = FSO.GetFolder(ipath)
+            Set Fdl = fso.GetFolder(ipath)
             For Each file In Fdl.Files
                 thisdir = file.path
             Exit For
@@ -398,7 +398,7 @@ Sub explorepath(ByVal ipath)
          cmd = "explorer.exe /select, """ & thisdir & """"
          shell.Run (cmd)
     End If
-    Set FSO = Nothing
+    Set fso = Nothing
     Set shell = Nothing
 End Sub
 '获取用户选择路径
@@ -425,25 +425,25 @@ If idx > 0 Then
 End Function
 
 Sub ClearDir(folderPath As String)
-    Dim FSO As Object::  Set FSO = GetFso()
+    Dim fso As Object::  Set fso = GetFso()
     ' 检查目录是否存在
-    If FSO.FolderExists(folderPath) Then
+    If fso.FolderExists(folderPath) Then
         Dim folder As Object
-        Set folder = FSO.GetFolder(folderPath)
+        Set folder = fso.GetFolder(folderPath)
         ' 删除目录中的所有文件
         Dim file As Object
         For Each file In folder.Files
-            FSO.DeleteFile file.path, True ' True表示强制删除只读文件
+            fso.DeleteFile file.path, True ' True表示强制删除只读文件
         Next
     End If
-    Set FSO = Nothing     ' 释放对象
+    Set fso = Nothing     ' 释放对象
 End Sub
 Function DeleteMe(ByVal path$) As Boolean
 DeleteMe = False
 On Error Resume Next
-    Dim FSO As Object: Set FSO = GetFso
-    If FSO.FileExists(path) Then
-        FSO.DeleteFile path, True
+    Dim fso As Object: Set fso = GetFso
+    If fso.FileExists(path) Then
+        fso.DeleteFile path, True
         DeleteMe = True
     End If
     If Error.Number = 0 Then
@@ -452,7 +452,7 @@ On Error Resume Next
         Error.Clear
     End If
     
-    Set FSO = Nothing
+    Set fso = Nothing
     Error.Clear
 On Error GoTo 0
 End Function
@@ -468,10 +468,10 @@ Function GetNewName$(ByVal oldPath$)
         GetNewName = newPath + path(2)
         Exit Function
     End If
-    Dim tempName$, I&: I = 0
+    Dim tempName$, i&: i = 0
     Do
-        I = I + 1
-        tempName = newPath + "_" + CStr(I) + path(2)
+        i = i + 1
+        tempName = newPath + "_" + CStr(i) + path(2)
         If Not isExists(tempName) Then
             GetNewName = tempName
             Exit Function
@@ -535,11 +535,11 @@ Public Function timestamp(Optional ByVal ostr) As String
     timestamp = Format(Now, FT)
 End Function
 Function isEngPath(ByVal path As String) As Boolean
-    Dim I As Long, charCode As Long
+    Dim i As Long, charCode As Long
     Dim validChars As String
      validChars = "!@#$%^&*()-_=+[]{};:'"",.<>/?\|~\/"    ' 定义允许的英文符号（包括路径分隔符）
-    For I = 1 To Len(path)      ' 遍历路径中的每个字符
-        charCode = AscW(Mid(path, I, 1))  ' 检查是否为英文字母（A-Z, a-z）
+    For i = 1 To Len(path)      ' 遍历路径中的每个字符
+        charCode = AscW(Mid(path, i, 1))  ' 检查是否为英文字母（A-Z, a-z）
         If (charCode >= 65 And charCode <= 90) Or _
            (charCode >= 97 And charCode <= 122) Then
             GoTo NextChar  ' 等同于 Continue For
@@ -547,13 +547,13 @@ Function isEngPath(ByVal path As String) As Boolean
         If charCode >= 48 And charCode <= 57 Then    ' 检查是否为数字（0-9）
             GoTo NextChar  ' 等同于 Continue For
         End If
-        If InStr(validChars, Mid(path, I, 1)) > 0 Then    ' 检查是否为允许的英文符号
+        If InStr(validChars, Mid(path, i, 1)) > 0 Then    ' 检查是否为允许的英文符号
             GoTo NextChar  ' 等同于 Continue For
         End If
         isEngPath = False          ' 如果都不是，则路径包含非法字符
         Exit Function
 NextChar:
-    Next I
+    Next i
     ' 所有字符都通过检查
     isEngPath = True
 End Function
@@ -561,21 +561,21 @@ End Function
 ' 参数: pathToCheck - 需要检查的路径
 ' 返回值: Boolean 类型，True 表示路径包含中文，False 表示不包含
 Function isPathchn(pathToCheck) As Boolean
-    Dim regex As Object
-    Set regex = getRegexp
-    regex.Pattern = "[\u4e00-\u9fa5]"   ' 设置正则表达式模式，匹配中文字符
-    regex.IgnoreCase = True
-    regex.Global = True
-    isPathchn = regex.TEST(pathToCheck)   ' 执行匹配并返回结果
-    Set regex = Nothing
+    Dim regEx As Object
+    Set regEx = getRegexp
+    regEx.Pattern = "[\u4e00-\u9fa5]"   ' 设置正则表达式模式，匹配中文字符
+    regEx.IgnoreCase = True
+    regEx.Global = True
+    isPathchn = regEx.TEST(pathToCheck)   ' 执行匹配并返回结果
+    Set regEx = Nothing
 End Function
 ''替换字符串的所有中文为横线
 Function rmchn(ByVal inputString$) As String
-    Dim regex: Set regex = getRegexp()
-    regex.Pattern = "[\u4e00-\u9fa5]"
-    regex.Global = True
-    rmchn = regex.Replace(inputString, "_")
-    Set regex = Nothing
+    Dim regEx: Set regEx = getRegexp()
+    regEx.Pattern = "[\u4e00-\u9fa5]"
+    regEx.Global = True
+    rmchn = regEx.Replace(inputString, "_")
+    Set regEx = Nothing
 End Function
 
 '@iStr string
@@ -616,13 +616,13 @@ If idx > 0 Then
 End Function
 '创建md文件
 Function getmd(ByVal ipath_name As String)
-     Dim FSO
-    Set FSO = GetFso()
+     Dim fso
+    Set fso = GetFso()
     Dim mdfile
     If Not KCL.isExists(ipath_name) Then
-        Set mdfile = FSO.CreateTextFile(ipath_name, False) '不存在则创建
+        Set mdfile = fso.CreateTextFile(ipath_name, False) '不存在则创建
     Else
-        Set mdfile = FSO.OpenTextFile(ipath_name, ForAppending, TristateFalse) '存在则
+        Set mdfile = fso.OpenTextFile(ipath_name, ForAppending, TristateFalse) '存在则
     End If
     Set getmd = mdfile
     Set mdfile = Nothing
@@ -697,8 +697,8 @@ Public Function GetApc() As Object
 End Function
 
 Public Function getRegexp() As Object
-    Dim regex: Set regex = CreateObject("VBScript.RegExp")
-    Set getRegexp = regex
+    Dim regEx: Set regEx = CreateObject("VBScript.RegExp")
+    Set getRegexp = regEx
 End Function
 Public Function getshell()
     Dim shellApp As Object
@@ -710,20 +710,20 @@ End Function
 
 ' 智能打开路径（优先激活已存在窗口）
 Sub openpath(ByVal strPath As String)
-    Dim FSO As Object: Set FSO = GetFso
+    Dim fso As Object: Set fso = GetFso
     If Len(strPath) > 3 And Right(strPath, 1) = "\" Then
         strPath = Left(strPath, Len(strPath) - 1)
     End If
-    If Not (FSO.FileExists(strPath) Or FSO.FolderExists(strPath)) Then
+    If Not (fso.FileExists(strPath) Or fso.FolderExists(strPath)) Then
         MsgBox "路径不存在: " & strPath, vbExclamation
         Exit Sub
     End If
 
     If Not ActivateExistingWindow(strPath) Then     ' 尝试激活已存在的窗口
        
-        If FSO.FileExists(strPath) Then  ' 未找到已存在窗口，执行新打开操作
+        If fso.FileExists(strPath) Then  ' 未找到已存在窗口，执行新打开操作
             OpenFileLocation strPath
-        ElseIf FSO.FolderExists(strPath) Then
+        ElseIf fso.FolderExists(strPath) Then
             openDir strPath
         End If
     End If
@@ -780,11 +780,11 @@ End Sub
 
 ' 批量打开多个路径
 Sub OpenMultiple(ParamArray Paths() As Variant)
-    Dim I As Long
-    For I = LBound(Paths) To UBound(Paths)
-        SmartOpen CStr(Paths(I))
+    Dim i As Long
+    For i = LBound(Paths) To UBound(Paths)
+        SmartOpen CStr(Paths(i))
         DoEvents ' 允许系统处理其他事件
-    Next I
+    Next i
 End Sub
 
 
@@ -843,23 +843,23 @@ End Function
 
 Public Function showdict(ByVal oDic, Optional ByVal boolShowKeyIndex As Boolean = False)
   Dim keys:   keys = oDic.keys
-  Dim I As Long
+  Dim i As Long
   Dim stIndex As String
   Dim stOutput As String
   stOutput = vbNullString
   
-  For I = 0 To oDic.count - 1
+  For i = 0 To oDic.count - 1
     If boolShowKeyIndex Then
-      stIndex = "(" & I & ")"
+      stIndex = "(" & i & ")"
     End If
-    stOutput = stOutput & keys(I) & stIndex & "  :  "
-    If IsObject(oDic(keys(I))) Then
-      stOutput = stOutput & "[" & showdict(oDic(keys(I)), boolShowKeyIndex) & "]"
+    stOutput = stOutput & keys(i) & stIndex & "  :  "
+    If IsObject(oDic(keys(i))) Then
+      stOutput = stOutput & "[" & showdict(oDic(keys(i)), boolShowKeyIndex) & "]"
     Else
-      stOutput = stOutput & oDic(keys(I))
+      stOutput = stOutput & oDic(keys(i))
     End If
         stOutput = stOutput & "; " & "_" & vbNewLine
-  Next I
+  Next i
   showdict = stOutput
   
   Debug.Print showdict

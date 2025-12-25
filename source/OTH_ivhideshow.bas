@@ -13,7 +13,7 @@ Sub CATMain()
         Set pdm = New Cls_PDM
     End If
     
-   Set M = pdm.osel
+   Set m = pdm.osel
     Dim oDoc
     Set oDoc = CATIA.ActiveDocument
     Dim cGroups

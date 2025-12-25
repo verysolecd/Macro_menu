@@ -131,7 +131,7 @@ Private Function Get_LeafItemLst(ByVal pt As part) As collection
     Set Get_LeafItemLst = Nothing
     Dim sel As Selection: Set sel = pt.Parent.Selection
     Dim TmpLst As collection: Set TmpLst = New collection
-    Dim I As Long
+    Dim i As Long
     Dim filter As String
     filter = "(CATPrtSearch.BodyFeature.Visibility=Shown " & _
             "+ CATPrtSearch.OpenBodyFeature.Visibility=Shown" & _
@@ -141,8 +141,8 @@ Private Function Get_LeafItemLst(ByVal pt As part) As collection
         .Clear
         .Add pt
         .Search filter
-        For I = 1 To .Count2
-            TmpLst.Add .item(I).value
+        For i = 1 To .Count2
+            TmpLst.Add .item(i).value
         Next
         .Clear
     End With

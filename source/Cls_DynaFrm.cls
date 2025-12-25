@@ -148,13 +148,13 @@ Private Function ContainsAny(ByVal mainString As String, ByVal substringsList As
     Next substring
 End Function
 Private Function ParseCts(ByVal code As String) As Object
-    Dim regex As Object
+    Dim regEx As Object
     Dim matches As Object
     Dim match As Object
     Dim Cls_property As Object ' Scripting.Dictionary
     
-    Set regex = CreateObject("VBScript.RegExp")
-    With regex
+    Set regEx = CreateObject("VBScript.RegExp")
+    With regEx
         .Global = True
         .MultiLine = True
         ' 格式: ' %UI <ControlType> <ControlName> <Caption/Text>
@@ -163,8 +163,8 @@ Private Function ParseCts(ByVal code As String) As Object
     
     Dim lst
     Set lst = InitLst
-    If regex.TEST(code) Then
-        Set matches = regex.Execute(code)
+    If regEx.TEST(code) Then
+        Set matches = regEx.Execute(code)
         For Each match In matches
             Set Cls_property = KCL.InitDic
             Cls_property.Add "Type", getiType(match.SubMatches(0))
@@ -180,12 +180,12 @@ End Function
 
 
 Private Function ParseTitle(ByVal code As String) As String
-        Dim regex As Object
+        Dim regEx As Object
         Dim matches As Object
         Dim match As Object
         Dim itl
-        Set regex = KCL.getRegexp
-    With regex
+        Set regEx = KCL.getRegexp
+    With regEx
         .Global = True
         .MultiLine = True
         ' 格式: ' %UI <Title> <Caption/Text>
@@ -193,8 +193,8 @@ Private Function ParseTitle(ByVal code As String) As String
     End With
     
     itl = "请配置你要如何执行"
-              If regex.TEST(code) Then
-                Set matches = regex.Execute(code)
+              If regEx.TEST(code) Then
+                Set matches = regEx.Execute(code)
                 For Each match In matches
                  itl = match.SubMatches(0)
                 Next

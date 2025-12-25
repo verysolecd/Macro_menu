@@ -30,13 +30,13 @@ Sub ctrhole()
                     Set pt = HSF.AddNewPointCoord(0, 0, 0)
                     Set ref = oPart.CreateReferenceFromObject(skt)
                     pt.PtRef = ref
-                    pt.Name = "Pt_" & I
+                    pt.Name = "Pt_" & i
                     targetHB.AppendHybridShape pt
                     oPart.InWorkObject = pt
                     oPart.Update
-                    I = I + 1
+                    i = i + 1
                 End If
             Next
-        MsgBox "完成：" & I & "个点", vbInformation
+        MsgBox "完成：" & i & "个点", vbInformation
     End If
 End Sub

@@ -136,7 +136,7 @@ Sub CaptureMe(iprd, oFolder)
     osel.Clear
     Dim Visp: Set Visp = osel.VisProperties
     
-    Dim children, I
+    Dim children, i
     Set children = iprd.Products
     
     '---- 隐藏所有子产品
@@ -147,10 +147,10 @@ Sub CaptureMe(iprd, oFolder)
         
      '---- 逐一显示子产品-截图-隐藏子产品
          If children.count > 0 Then
-              For I = 1 To children.count     ' 递归处理每个子产品
-                   osel.Add children.item(I): Visp.SetShow 0: osel.Clear '显示当前子产品
-                     Call CaptureMe(children.item(I), oFolder)
-                   osel.Add children.item(I): Visp.SetShow 1: osel.Clear  ' 隐藏当前子产品
+              For i = 1 To children.count     ' 递归处理每个子产品
+                   osel.Add children.item(i): Visp.SetShow 0: osel.Clear '显示当前子产品
+                     Call CaptureMe(children.item(i), oFolder)
+                   osel.Add children.item(i): Visp.SetShow 1: osel.Clear  ' 隐藏当前子产品
               Next
         End If
    ' 重新显示每个子产品
@@ -162,7 +162,7 @@ Sub CaptureMe(iprd, oFolder)
 End Sub
 Sub HideNonBody(iDoc)
      On Error Resume Next
-         Dim osel As Selection, I
+         Dim osel As Selection, i
          Dim filter(1 To 6) As Variant
          filter(1) = "(((CATStFreeStyleSearch.Plane + CATPrtSearch.Plane) + CATGmoSearch.Plane) + CATSpdSearch.Plane),all"
          filter(2) = "(((CATStFreeStyleSearch.AxisSystem + CATPrtSearch.AxisSystem) + CATGmoSearch.AxisSystem) + CATSpdSearch.AxisSystem),all"
@@ -170,8 +170,8 @@ Sub HideNonBody(iDoc)
          filter(4) = "((((((CATStFreeStyleSearch.Curve + CAT2DLSearch.2DCurve) + CATSketchSearch.2DCurve) + CATDrwSearch.2DCurve) + CATPrtSearch.Curve) + CATGmoSearch.Curve) + CATSpdSearch.Curve),all"
          filter(5) = "(((CATStFreeStyleSearch.Surface + CATPrtSearch.Surface) + CATGmoSearch.Surface) + CATSpdSearch.Surface),all"
          filter(6) = "(((((((CATProductSearch.MfConstraint + CATStFreeStyleSearch.MfConstraint) + CATAsmSearch.MfConstraint) + CAT2DLSearch.MfConstraint) + CATSketchSearch.MfConstraint) + CATDrwSearch.MfConstraint) + CATPrtSearch.MfConstraint) + CATSpdSearch.MfConstraint),all"
-         For I = LBound(filter) To UBound(filter)
-               KCL.getSearch(iDoc, filter(I)).VisProperties.SetShow 1
+         For i = LBound(filter) To UBound(filter)
+               KCL.getSearch(iDoc, filter(i)).VisProperties.SetShow 1
          Next
           Err.Clear
      On Error GoTo 0

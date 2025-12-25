@@ -79,34 +79,34 @@ Function AddNode(PStack, D)
 End Function
 Function getDecCode()
     On Error Resume Next
-    Dim M As Object: Set M = KCL.GetApc().ExecutingProject.VBProject.VBE.Activecodepane.codemodule
-    If Not M Is Nothing Then If M.CountOfDeclarationLines > 0 Then getDecCode = M.Lines(1, M.CountOfDeclarationLines)
+    Dim m As Object: Set m = KCL.GetApc().ExecutingProject.VBProject.VBE.Activecodepane.codemodule
+    If Not m Is Nothing Then If m.CountOfDeclarationLines > 0 Then getDecCode = m.Lines(1, m.CountOfDeclarationLines)
 End Function
 
 Private Function ParsePn(C$) As Object
-    Dim RE As Object, M, lst, curL%, H(20) As Integer, curI%
+    Dim RE As Object, m, lst, curL%, H(20) As Integer, curI%
     Set RE = CreateObject("VBScript.RegExp"): Set lst = KCL.InitDic(1)
     RE.Global = True: RE.MultiLine = True: RE.Pattern = "^(\s*)'\s*%info\s+([^,]*),+([^,]*),+([^,]*),+([^,]*),+([^,\r\n]*).*$"
     If RE.TEST(C) Then
         H(0) = -1: H(1) = 0
-        For Each M In RE.Execute(C)
-            curI = Len(M.SubMatches(0))
+        For Each m In RE.Execute(C)
+            curI = Len(m.SubMatches(0))
             curL = GetLev(curI, curL, H)
             Dim D: Set D = KCL.InitDic(1)
-            D.Add "Level", curL: D.Add "Type", Trim(M.SubMatches(1)): D.Add "PartNumber", Trim(M.SubMatches(2))
-            D.Add "Nomenclature", Trim(M.SubMatches(3)): D.Add "Definition", Trim(M.SubMatches(4)): D.Add "Name", Trim(M.SubMatches(5))
+            D.Add "Level", curL: D.Add "Type", Trim(m.SubMatches(1)): D.Add "PartNumber", Trim(m.SubMatches(2))
+            D.Add "Nomenclature", Trim(m.SubMatches(3)): D.Add "Definition", Trim(m.SubMatches(4)): D.Add "Name", Trim(m.SubMatches(5))
             lst.Add D("PartNumber"), D
         Next
     End If
     Set ParsePn = lst
 End Function
 
-Private Function GetLev(ByVal I As Integer, ByVal L As Integer, ByRef H() As Integer) As Integer
-    If L = 0 Or I > H(L) Then
+Private Function GetLev(ByVal i As Integer, ByVal L As Integer, ByRef H() As Integer) As Integer
+    If L = 0 Or i > H(L) Then
         L = L + 1: If L > UBound(H) Then L = UBound(H)
-        H(L) = I
+        H(L) = i
     Else
-        While L > 1 And H(L) > I: L = L - 1: Wend
+        While L > 1 And H(L) > i: L = L - 1: Wend
     End If
     GetLev = L
 End Function

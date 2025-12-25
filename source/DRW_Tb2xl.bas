@@ -39,13 +39,13 @@ Sub Tb2xl()
         colsNo = drwTable.NumberOfColumns
         
         
-        Dim I As Long, j As Long
+        Dim i As Long, j As Long
         ReDim arr(rowsNo - 1, colsNo - 1) As Variant
       
-        For I = 1 To rowsNo
+        For i = 1 To rowsNo
             For j = 1 To colsNo
                 ' write cell content to an array item
-                arr(I - 1, j - 1) = drwTable.GetCellString(I, j)
+                arr(i - 1, j - 1) = drwTable.GetCellString(i, j)
             Next
         Next
         

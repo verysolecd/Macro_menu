@@ -122,8 +122,8 @@ Function DumpVariable( _
                         Dim mx As Long: mx = 8 - 1
                         Dim xb As Long: xb = IIf(ub - lb < mx, ub, lb + mx)
                         ReDim ar(lb To xb)
-                        Dim I As Long
-                        For I = lb To xb: ar(I) = DumpVariable(X(I)): Next
+                        Dim i As Long
+                        For i = lb To xb: ar(i) = DumpVariable(X(i)): Next
                     End If
                     DumpVariable = "Array(" & Join(ar, ", ") & IIf(xb < ub, ", ...", "") & ")"
                 Else
@@ -151,14 +151,14 @@ Private Function ReMatch( _
         ByVal expr As String, ByVal ptrnFind As String, _
         Optional ByVal iCase As Boolean = False) As Variant
     Dim ret As Variant: ret = Array()
-    Dim regex As Object:  Set regex = CreateRegExp(ptrnFind, IIf(iCase, "i", ""))
-    Dim ms As Object:     Set ms = regex.Execute(expr)
+    Dim regEx As Object:  Set regEx = CreateRegExp(ptrnFind, IIf(iCase, "i", ""))
+    Dim ms As Object:     Set ms = regEx.Execute(expr)
     If ms.count < 1 Then: GoTo Ending
     Dim sms As Object:    Set sms = ms(0).SubMatches
     ReDim ret(sms.count)
     ret(0) = ms.item(0).value
-    Dim I As Integer
-    For I = 1 To UBound(ret): ret(I) = sms.item(I - 1): Next
+    Dim i As Integer
+    For i = 1 To UBound(ret): ret(i) = sms.item(i - 1): Next
 Ending:
     ReMatch = ret
 End Function
@@ -189,10 +189,10 @@ Private Function ArrRank( _
         ByVal arr As Variant) As Integer
     If Not IsArray(arr) Then Err.Raise 13
     Dim X As Long
-    Dim I As Integer: I = 0
+    Dim i As Integer: i = 0
     On Error Resume Next
-    While Err.Number = 0: X = UBound(arr, IncrPre(I)): Wend
-    ArrRank = I - 1
+    While Err.Number = 0: X = UBound(arr, IncrPre(i)): Wend
+    ArrRank = i - 1
 End Function
 ''' @param n As Variant
 ''' @param stepVal As Variant
@@ -332,9 +332,9 @@ Function InitArray( _
     If IsEmpty(value) Then
         InitArray = Ary
     End If
-    Dim I As Long
-    For I = 0 To UBound(Ary)
-        Ary(I) = value
+    Dim i As Long
+    For i = 0 To UBound(Ary)
+        Ary(i) = value
     Next
     InitArray = Ary
 End Function
@@ -367,14 +367,14 @@ Function JointArray( _
         End Select
         Dim StCount&: StCount = UBound(ary1)
         ReDim Preserve ary1(UBound(ary1) + UBound(Ary2) + 1)
-        Dim I&
+        Dim i&
         If IsObject(Ary2(0)) Then
-            For I = StCount + 1 To UBound(ary1)
-                Set ary1(I) = Ary2(I - StCount - 1)
+            For i = StCount + 1 To UBound(ary1)
+                Set ary1(i) = Ary2(i - StCount - 1)
             Next
         Else
-            For I = StCount + 1 To UBound(ary1)
-                ary1(I) = Ary2(I - StCount - 1)
+            For i = StCount + 1 To UBound(ary1)
+                ary1(i) = Ary2(i - StCount - 1)
             Next
         End If
         JointArray = ary1
@@ -394,9 +394,9 @@ Function Slice( _
     If endIdx > UBound(Ary) Then Exit Function
     Dim rngAry() As Variant
     ReDim rngAry(endIdx - startIdx)
-    Dim I As Long
-    For I = startIdx To endIdx
-        rngAry(I - startIdx) = Ary(I)
+    Dim i As Long
+    For i = startIdx To endIdx
+        rngAry(i - startIdx) = Ary(i)
     Next
     Slice = rngAry
 End Function
@@ -418,9 +418,9 @@ Function IsEqualArray( _
     IsEqualArray = False
     If Not IsArray(ary1) Or Not IsArray(Ary2) Then Exit Function
     If Not UBound(ary1) = UBound(Ary2) Then Exit Function
-    Dim I As Long
-    For I = 0 To UBound(ary1)
-        If Not ary1(I) = Ary2(I) Then Exit Function
+    Dim i As Long
+    For i = 0 To UBound(ary1)
+        If Not ary1(i) = Ary2(i) Then Exit Function
     Next
     IsEqualArray = True
 End Function
@@ -453,9 +453,9 @@ Function CollectionToArraySet( _
     End If
     Dim Ary() As Variant
     ReDim Ary(lstCount - 1)
-    Dim I As Long
-    For I = 1 To lst.count
-        Set Ary(I - 1) = lst(I)
+    Dim i As Long
+    For i = 1 To lst.count
+        Set Ary(i - 1) = lst(i)
     Next
     CollectionToArraySet = Ary
 End Function
@@ -472,9 +472,9 @@ Function CollectionToArrayLet( _
     End If
     Dim Ary() As Variant
     ReDim Ary(lstCount - 1)
-    Dim I As Long
-    For I = 1 To lst.count
-        Let Ary(I - 1) = lst(I)
+    Dim i As Long
+    For i = 1 To lst.count
+        Let Ary(i - 1) = lst(i)
     Next
     CollectionToArrayLet = Ary
 End Function
@@ -516,15 +516,15 @@ Function ArraySlice( _
     ' 数组切片
     Dim j As Long
     j = 0
-    Dim I As Long
-    For I = StartIndex To EndIndex
+    Dim i As Long
+    For i = StartIndex To EndIndex
         If IsObject(arr(0)) Then
-            Set result(j) = arr(I)
+            Set result(j) = arr(i)
         Else
-            Let result(j) = arr(I)
+            Let result(j) = arr(i)
         End If
         j = j + 1
-    Next I
+    Next i
     ArraySlice = result
 End Function
 '************************************************************************
@@ -534,17 +534,17 @@ End Function
 '************************************************************************
 Function BubbleSort( _
         ByVal arrTmp As Variant) As Variant
-    Dim I As Long, j As Long
+    Dim i As Long, j As Long
     Dim vTmp As Variant
-    For I = LBound(arrTmp) To UBound(arrTmp) - 1
-        For j = I + 1 To UBound(arrTmp)
-            If ExtractNumericPart(arrTmp(j)) < ExtractNumericPart(arrTmp(I)) Then
-                vTmp = arrTmp(I)
-                arrTmp(I) = arrTmp(j)
+    For i = LBound(arrTmp) To UBound(arrTmp) - 1
+        For j = i + 1 To UBound(arrTmp)
+            If ExtractNumericPart(arrTmp(j)) < ExtractNumericPart(arrTmp(i)) Then
+                vTmp = arrTmp(i)
+                arrTmp(i) = arrTmp(j)
                 arrTmp(j) = vTmp
             End If
         Next j
-    Next I
+    Next i
     BubbleSort = arrTmp
 End Function
 '------------------------------------------------------------------------
@@ -555,12 +555,12 @@ End Function
 Private Function ExtractNumericPart( _
         ByVal sTxt As String) As Long
     Dim sNumericPart As String
-    Dim I As Long
-    For I = 1 To Len(sTxt)
-        If IsNumeric(Mid(sTxt, I, 1)) Then
-            sNumericPart = sNumericPart & Mid(sTxt, I, 1)
+    Dim i As Long
+    For i = 1 To Len(sTxt)
+        If IsNumeric(Mid(sTxt, i, 1)) Then
+            sNumericPart = sNumericPart & Mid(sTxt, i, 1)
         End If
-    Next I
+    Next i
     ExtractNumericPart = CLng(sNumericPart)
 End Function
 '*****IO函数*****
@@ -603,21 +603,21 @@ Function GetUniquePath( _
     path(2) = "." & path(2)
     '替换文件名中不能使用的字符
     path(1) = ReplaceInvalidChars(path(1))
-    Dim FSO As Object
-    Set FSO = GetFso()
+    Dim fso As Object
+    Set fso = GetFso()
     Dim newPath As String
     newPath = path(0) + "\" + path(1)
-    If Not FSO.FileExists(newPath + path(2)) Then
+    If Not fso.FileExists(newPath + path(2)) Then
         GetUniquePath = newPath + path(2)
         Exit Function
     End If
     Dim tempName As String
-    Dim I As Long
-    I = 0
+    Dim i As Long
+    i = 0
     Do
-        I = I + 1
-        tempName = newPath + "_" + CStr(I) + path(2)
-        If Not FSO.FileExists(tempName) Then
+        i = i + 1
+        tempName = newPath + "_" + CStr(i) + path(2)
+        If Not fso.FileExists(tempName) Then
             GetUniquePath = tempName
             Exit Function
         End If

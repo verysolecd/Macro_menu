@@ -153,13 +153,13 @@ Private Function getMaxSize_Bodies( _
     Dim tmpBox() As Double
     ReDim tmpBox(UBound(vec))
     Dim maxBox As Variant
-    Dim I As Long
+    Dim i As Long
     Dim bdy As body
     For Each bdy In bodies
-        For I = 0 To UBound(vec)
-            tmpBox(I) = _
+        For i = 0 To UBound(vec)
+            tmpBox(i) = _
                 (DMYLNG - getMimLength( _
-                    pt, bdy, axRef, vec(I))) * IIf(I Mod 2 = 0, -1, 1)
+                    pt, bdy, axRef, vec(i))) * IIf(i Mod 2 = 0, -1, 1)
         Next
         maxBox = updateBox(tmpBox, maxBox)
     Next
@@ -238,10 +238,10 @@ Private Function getBodies( _
     Dim lst As collection
     Set lst = New collection
     
-    Dim I As Long
+    Dim i As Long
     Dim bdy As body
-    For I = 1 To sel.Count2
-        Set bdy = sel.Item2(I).value
+    For i = 1 To sel.Count2
+        Set bdy = sel.Item2(i).value
             If bdy.Shapes.count > 0 And bdy.Name <> "MinimumBox" Then
                 lst.Add bdy
             End If
@@ -281,11 +281,11 @@ Private Function getAxisPlaneRefs( _
     Set pt = KCL.GetParent_Of_T(ax, "Part")
     
     Dim PlaneRef(2) As Reference
-    Dim I As Long
-    For I = 0 To UBound(PlaneRef)
-        Set PlaneRef(I) = _
+    Dim i As Long
+    For i = 0 To UBound(PlaneRef)
+        Set PlaneRef(i) = _
             pt.CreateReferenceFromBRepName( _
-                getAxisPlaneBrepName(ax, I), ax)
+                getAxisPlaneBrepName(ax, i), ax)
     Next
     getAxisPlaneRefs = PlaneRef
 End Function

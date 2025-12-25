@@ -6,7 +6,7 @@ Attribute VB_Name = "MDL_LayersMng"
 '{Caption:当前层创建YZ向图纸}
 '{ControlTipText: 设置只显示当前图层，然后创建YZ向图纸}
 '{BackColor:12648447}
-Private I
+Private i
 Sub LayersMng()
 If Not CanExecute("partDocument,productdocument") Then Exit Sub
 Set rootDoc = CATIA.ActiveDocument
@@ -75,9 +75,9 @@ If ly <> "None" Then
                     ipt = Split(ipt, ",") '过滤器转数组
                 End If
                 fstr = ""
-                For I = LBound(ipt) To UBound(ipt)
-                    ily = "Layer= " & CLng(ipt(I)) & "+ " & ily
-                Next I
+                For i = LBound(ipt) To UBound(ipt)
+                    ily = "Layer= " & CLng(ipt(i)) & "+ " & ily
+                Next i
                 fstr = ""
                 fstr = Left(ily, Len(ily) - 2)
                     If fstr <> "" Then
@@ -106,7 +106,7 @@ Function addDrw(iprd)
     Set sht = Shts.item("Sheet.1")
     Set oVs = sht.Views
  xdis = 200
- I = 1
+ i = 1
 If iprd.Products.count < 1 Then
     On Error Resume Next
      Set oprt = iprd.ReferenceProduct.Parent.part
@@ -116,12 +116,12 @@ If iprd.Products.count < 1 Then
             Set ViewGBH = oV.GenerativeBehavior
                 ViewGBH.Document = prd
                 ViewGBH.DefineFrontView 0#, 1#, 0#, 0#, 0#, 1#
-                oV.X = xdis * I
+                oV.X = xdis * i
                 oV.Y = 300
                 oV.[Scale] = 1#
             ViewGBH.Update
             oV.Activate
-            I = I + 1
+            i = i + 1
         End If
     On Error Resume Next
 Else
@@ -132,12 +132,12 @@ Else
             Set ViewGBH = oV.GenerativeBehavior
                 ViewGBH.Document = prd
                 ViewGBH.DefineFrontView 0#, 1#, 0#, 0#, 0#, 1#
-                oV.X = xdis * I
+                oV.X = xdis * i
                 oV.Y = 300
                 oV.[Scale] = 1#
             ViewGBH.Update
             oV.Activate
-            I = I + 1
+            i = i + 1
         Next
 End If
 End Function

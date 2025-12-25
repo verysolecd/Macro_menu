@@ -22,12 +22,12 @@ Sub iPos(Optional ByVal pp As Double)
     
      If pp > 1 Then 'Ñ­»·»­Í¼
     
-       For I = 1 To pp
+       For i = 1 To pp
           For j = 1 To pp
-                X0 = idstx * I
+                X0 = idstx * i
                Y0 = idsty * j
                
-               fs = I * j
+               fs = i * j
                If fs Mod 2 = 0 Then
                 Z = 50
                 Else
@@ -690,7 +690,7 @@ Sub Flower(Optional ByVal pp As Double)
         Dim Alfa As Double
             Alfa = 0
             
-            For I = 1 To QtyHole - 1
+            For i = 1 To QtyHole - 1
                 Alfa = Alfa + 360 / QtyHole
                 Set myCenterHolePoint = HSF.AddNewPointOnPlane(RefPlaneHole, DistHole * Cos(Alfa * Pi / 180), DistHole * Sin(Alfa * Pi / 180))
                 myCenterHolePoint.Point = RefCenterBump
@@ -735,7 +735,7 @@ Sub Flower(Optional ByVal pp As Double)
                     'MsgBox Alfa
                 HSF.GSMVisibility RefmyHoleProject, 0
                 HSF.GSMVisibility RefCutter, 0
-            Next I
+            Next i
             
             'Step 4-11: Create Fillet
                 Dim RefFilletUp As Reference

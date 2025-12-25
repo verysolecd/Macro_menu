@@ -40,7 +40,7 @@ MsgBox "没编呢"
 Exit Sub
  Dim iprd, rootPrd, oPrd, children
  Dim xlsht, rng, RC(0 To 1), oArry()
- Dim I, oRowNb
+ Dim i, oRowNb
   RC(0) = 3: RC(1) = 3
     On Error Resume Next
     Set CATIA = GetObject(, "CATIA.Application") '获取catia程序
@@ -78,7 +78,7 @@ End Sub
 Function shotme()
     Dim iprd, rootPrd, oPrd, children
     Dim xlsht, rng, RC(0 To 1), oArry()
-    Dim I, oRowNb
+    Dim i, oRowNb
      RC(0) = 3: RC(1) = 3
        On Error Resume Next
        Set CATIA = GetObject(, "CATIA.Application") '获取catia程序

@@ -222,10 +222,10 @@ Private Function To_SortedList(ByVal Infos As Object) As Object
     If SoLst.count < 1 Then Exit Function
     
     ' 按模块名称排序
-    Dim I As Long
+    Dim i As Long
     Dim InfoDic As Object: Set InfoDic = KCL.InitDic(vbTextCompare)
-    For I = 0 To SoLst.count - 1
-        InfoDic.Add SoLst.GetKey(I), Sort_by(SoLst.GetByIndex(I))
+    For i = 0 To SoLst.count - 1
+        InfoDic.Add SoLst.GetKey(i), Sort_by(SoLst.GetByIndex(i))
     Next
     
     Set To_SortedList = InfoDic
@@ -235,17 +235,17 @@ End Function
 ' 返回值: lst(Dict)
 Private Function Sort_by(ByVal lst As Object) As Object
     Dim tmp As Object
-    Dim I As Long, j As Long
+    Dim i As Long, j As Long
     Set tmp = lst(0)
-    For I = 0 To lst.count - 1
-        For j = lst.count - 1 To I Step -1
-            If lst(I)(TAG_MDLNAME) > lst(j)(TAG_MDLNAME) Then
-                Set tmp = lst(I)
-                Set lst(I) = lst(j)
+    For i = 0 To lst.count - 1
+        For j = lst.count - 1 To i Step -1
+            If lst(i)(TAG_MDLNAME) > lst(j)(TAG_MDLNAME) Then
+                Set tmp = lst(i)
+                Set lst(i) = lst(j)
                 Set lst(j) = tmp
             End If
         Next j
-    Next I
+    Next i
     Set Sort_by = lst
 End Function
 

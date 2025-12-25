@@ -36,15 +36,15 @@ Set colls = rootPrd.Products
                 opath(2) = "3dmap"
                    Mt(0) = "AddedMaterial"
                     Mt(1) = "RemovedMaterial"
-            For I = 0 To 1
-             opath(1) = Mt(I)
-             filepath(I) = JoinPathName(opath())
-             mapName(I) = Mt(I) & ".3dmap"
-             KCL.DeleteMe (filepath(I))
+            For i = 0 To 1
+             opath(1) = Mt(i)
+             filepath(i) = JoinPathName(opath())
+             mapName(i) = Mt(i) & ".3dmap"
+             KCL.DeleteMe (filepath(i))
             Next
-            For I = 0 To 1
-                        Set oDoc = Docs.item(mapName(I)): oDoc.Activate
-                        oDoc.SaveAs filepath(I)
+            For i = 0 To 1
+                        Set oDoc = Docs.item(mapName(i)): oDoc.Activate
+                        oDoc.SaveAs filepath(i)
                         oDoc.Close
             Next
                 On Error GoTo 0

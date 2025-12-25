@@ -58,13 +58,13 @@ Sub iniarr()
 End Sub
 ' Calculate the total mass of a product and its sub-products
 Public Function Assmass(oPrd)
-        Dim I, total, children
+        Dim i, total, children
             total = 0
         Set children = oPrd.Products
         If oPrd.Products.count > 0 Then
-            For I = 1 To children.count
-                Assmass (children.item(I)) 'Assmass = Assmass +
-                total = total + children.item(I).ReferenceProduct.UserRefProperties.item("Mass").value
+            For i = 1 To children.count
+                Assmass (children.item(i)) 'Assmass = Assmass +
+                total = total + children.item(i).ReferenceProduct.UserRefProperties.item("Mass").value
             Next
                 oPrd.ReferenceProduct.UserRefProperties.item("Mass").value = total
         Else
@@ -92,18 +92,18 @@ Public Function Assmass(oPrd)
         infoPrd = arr
     End Function
 Public Function attLv2Prd(oPrd)
-    Dim tempdata, I, j
+    Dim tempdata, i, j
     tempdata = infoPrd(oPrd)
     If counter = 1 Then
         ReDim bigbom(1 To gfn, 0 To UBound(tempdata)) '初始化所有bigbom元素为""
-            For I = 1 To gfn
+            For i = 1 To gfn
                 For j = 0 To UBound(tempdata)
-                    bigbom(I, j) = ""
+                    bigbom(i, j) = ""
                 Next j
-            Next I
+            Next i
     End If
-   For I = 1 To UBound(tempdata)
-       bigbom(counter, I) = tempdata(I)
+   For i = 1 To UBound(tempdata)
+       bigbom(counter, i) = tempdata(i)
    Next
   
    Dim children As Products: Set children = oPrd.Products
@@ -111,16 +111,16 @@ Public Function attLv2Prd(oPrd)
                 For j = 1 To children.count
                     counter = counter + 1
                     tempdata = infoPrd(children.item(j))
-                   For I = 1 To UBound(tempdata)
-                        bigbom(counter, I) = tempdata(I)
+                   For i = 1 To UBound(tempdata)
+                        bigbom(counter, i) = tempdata(i)
                    Next
                 Next
             End If
   ReDim finalbom(1 To counter, 1 To UBound(tempdata))
-      For I = 1 To UBound(finalbom, 1)
+      For i = 1 To UBound(finalbom, 1)
         For j = 1 To UBound(finalbom, 2)
           
-          finalbom(I, j) = bigbom(I, j)
+          finalbom(i, j) = bigbom(i, j)
       
         Next
       Next
@@ -130,41 +130,41 @@ End Function
 
 Public Function recurInfoPrd(oPrd, LV)
 
-    Dim tempdata, I, j
+    Dim tempdata, i, j
     tempdata = infoPrd(oPrd) '此数组是1-9
     
     If counter = 1 Then  '初始化所有bigbom元素为""
         ReDim bigbom(1 To gfn, 0 To UBound(tempdata))
-            For I = 1 To gfn
+            For i = 1 To gfn
                 For j = 0 To UBound(tempdata)
-                    bigbom(I, j) = ""
+                    bigbom(i, j) = ""
                 Next j
-            Next I
+            Next i
     End If
     '===================
-   For I = 0 To UBound(tempdata)   'tempdata 数组是1-9
-        Select Case I
-             Case 0: bigbom(counter, I) = LV
+   For i = 0 To UBound(tempdata)   'tempdata 数组是1-9
+        Select Case i
+             Case 0: bigbom(counter, i) = LV
              Case Else:
-                 bigbom(counter, I) = tempdata(I)
+                 bigbom(counter, i) = tempdata(i)
              End Select
    Next
        Dim children: Set children = oPrd.Products
             If children.count > 0 Then
                     Dim bdict: Set bdict = KCL.InitDic
-                For I = 1 To children.count
-                    If bdict.Exists(children.item(I).PartNumber) = False Then
-                       bdict(children.item(I).PartNumber) = 1
+                For i = 1 To children.count
+                    If bdict.Exists(children.item(i).PartNumber) = False Then
+                       bdict(children.item(i).PartNumber) = 1
                        counter = counter + 1
-                       recurInfoPrd children.item(I), LV + 1
+                       recurInfoPrd children.item(i), LV + 1
                     End If
                 Next
             End If
             
     ReDim finalbom(1 To counter, 0 To UBound(tempdata))
-      For I = 1 To UBound(finalbom, 1)
+      For i = 1 To UBound(finalbom, 1)
         For j = 0 To UBound(finalbom, 2)
-            finalbom(I, j) = bigbom(I, j)
+            finalbom(i, j) = bigbom(i, j)
         Next
       Next
     recurInfoPrd = finalbom
@@ -177,26 +177,26 @@ Public Function recurPrd(oPrd, LV)
     
     Dim bomsize
         bomsize = UBound(mapping)
-    Dim I, j
+    Dim i, j
         If counter = 1 Then
         ReDim bigbom(1 To gfn, 1 To bomsize)
-            For I = 1 To gfn
+            For i = 1 To gfn
                 For j = 1 To bomsize
-                    bigbom(I, j) = ""
+                    bigbom(i, j) = ""
                 Next j
-            Next I
+            Next i
     End If   '初始化所有bigbom元素为""
     Dim tempdata
     tempdata = infoPrd(oPrd)
    '=====生成行数据 === bom行数据直接按最大列处理得到一行数据
-        For I = 1 To UBound(bigbom, 2)  '从1到最大列
-            bigbom(counter, I) = ""  '默认赋值为空
-            Select Case I
-                Case 1: bigbom(counter, I) = counter  'counter是全局变量,遍历BOM时为1
-                Case 2: bigbom(counter, I) = LV
+        For i = 1 To UBound(bigbom, 2)  '从1到最大列
+            bigbom(counter, i) = ""  '默认赋值为空
+            Select Case i
+                Case 1: bigbom(counter, i) = counter  'counter是全局变量,遍历BOM时为1
+                Case 2: bigbom(counter, i) = LV
                 Case Else
-                    If mapping(I) <= UBound(tempdata) And mapping(I) >= LBound(tempdata) Then '当对应列map值在tempdata元素范围内，
-                        bigbom(counter, I) = tempdata(mapping(I))
+                    If mapping(i) <= UBound(tempdata) And mapping(i) >= LBound(tempdata) Then '当对应列map值在tempdata元素范围内，
+                        bigbom(counter, i) = tempdata(mapping(i))
                     End If
             End Select
            Next
@@ -205,42 +205,42 @@ Public Function recurPrd(oPrd, LV)
             If children.count > 0 Then
                     Dim bdict
                     Set bdict = KCL.InitDic
-                For I = 1 To children.count
-                    If bdict.Exists(children.item(I).PartNumber) = False Then
-                       bdict(children.item(I).PartNumber) = 1
+                For i = 1 To children.count
+                    If bdict.Exists(children.item(i).PartNumber) = False Then
+                       bdict(children.item(i).PartNumber) = 1
                        counter = counter + 1
-                       recurPrd children.item(I), LV + 1
+                       recurPrd children.item(i), LV + 1
                     End If
                 Next
             End If
   ReDim finalbom(1 To counter, 1 To 17)
-  For I = 1 To UBound(finalbom, 1)
+  For i = 1 To UBound(finalbom, 1)
     For j = 1 To UBound(finalbom, 2)
-        finalbom(I, j) = bigbom(I, j)
+        finalbom(i, j) = bigbom(i, j)
     Next
   Next
   recurPrd = finalbom
 End Function
 Public Function modatt(oPrd, odata)
     Dim refPrd: Set refPrd = oPrd.ReferenceProduct
-    Dim colls, I
+    Dim colls, i
     Dim currAtt As Variant
      currAtt = infoPrd(oPrd)
-    For I = 1 To 6
-        If odata(I) <> "" And odata(I) <> currAtt(I) Then
+    For i = 1 To 6
+        If odata(i) <> "" And odata(i) <> currAtt(i) Then
             On Error Resume Next
-                Select Case I
-                    Case 1: refPrd.PartNumber = odata(I)
-                    Case 2: refPrd.Nomenclature = odata(I)
-                    Case 3: refPrd.Definition = odata(I)
-                    Case 4: oPrd.Name = odata(I)
+                Select Case i
+                    Case 1: refPrd.PartNumber = odata(i)
+                    Case 2: refPrd.Nomenclature = odata(i)
+                    Case 3: refPrd.Definition = odata(i)
+                    Case 4: oPrd.Name = odata(i)
                     Case 5:
                         Set colls = refPrd.UserRefProperties
-                        colls.item("Material").value = odata(I)
+                        colls.item("Material").value = odata(i)
                     Case 6
                         On Error Resume Next
                             Set colls = refPrd.Parent.part.Parameters.RootParameterSet.ParameterSets.item("Part_info").DirectParameters
-                            colls.item("Density").value = odata(I)
+                            colls.item("Density").value = odata(i)
                             Error.Clear
                         On Error GoTo 0
                 End Select
@@ -261,11 +261,11 @@ Public Sub initPrd(oPrd)
         )
     Dim usrp(0 To 0)
     Set colls = refPrd.UserRefProperties
-    Dim I
-    For I = 0 To 0
-        Set usrp(I) = New Cls_Para
-        usrp(I).SetNT NT(I)(0), NT(I)(1)
-        checkPara usrp(I), colls
+    Dim i
+    For i = 0 To 0
+        Set usrp(i) = New Cls_Para
+        usrp(i).SetNT NT(i)(0), NT(i)(1)
+        checkPara usrp(i), colls
     Next
     
     On Error Resume Next
@@ -299,7 +299,7 @@ End Sub
 
 Private Sub iniPrt(oPrd)
     Dim refPrd, colls
-    Dim I
+    Dim i
     Set refPrd = oPrd.ReferenceProduct
     Dim oprt: Set oprt = refPrd.Parent.part
 
@@ -313,10 +313,10 @@ Private Sub iniPrt(oPrd)
             )
         Dim usrp(0 To 3)
         Set colls = refPrd.UserRefProperties
-        For I = 0 To 3
-            Set usrp(I) = New Cls_Para
-            usrp(I).SetNT NT(I)(0), NT(I)(1)
-            checkPara usrp(I), colls
+        For i = 0 To 3
+            Set usrp(i) = New Cls_Para
+            usrp(i).SetNT NT(i)(0), NT(i)(1)
+            checkPara usrp(i), colls
         Next
 '============创建part_info内参数=================
     '============创建参数集合=================
@@ -343,10 +343,10 @@ Private Sub iniPrt(oPrd)
             Array("Density", "Density"), _
             Array("Mass", "Mass") _
         )
-        For I = 0 To 3
-            Set infoPara(I) = New Cls_Para
-            infoPara(I).SetNT PNT(I)(0), PNT(I)(1)
-            checkPara infoPara(I), colls
+        For i = 0 To 3
+            Set infoPara(i) = New Cls_Para
+            infoPara(i).SetNT PNT(i)(0), PNT(i)(1)
+            checkPara infoPara(i), colls
         Next
     '======创建零件发布======
         Dim oref, pubid, oPub, pubs
@@ -472,14 +472,14 @@ Private Function getAtt(iName, collection)
 End Function
 
 Private Function count_me(oPrd)  '获取兄弟字典
-     Dim I, oDict, QTy, pn
+     Dim i, oDict, QTy, pn
          QTy = 1
      On Error Resume Next
           If TypeOf oPrd.Parent Is Products Then    '若有父级产品'获取兄弟字典
                    Dim oParent: Set oParent = oPrd.Parent.Parent
                    Set oDict = KCL.InitDic
-                   For I = 1 To oParent.Products.count
-                          pn = oParent.Products.item(I).PartNumber
+                   For i = 1 To oParent.Products.count
+                          pn = oParent.Products.item(i).PartNumber
                             If oDict.Exists(pn) = True Then
                                 oDict(pn) = oDict(pn) + 1
                             Else
@@ -497,9 +497,9 @@ Public Function catSelx(prompt As String) As collection
     Dim iType(0)
     iType(0) = "Product"
     If msel.SelectElement3(iType, prompt, True, 2, True) = "Normal" Then
-        Dim I As Integer
-        For I = 1 To msel.count
-            catSelx.Add msel.item(I).LeafProduct
+        Dim i As Integer
+        For i = 1 To msel.count
+            catSelx.Add msel.item(i).LeafProduct
         Next
     End If
     msel.Clear
@@ -535,34 +535,34 @@ Public Function gxBom(oPrd, LV)
     mapping = Array(0, 0, 0, 0, 0, 0, 1, 0, 3, 2, 0, 9, 0, 7, 0, 5, 0)
     Dim bomsize
         bomsize = UBound(mapping)
-    Dim I, j
+    Dim i, j
         If counter = 1 Then
         ReDim bigbom(1 To gfn, 1 To bomsize)
-            For I = 1 To gfn
+            For i = 1 To gfn
                 For j = 1 To bomsize
-                    bigbom(I, j) = ""
+                    bigbom(i, j) = ""
                 Next j
-            Next I
+            Next i
     End If   '初始化所有bigbom元素为""
     Dim tempdata
     tempdata = infoPrd(oPrd)
    '=====生成行数据 === bom行数据直接按最大列处理得到一行数据
-        For I = 1 To UBound(bigbom, 2)  '从1到最大列
-            bigbom(counter, I) = ""  '默认赋值为空
-            Select Case I
-                Case 1: bigbom(counter, I) = counter  'counter是全局变量,遍历BOM时为1
+        For i = 1 To UBound(bigbom, 2)  '从1到最大列
+            bigbom(counter, i) = ""  '默认赋值为空
+            Select Case i
+                Case 1: bigbom(counter, i) = counter  'counter是全局变量,遍历BOM时为1
                 Case 2, 3, 4, 5:
                     If LV <= 4 Then
-                        If LV = I - 1 Then
-                            bigbom(counter, I) = LV
+                        If LV = i - 1 Then
+                            bigbom(counter, i) = LV
                         End If
                      Else
-                     bigbom(counter, I) = "error"
+                     bigbom(counter, i) = "error"
                     End If
             
                 Case Else
-                    If mapping(I) <= UBound(tempdata) And mapping(I) >= LBound(tempdata) Then '当对应列map值在tempdata元素范围内，
-                        bigbom(counter, I) = tempdata(mapping(I))
+                    If mapping(i) <= UBound(tempdata) And mapping(i) >= LBound(tempdata) Then '当对应列map值在tempdata元素范围内，
+                        bigbom(counter, i) = tempdata(mapping(i))
                     End If
             End Select
            Next
@@ -571,18 +571,18 @@ Public Function gxBom(oPrd, LV)
             If children.count > 0 Then
                     Dim bdict
                     Set bdict = KCL.InitDic
-                For I = 1 To children.count
-                    If bdict.Exists(children.item(I).PartNumber) = False Then
-                       bdict(children.item(I).PartNumber) = 1
+                For i = 1 To children.count
+                    If bdict.Exists(children.item(i).PartNumber) = False Then
+                       bdict(children.item(i).PartNumber) = 1
                        counter = counter + 1
-                       gxBom children.item(I), LV + 1
+                       gxBom children.item(i), LV + 1
                     End If
                 Next
             End If
   ReDim finalbom(1 To counter, 1 To 16)
-  For I = 1 To UBound(finalbom, 1)
+  For i = 1 To UBound(finalbom, 1)
     For j = 1 To UBound(finalbom, 2)
-        finalbom(I, j) = bigbom(I, j)
+        finalbom(i, j) = bigbom(i, j)
     Next
   Next
         gxBom = finalbom

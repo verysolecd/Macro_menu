@@ -25,7 +25,7 @@ Sub pt2xl()
     Set oAxi = KCL.SelectItem(imsg, AxisSystem)
     
     If Not oHB Is Nothing Then
-        Dim I, irow, ct
+        Dim i, irow, ct
         
         Set oshapes = oHB.HybridShapes
         ct = oshapes.count
@@ -42,8 +42,8 @@ Sub pt2xl()
         
         ReDim fincoord(2), absCoord(2)
         
-        For I = 1 To ct
-            Set opt = oshapes.item(I)
+        For i = 1 To ct
+            Set opt = oshapes.item(i)
             Dim str
             str = HSF.GetGeometricalFeatureType(opt)
             If str = 1 Then
@@ -94,14 +94,14 @@ Sub ArrayToxl(arr2D() As Variant)
 End Sub
 Function TransAxi(acoor As Variant, axi1) As Variant
     Dim origin(2), xDir(2), yDir(2), zDir(2)
-    Dim I
+    Dim i
     axi1.GetOrigin origin
     axi1.GetXAxis xDir
     axi1.GetYAxis yDir
     axi1.GetZAxis zDir
     Dim v(2) As Double
-    For I = 0 To 2
-        v(I) = acoor(I) - origin(I)
+    For i = 0 To 2
+        v(i) = acoor(i) - origin(i)
     Next
     Dim result(2)
     result(0) = v(0) * xDir(0) + v(1) * xDir(1) + v(2) * xDir(2)

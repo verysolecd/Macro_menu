@@ -30,8 +30,8 @@ Sub rm(oPrd)
      colls.Remove ("iMaterial")
      colls.Remove ("iThickness")
     If oPrd.Products.count > 0 Then
-        For I = 1 To oPrd.Products.count
-          rm (oPrd.Products.item(I))
+        For i = 1 To oPrd.Products.count
+          rm (oPrd.Products.item(i))
         Next
     End If
 On Error GoTo 0

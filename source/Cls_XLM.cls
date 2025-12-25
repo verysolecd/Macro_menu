@@ -112,9 +112,9 @@ Private Sub set_Header(header, idxrow)
      Dim lastrow: lastrow = ws.Cells(ws.Rows.count, 2).End(xlUp).Row
      
     For rowNb = 2 To lastrow
-        For I = 1 To UBound(mapcells)
-                ws.Cells(rowNb, mapcells(I)).Interior.color = RGB(190, 190, 190)
-        Next I
+        For i = 1 To UBound(mapcells)
+                ws.Cells(rowNb, mapcells(i)).Interior.color = RGB(190, 190, 190)
+        Next i
         Next rowNb
 End Sub
 
@@ -258,21 +258,21 @@ xlhide
 xlshow
 End Sub
 Sub inject_pic(ipath, pncol, Piccol)
-        Dim I&, rng As Range
+        Dim i&, rng As Range
         Dim iPic As Shape
         Dim cntrow
         ws.Rows.RowHeight = 25
         cntrow = ws.Cells(ws.Rows.count, 1).End(xlUp).Row
-                For I = 2 To cntrow
-                 pn = ws.Cells(I, pncol).value
+                For i = 2 To cntrow
+                 pn = ws.Cells(i, pncol).value
                  picpath = ipath & "\" & pn & ".jpg"
                 If KCL.isExists(picpath) = False Then
-                   ws.Cells(I, Piccol).value = "缺少图片" & picpath
+                   ws.Cells(i, Piccol).value = "缺少图片" & picpath
                 Else
-                    ws.Cells(I, Piccol).value = ""
+                    ws.Cells(i, Piccol).value = ""
                     '先插入图片：路径，不链接，保存图片，-1保留原有高度宽度
                     Set iPic = ws.Shapes.AddPicture(picpath, False, True, 0, 0, -1, -1)
-                    Set rng = ws.Cells(I, Piccol)
+                    Set rng = ws.Cells(i, Piccol)
                 With iPic ' 保持纵横比
                     .LockAspectRatio = msoTrue  '计算最佳尺寸以适应单元格
                     Dim cellRatio, imgRatio
@@ -290,7 +290,7 @@ Sub inject_pic(ipath, pncol, Piccol)
                     .Placement = xlMoveAndSize
                 End With
             End If
-    Next I
+    Next i
 End Sub
 
 Public Sub xlshow()
