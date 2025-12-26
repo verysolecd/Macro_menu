@@ -37,58 +37,7 @@ Sub CATMain()
   End If
     CATExit targetSheet
 End Sub
-Function Col(idx)
-  Col = Array(-190, -170, -145, -45, -25, -20)(idx - 1)
-End Function
-Function Row(idx)
-  Row = Array(4, 17, 30, 45, 60)(idx - 1)
-End Function
-Function GetRulerLength()
-  GetRulerLength = 200
-End Function
-Function GetMacroID() As String
-  GetMacroID = "My Drawing frame"
-End Function
-Function GetNbOfRevision()
-  GetNbOfRevision = 9
-End Function
-Function GetRevRowHeight()
-  GetRevRowHeight = 10
-End Function
-Function GetDisplayFormat() As String
-  GetDisplayFormat = Array("Letter", "Legal", "A0", "A1", "A2", "A3", "A4", "A", "B", "C", "D", "E", "F", "User")(Sheet.PaperSize)
-End Function
-Function GetOffset()
-  If Sheet.PaperSize = catPaperA0 Or Sheet.PaperSize = catPaperA1 Or (Sheet.PaperSize = catPaperUser And (GetWidth() > 594 Or GetHeight() > 594)) Then
-    GetOffset = 20
-  Else
-    GetOffset = 10
-  End If
-End Function
-Function GetWidth()
-  Select Case TypeName(Sheet)
-    Case "DrawingSheet": GetWidth = Sheet.GetPaperWidth
-    Case "Layout2DSheet": GetWidth = Sheet.PaperWidth
-  End Select
-End Function
-Function GetHeight()
-  Select Case TypeName(Sheet)
-    Case "DrawingSheet": GetHeight = Sheet.GetPaperHeight
-    Case "Layout2DSheet": GetHeight = Sheet.PaperHeight
-  End Select
-End Function
-Function GetOH()
-  GetOH = GetWidth() - GetOffset()
-End Function
-Function GetOV()
-  GetOV = GetOffset()
-End Function
-Function GetColRev(index)
-  GetColRev = Array(-190, -175, -140, -20)(index - 1)
-End Function
-Function GetRevLetter(index)
-   GetRevLetter = Chr(Asc("A") + index - 1)
-End Function
+
 Function CreateLine(iX1, iY1, iX2, iY2, iName) As Curve2D
   '-------------------------------------------------------------------------------
   ' Creates a sketcher lines thanks to the current 2D factory set to the global variable Fact
@@ -855,7 +804,58 @@ Sub CATColorGeometry()
     End Select
   End If
 End Sub
-
+Function Col(idx)
+  Col = Array(-190, -170, -145, -45, -25, -20)(idx - 1)
+End Function
+Function Row(idx)
+  Row = Array(4, 17, 30, 45, 60)(idx - 1)
+End Function
+Function GetRulerLength()
+  GetRulerLength = 200
+End Function
+Function GetMacroID() As String
+  GetMacroID = "My Drawing frame"
+End Function
+Function GetNbOfRevision()
+  GetNbOfRevision = 9
+End Function
+Function GetRevRowHeight()
+  GetRevRowHeight = 10
+End Function
+Function GetDisplayFormat() As String
+  GetDisplayFormat = Array("Letter", "Legal", "A0", "A1", "A2", "A3", "A4", "A", "B", "C", "D", "E", "F", "User")(Sheet.PaperSize)
+End Function
+Function GetOffset()
+  If Sheet.PaperSize = catPaperA0 Or Sheet.PaperSize = catPaperA1 Or (Sheet.PaperSize = catPaperUser And (GetWidth() > 594 Or GetHeight() > 594)) Then
+    GetOffset = 20
+  Else
+    GetOffset = 10
+  End If
+End Function
+Function GetWidth()
+  Select Case TypeName(Sheet)
+    Case "DrawingSheet": GetWidth = Sheet.GetPaperWidth
+    Case "Layout2DSheet": GetWidth = Sheet.PaperWidth
+  End Select
+End Function
+Function GetHeight()
+  Select Case TypeName(Sheet)
+    Case "DrawingSheet": GetHeight = Sheet.GetPaperHeight
+    Case "Layout2DSheet": GetHeight = Sheet.PaperHeight
+  End Select
+End Function
+Function GetOH()
+  GetOH = GetWidth() - GetOffset()
+End Function
+Function GetOV()
+  GetOV = GetOffset()
+End Function
+Function GetColRev(index)
+  GetColRev = Array(-190, -175, -140, -20)(index - 1)
+End Function
+Function GetRevLetter(index)
+   GetRevLetter = Chr(Asc("A") + index - 1)
+End Function
 
 
 
