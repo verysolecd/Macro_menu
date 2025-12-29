@@ -14,8 +14,6 @@ Private pType As String '参数类型
 Private pStr As Variant '参数字符段
 Private pTarget As Object '参数目标对象
 Private pobj As Object   '参数本身
-
-
 Private Sub Class_Initialize()
     Me.Desc = ""
 End Sub

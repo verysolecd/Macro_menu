@@ -85,10 +85,10 @@ On Error Resume Next
     
     oDic = KCL.InitDic
     
-     Dim oPrd: Set oPrd = rootPrd
-     If oPrd Is Nothing Then Exit Sub
+     Dim oprd: Set oprd = rootprd
+     If oprd Is Nothing Then Exit Sub
      
-     oPrd.ApplyWorkMode (3)  '3  DESIGN_MODE
+     oprd.ApplyWorkMode (3)  '3  DESIGN_MODE
      Dim opath: opath = KCL.GetPath(KCL.getVbaDir & "\" & "oTemp")
      KCL.ClearDir (opath) '截图前先清空文件夹
      If gPic_Path = "" Then
@@ -96,9 +96,9 @@ On Error Resume Next
      End If
      
      oDic.Remove all
-     CaptureMe oPrd, opath
+     CaptureMe oprd, opath
      oDic.Remove all
-     Set oPrd = Nothing
+     Set oprd = Nothing
 '-----------恢复显示样式模式-------------
      CATIA.DisplayFileAlerts = True
      owd.WindowState = 0
@@ -132,37 +132,37 @@ Sub CaptureMe(iprd, oFolder)
           thisdir = imgfilename
      End If
           
-    Dim osel: Set osel = CATIA.ActiveDocument.Selection
-    osel.Clear
-    Dim Visp: Set Visp = osel.VisProperties
+    Dim oSel: Set oSel = CATIA.ActiveDocument.Selection
+    oSel.Clear
+    Dim Visp: Set Visp = oSel.VisProperties
     
     Dim children, i
     Set children = iprd.Products
     
     '---- 隐藏所有子产品
         For Each cPrd In children
-            osel.Add cPrd
+            oSel.Add cPrd
         Next
-        Visp.SetShow 1: osel.Clear
+        Visp.SetShow 1: oSel.Clear
         
      '---- 逐一显示子产品-截图-隐藏子产品
          If children.count > 0 Then
               For i = 1 To children.count     ' 递归处理每个子产品
-                   osel.Add children.item(i): Visp.SetShow 0: osel.Clear '显示当前子产品
+                   oSel.Add children.item(i): Visp.SetShow 0: oSel.Clear '显示当前子产品
                      Call CaptureMe(children.item(i), oFolder)
-                   osel.Add children.item(i): Visp.SetShow 1: osel.Clear  ' 隐藏当前子产品
+                   oSel.Add children.item(i): Visp.SetShow 1: oSel.Clear  ' 隐藏当前子产品
               Next
         End If
    ' 重新显示每个子产品
         For Each cPrd In children
-          osel.Add cPrd
+          oSel.Add cPrd
         Next
-          Visp.SetShow 0: osel.Clear
+          Visp.SetShow 0: oSel.Clear
        
 End Sub
 Sub HideNonBody(iDoc)
      On Error Resume Next
-         Dim osel As Selection, i
+         Dim oSel As Selection, i
          Dim filter(1 To 6) As Variant
          filter(1) = "(((CATStFreeStyleSearch.Plane + CATPrtSearch.Plane) + CATGmoSearch.Plane) + CATSpdSearch.Plane),all"
          filter(2) = "(((CATStFreeStyleSearch.AxisSystem + CATPrtSearch.AxisSystem) + CATGmoSearch.AxisSystem) + CATSpdSearch.AxisSystem),all"

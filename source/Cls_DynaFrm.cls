@@ -42,14 +42,10 @@ Function getUIres() 'imdl
         If DecCnt < 1 Then Exit Function
     DecCode = mdl.Lines(1, DecCnt) ' 获取声明代码
     
-    
-    Dim clscfg
-    Set clscfg = ParseCts(DecCode)
+    Dim clscfg: Set clscfg = ParseCts(DecCode)
     Dim ttl: ttl = ParseTitle(DecCode)
-'    Dim frm: Set frm = wd
     Load WD
     Call WD.setFrm(ttl, clscfg)
-
 ' --- 3. 绑定按钮事件 ---
     Dim eventCol As New collection ' 必须保持这个集合存活，否则事件对象会被销毁
     Dim ctl As Control
@@ -63,10 +59,8 @@ Function getUIres() 'imdl
             eventCol.Add evtHandler
         End If
     Next
-    
       ' --- 4. 显示窗体 (模态) ---
     WD.Show vbModal     ' 代码会在这里暂停，直到窗体被 Hide
-    
      ' --- 5. 收集返回值 ---
     Dim Res As Object
     Set Res = CreateObject("Scripting.Dictionary")
@@ -85,7 +79,6 @@ Function getUIres() 'imdl
     ' --- 6. 清理 ---
     Unload WD
     Set getUIres = Res
-
 End Function
 Function getmdl()
    getmdl = ""
@@ -177,7 +170,6 @@ Private Function ParseCts(ByVal code As String) As Object
     End If
     Set ParseCts = lst
 End Function
-
 
 Private Function ParseTitle(ByVal code As String) As String
         Dim regEx As Object

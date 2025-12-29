@@ -37,12 +37,12 @@ Sub CATMain()
     prj = KCL.GetInput("请输入项目名称"): If prj = "" Then Exit Sub
     Dim Tree As Object: Set Tree = ParsePn(getDecCode())
     Dim PStack As Object: Set PStack = KCL.InitDic
-    Dim k, oPrd As Object, ref As Object, fast As Object
+    Dim k, oprd As Object, ref As Object, fast As Object
     
     For Each k In Tree.keys
-        Set oPrd = AddNode(PStack, Tree(k))
-        If InStr(1, k, "_ref", 1) > 0 Then Set ref = oPrd
-        If InStr(1, k, "_Patterns", 1) > 0 Then Set fast = oPrd
+        Set oprd = AddNode(PStack, Tree(k))
+        If InStr(1, k, "_ref", 1) > 0 Then Set ref = oprd
+        If InStr(1, k, "_Patterns", 1) > 0 Then Set fast = oprd
     Next
     
     If Not (ref Is Nothing Or fast Is Nothing) Then
@@ -55,27 +55,27 @@ End Sub
 
 Function AddNode(PStack, D)
     Dim L%: L = IIf(D.Exists("Level"), CInt(D("Level")), 1)
-    Dim oPrd, par, TP$: TP = "Product"
+    Dim oprd, par, TP$: TP = "Product"
     If L < 1 Then L = 1
     If L = 1 Then
-        Set oPrd = CATIA.Documents.Add("Product").Product:  Set PStack(1) = oPrd
+        Set oprd = CATIA.Documents.Add("Product").Product:  Set PStack(1) = oprd
     Else
         Set par = PStack(IIf(PStack.Exists(L - 1), L - 1, 1))
         If D.Exists("Type") Then
             If UCase(Trim(D("Type"))) = "T" Then TP = "Part"
             If UCase(Trim(D("Type"))) = "C" Then TP = "Component"
         End If
-        If TP = "Component" Then Set oPrd = par.Products.AddNewProduct("") Else Set oPrd = par.Products.AddNewComponent(TP, "")
-       Set PStack(L) = oPrd
+        If TP = "Component" Then Set oprd = par.Products.AddNewProduct("") Else Set oprd = par.Products.AddNewComponent(TP, "")
+       Set PStack(L) = oprd
     End If
     
     On Error Resume Next
-    oPrd.Name = D("Name")
-    With oPrd.ReferenceProduct
+    oprd.Name = D("Name")
+    With oprd.ReferenceProduct
         .PartNumber = prj & D("PartNumber"): .Nomenclature = D("Nomenclature"): .Definition = D("Definition")
     End With
-    oPrd.Update
-    Set AddNode = oPrd
+    oprd.Update
+    Set AddNode = oprd
 End Function
 Function getDecCode()
     On Error Resume Next

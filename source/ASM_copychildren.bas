@@ -13,7 +13,7 @@ Sub cpChildren()
 If Not CanExecute("ProductDocument") Then Exit Sub
 Dim imsg, filter(0), iSel
 Set oDoc = CATIA.ActiveDocument
-Set osel = CATIA.ActiveDocument.Selection
+Set oSel = CATIA.ActiveDocument.Selection
 On Error Resume Next
     imsg = "请先点击选择源父产品，再点击选择目标父产品"
     MsgBox imsg
@@ -22,16 +22,16 @@ On Error Resume Next
     Set sourcePrd = KCL.SelectItem(imsg, filter)
     If sourcePrd Is Nothing Then Exit Sub
         For Each prd In sourcePrd.Products
-           osel.Add prd
+           oSel.Add prd
         Next
-    osel.Copy
-    osel.Clear
+    oSel.Copy
+    oSel.Clear
     Set targetPrd = KCL.SelectItem(imsg, filter)
     If targetPrd Is Nothing Then
         Exit Sub
     Else
-        osel.Add targetPrd
-        osel.Paste
+        oSel.Add targetPrd
+        oSel.Paste
         Set targetPrd = Nothing
     End If
 On Error GoTo 0

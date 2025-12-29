@@ -1,6 +1,6 @@
 Attribute VB_Name = "TEST"
 Sub idn()
-Set Drawing = CATIA.ActiveDocument
+
 i = 1
 For Each sht In Drawing.Sheets
     If sht.IsDetail = False Then

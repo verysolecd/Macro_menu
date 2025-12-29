@@ -84,13 +84,13 @@ Continue:
     UpdateProductInfo    ' 初始更新产品信息
 End Sub
 ' 设置窗体属性
-Private Sub Set_Form(ByVal MPgs As MultiPage, ByVal Cap As String)
+Private Sub Set_Form(ByVal MPgs As MultiPage, ByVal cap As String)
     With Me
         Dim requiredInsideHeight
         requiredInsideHeight = MPgs.top + MPgs.Height + ADJUST_F_H + lb_H  '+ FrmMargin(2)
         .Height = requiredInsideHeight + (Me.Height - Me.InsideHeight)
         .Width = MPgs.Width + 2 * ADJUST_F_W + 2 * FrmMargin(2)
-        .Caption = Cap
+        .Caption = cap
     End With
 End Sub
 ' 设置多页控件属性

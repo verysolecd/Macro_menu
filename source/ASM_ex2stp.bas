@@ -34,18 +34,14 @@ Sub ex2stp_zip()
     Err.Number = 0
     ErrorMessage = ""
     Dim oDoc: Set oDoc = CATIA.ActiveDocument
-    
     Dim outputpath As String: outputpath = ""
-    
-     Dim frmDic: Set frmDic = getFrmDic ' oFrm.Res
+    Dim frmDic: Set frmDic = getFrmDic ' oFrm.Res
     
     If frmDic("Status") <> "btnOK" Then   ' 2. 检查是否点击了确定 (btnOK)
         MsgBox "用户取消了操作"
         Exit Sub
     End If
-    
     '===========路径设置
-
     If frmDic.Exists("chk_path") = True Then
                Select Case frmDic("chk_path")
                     Case True: outputpath = IIf(oDoc.path = "", "", oDoc.path)
@@ -56,11 +52,8 @@ Sub ex2stp_zip()
             ErrorMessage = "缺少导出路径，操作取消！"
             GoTo ShowMessage
         End If
-        
-       
     '===========零件号时间戳处理
       If frmDic.Exists("chk_tm") = True Then
-      
            Dim ttp: ttp = KCL.timestamp("min")
                Select Case frmDic("chk_tm")
                     Case True:
@@ -77,8 +70,6 @@ Sub ex2stp_zip()
           
         '==========STP文件名处理
           stpname = KCL.strbf1st(pn, "_") & "_" & ttp
-
-            
         Dim opath(2) '0=路径，1=name，2=extname
             opath(0) = outputpath
             opath(1) = stpname
@@ -92,10 +83,7 @@ Sub ex2stp_zip()
         
         If Not ex2zip(stpfilepath) Then GoTo ShowMessage
             KCL.DeleteMe stpfilepath ' 删除原始 STP 文件
-    
-           
 '============生成导出日志
-
   If frmDic.Exists("chk_log") Then
      Select Case frmDic("chk_log")
           Case True:
@@ -105,13 +93,11 @@ Sub ex2stp_zip()
                KCL.Appendtext KCL.getmd(logpath), loginfo
           Case False:
      End Select
-     
      End If
       If Err.Number <> 0 Then
                 ErrorMessage = "STP 导出失败：" & Err.Description
                 GoTo ShowMessage
         End If
-
 ShowMessage:
     If ErrorMessage <> "" Then
         MsgBox ErrorMessage, vbCritical
@@ -155,7 +141,4 @@ seterror:
         ErrorMessage = "压缩失败！请确保 PowerShell 版本不低于 5.0 或 7-Zip 已经安装。"
         ex2zip = Fasle
     On Error GoTo 0
-    
 End Function
-
-

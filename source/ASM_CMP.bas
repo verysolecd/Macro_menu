@@ -8,19 +8,19 @@ Attribute VB_Name = "ASM_CMP"
 
 Sub myCMP()
  If Not CanExecute("ProductDocument") Then Exit Sub
-Dim rootPrd As Product
+Dim rootprd As Product
 Dim colls As Products
 Dim oWB As OptimizerWorkBench
 Dim oComps As PartComps
-Dim Docs As Documents
-    Dim Mt(1), pn2, opath(2), filepath(1), mapName(1)
+Dim docs As Documents
+    Dim Mt(1), pn2, opath(2), filePath(1), mapName(1)
 Dim rtDoc As ProductDocument
 Set rtDoc = CATIA.ActiveDocument
-Set Docs = CATIA.Documents
+Set docs = CATIA.Documents
 Set oWB = rtDoc.GetWorkbench("OptimizerWorkBench")
 Set oComps = oWB.PartComps
-Set rootPrd = rtDoc.Product
-Set colls = rootPrd.Products
+Set rootprd = rtDoc.Product
+Set colls = rootprd.Products
  Dim imsg, filter(0)
     imsg = "请依次选择旧版本、新版本零件"
     filter(0) = "Product"
@@ -38,18 +38,18 @@ Set colls = rootPrd.Products
                     Mt(1) = "RemovedMaterial"
             For i = 0 To 1
              opath(1) = Mt(i)
-             filepath(i) = JoinPathName(opath())
+             filePath(i) = JoinPathName(opath())
              mapName(i) = Mt(i) & ".3dmap"
-             KCL.DeleteMe (filepath(i))
+             KCL.DeleteMe (filePath(i))
             Next
             For i = 0 To 1
-                        Set oDoc = Docs.item(mapName(i)): oDoc.Activate
-                        oDoc.SaveAs filepath(i)
+                        Set oDoc = docs.item(mapName(i)): oDoc.Activate
+                        oDoc.SaveAs filePath(i)
                         oDoc.Close
             Next
                 On Error GoTo 0
                     Set Prdvariant = colls
-                    Prdvariant.AddComponentsFromFiles filepath(), "*"
+                    Prdvariant.AddComponentsFromFiles filePath(), "*"
                     On Error GoTo 0
 
 End If

@@ -499,13 +499,13 @@ Private Sub cleanUp_userdata()
     Set fso = mUtil.GetFso()
     Dim removeLst As collection
     Set removeLst = New collection
-    Dim filepath As String
+    Dim filePath As String
     Dim dirPath As String
     Dim key As Variant 'String
     For Each key In mUserDict.keys()
         If key = "ver" Then GoTo Continue
-        filepath = Replace(key, SEPARATOR, "\")
-        If Not fso.FileExists(filepath) Then
+        filePath = Replace(key, SEPARATOR, "\")
+        If Not fso.FileExists(filePath) Then
             removeLst.Add key
             GoTo Continue
         End If

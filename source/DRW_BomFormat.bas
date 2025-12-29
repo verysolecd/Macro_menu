@@ -9,18 +9,18 @@ Option Explicit
 
 Sub CATMain()
  If Not CanExecute("ProductDocument") Then Exit Sub
-    Dim rootPrd: Set rootPrd = CATIA.ActiveDocument.Product
-    Dim Asm: Set Asm = rootPrd.getItem("BillOfMaterial")
-    Dim Ary(7) 'change number if you have more custom columns/array...
-    Ary(0) = "Number"
-    Ary(1) = "Part Number"
-    Ary(2) = "Quantity"
-    Ary(3) = "Nomenclature"
-    Ary(4) = "Defintion"
-    Ary(5) = "Mass"
-    Ary(6) = "Density"
-    Ary(7) = "Material"
-    Asm.SetCurrentFormat Ary
+    Dim rootprd: Set rootprd = CATIA.ActiveDocument.Product
+    Dim Asm: Set Asm = rootprd.getItem("BillOfMaterial")
+    Dim ary(7) 'change number if you have more custom columns/array...
+    ary(0) = "Number"
+    ary(1) = "Part Number"
+    ary(2) = "Quantity"
+    ary(3) = "Nomenclature"
+    ary(4) = "Defintion"
+    ary(5) = "Mass"
+    ary(6) = "Density"
+    ary(7) = "Material"
+    Asm.SetCurrentFormat ary
 
 Dim opath: opath = KCL.GetPath(KCL.getVbaDir & "\" & "oTemp")
 

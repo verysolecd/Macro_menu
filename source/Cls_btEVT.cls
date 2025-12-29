@@ -18,11 +18,9 @@ Private mParentForm As MSForms.UserForm
 Private mInfo As Object
 Private mCloseType As Boolean
 
-Private Const TAG_ENTRYPNT = "ep"           ' Èë¿Úµã±êÇ©
-Private Const TAG_PJTPATH = "pjt_path"      ' ÏîÄ¿Â·¾¶±êÇ©
-Private Const TAG_MDLNAME = "mdl_name"      ' Ä£¿éÃû³Æ±êÇ©
-
-
+Private Const TAG_ENTRYPNT = "ep"           ' å…¥å£ç‚¹æ ‡ç­¾
+Private Const TAG_PJTPATH = "pjt_path"      ' é¡¹ç›®è·¯å¾„æ ‡ç­¾
+Private Const TAG_MDLNAME = "mdl_name"      ' æ¨¡å—åç§°æ ‡ç­¾
 Sub set_ButtonEvent(ByVal btn As MSForms.CommandButton, _
                     ByVal BtnInfo As Object, _
                     ByVal ParentForm As MSForms.UserForm, _
@@ -33,49 +31,46 @@ Sub set_ButtonEvent(ByVal btn As MSForms.CommandButton, _
     mCloseType = CloseType
 End Sub
 Private Sub mBtn_click()
-    If Not mCloseType Then Unload mParentForm  ' Èç¹ûÊÇÑÕÉ«ÇĞ»»°´Å¥£¬ÔÚÖ´ĞĞÇ°¸üĞÂ°´Å¥ÎÄ×Ö
-    
-    If mInfo(TAG_MDLNAME) = "OTH_Color" Then
-        On Error Resume Next
-         Dim MyViewer:  Set MyViewer = CATIA.ActiveWindow.ActiveViewer
-         Dim currentColor(2)
-            MyViewer.GetBackgroundColor currentColor
-        On Error GoTo 0
-        Dim willBeWhite As Boolean      ' ¸ù¾İµ±Ç°±³¾°É«ÅĞ¶Ï¼´½«ÇĞ»»µ½µÄ×´Ì¬
-        willBeWhite = (currentColor(0) <> 1 Or currentColor(1) <> 1 Or currentColor(2) <> 1)
-        Call UpdateButtonText(mBtn, willBeWhite)  ' µ÷ÓÃM60_ColorÄ£¿éµÄº¯Êı¸üĞÂ°´Å¥ÎÄ×Ö
-    End If
-    
-     If mInfo(TAG_MDLNAME) = "OTH_ivhideshow" Then
-        On Error Resume Next
-        
-         ' ¸ù¾İµ±Ç°±³¾°É«ÅĞ¶Ï¼´½«ÇĞ»»µ½µÄ×´Ì¬
-        willBeWhite = (currentColor(0) <> 1 Or currentColor(1) <> 1 Or currentColor(2) <> 1)
-        Call UpdateButtonText(mBtn, willBeWhite)  ' µ÷ÓÃM60_ColorÄ£¿éµÄº¯Êı¸üĞÂ°´Å¥ÎÄ×Ö
-    End If
-    
-    Dim Ary: Ary = Array()  'ÕâÀï°´ÕÕ´«Èë°´Å¥ĞÅÏ¢Ö´ĞĞ°´Å¥¶ÔÓ¦µÄmoduleºê
+    If Not mCloseType Then Unload mParentForm
+
     Dim ss: Set ss = CATIA.SystemService
     Call ss.ExecuteScript(mInfo(TAG_PJTPATH), _
                           catScriptLibraryTypeVBAProject, _
                           mInfo(TAG_MDLNAME), _
                           mInfo(TAG_ENTRYPNT), _
                           Array())
+    
+     Dim capUp, cap
+   
+     cap = Array(0, 0)
+
+    Select Case UCase(mInfo(TAG_MDLNAME))
+    Case "OTH_COLOR"
+            capUp = amWhite
+            cap = Array("å½©è‰²èƒŒæ™¯", "é»˜è®¤èƒŒæ™¯")
+    Case "OTH_EFF"
+            capUp = lowEFF
+           cap = Array("ç¦æ­¢åˆ·æ–°", "æ­£å¸¸æ¨¡å¼")
+    End Select
+    
+    If cap(0) <> 0 Then Call UpdateButtonText(capUp, cap)
+ 
+    Dim ary: ary = Array()  ' å‡†å¤‡ä»æŒ‰é’®ä¿¡æ¯æ‰§è¡ŒæŒ‰é’®å¯¹åº”çš„module
 End Sub
 
-Private Sub UpdateButtonText(ByVal btn As MSForms.CommandButton, ByVal isWhiteBackground As Boolean)
-    If isWhiteBackground Then
-        btn.Caption = "Ä¬ÈÏ±³¾°"
-    Else
-        btn.Caption = "°×É«±³¾°"
-    End If
+Private Sub UpdateButtonText(ByVal up2New As Boolean, ary)
+        mBtn.Caption = IIf(up2New, ary(1), ary(0))
 End Sub
 
-Private Sub UpdateButtonText2(ByVal btn As MSForms.CommandButton, ByVal isWhiteBackground As Boolean)
-    If isWhiteBackground Then
-        btn.Caption = "Ä¬ÈÏ±³¾°"
-    Else
-        btn.Caption = "°×É«±³¾°"
-    End If
-End Sub
+Private Function amWhite()
+        If CATIA.Windows.count >= 1 Then
+            Dim currentColor(2)
+                Dim MyViewer:  Set MyViewer = CATIA.ActiveWindow.ActiveViewer
+                MyViewer.GetBackgroundColor currentColor
+            amWhite = (currentColor(0) <> 1 Or currentColor(1) <> 1 Or currentColor(2) <> 1) 'åªè¦ä¸€ä¸ªåˆ†é‡ä¸ä¸º1å°±ä¸ºtrue
+        End If
+End Function
 
+Private Function lowEFF()
+    lowEFF = IIf(CATIA.RefreshDisplay, False, True)
+End Function

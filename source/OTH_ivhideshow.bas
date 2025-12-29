@@ -13,18 +13,16 @@ Sub CATMain()
         Set pdm = New Cls_PDM
     End If
     
-   Set m = pdm.osel
-    Dim oDoc
+    Set oSel = pdm.msel
+    Dim oDoc, cGroups, oGroup
     Set oDoc = CATIA.ActiveDocument
-    Dim cGroups
-    Set cGroups = oDoc.Product.GetTechnologicalObject("Groups")
-    Dim oGroup As Group
+    Set cGroups = rootprd.GetTechnologicalObject("Groups")
     Set oGroup = cGroups.AddFromSel    ' 当前选择产品添加到组
+    
     oGroup.ExtractMode = 1
     oGroup.FillSelWithInvert   '  反选
     
     'oGroup.FillSelWithExtract
-    ' Delete the group
       cGroups.Remove 1
       Set cGroups = Nothing
       Dim sel

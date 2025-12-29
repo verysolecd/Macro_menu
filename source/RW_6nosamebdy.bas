@@ -37,23 +37,23 @@ Sub nosamebdy()
  
  allPN.RemoveAll
 End Sub
-Sub nosamebdy_prds(oPrd)
+Sub nosamebdy_prds(oprd)
     Dim Product
-        If allPN.Exists(oPrd.PartNumber) = False Then
-            allPN(oPrd.PartNumber) = 1
-            Call nosamebdy_prd(oPrd)
+        If allPN.Exists(oprd.PartNumber) = False Then
+            allPN(oprd.PartNumber) = 1
+            Call nosamebdy_prd(oprd)
         End If
-    If oPrd.Products.count > 0 Then
-            For Each Product In oPrd.Products
+    If oprd.Products.count > 0 Then
+            For Each Product In oprd.Products
                 Call nosamebdy_prds(Product)
              Next
     End If
 End Sub
-Public Sub nosamebdy_prd(oPrd)
+Public Sub nosamebdy_prd(oprd)
     Dim colls, oprt
 
     On Error Resume Next
-         Set oprt = oPrd.ReferenceProduct.Parent.part
+         Set oprt = oprd.ReferenceProduct.Parent.part
         If Err.Number <> 0 Then
             Err.Clear
             Set oprt = Nothing
@@ -62,7 +62,7 @@ Public Sub nosamebdy_prd(oPrd)
     
     If Not oprt Is Nothing Then
         On Error Resume Next
-                Call nosamebdy_bdylst(oPrd)
+                Call nosamebdy_bdylst(oprd)
                 Err.Clear
         On Error GoTo 0
     End If

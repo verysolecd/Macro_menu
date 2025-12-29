@@ -10,9 +10,9 @@ Private i
 Sub LayersMng()
 If Not CanExecute("partDocument,productdocument") Then Exit Sub
 Set rootDoc = CATIA.ActiveDocument
-Set rootPrd = rootDoc.Product
+Set rootprd = rootDoc.Product
     Call appFilterLayer(rootDoc)
-    Call addDrw(rootPrd)
+    Call addDrw(rootprd)
  '---显示管理
 '    '---图层管理
 '    Dim layer: layer = CLng(0)
@@ -53,8 +53,8 @@ Set rootPrd = rootDoc.Product
 'oDoc.CurrentFilter = "All visible"
 End Sub
 Sub appFilterLayer(oDoc)
-Dim osel
-Set osel = CATIA.ActiveDocument.Selection
+Dim oSel
+Set oSel = CATIA.ActiveDocument.Selection
  '---显示过滤器管理管理
  ily = ""
  ly = oDoc.CurrentLayer
@@ -92,7 +92,7 @@ If ly <> "None" Then
 End If
 End Sub
 Function addDrw(iprd)
-    Dim Docs As Documents
+    Dim docs As Documents
     Dim Shts As DrawingSheets
     Dim drwDoc As DrawingDocument
     Dim sht As DrawingSheet
@@ -100,8 +100,8 @@ Function addDrw(iprd)
     Dim oV As DrawingView
     Dim ViewGen As DrawingViewGenerativeLinks
     Dim ViewGBH As DrawingViewGenerativeBehavior
-    Set Docs = CATIA.Documents
-    Set drwDoc = Docs.Add("Drawing")
+    Set docs = CATIA.Documents
+    Set drwDoc = docs.Add("Drawing")
     Set Shts = drwDoc.Sheets
     Set sht = Shts.item("Sheet.1")
     Set oVs = sht.Views

@@ -28,8 +28,8 @@ Sub pt2xl()
     
     Dim HSF:  Set HSF = oDoc.part.HybridShapeFactory
     Dim HBS: Set HBS = oDoc.part.HybridBodies
-    Dim osel: Set osel = oDoc.Selection
-    osel.Clear
+    Dim oSel: Set oSel = oDoc.Selection
+    oSel.Clear
     
     '=======要求选择点集和坐标
     Dim imsg, filter(0)
@@ -69,9 +69,9 @@ Sub pt2xl()
                 oHB.AppendHybridShape fakept
                 oDoc.part.Update
                fakept.GetCoordinates absCoord
-                  osel.Clear
-                  osel.Add fakept
-                  osel.Delete
+                  oSel.Clear
+                  oSel.Add fakept
+                  oSel.Delete
                   oDoc.part.Update
                 If Not oAxi Is Nothing Then
                     fincoord = TransAxi(absCoord, oAxi)

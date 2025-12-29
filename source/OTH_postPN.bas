@@ -8,8 +8,8 @@ Attribute VB_Name = "OTH_postPN"
 Private oSuffix
 Sub CATMain()
 If Not KCL.CanExecute("ProductDocument") Then Exit Sub
-    Set oPrd = KCL.SelectItem("请选择产品", "Product")
-    If oPrd Is Nothing Then
+    Set oprd = KCL.SelectItem("请选择产品", "Product")
+    If oprd Is Nothing Then
         MsgBox "没有选择产品"
     Else
         Dim imsg
@@ -18,14 +18,14 @@ If Not KCL.CanExecute("ProductDocument") Then Exit Sub
             If oSuffix = "" Then
                 MsgBox imsg: Exit Sub
             End If
-        Call postPn(oPrd)
+        Call postPn(oprd)
     End If
 End Sub
 
-Sub postPn(oPrd)
-    pn = oPrd.PartNumber
-    oPrd.PartNumber = pn & "_" & oSuffix
-    For Each Product In oPrd.Products
+Sub postPn(oprd)
+    pn = oprd.PartNumber
+    oprd.PartNumber = pn & "_" & oSuffix
+    For Each Product In oprd.Products
         Call postPn(Product)
         Next
 End Sub
