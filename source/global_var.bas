@@ -6,13 +6,11 @@ Public startrow, lastrow  '全局excel行定义
 Public xlAPP As Object  '全局excelcom组件
 Public gwb As Object
 Public gws  As Object
-Public pdm As Object
+Public pdm As New Cls_PDM
 Public xlm As Object
 Public allPN As Object
 Public counter As Integer
 Public Const gfn As Integer = 400
-Public Cls_PrdOB As New Cls_PrdOB
-
 Public gPic_Path
 
 

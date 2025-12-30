@@ -37,7 +37,7 @@ Private Const lb_frontsize = 10 ' 字体大小
 Private Const itl = "公众号:键盘造车手"
 ' 按钮事件集合
 Private mBtns As Object
-Private WithEvents prdObserver As Cls_PrdOB
+Private WithEvents prdObserver As Cls_PDM
 Attribute prdObserver.VB_VarHelpID = -1
 Private WithEvents lblProductInfo As MSForms.Label
 Attribute lblProductInfo.VB_VarHelpID = -1
@@ -51,7 +51,7 @@ Sub Set_FormInfo(ByVal InfoLst As Object, _
                  ByVal PageMap As Object, _
                  ByVal formTitle As String, _
                  ByVal CloseType As Boolean)
-    Set prdObserver = Cls_PrdOB  ' 连接到全局产品观察器
+    Set prdObserver = pdm  ' 连接到全局产品观察器
     FrmMargin = Array(2, 2, 2, 2) ' 上, 右, 下, 左 窗体边距调整值
     Set MPgs = Me.controls.Add("Forms.MultiPage.1", "MPgs", True) ' 创建多页控件
     Dim Pgs As Pages
@@ -188,6 +188,8 @@ Private Sub prdObserver_ProductChanged()
  Debug.Print "事件触发"
     UpdateProductInfo
 End Sub
+
+
 ' 更新产品信息的方法
 Private Sub UpdateProductInfo()
     Dim msg, mcolor
@@ -262,19 +264,4 @@ Private Function getMeinfo(mFrm)
    Set getMeinfo = mLbl
 End Function
 
-'Private Function getNewCls(mFrm, ByVal ClCfg As Dictionary)
-'Dim mCl
-'    Set mCl = mFrm.controls.Add(ClCfg(mType), ClCfg(mName), True)
-'        With mCl
-'             .Caption = ClCfg(mCaption)
-'             .top = FrmMargin(0): .Height = lb_H
-'             .Left = 2: .Width = MPgs.Width - 20
-'             .Font.Size = lb_frontsize
-'             .BackColor = vbGreen
-'             .TextAlign = fmTextAlignCenter
-'             .BorderStyle = fmBorderStyleSingle
-'             .WordWrap = False              ' 不换行
-'             .AutoSize = True
-'         End With
-'   Set getNewLbl = mLbl
-'End Function
+

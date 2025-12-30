@@ -19,6 +19,7 @@ Private WB As Object
 Private ws As Object
 Private bws As Object
 
+
 ' 在类初始化时检查实例
 Private Sub Class_Initialize()
 
@@ -313,6 +314,6 @@ Public Sub xlhide()
         .Calculation = xlCalculationManual 'xlCalculationmanual
         .EnableEvents = False
     End With
- xlAPP.Visible = Fasle
+ xlAPP.Visible = fasle
 End Sub
  

@@ -293,14 +293,14 @@ Private Function createPlane( _
     ByVal pt As part, _
     ByVal axRef As Reference, _
     ByVal A As Double, _
-    ByVal B As Double, _
+    ByVal b As Double, _
     ByVal C As Double) _
     As HybridShapePlaneEquation
     
     Dim HBF As HybridShapeFactory
     Set HBF = pt.HybridShapeFactory
     
-    Set createPlane = HBF.AddNewPlaneEquation(A, B, C, DMYLNG)
+    Set createPlane = HBF.AddNewPlaneEquation(A, b, C, DMYLNG)
     
     If Not axRef Is Nothing Then
         createPlane.RefAxisSystem = axRef

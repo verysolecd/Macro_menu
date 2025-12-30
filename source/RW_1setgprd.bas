@@ -12,7 +12,7 @@ Sub setgprd()
     End If
 
     Set gPrd = pdm.getiPrd()
-    Set Cls_PrdOB.CurrentProduct = gPrd ' 这会自动触发事件
+    Set pdm.CurrentProduct = gPrd ' 这会自动触发事件
 
         If Not gPrd Is Nothing Then
            imsg = "你选择的产品是" & gPrd.PartNumber

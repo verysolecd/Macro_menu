@@ -8,19 +8,15 @@ Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
 Option Explicit
-
 Private WithEvents mBtn As MSForms.CommandButton
 Attribute mBtn.VB_VarHelpID = -1
-Private WithEvents btn As MSForms.CommandButton
-Attribute btn.VB_VarHelpID = -1
-
 Private mParentForm As MSForms.UserForm
 Private mInfo As Object
 Private mCloseType As Boolean
 
-Private Const TAG_ENTRYPNT = "ep"           ' å…¥å£ç‚¹æ ‡ç­¾
-Private Const TAG_PJTPATH = "pjt_path"      ' é¡¹ç›®è·¯å¾„æ ‡ç­¾
-Private Const TAG_MDLNAME = "mdl_name"      ' æ¨¡å—åç§°æ ‡ç­¾
+Private Const TAG_ENTRYPNT = "ep"           ' Èë¿Úµã±êÇ©
+Private Const TAG_PJTPATH = "pjt_path"      ' ÏîÄ¿Â·¾¶±êÇ©
+Private Const TAG_MDLNAME = "mdl_name"      ' Ä£¿éÃû³Æ±êÇ©
 Sub set_ButtonEvent(ByVal btn As MSForms.CommandButton, _
                     ByVal BtnInfo As Object, _
                     ByVal ParentForm As MSForms.UserForm, _
@@ -31,46 +27,44 @@ Sub set_ButtonEvent(ByVal btn As MSForms.CommandButton, _
     mCloseType = CloseType
 End Sub
 Private Sub mBtn_click()
-    If Not mCloseType Then Unload mParentForm
 
+    If Not mCloseType Then Unload mParentForm
+    Dim ary: ary = Array()  'ÕâÀï°´ÕÕ´«Èë°´Å¥ĞÅÏ¢Ö´ĞĞ°´Å¥¶ÔÓ¦µÄmoduleºê
     Dim ss: Set ss = CATIA.SystemService
     Call ss.ExecuteScript(mInfo(TAG_PJTPATH), _
                           catScriptLibraryTypeVBAProject, _
                           mInfo(TAG_MDLNAME), _
                           mInfo(TAG_ENTRYPNT), _
                           Array())
-    
-     Dim capUp, cap
-   
-     cap = Array(0, 0)
-
+                          
+    Dim capUp, cap
+    cap = Array(0, 0)
     Select Case UCase(mInfo(TAG_MDLNAME))
     Case "OTH_COLOR"
             capUp = amWhite
-            cap = Array("å½©è‰²èƒŒæ™¯", "é»˜è®¤èƒŒæ™¯")
+            cap = Array("°×É«±³¾°", "Ä¬ÈÏ±³¾°")
     Case "OTH_EFF"
-            capUp = lowEFF
-           cap = Array("ç¦æ­¢åˆ·æ–°", "æ­£å¸¸æ¨¡å¼")
+            capUp = canrefresh
+           cap = Array("½ûÖ¹¸üĞÂ", "Õı³£Ä£Ê½")
     End Select
-    
     If cap(0) <> 0 Then Call UpdateButtonText(capUp, cap)
- 
-    Dim ary: ary = Array()  ' å‡†å¤‡ä»æŒ‰é’®ä¿¡æ¯æ‰§è¡ŒæŒ‰é’®å¯¹åº”çš„module
+               
 End Sub
 
 Private Sub UpdateButtonText(ByVal up2New As Boolean, ary)
-        mBtn.Caption = IIf(up2New, ary(1), ary(0))
+        mBtn.Caption = IIf(up2New, ary(0), ary(1))
 End Sub
-
 Private Function amWhite()
+          amWhite = False
         If CATIA.Windows.count >= 1 Then
             Dim currentColor(2)
                 Dim MyViewer:  Set MyViewer = CATIA.ActiveWindow.ActiveViewer
                 MyViewer.GetBackgroundColor currentColor
-            amWhite = (currentColor(0) <> 1 Or currentColor(1) <> 1 Or currentColor(2) <> 1) 'åªè¦ä¸€ä¸ªåˆ†é‡ä¸ä¸º1å°±ä¸ºtrue
+            amWhite = (currentColor(0) <> 1 Or currentColor(1) <> 1 Or currentColor(2) <> 1) 'Ö»ÒªÒ»¸ö²»µÈÓÚ1¾ÍÊÇtrue
         End If
 End Function
 
-Private Function lowEFF()
-    lowEFF = IIf(CATIA.RefreshDisplay, False, True)
+Private Function canrefresh()
+    canrefresh = False
+    If CATIA.RefreshDisplay Then canrefresh = True
 End Function

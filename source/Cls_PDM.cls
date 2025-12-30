@@ -18,6 +18,10 @@ Attribute VB_Exposed = False
 ' 对于产品发布谁？  质量mass来自usrp
 ' 对于零件发布谁？ usrp.mass part_info.thickness part_info.density usrp.material
 Option Explicit
+
+Public Event ProductChanged()  ' 事件声明
+Private mProduct As Object  ' 私有变量存储当前产品
+
 Public bigbom As Variant
 Public msel
 Private imsg
@@ -29,7 +33,8 @@ Private Const ekldesc = "sum of vol of bodylist"
 Private Const eklstr = "let lst(list) set lst=Part_info\iBodys   let V (Volume) V=0 let i(integer) i=1 for i while i<=lst.Size() {V=V+smartVolume(lst.GetItem(i)) i=i+1} Part_info\sumVol =V"  '使用Const关键字定义常量
 Private Sub Class_Initialize()
      Set allPN = KCL.InitDic
-    iniarr
+     Set mProduct = Nothing
+      iniarr
         On Error GoTo ErrorHandler
         If CATIA.Documents.count = 0 Then
             Err.Raise 1001, , "未检测到打开的CATIA文档"
@@ -37,6 +42,7 @@ Private Sub Class_Initialize()
         End If
             Set rootDoc = CATIA.ActiveDocument
             Set rootprd = CATIA.ActiveDocument.Product
+             
         On Error GoTo 0
         If Not rootprd Is Nothing Then
             rootprd.ApplyWorkMode (3)
@@ -48,6 +54,7 @@ ErrorHandler:
         MsgBox "CATIA 程序错误：" & Err.Description, vbCritical
         Exit Sub
     End If
+    
 End Sub
 Sub iniarr()
     Att(1) = "Mass"
@@ -588,5 +595,12 @@ Public Function gxBom(oprd, LV)
 End Function
 
 
-
-
+' 属性：当前产品
+Public Property Get CurrentProduct() As Object
+    Set CurrentProduct = mProduct
+End Property
+Public Property Set CurrentProduct(ByVal newProduct As Object)
+    ' 设置新产品并触发事件
+    Set mProduct = newProduct
+    RaiseEvent ProductChanged
+End Property

@@ -45,7 +45,7 @@ Sub ex2stp_zip()
     If frmDic.Exists("chk_path") = True Then
                Select Case frmDic("chk_path")
                     Case True: outputpath = IIf(oDoc.path = "", "", oDoc.path)
-                    Case Fasle: outputpath = KCL.selFdl()
+                    Case fasle: outputpath = KCL.selFdl()
                 End Select
      End If
     If outputpath = "" Then
@@ -63,7 +63,7 @@ Sub ex2stp_zip()
                                    Else
                                        oDoc.Product.PartNumber = pn & "_" & ttp
                                    End If
-                    Case Fasle:
+                    Case fasle:
                 End Select
       End If
           pn = oDoc.Product.PartNumber
@@ -139,6 +139,6 @@ Function ex2zip(oFilepath) As Boolean
     End If
 seterror:
         ErrorMessage = "压缩失败！请确保 PowerShell 版本不低于 5.0 或 7-Zip 已经安装。"
-        ex2zip = Fasle
+        ex2zip = fasle
     On Error GoTo 0
 End Function

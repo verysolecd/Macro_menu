@@ -5,7 +5,6 @@ Attribute VB_Name = "OTH_Color"
 '{Caption:背景颜色}
 '{ControlTipText:白黑色背景切换}
 '{BackColor: }
-Const CF_BITMAP = 2
 ' 更新按钮文字的公共函数
 
 
