@@ -35,7 +35,7 @@ Private Sub Class_Initialize()
      Set allPN = KCL.InitDic
      Set mProduct = Nothing
       iniarr
-        On Error GoTo ErrorHandler
+        On Error GoTo errorhandler
         If CATIA.Documents.count = 0 Then
             Err.Raise 1001, , "未检测到打开的CATIA文档"
             Exit Sub
@@ -48,7 +48,7 @@ Private Sub Class_Initialize()
             rootprd.ApplyWorkMode (3)
         End If
         Set msel = CATIA.ActiveDocument.Selection: msel.Clear
-ErrorHandler:
+errorhandler:
     If Err.Number <> 0 Then
         Err.Clear
         MsgBox "CATIA 程序错误：" & Err.Description, vbCritical

@@ -11,13 +11,10 @@ Sub CLSpart()
 Dim wds, WD
  On Error Resume Next
    wds = CATIA.Windows
-
-    If wds.count < 1 Then
-           MsgBox "没有打开的窗口"
+    If wds.count <= 1 Then
+           MsgBox "没有打开的零件窗口"
            Exit Sub
     End If
-    
-    
     For i = 1 To wds.count
         Set WD = wds.item(i)
         If KCL.isobjtype(WD.Parent, "PartDocument") Then

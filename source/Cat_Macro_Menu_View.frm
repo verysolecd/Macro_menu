@@ -1,10 +1,10 @@
 VERSION 5.00
 Begin {C62A69F0-16DC-11CE-9E98-00AA00574A4F} Cat_Macro_Menu_View 
    Caption         =   "UserForm1"
-   ClientHeight    =   3870
+   ClientHeight    =   9015.001
    ClientLeft      =   120
    ClientTop       =   450
-   ClientWidth     =   8550.001
+   ClientWidth     =   15345
    OleObjectBlob   =   "Cat_Macro_Menu_View.frx":0000
    StartUpPosition =   1  'CenterOwner
 End
@@ -19,12 +19,12 @@ Private FrmMargin As Variant ' 上, 右, 下, 左 窗体边距调整值
 ' 窗体宽度调整值
 Private Const ADJUST_F_W = 4
 ' 窗体高度调整值
-Private Const ADJUST_F_H = 20
+Private Const ADJUST_F_H = 5
 ' 多页控件调整
 Private Const ADJUST_M_W = 10 ' 多页控件宽度调整值
 Private Const ADJUST_M_H = 5 ' 多页控件高度调整值
 Private Const Tab_W = 30 ' Tab固定宽度
-Private Const Tab_H = 22 ' TAB高度
+Private Const Tab_H = 20 ' TAB高度
 Private Const Tab_frontsize = 10
 ' 按钮尺寸
 Private Const Btn_W = 70 ' 按钮的固定宽度
@@ -263,5 +263,7 @@ Private Function getMeinfo(mFrm)
         End With
    Set getMeinfo = mLbl
 End Function
+
+
 
 

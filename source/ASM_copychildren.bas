@@ -11,28 +11,54 @@ Attribute VB_Name = "ASM_copychildren"
 Sub cpChildren()
 
 If Not CanExecute("ProductDocument") Then Exit Sub
-Dim imsg, filter(0), iSel
+
+Call setASM(False)
+
+Dim imsg, filter(0), oSel
 Set oDoc = CATIA.ActiveDocument
 Set oSel = CATIA.ActiveDocument.Selection
-On Error Resume Next
+
+oSel.Clear
+On Error GoTo errorhandler
     imsg = "请先点击选择源父产品，再点击选择目标父产品"
     MsgBox imsg
     filter(0) = "Product"
     Dim sourcePrd, targetPrd
     Set sourcePrd = KCL.SelectItem(imsg, filter)
-    If sourcePrd Is Nothing Then Exit Sub
+    If sourcePrd Is Nothing Then GoTo errorhandler
         For Each prd In sourcePrd.Products
            oSel.Add prd
         Next
     oSel.Copy
     oSel.Clear
+    imsg = "请点击选择目标父产品"
     Set targetPrd = KCL.SelectItem(imsg, filter)
     If targetPrd Is Nothing Then
-        Exit Sub
+      GoTo errorhandler
     Else
         oSel.Add targetPrd
         oSel.Paste
-        Set targetPrd = Nothing
+        
     End If
-On Error GoTo 0
+        oSel.Clear
+        Set targetPrd = Nothing
+         Set sourcePrd = Nothing
+    On Error GoTo 0
+    
+    Call setASM(True)
+    
+    
+errorhandler:
+        If Err.Number <> 0 Then
+            Call setASM(True)
+              oSel.Clear
+            Err.Clear
+            MsgBox "CATIA 程序错误：" & Err.Description, vbCritical
+        Exit Sub
+        Else
+        
+         Call setASM(True)
+        End If
+
 End Sub
+

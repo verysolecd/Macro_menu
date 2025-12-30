@@ -731,7 +731,7 @@ End Sub
 
 ' 检查并激活已存在的窗口
 Function ActivateExistingWindow(ByVal strPath As String) As Boolean
-    On Error GoTo ErrorHandler
+    On Error GoTo errorhandler
     Dim shellApp As Object, window As Object
     Set shellApp = getshell
     For Each window In shellApp.Windows   ' 遍历所有资源管理器窗口
@@ -748,33 +748,33 @@ Function ActivateExistingWindow(ByVal strPath As String) As Boolean
                 Exit Function
             End If
         End If
-        On Error GoTo ErrorHandler
+        On Error GoTo errorhandler
     Next window
     ActivateExistingWindow = False
     Exit Function
-ErrorHandler:
+errorhandler:
     ActivateExistingWindow = False
 End Function
 
 ' 打开文件夹
 Sub openDir(ByVal strPath As String)
-    On Error GoTo ErrorHandler
+    On Error GoTo errorhandler
     If InStr(strPath, " ") > 0 Then      ' 处理包含空格的路径
         strPath = """" & strPath & """"
     End If
     shell "explorer.exe " & strPath, vbMaximizedFocus
     Exit Sub
-ErrorHandler:
+errorhandler:
     MsgBox "无法打开路径: " & strPath & vbCrLf & "错误: " & Err.Description, vbExclamation
 End Sub
 
 ' 打开文件位置并选中文件
 Sub OpenFileLocation(ByVal strFilePath As String)
-    On Error GoTo ErrorHandler
+    On Error GoTo errorhandler
     strFilePath = """" & strFilePath & """"  ' 确保文件路径被引号包围
     shell "explorer.exe /select," & strFilePath, vbMaximizedFocus
     Exit Sub
-ErrorHandler:
+errorhandler:
     MsgBox "无法打开文件位置: " & strFilePath & vbCrLf & "错误: " & Err.Description, vbExclamation
 End Sub
 
@@ -883,4 +883,31 @@ Function getFrmDic()
     Set getFrmDic = frmDic
     Set frmDic = Nothing
     Set oFrm = Nothing
+End Function
+
+Public Function setASM(ByVal higheff As Boolean)
+
+  Dim setcls:  Set setcls = CATIA.SettingControllers
+   Dim Asmg: Set Asmg = setcls.item("CATAsmGeneralSettingCtrl")
+   Dim Vismg: Set Vismg = setcls.item("CATVizVisualizationSettingCtrl")
+If higheff Then
+   With CATIA
+    '.DisableNewUndoRedoTransaction
+    '.EnableNewUndoRedoTransaction
+     .RefreshDisplay = False
+    End With
+  
+  Asmg.AutoUpdateMode = 0 '0: catManualUpdate
+  Vismg.Viz3DFixedAccuracy = 1
+Else
+
+    With CATIA
+    '.DisableNewUndoRedoTransaction
+    '.EnableNewUndoRedoTransaction
+    .RefreshDisplay = True
+    End With
+   Asmg.AutoUpdateMode = 1 '1: catAutomaticUpdate
+    Vismg.Viz3DFixedAccuracy = 0.1
+    
+End If
 End Function

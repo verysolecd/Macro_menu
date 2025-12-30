@@ -16,7 +16,7 @@ Sub rvme()
         Dim children
                 Set children = Prd2rv.Products
               Prd2rv.ApplyWorkMode (3)
-On Error GoTo ErrorHandler
+On Error GoTo errorhandler
         Dim odata As Variant
            odata = xlm.extract_ary
            End If
@@ -46,7 +46,7 @@ On Error GoTo ErrorHandler
         Next i
           Set Prd2rv = Nothing
        MsgBox "已经修改产品"
-ErrorHandler:
+errorhandler:
     If Err.Number <> 0 Then
         Err.Clear
         MsgBox "程序错误：" & Err.Description, vbCritical

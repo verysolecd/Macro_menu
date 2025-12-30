@@ -1,40 +1,78 @@
-如果要修改当前模块绘制的标题栏样式（布局、字段、大小等），可以从参数定义、框架结构和文本内容三个维度进行。
-由于我们之前已经将硬编码的部分简化为了私有变量，现在的修改效率已经比原始代码高了很多。以下是详细的总结：
-1. 核心修改元素
-A. 尺寸与网格布局 (最先修改)
-标题栏本质上是一个由行列组成的坐标网格。
-修改点：CATInit 中的 m_Col (列偏移) 和 m_Row (行高度)。
-如何改：
-m_Col 定义了从图纸右边缘向左的距离（负值）。增加数组成员即可增加列。
-m_Row 定义了从图纸下边缘向上的距离（正值）。
-B. 線条框架 (几何结构)
+在VBA中，Dictionary (通常来自 Microsoft Scripting Runtime) 和 ArrayList (来自 .NET Framework 的 System.Collections) 是两种非常强大的数据结构，用于替代传统的数组。
 
-修改点：CATCreateTitleBlockFrame 子程序。
-	如何改：
-	目前的逻辑是循环连接 m_Col 和 m_Row 定义的点。
-	如果要合并单元格，需要删除特定的 CreateLine 调用；如果要增加分割线，则增加 CreateLine。
-	C. 字段内容与位置 (业务数据)
-修改点：CATTitleBlockText 子程序。
-	如何改：
-	位置：修改 CreateTextAF 中的坐标参数（通常是 m_OH + m_Col(i) 这种形式）。
-	字段内容：修改 Text_01, Text_02 等变量的赋值，或者直接从 3D 模型属性中提取新字段（参考 CATLinks 函数）。
-2. 如何高效完成修改？
-为了避免在几百行代码中反复调试坐标，建议采取以下高效策略：
-策略一：参数化布局 (Data-Driven)
-	不要在 CreateLine 里写死数字。
-	做法：所有坐标都引用 m_Col(i) 和 m_Row(j)。
-	效率提升：这样你只需要在 CATInit 里调整数组里的一个数值，整个标题栏的所有线条和文字都会自动随之平移，无需逐行改代码。
-策略二：模块化绘图函数
-	做法：将复杂的图形（如公司 Logo、特殊的粗线条框）封装成独立的子函数。
-	效率提升：主流程 CATDrw_Creation 保持精简，便于快速排列组合不同的样式模块。
-策略三：利用 CATLinks 进行自动化
-	做法：尽量减少 InputBox 手动输入，大量使用 ProductDrawn.UserRefProperties 或自定义参数。
-	效率提升：修改样式时，只要字段名（Name）保持一致，逻辑部分完全不需要重写，只需重排视觉位置。
-策略四：版本化临时测试
-	做法：在修改 CATCreateTitleBlockFrame 前，先运行 CATDrw_Deletion。
-	效率提升：因为本模块有完善的删除逻辑，你可以通过“修改代码 -> 运行脚本 -> 查看效果 -> 撤销/删除 -> 再修改”的闭环快速迭代样式，通常 5-10 分钟就能完成一个新布局的调试。
-总结建议修改步骤：
-	草图阶段：在纸上画出新的行列网格，标出具体的尺寸（单位 mm）。
-	定义网格：在 CATInit 中更新 m_Col 和 m_Row 数组。
-	连接线条：在 CATCreateTitleBlockFrame 中根据网格序号连线。
-	对齐文字：在 CATTitleBlockText 中使用 m_Col 和 m_Row 的中点坐标放置文字，并设置好 catMiddleCenter。
+以下是它们在语法和特性上的详细对比和总结。
+
+1. 核心区别对比表
+特性	Scripting.Dictionary	System.Collections.ArrayList
+核心概念	键值对 (Key-Value) 集合	动态数组 (List)，仅存储值
+数据结构	哈希表 (Hash Table)	动态增长的数组
+主要用途	快速查找、去重、建立映射关系	排序、动态列表、无需预定义大小的数组
+依赖库	Microsoft Scripting Runtime (scrrun.dll)	mscorlib.dll (需要 .NET Framework)
+索引方式	通过 Key (唯一键) 访问	通过 Index (0, 1, 2...) 访问
+唯一性	Key 必须唯一，Value 可重复	允许重复元素
+排序功能	无内置排序 (需转为数组后编写冒泡/快排)	内置 .Sort 方法 (非常强大)
+插入/删除	只能按 Key 删除，无法在中间插入	可在任意位置插入 (Insert) 或删除 (RemoveAt)
+性能	查找 Key 的速度极快	遍历和排序速度快，但在列表中间插入较慢
+2. 常用语法对照表
+假设对象已创建： Dim dict: Set dict = CreateObject("Scripting.Dictionary") Dim list: Set list = CreateObject("System.Collections.ArrayList")
+
+操作	Dictionary 语法	ArrayList 语法
+添加元素	dict.Add "Key", "Value"或是 dict("Key") = "Value" (推荐)	list.Add "Value"
+读取元素	val = dict("Key")val = dict.Item("Key")	val = list(0)val = list.Item(0)
+修改元素	dict("Key") = "NewValue"	list(0) = "NewValue"
+获取数量	n = dict.Count	n = list.Count
+检查存在	If dict.Exists("Key") Then	If list.Contains("Value") Then
+删除元素	dict.Remove "Key"dict.RemoveAll	list.Remove "Value" (按值删)list.RemoveAt 0 (按索引删)list.Clear
+排序	❌ 无 (需自行实现)	✅ list.Sortlist.Reverse (反转)
+插入中间	❌ 不支持	✅ list.Insert 1, "Value" (在索引1处插入)
+转为数组	arr = dict.Keysarr = dict.Items	arr = list.ToArray()
+遍历	For Each k In dict.Keys Debug.Print dict(k)Next	For i = 0 To list.Count - 1 Debug.Print list(i)Next
+3. 选择建议
+使用 Dictionary 的情况：
+你需要去重（例如：统计一列中有多少个不重复的客户）。
+你需要根据一个唯一标识（ID、名字）快速查找对应的详情。
+你需要建立映射关系（例如：产品ID -> 产品单价）。
+使用 ArrayList 的情况：
+你需要对一堆数据进行排序（直接调用 .Sort 极其方便，也是在VBA中用它最大的理由）。
+你需要一个动态数组，只管往里 .Add，不想像VBA原生数组那样频繁使用 ReDim Preserve。
+你需要灵活地在列表的中间位置插入或移除项目。
+4. 示例代码
+Dictionary 示例 (去重与查找)
+vba
+Sub TestDictionary()
+    ' 需要引用: Microsoft Scripting Runtime (或使用Late Binding)
+    Dim dict As Object
+    Set dict = CreateObject("Scripting.Dictionary")
+    
+    ' 添加数据
+    dict("Apple") = 10
+    dict("Banana") = 20
+    
+    ' 检查并更新
+    If dict.Exists("Apple") Then
+        dict("Apple") = dict("Apple") + 5
+    End If
+    
+    Debug.Print "Apple count: " & dict("Apple") ' 输出 15
+End Sub
+ArrayList 示例 (排序)
+vba
+Sub TestArrayList()
+    ' 依赖 Windows .NET Framework (通常系统自带)
+    Dim list As Object
+    Set list = CreateObject("System.Collections.ArrayList")
+    
+    ' 添加乱序数据
+    list.Add "Zebra"
+    list.Add "Apple"
+    list.Add "Mango"
+    
+    ' 排序
+    list.Sort
+    
+    ' 遍历
+    Dim i As Integer
+    For i = 0 To list.Count - 1
+        Debug.Print list(i) ' 输出: Apple, Mango, Zebra
+    Next i
+End Sub
