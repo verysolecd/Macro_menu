@@ -13,6 +13,8 @@ Public counter As Integer
 Public Const gfn As Integer = 400
 Public gPic_Path
 
+Public uuus
+
 
 Sub clearall()
 

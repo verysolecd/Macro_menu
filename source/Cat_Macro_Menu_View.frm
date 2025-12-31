@@ -1,10 +1,10 @@
 VERSION 5.00
 Begin {C62A69F0-16DC-11CE-9E98-00AA00574A4F} Cat_Macro_Menu_View 
    Caption         =   "UserForm1"
-   ClientHeight    =   9015.001
+   ClientHeight    =   4035
    ClientLeft      =   120
    ClientTop       =   450
-   ClientWidth     =   15345
+   ClientWidth     =   7485
    OleObjectBlob   =   "Cat_Macro_Menu_View.frx":0000
    StartUpPosition =   1  'CenterOwner
 End
@@ -32,7 +32,7 @@ Private Const BTN_H = 20 ' 单个按钮的高度
 Private Const BTN_frontsize = 8 ' 按钮字体大小
 '标签尺寸
 Private Const lb_W = 62 ' 宽度
-Private Const lb_H = 20 ' 高度
+Private Const lb_H = 26 ' 高度
 Private Const lb_frontsize = 10 ' 字体大小
 Private Const itl = "公众号:键盘造车手"
 ' 按钮事件集合
@@ -97,7 +97,7 @@ End Sub
 Private Sub Set_MPage(ByVal MPgs As MultiPage)
     MPgs.Width = Tab_W + Btn_W + FrmMargin(3) + ADJUST_M_W
     With MPgs
-        .top = lb_H + FrmMargin(1)
+        .top = lb_H + FrmMargin(1) + 1
         .Left = FrmMargin(0)
         .TabFixedHeight = Tab_H  ' 标签高度（单位：磅）
         .TabFixedWidth = Tab_W ' 标签宽度
@@ -233,15 +233,15 @@ Private Function getNewLbl(mFrm)
     Dim mLbl
     Set mLbl = mFrm.controls.Add("Forms.Label.1", "lblProductInfo", True)
         With mLbl
-             .Caption = "待选择"
+             .Caption = "操作产品待选择"
              .top = FrmMargin(0): .Height = lb_H
-             .Left = 2: .Width = MPgs.Width - 20
+             .Left = 2: .Width = mFrm.Width - 16
              .Font.Size = lb_frontsize
              .BackColor = vbGreen
              .TextAlign = fmTextAlignCenter
              .BorderStyle = fmBorderStyleSingle
-             .WordWrap = False              ' 不换行
-             .AutoSize = True
+             .WordWrap = True         ' 不换行
+             .AutoSize = False
          End With
    Set getNewLbl = mLbl
 End Function
@@ -251,7 +251,7 @@ Private Function getMeinfo(mFrm)
     Set mLbl = mFrm.controls.Add("Forms.Label.1", "lblAuthor", True)
         With mLbl
             .Caption = itl ' 使用常量显示作者信息
-            .top = MPgs.top + MPgs.Height + FrmMargin(1) + 15 ' 放置在多页控件下方
+            .top = MPgs.top + MPgs.Height + FrmMargin(1) + 2 ' 放置在多页控件下方
             .Left = lblProductInfo.Left + 5 ' 与顶部信息栏左对齐
             .Width = lblProductInfo.Width ' 与顶部信息栏同宽
             .Height = lb_H
@@ -263,6 +263,8 @@ Private Function getMeinfo(mFrm)
         End With
    Set getMeinfo = mLbl
 End Function
+
+
 
 
 

@@ -30,7 +30,7 @@ Private Sub ControlBtn_Click()
 End Sub
 
 Function getUIres() 'imdl
-    Dim DecCnt, DecCode
+     Dim DecCnt, DecCode
      Dim Apc As Object: Set Apc = KCL.GetApc()
          Dim ExecPjt As Object: Set ExecPjt = Apc.ExecutingProject
          On Error Resume Next
@@ -38,9 +38,9 @@ Function getUIres() 'imdl
              Error.Clear
          On Error GoTo 0
     If mdl Is Nothing Then Exit Function
-    DecCnt = mdl.CountOfDeclarationLines ' 获取声明行数
-        If DecCnt < 1 Then Exit Function
-    DecCode = mdl.Lines(1, DecCnt) ' 获取声明代码
+        DecCnt = mdl.CountOfDeclarationLines ' 获取声明行数
+    If DecCnt < 1 Then Exit Function
+        DecCode = mdl.Lines(1, DecCnt) ' 获取声明代码
     
     Dim clscfg: Set clscfg = ParseCts(DecCode)
     Dim ttl: ttl = ParseTitle(DecCode)
@@ -80,17 +80,7 @@ Function getUIres() 'imdl
     Unload WD
     Set getUIres = Res
 End Function
-Function getmdl()
-   getmdl = ""
-    Dim Apc As Object: Set Apc = KCL.GetApc()
-    Dim ExecPjt As Object: Set ExecPjt = Apc.ExecutingProject
-    On Error Resume Next
-     Dim mdl: Set mdl = ExecPjt.VBProject.VBE.Activecodepane.codemodule
-        Error.Clear
-    On Error GoTo 0
-    If mdl Is Nothing Then Exit Function
-   Set getmdl = mdl
-End Function
+
 ' getiType 函数（字典驱动版）
 Function getiType(ctrltypename As String) As String
     ' 使用 Static 关键字，字典在多次函数调用之间只会创建一次，提高性能
@@ -145,7 +135,6 @@ Private Function ParseCts(ByVal code As String) As Object
     Dim matches As Object
     Dim match As Object
     Dim Cls_property As Object ' Scripting.Dictionary
-    
     Set regEx = CreateObject("VBScript.RegExp")
     With regEx
         .Global = True
@@ -153,9 +142,7 @@ Private Function ParseCts(ByVal code As String) As Object
         ' 格式: ' %UI <ControlType> <ControlName> <Caption/Text>
         .Pattern = "^\s*'\s*%UI\s+(\w+)\s+(\w+)\s+(.*)$"
     End With
-    
-    Dim lst
-    Set lst = InitLst
+    Dim lst: Set lst = InitLst
     If regEx.TEST(code) Then
         Set matches = regEx.Execute(code)
         For Each match In matches
@@ -164,7 +151,7 @@ Private Function ParseCts(ByVal code As String) As Object
             Cls_property.Add "Name", match.SubMatches(1)
             Cls_property.Add "Caption", Trim(match.SubMatches(2))
 '            If Not ctrlcoll.Contains(Cls_property("Name")) Then
-               lst.Add Cls_property '("Name") , Cls_property
+               lst.Add Cls_property
 '            End If
         Next
     End If
@@ -183,7 +170,6 @@ Private Function ParseTitle(ByVal code As String) As String
         ' 格式: ' %UI <Title> <Caption/Text>
         .Pattern = "^\s*'\s*%Title\s+(.*)$"
     End With
-    
     itl = "请配置你要如何执行"
               If regEx.TEST(code) Then
                 Set matches = regEx.Execute(code)

@@ -788,48 +788,6 @@ Sub OpenMultiple(ParamArray Paths() As Variant)
 End Sub
 
 
-' 从字符串中提取配置信息 - 键转换为长整型
-' 参数  : str,Opt_bool
-' 返回值: Dict
-Public Function getInfo_asDic( _
-                    ByVal txt As String, _
-                    ByVal regPtn As String, _
-                    Optional ByVal KeyToLong As Boolean = False) _
-                    As Object
-    Set getInfo_asDic = Nothing
-    Dim Reg As Object
-    Set Reg = CreateObject("VBScript.RegExp")
-    With Reg
-        .Pattern = regPtn  'TAG_S & "(.*?)" & TAG_D & "(.*?)" & TAG_E
-        .Global = True
-    End With
-    Dim matches As Object
-    Set matches = Reg.Execute(txt)
-    Set Reg = Nothing
-    If matches.count < 1 Then Exit Function
-    Dim Dic As Object: Set Dic = KCL.InitDic(vbTextCompare)
-    Dim match As Object, SubMatchs As Object
-    Dim key As Variant, Var As Variant
-    
-    For Each match In matches
-        Set SubMatchs = match.SubMatches
-        If SubMatchs.count < 2 Then GoTo Continue
-        ' ==  获取编号
-        key = Trim(Replace(SubMatchs(0), """", "")) 'trim 取消前后空格， replace 删除中间空格
-        
-        If Len(key) < 1 Then GoTo Continue  '若key为空进入下一个循环
-        
-        If KeyToLong Then key = CLng(key)  'Clng转换为long类型
-            ' ==  获取编号对应page
-            Var = Trim(Replace(SubMatchs(1), """", ""))  'trim 取消前后空格， replace 删除中间空格
-        If Len(Var) < 1 Then GoTo Continue
-        Set Dic = Push_Dic(Dic, key, Var)
-Continue:
-    Next
-    If Dic.count < 1 Then Exit Function
-    Set getInfo_asDic = Dic
-
-End Function
 Public Function Push_Dic(ByVal Dic As Object, _
                           ByVal key As Variant, _
                           ByVal item As Variant) As Object
@@ -875,8 +833,6 @@ Public Function GetBrepName(MyBRepName As String) As String
     GetBrepName = MyBRepName
 End Function
 
-
-
 Function getFrmDic()
    Dim oFrm: Set oFrm = New Cls_DynaFrm
    Dim frmDic: Set frmDic = oFrm.Res
@@ -890,16 +846,16 @@ Public Function setASM(ByVal higheff As Boolean)
   Dim setcls:  Set setcls = CATIA.SettingControllers
    Dim Asmg: Set Asmg = setcls.item("CATAsmGeneralSettingCtrl")
    Dim Vismg: Set Vismg = setcls.item("CATVizVisualizationSettingCtrl")
-If higheff Then
-   With CATIA
-    '.DisableNewUndoRedoTransaction
-    '.EnableNewUndoRedoTransaction
-     .RefreshDisplay = False
-    End With
-  
-  Asmg.AutoUpdateMode = 0 '0: catManualUpdate
-  Vismg.Viz3DFixedAccuracy = 1
-Else
+    If higheff Then
+       With CATIA
+        '.DisableNewUndoRedoTransaction
+        '.EnableNewUndoRedoTransaction
+         .RefreshDisplay = False
+        End With
+      
+      Asmg.AutoUpdateMode = 0 '0: catManualUpdate
+      Vismg.Viz3DFixedAccuracy = 1
+    Else
 
     With CATIA
     '.DisableNewUndoRedoTransaction
@@ -910,4 +866,24 @@ Else
     Vismg.Viz3DFixedAccuracy = 0.1
     
 End If
+End Function
+Function getmdl()
+   getmdl = ""
+    Dim Apc As Object: Set Apc = KCL.GetApc()
+    Dim ExecPjt As Object: Set ExecPjt = Apc.ExecutingProject
+    On Error Resume Next
+     Dim mdl: Set mdl = ExecPjt.VBProject.VBE.Activecodepane.codemodule
+        Error.Clear
+    On Error GoTo 0
+    If mdl Is Nothing Then Exit Function
+   Set getmdl = mdl
+End Function
+
+Public Function getDecCode()
+ Dim DecCnt
+   Dim mdl:  Set mdl = KCL.getmdl
+    If mdl Is Nothing Then Exit Function
+        DecCnt = mdl.CountOfDeclarationLines ' 获取声明行数
+    If DecCnt < 1 Then Exit Function
+        getDecCode = mdl.Lines(1, DecCnt) ' 获取声明代码
 End Function

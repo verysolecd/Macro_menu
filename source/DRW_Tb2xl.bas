@@ -58,8 +58,6 @@ Sub Tb2xl()
 
 
 End Sub
-
-
 Sub ArrayToxl(arr2D() As Variant)
     Dim xlAPP As Object
     Set xlAPP = CreateObject("Excel.Application")
@@ -67,14 +65,12 @@ Sub ArrayToxl(arr2D() As Variant)
     Set wbook = xlAPP.Workbooks.Add
     Dim rng As Object
     Set rng = wbook.Sheets(1).Range("B2")
-    
     With rng.Resize(UBound(arr2D, 1) + 1, UBound(arr2D, 2) + 1)
         .value = arr2D
         .Borders.LineStyle = xlContinuous
         .Borders.Weight = xlThin
         .Borders.ColorIndex = 0
     End With
-    
     xlAPP.Visible = True
 End Sub
 

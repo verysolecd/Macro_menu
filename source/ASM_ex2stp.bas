@@ -1,20 +1,19 @@
 Attribute VB_Name = "ASM_ex2stp"
 
-'------宏信息
-
+'------宏信息-----------------------------------------------------
 '{GP:3}
 '{EP:ex2stp_zip}
 '{Caption:导出stp}
 '{ControlTipText: 一键导出stp并压缩到指定路径或本身目录}
 '{BackColor:}
 
-'------窗体标题------
+'------窗体标题-------------------------------------------------
 '标题格式为 %Title <Caption/Text>
 ' %%Title 现在要导出stp呢那请问你?
 
-'控件格式为 %UI <ControlType> <ControlName> <Caption/Text>
-'------控件清单-------
+'------控件清单--------------------------------------------------
 
+'控件格式为 %UI <ControlType> <ControlName> <Caption/Text>
 ' %UI Label lbL_jpzcs  键盘造车手出品
 ' %UI CheckBox chk_path  是否导出到当前路径
 ' %UI CheckBox  chk_tm  是否更新时间戳到CATIA零件号？
@@ -22,9 +21,8 @@ Attribute VB_Name = "ASM_ex2stp"
 ' %UI TextBox   txt_log  请输入更新内容(不必输入时间)
 ' %UI Button btnOK  确定
 ' %UI Button btncancel  取消
+'------------------------------------------------
 
-
-' 定义模块级变量
 Private ErrorMessage As String
 Private zippath
 
@@ -35,6 +33,7 @@ Sub ex2stp_zip()
     ErrorMessage = ""
     Dim oDoc: Set oDoc = CATIA.ActiveDocument
     Dim outputpath As String: outputpath = ""
+    
     Dim frmDic: Set frmDic = getFrmDic ' oFrm.Res
     
     If frmDic("Status") <> "btnOK" Then   ' 2. 检查是否点击了确定 (btnOK)
