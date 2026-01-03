@@ -39,7 +39,7 @@ Private Sub mBtn_click()
                           
     Dim capUp, icap
     icap = Array(0, 0)
-    Select Case UCase(mInfo(TAG_MDLNAME))
+    Select Case VBA.UCase(mInfo(TAG_MDLNAME))
     Case "OTH_COLOR"
             capUp = amWhite
             icap = Array("°×É«±³¾°", "Ä¬ÈÏ±³¾°")

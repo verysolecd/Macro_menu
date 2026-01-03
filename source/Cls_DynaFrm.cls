@@ -45,6 +45,7 @@ Function getUIres() 'imdl
     Dim clscfg: Set clscfg = ParseCts(DecCode)
     Dim ttl: ttl = ParseTitle(DecCode)
     Load WD
+    WD.Tag = ""
     Call WD.setFrm(ttl, clscfg)
 ' --- 3. 绑定按钮事件 ---
     Dim eventCol As New collection ' 必须保持这个集合存活，否则事件对象会被销毁
@@ -65,7 +66,10 @@ Function getUIres() 'imdl
     Dim Res As Object
     Set Res = CreateObject("Scripting.Dictionary")
     ' 记录点击了哪个按钮 (通过 Tag 传递)
-    Res.Add "Status", WD.Tag
+    Res.Add "btn_clicked", WD.Tag
+    
+    
+    
     ' 遍历所有控件获取值
     For Each ctl In WD.controls
         On Error Resume Next ' 防止某些控件没有 Value 或 Text 属性
@@ -124,7 +128,7 @@ Private Function ContainsAny(ByVal mainString As String, ByVal substringsList As
     substrings = Split(substringsList, ",")
     ContainsAny = False
     For Each substring In substrings
-        If InStr(1, mainString, Trim(substring), vbTextCompare) > 0 Then
+        If InStr(1, mainString, VBA.Trim(substring), vbTextCompare) > 0 Then
             ContainsAny = True
             Exit Function
         End If
@@ -149,7 +153,7 @@ Private Function ParseCts(ByVal code As String) As Object
             Set Cls_property = KCL.InitDic
             Cls_property.Add "Type", getiType(match.SubMatches(0))
             Cls_property.Add "Name", match.SubMatches(1)
-            Cls_property.Add "Caption", Trim(match.SubMatches(2))
+            Cls_property.Add "Caption", VBA.Trim(match.SubMatches(2))
 '            If Not ctrlcoll.Contains(Cls_property("Name")) Then
                lst.Add Cls_property
 '            End If

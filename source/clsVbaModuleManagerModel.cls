@@ -183,7 +183,7 @@ Private Function GetValidCharacterCount( _
     totalChars = 0
     ' 检查每行并排除注释
     For i = 1 To CodeMod.CountOfLines
-        codeLine = Trim(CodeMod.Lines(i, 1))
+        codeLine = VBA.Trim(CodeMod.Lines(i, 1))
         If Left(codeLine, 1) <> "'" Then
             totalChars = totalChars + Len(codeLine)
         End If

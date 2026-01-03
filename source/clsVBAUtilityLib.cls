@@ -73,7 +73,7 @@ Function DumpVariable( _
             Dim D As String, t As String
             If Abs(X) >= 1 Then D = Month(X) & "/" & Day(X) & "/" & Year(X)
             If Not IsInt(X) Then t = Format(X, "h:nn:ss AM/PM")
-            DumpVariable = "#" & Trim(D & " " & t) & "#"
+            DumpVariable = "#" & VBA.Trim(D & " " & t) & "#"
         Case "String"
             If StrPtr(X) = 0 Then
                 DumpVariable = "vbNullString"

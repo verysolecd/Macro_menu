@@ -28,10 +28,14 @@ Attribute VB_Name = "Drw_myframe2"
 '%lb   riqi    ,  日期    ,  126 ,  36
 
 
+' %UI Button btn_create 创建图框
+' %UI Button btn_delete 删除图框
+' %UI Button btn_resize 更改图框尺寸
+' %UI Button btn_update 更新图框
 
 
 Public ActiveDoc, Fact, Selection
-Public Sheets, Sheet, targetSheet, Views, View, Texts, Text
+Private Sheets, Sheet, targetSheet, Views, View, Texts, Text
 Private m_MacroID, m_DisplayFormat As String
 Private m_RevRowHeight, m_checkRowHeight, m_RulerLength As Double
 Private m_Width, m_Height As Double
@@ -49,12 +53,23 @@ Sub CATMain()
       Err.Clear: Name = "none"
     End If
   On Error GoTo 0
-  If (Name = "none") Then
-    CATDrw_Creation targetSheet
-  Else
-    CATDrw_Resizing targetSheet
-    CATDrw_Update targetSheet
-  End If
+        Dim frmDic: Set frmDic = KCL.getFrmDic ' oFrm.Res
+      Select Case frmDic("btn_clicked")
+      
+        Case "btn_create"
+            If (Name = "none") Then CATDrw_Creation targetSheet
+          Case "btn_resize"
+          
+            If (Name <> "none") Then
+             CATDrw_Resizing targetSheet
+              CATDrw_Update targetSheet
+            End If
+          
+        Case Else
+            MsgBox "未点击任何按钮，或按钮名称未匹配", vbExclamation
+    End Select
+  
+
     CATExit targetSheet
 End Sub
 Sub CAT2DL_ViewLayout(targetSheet)
@@ -109,10 +124,12 @@ Sub CATDrw_Resizing(targetSheet)
     ' Redraw Standard Pictorgram
     CATDeleteTitleBlockStandard
     CATCreateTitleBlockStandard
+    
     ' Redraw Title Block Frame
     CATDeleteTitleBlockFrame
     CATCreateTitleBlockFrame
     CATMoveTitleBlockText TbTranslation
+    
     ' Redraw revision block
 '    CATDeleteRevisionBlockFrame
 '    CATCreateRevisionBlockFrame
@@ -298,8 +315,10 @@ Sub CATFrameCentringMark(Nb_CM_H, Nb_CM_V, Ruler, Cst_1, Cst_2)
    On Error Resume Next
         newLineV 0.5 * m_Width, m_Height - m_Offset, m_Height, "Frame_centerMark_Top"
         newLineV 0.5 * m_Width, Y0, 0, "Frame_centerMark_Bottom"
-        newLineH Y0, 0.5 * m_Height, 0, "Frame_centerMark_Left"
-        newLineH m_Width - m_Offset, 0.5 * m_Height, m_Width, "Frame_centerMark_Right"
+        
+        
+        newLineH 0, m_Offset, 0.5 * m_Height, "Frame_centerMark_Left"
+        newLineH m_Width - m_Offset, m_Width, 0.5 * m_Height, "Frame_centerMark_Right"
     
         For i = Nb_CM_H To Ruler / 2 / Cst_1 Step -1
           If (i * Cst_1 < 0.5 * m_Width - 1) Then
@@ -319,7 +338,6 @@ Sub CATFrameCentringMark(Nb_CM_H, Nb_CM_V, Ruler, Cst_1, Cst_2)
             CreateLine X, m_Height - m_Offset, X, m_Height - 0.25 * m_Offset, "Frame_centerMark_Top_" & Int(X)
           End If
         Next
-    
     
     For i = 1 To Nb_CM_V
       If (i * Cst_2 < 0.5 * m_Height - 1) Then
@@ -422,9 +440,9 @@ Sub CATCreateTitleBlockStandard()
     CreateLine X(3), Y(6), X(2), Y(5), "TB_std_Line_4"
     Dim oCircle
     Set oCircle = Fact.CreateClosedCircle(X(4), Y(1), R1)
-    oCircle.Name = "TB_std_Circle_1"
+    oCircle.Name = "TB_std_Line_Circle_1"
     Set oCircle = Fact.CreateClosedCircle(X(4), Y(1), R2)
-    oCircle.Name = "TB_std_Circle_2"
+    oCircle.Name = "TB_std_Line_Circle_2"
     If Err.Number <> 0 Then Err.Clear
   On Error GoTo 0
 End Sub
@@ -439,8 +457,8 @@ Function newLineH(iX1, iX2, iY2, iName) As Curve2D
   Set newLineH = oLine
 End Function
 
-Function newLineV(iX2, iY1, iY2, iName) As Curve2D
-  Set oLine = Fact.CreateLine(iX2, iY1, iX2, iY2)
+Function newLineV(iX1, iY1, iY2, iName) As Curve2D
+  Set oLine = Fact.CreateLine(iX1, iY1, iX1, iY2)
   oLine.Name = iName
   Set Point = oLine.StartPoint 'Create the start point
   Point.Name = iName & "_start"
@@ -505,9 +523,18 @@ Nb_rv = 5
 End Sub
 
 Sub CATTitleBlockText()
-     Set lst = getTTx()
+
+
+
+ Dim dec, lst
+   dec = getDecCode()
+   Set lst = ParseDec(dec)
+     
+     
      For Each ttx In lst
-            CreateTextAF ttx("val"), X0 - ttx("X"), ttx("Y") + Y0, ttx("name"), catBottomCenter, 2.5  'catMiddleCenter
+     
+            oTxtName = "TitleBlock_Text_" & ttx("name")
+            CreateTextAF ttx("val"), X0 - ttx("X"), ttx("Y") + Y0, oTxtName, catBottomCenter, 2.5  'catMiddleCenter
         Next
 '    Select Case GetContext():
 '      Case "LAY": Text.InsertVariable 0, 0, ActiveDoc.part.getItem("CATLayoutRoot").Parameters.item(ActiveDoc.part.getItem("CATLayoutRoot").Name + "\" + Sheet.Name + "\ViewMakeUp2DL.1\Scale")
@@ -551,9 +578,11 @@ Sub CATRemoveFrame()
   DeleteAll "CATDrwSearch.2DPoint.Name=TBline_*"
 End Sub
 Sub CATDeleteTitleBlockStandard()
-  DeleteAll "CATDrwSearch.2DGeometry.Name=TitleBlock_Standard*"
+  DeleteAll "CATDrwSearch.2DGeometry.Name=TB_std_Line_*"
 End Sub
 Sub CATMoveTitleBlockText(Translation)
+
+
   SelectAll "CATDrwSearch.DrwText.Name=TitleBlock_Text_*"
   count = Selection.Count2
   For ii = 1 To count
@@ -563,6 +592,7 @@ Sub CATMoveTitleBlockText(Translation)
   Next
 End Sub
 Sub CATMoveViews(Translation)
+
   For i = 3 To Views.count
     Views.item(i).UnAlignedWithReferenceView
   Next
@@ -715,11 +745,7 @@ Sub initVar()
   m_ColRev = Array(0, -190, -175, -140, -20)
 End Sub
 
-Function getTTx()
- Dim dec, lst
-   dec = KCL.getDecCode()
-   Set getTTx = ParseDec(dec)
-End Function
+
 
 Private Function ParseDec(ByVal code As String) As Object
     Dim regEx As Object
@@ -734,12 +760,12 @@ Private Function ParseDec(ByVal code As String) As Object
         .Pattern = "^\s*'\s*%lb\s+\s*(\w+)\s*,\s*(.*)\s*,\s*(\d+(?:\.\d+)?)\s*,\s*(\d+(?:\.\d+)?)$"
     End With
     Dim lst, mdic
-    Set lst = KCL.InitLst
+    Set lst = InitLst
 
     If regEx.TEST(code) Then
         Set matches = regEx.Execute(code)
         For Each match In matches
-                Set mdic = KCL.InitDic
+                Set mdic = InitDic
                 mdic.Add "name", match.SubMatches(0)
                 mdic.Add "val", match.SubMatches(1)
                 mdic.Add "X", CLng(match.SubMatches(2))
@@ -781,3 +807,57 @@ Sub CATCreateReference()
   Set Text = Texts.Add("", X0, Y0)
   Text.Name = "Reference_" + m_MacroID
 End Sub
+
+
+Private Function getDecCode()
+    Dim COMObjectName$     ' 获取VBA版本对应的COM对象名称
+    #If VBA7 Then
+        COMObjectName = "MSAPC.Apc.7.1"
+    #ElseIf VBA6 Then
+        COMObjectName = "MSAPC.Apc.6.2"
+    #Else
+        MsgBox "不支持当前VBA版本", vbExclamation + vbOKOnly
+        Exit Function
+    #End If
+    Dim Apc As Object: Set Apc = Nothing   ' 获取APC对象
+    On Error Resume Next
+        Set Apc = CreateObject(COMObjectName)
+        Dim ExecPjt As Object: Set ExecPjt = Apc.ExecutingProject
+         Dim mdl: Set mdl = ExecPjt.VBProject.VBE.Activecodepane.codemodule
+    On Error GoTo 0
+    If mdl Is Nothing Then Exit Function
+        Dim DecCnt
+        DecCnt = mdl.CountOfDeclarationLines ' 获取声明行数
+        If DecCnt < 1 Then Exit Function
+        getDecCode = mdl.Lines(1, DecCnt) ' 获取声明代码
+End Function
+
+
+Private Function InitLst() As Object
+    Set InitLst = CreateObject("System.Collections.ArrayList")
+End Function
+
+
+Private Function InitDic(Optional compareMode As Long = vbBinaryCompare) As Object
+    Dim Dic As Object
+    Set Dic = CreateObject("Scripting.Dictionary")
+    Dic.compareMode = compareMode
+    Set InitDic = Dic
+End Function
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

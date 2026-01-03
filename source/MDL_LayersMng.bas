@@ -71,7 +71,7 @@ If ly <> "None" Then
            Case 7:  '===选择“否”====
                 ipt = KCL.GetInput("请输入你想显示的图层，逗号分割")
                 If VarType(ipt) = vbString Then
-                    ipt = LCase(ipt)
+                    ipt = VBA.LCase(ipt)
                     ipt = Split(ipt, ",") '过滤器转数组
                 End If
                 fstr = ""

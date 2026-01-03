@@ -36,7 +36,7 @@ Sub ex2stp_zip()
     
     Dim frmDic: Set frmDic = getFrmDic ' oFrm.Res
     
-    If frmDic("Status") <> "btnOK" Then   ' 2. 检查是否点击了确定 (btnOK)
+    If frmDic("btn_clicked") <> "btnOK" Then   ' 2. 检查是否点击了确定 (btnOK)
         MsgBox "用户取消了操作"
         Exit Sub
     End If

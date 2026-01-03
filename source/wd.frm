@@ -3,8 +3,8 @@ Begin {C62A69F0-16DC-11CE-9E98-00AA00574A4F} WD
    Caption         =   "UserForm1"
    ClientHeight    =   6780
    ClientLeft      =   120
-   ClientTop       =   465
-   ClientWidth     =   9855.001
+   ClientTop       =   470
+   ClientWidth     =   9860.001
    OleObjectBlob   =   "WD.frx":0000
    StartUpPosition =   1  'CenterOwner
 End

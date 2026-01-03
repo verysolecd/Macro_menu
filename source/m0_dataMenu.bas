@@ -183,11 +183,11 @@ Private Function Get_KeyValue( _
         Set SubMatchs = match.SubMatches
         If SubMatchs.count < 2 Then GoTo Continue
         ' ==  获取编号
-        key = Trim(Replace(SubMatchs(0), """", "")) 'trim 取消前后空格， replace 删除中间空格
+        key = VBA.Trim(VBA.Replace(SubMatchs(0), """", "")) 'trim 取消前后空格， replace 删除中间空格
         If Len(key) < 1 Then GoTo Continue  '若key为空进入下一个循环
         If KeyToLong Then key = CLng(key)  'Clng转换为long类型
             ' ==  获取编号对应page
-        Var = Trim(Replace(SubMatchs(1), """", ""))  'trim 取消前后空格， replace 删除中间空格
+        Var = VBA.Trim(VBA.Replace(SubMatchs(1), """", ""))  'trim 取消前后空格， replace 删除中间空格
         If Len(Var) < 1 Then GoTo Continue
         Set Dic = Push_Dic(Dic, key, Var)
 Continue:

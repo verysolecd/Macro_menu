@@ -36,18 +36,36 @@ Private Sub Class_Initialize()
      Set mProduct = Nothing
       iniarr
         On Error GoTo errorhandler
+        
+        
+        
         If CATIA.Documents.count = 0 Then
-            Err.Raise 1001, , "未检测到打开的CATIA文档"
-            Exit Sub
-        End If
-            Set rootDoc = CATIA.ActiveDocument
+          MsgBox "当前未打开CATIA文档"
+          
+          
+          Else
+          
+          Set rootDoc = CATIA.ActiveDocument
             Set rootprd = CATIA.ActiveDocument.Product
+       
+          
+        End If
+           
              
         On Error GoTo 0
+        
+        
+        If Not rootDoc Is Nothing Then
+        Set msel = CATIA.ActiveDocument.Selection: msel.Clear
+        End If
+        
+        
         If Not rootprd Is Nothing Then
             rootprd.ApplyWorkMode (3)
         End If
-        Set msel = CATIA.ActiveDocument.Selection: msel.Clear
+        
+        
+        
 errorhandler:
     If Err.Number <> 0 Then
         Err.Clear

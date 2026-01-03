@@ -62,8 +62,8 @@ Function AddNode(PStack, D)
     Else
         Set par = PStack(IIf(PStack.Exists(L - 1), L - 1, 1))
         If D.Exists("Type") Then
-            If UCase(Trim(D("Type"))) = "T" Then TP = "Part"
-            If UCase(Trim(D("Type"))) = "C" Then TP = "Component"
+            If VBA.UCase(VBA.Trim(D("Type"))) = "T" Then TP = "Part"
+            If VBA.UCase(VBA.Trim(D("Type"))) = "C" Then TP = "Component"
         End If
         If TP = "Component" Then Set oprd = par.Products.AddNewProduct("") Else Set oprd = par.Products.AddNewComponent(TP, "")
        Set PStack(L) = oprd
@@ -93,8 +93,8 @@ Private Function ParsePn(C$) As Object
             curI = Len(m.SubMatches(0))
             curL = GetLev(curI, curL, H)
             Dim D: Set D = KCL.InitDic(1)
-            D.Add "Level", curL: D.Add "Type", Trim(m.SubMatches(1)): D.Add "PartNumber", Trim(m.SubMatches(2))
-            D.Add "Nomenclature", Trim(m.SubMatches(3)): D.Add "Definition", Trim(m.SubMatches(4)): D.Add "Name", Trim(m.SubMatches(5))
+            D.Add "Level", curL: D.Add "Type", VBA.Trim(m.SubMatches(1)): D.Add "PartNumber", VBA.Trim(m.SubMatches(2))
+            D.Add "Nomenclature", VBA.Trim(m.SubMatches(3)): D.Add "Definition", VBA.Trim(m.SubMatches(4)): D.Add "Name", VBA.Trim(m.SubMatches(5))
             lst.Add D("PartNumber"), D
         Next
     End If

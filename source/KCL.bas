@@ -40,7 +40,7 @@ Function CanExecute(ByVal docTypes As Variant) As Boolean
         Exit Function
     End If
     If VarType(docTypes) = vbString Then
-      docTypes = LCase(docTypes)
+      docTypes = VBA.LCase(docTypes)
         docTypes = Split(docTypes, ",") '过滤器转数组
     End If
     
@@ -55,7 +55,7 @@ End Function
 Function checkDocType(ByVal docTypes As Variant)
     checkDocType = False
     If VarType(docTypes) = vbString Then
-         docTypes = LCase(docTypes)
+         docTypes = VBA.LCase(docTypes)
         docTypes = Split(docTypes, ",") '过滤器转数组
     End If
     If Not checkFilterType(docTypes) Then Exit Function '过滤器检查，非数组则退出
@@ -68,7 +68,7 @@ Function checkDocType(ByVal docTypes As Variant)
         MsgBox "无打开的文档"
         Exit Function
     End If
-     If UBound(filter(docTypes, LCase(TypeName(ActDoc)))) < 0 Then '此处filter函数是VBA中比较后返回数组的函数
+     If UBound(filter(docTypes, VBA.LCase(TypeName(ActDoc)))) < 0 Then '此处filter函数是VBA中比较后返回数组的函数
         Exit Function
     End If
     checkDocType = True
@@ -520,7 +520,7 @@ End Function
 ' 检查字符串中是否包含指定关键字
 ' 忽略大小写进行检查
 Public Function ExistsKey(ByVal txt As String, ByVal key As String) As Boolean
-    ExistsKey = IIf(InStr(LCase(txt), LCase(key)) > 0, True, False)
+    ExistsKey = IIf(VBA.InStr(VBA.LCase(txt), VBA.LCase(key)) > 0, True, False)
 End Function
 '@@ param:ostr-时间格式
 Public Function timestamp(Optional ByVal ostr) As String
@@ -736,10 +736,10 @@ Function ActivateExistingWindow(ByVal strPath As String) As Boolean
     Set shellApp = getshell
     For Each window In shellApp.Windows   ' 遍历所有资源管理器窗口
         On Error Resume Next
-        If InStr(UCase(window.FullName), "EXPLORER.EXE") > 0 Then   ' 检查是否为资源管理器窗口
+        If VBA.InStr(VBA.UCase(window.FullName), "EXPLORER.EXE") > 0 Then   ' 检查是否为资源管理器窗口
             Dim windowPath As String
             windowPath = window.Document.folder.Self.path      ' 获取窗口路径并比较（不区分大小写）
-            If LCase(windowPath) = LCase(strPath) Then
+            If VBA.LCase(windowPath) = VBA.LCase(strPath) Then
 '
 '            Shell("C:\WINDOWS\CALC.EXE", 1)
                 window.Visible = True    ' 激活已存在的窗口
