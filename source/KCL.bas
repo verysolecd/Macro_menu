@@ -856,16 +856,16 @@ Public Function setASM(ByVal higheff As Boolean)
       Asmg.AutoUpdateMode = 0 '0: catManualUpdate
       Vismg.Viz3DFixedAccuracy = 1
     Else
-
-    With CATIA
-    '.DisableNewUndoRedoTransaction
-    '.EnableNewUndoRedoTransaction
-    .RefreshDisplay = True
-    End With
-   Asmg.AutoUpdateMode = 1 '1: catAutomaticUpdate
-    Vismg.Viz3DFixedAccuracy = 0.1
     
-End If
+        With CATIA
+        '.DisableNewUndoRedoTransaction
+        '.EnableNewUndoRedoTransaction
+        .RefreshDisplay = True
+        End With
+       Asmg.AutoUpdateMode = 1 '1: catAutomaticUpdate
+        Vismg.Viz3DFixedAccuracy = 0.1
+    End If
+    
 End Function
 Function getmdl()
    getmdl = ""

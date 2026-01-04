@@ -8,6 +8,8 @@ Attribute VB_Name = "OTH_SWScr"
 
 Sub switchRefresh()
 
+On Error Resume Next
     CATIA.ActiveWindow.ActiveViewer.Update
+    On Error GoTo 0
     
 End Sub

@@ -72,9 +72,9 @@ Private Function canrefresh()
 
 Dim bol: bol = CATIA.RefreshDisplay
 If bol Then
-setASM (bol)
+KCL.setASM (bol)
 Else
-setASM (bol)
+KCL.setASM (bol)
 End If
 
 CATIA.ActiveWindow.ActiveViewer.Update

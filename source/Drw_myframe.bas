@@ -220,9 +220,9 @@ Function CATInit()
   
   'Set Sheet = targetSheet
   
- Set oSheet = CATIA.ActiveDocument.Sheets.item(1)
+ Set osheet = CATIA.ActiveDocument.Sheets.item(1)
  
- Set targetSheet = oSheet
+ Set targetSheet = osheet
  Set Sheet = targetSheet
  
   Set Sheets = Sheet.Parent
@@ -266,16 +266,16 @@ Function CATCheckRef(Mode)
   '-------------------------------------------------------------------------------
   'How to check that the called macro is the right one
   '-------------------------------------------------------------------------------
-  nbTexts = Texts.count
+  nbtexts = Texts.count
   i = 0
-  notFound = 0
-  While (notFound = 0 And i < nbTexts)
+  notfound = 0
+  While (notfound = 0 And i < nbtexts)
     i = i + 1
     Set Text = Texts.item(i)
-    WholeName = Text.Name
-    leftText = Left(WholeName, 10)
+    wholename = Text.Name
+    leftText = Left(wholename, 10)
     If (leftText = "Reference_") Then
-      notFound = 1
+      notfound = 1
       refText = "Reference_" + GetMacroID()
       If (Mode = 1) Then
         MsgBox "Frame and Titleblock already created!"

@@ -47,7 +47,14 @@ Private Sub Class_Initialize()
           
           Set rootDoc = CATIA.ActiveDocument
             Set rootprd = CATIA.ActiveDocument.Product
-       
+            If Not rootDoc Is Nothing Then
+            Set msel = CATIA.ActiveDocument.Selection: msel.Clear
+            End If
+        
+        
+        If Not rootprd Is Nothing Then
+            rootprd.ApplyWorkMode (3)
+        End If
           
         End If
            
@@ -55,14 +62,7 @@ Private Sub Class_Initialize()
         On Error GoTo 0
         
         
-        If Not rootDoc Is Nothing Then
-        Set msel = CATIA.ActiveDocument.Selection: msel.Clear
-        End If
-        
-        
-        If Not rootprd Is Nothing Then
-            rootprd.ApplyWorkMode (3)
-        End If
+       
         
         
         

@@ -66,11 +66,11 @@ MyViewer.GetBackgroundColor oColor
 MyViewer.PutBackgroundColor Array(1, 1, 1) ' Change background color to WHITE
 '====修改背景颜色=====
 file_type = "tiff"
-Dim oName, CapturePath, oType
+Dim oname, CapturePath, oType
   CapturePath = CATIA.FileSelectionBox("输入文件名", file_type, CatFileSelectionModeSave)
-  oName = CapturePath & "." & file_type
+  oname = CapturePath & "." & file_type
 oType = catCaptureFormatTIFF 'catCaptureFormatBMP catCaptureFormatJPEG
-MyViewer.CaptureToFile oType, oName ' MAIN SENTENCE!! STORE THE PICTURE IN ANY FORMAT
+MyViewer.CaptureToFile oType, oname ' MAIN SENTENCE!! STORE THE PICTURE IN ANY FORMAT
 MyViewer.PutBackgroundColor oColor ' Change background original
 MsgBox ("已经保存图片")
 oWindow.Layout = catWindowSpecsAndGeom 'catWindowSpecsOnly ' catWindowGeomOnly
@@ -104,12 +104,12 @@ Function shotme()
     MyViewer.PutBackgroundColor Array(1, 1, 1) ' Change background color to WHITE
 '====修改背景颜色=====
     file_type = "tiff"
-    Dim oName, CapturePath, oType
+    Dim oname, CapturePath, oType
     MyViewer.CaptureToClipboard
       CapturePath = CATIA.FileSelectionBox("输入文件名", file_type, CatFileSelectionModeSave)
-      oName = CapturePath & "." & file_type
+      oname = CapturePath & "." & file_type
     oType = catCaptureFormatTIFF 'catCaptureFormatBMP catCaptureFormatJPEG
-    MyViewer.CaptureToFile oType, oName ' MAIN SENTENCE!! STORE THE PICTURE IN ANY FORMAT
+    MyViewer.CaptureToFile oType, oname ' MAIN SENTENCE!! STORE THE PICTURE IN ANY FORMAT
     MyViewer.PutBackgroundColor oColor ' Change background original
     MsgBox ("已经保存图片")
     oWindow.Layout = catWindowSpecsAndGeom 'catWindowSpecsOnly ' catWindowGeomOnly

@@ -12,7 +12,7 @@ Sub cpChildren()
 
 If Not CanExecute("ProductDocument") Then Exit Sub
 
-Call setASM(False)
+Call KCL.setASM(False)
 
 Dim imsg, filter(0), oSel
 Set oDoc = CATIA.ActiveDocument
@@ -45,19 +45,19 @@ On Error GoTo errorhandler
          Set sourcePrd = Nothing
     On Error GoTo 0
     
-    Call setASM(True)
+    Call KCL.setASM(True)
     
     
 errorhandler:
         If Err.Number <> 0 Then
-            Call setASM(True)
+            Call KCL.setASM(True)
               oSel.Clear
             Err.Clear
             MsgBox "CATIA ³ÌÐò´íÎó£º" & Err.Description, vbCritical
         Exit Sub
         Else
         
-         Call setASM(True)
+         Call KCL.setASM(True)
         End If
 
 End Sub
