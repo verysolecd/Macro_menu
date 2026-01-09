@@ -13,7 +13,6 @@ Private hdgx(1 To 15)
 Private inject_cols
 Private extract_cols
 Private bom_cols
-
 Private wsEVT
 Private WB As Object
 Private ws As Object
@@ -107,11 +106,8 @@ Private Sub set_Header(header, idxrow)
     .Range(.Cells(idxrow, 1), .Cells(idxrow, lastCol)).value = header
     .Range(.Cells(idxrow, 1), .Cells(idxrow, lastCol)).Interior.color = RGB(190, 190, 190)
     End With
-    
      Dim mapcells: mapcells = Array(0, 1, 3, 5, 7, 9, 11, 13, 14)
-     
      Dim lastrow: lastrow = ws.Cells(ws.Rows.count, 2).End(xlUp).Row
-     
     For rowNb = 2 To lastrow
         For i = 1 To UBound(mapcells)
                 ws.Cells(rowNb, mapcells(i)).Interior.color = RGB(190, 190, 190)
@@ -124,8 +120,6 @@ Public Sub clear_table()
 End Sub
 
 Sub inject_ary(ByVal idata As Variant, Optional ByVal idcols As Variant, Optional ByVal idx As Variant)
- 
-    Call xlhide
      startrow = 2 ' 起始行
         If IsArray(idcols) And IsArray(idx) Then
             For j = 1 To UBound(idcols)
@@ -142,6 +136,7 @@ CleanUp:     ' 恢复Excel设置
     On Error GoTo 0
 End Sub
 Sub inject_bom(ByVal idata As Variant, Optional ByVal idcols As Variant, Optional ByVal idx As Variant)
+    xlhide
      Call inject_ary(idata, idcols, idx)
          Dim bomrowcnt: bomrowcnt = UBound(idata, 1)
          startrow = 2
@@ -194,7 +189,6 @@ Public Function extract_ary()
     cntx = ws.Cells(ws.Rows.count, 1).End(xlUp).Row
     cnty = 14
  ReDim resultAry(1 To cntx, 1 To cnty)
- 
   For idrow = 2 To cntx
          Dim temparr As Variant
             temparr = ws.Rows(idrow).Resize(1, cnty).value
@@ -206,6 +200,7 @@ Public Function extract_ary()
 End Function
 
 Private Sub LvMg()
+xlhide
     Dim row_num As Long ' 声明 row_num 变量
     Dim cell ' 声明 cell 变量
      With ws
@@ -243,7 +238,7 @@ xlhide
      ws.Name = "BOM_xx" & Format(Now, "yymmdd_hhmm")
       startrow = 5
      Call set_Header(hdgx, startrow - 1)
-     lastrow = counter + startrow - 1
+     lastrow = g_counter + startrow - 1
      Dim cols
      cols = UBound(Data, 2)
      With ws
@@ -255,8 +250,7 @@ xlhide
             End With
         End If
          End With
-     counter = 0
-xlshow
+     g_counter = 0
 End Sub
 Sub inject_pic(ipath, pncol, Piccol)
         Dim i&, rng As Range

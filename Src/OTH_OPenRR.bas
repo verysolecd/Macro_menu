@@ -64,9 +64,9 @@ Sub LockAllFiles_Internal()
     
     For i = 1 To docs.count
         Set doc = docs.item(i)
-        If doc.FullName <> "" Then
+        If doc.fullName <> "" Then
             ' 强制设为只读
-            SetAttr doc.FullName, vbReadOnly
+            SetAttr doc.fullName, vbReadOnly
             Err.Clear
         End If
     Next i
@@ -94,7 +94,7 @@ Sub UnlockSelection()
 
             Set doc = prod.ReferenceProduct.Parent
             If Not doc Is Nothing Then
-                docPath = doc.FullName
+                docPath = doc.fullName
                 If docPath <> "" Then
                     SetAttr docPath, vbNormal
                     If Err.Number = 0 Then
@@ -139,9 +139,9 @@ Sub CheckAndSaveUnlocked()
         Set doc = docs.item(i)
         
         ' 仅处理已保存过的、有路径的文件
-        If doc.FullName <> "" Then
+        If doc.fullName <> "" Then
             ' 获取文件属性
-            attr = GetAttr(doc.FullName)
+            attr = GetAttr(doc.fullName)
             
             ' ??? 核心判断 ???
             ' 检查文件是否包含 vbReadOnly 属性
@@ -152,7 +152,7 @@ Sub CheckAndSaveUnlocked()
                 If doc.ReadOnly Then
                     ' 如果是CATIA只读模式打开的，必须用SaveAs覆盖原文件
                     ' 因为我们这一步确认了硬盘是可写的，所以SaveAs会成功
-                    doc.SaveAs doc.FullName
+                    doc.SaveAs doc.fullName
                 Else
                     ' 如果是正常模式，直接Save
                     doc.Save

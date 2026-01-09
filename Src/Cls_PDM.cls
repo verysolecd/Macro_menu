@@ -32,47 +32,29 @@ Private Const eklname = "sumVol"
 Private Const ekldesc = "sum of vol of bodylist"
 Private Const eklstr = "let lst(list) set lst=Part_info\iBodys   let V (Volume) V=0 let i(integer) i=1 for i while i<=lst.Size() {V=V+smartVolume(lst.GetItem(i)) i=i+1} Part_info\sumVol =V"  '使用Const关键字定义常量
 Private Sub Class_Initialize()
-     Set allPN = KCL.InitDic
+     Set g_allPN = KCL.InitDic
      Set mProduct = Nothing
       iniarr
         On Error GoTo errorhandler
-        
-        
-        
-        If CATIA.Documents.count = 0 Then
-          MsgBox "当前未打开CATIA文档"
-          
-          
-          Else
-          
-          Set rootDoc = CATIA.ActiveDocument
-            Set rootprd = CATIA.ActiveDocument.Product
-            If Not rootDoc Is Nothing Then
-            Set msel = CATIA.ActiveDocument.Selection: msel.Clear
-            End If
-        
-        
+If CATIA.Documents.count = 0 Then
+    MsgBox "当前未打开CATIA文档"
+Else
+    Set rootDoc = CATIA.ActiveDocument
+    Set rootprd = CATIA.ActiveDocument.Product
+        If Not rootDoc Is Nothing Then
+        Set msel = CATIA.ActiveDocument.Selection: msel.Clear
+        End If
         If Not rootprd Is Nothing Then
-            rootprd.ApplyWorkMode (3)
+        rootprd.ApplyWorkMode (3)
         End If
-          
-        End If
-           
-             
-        On Error GoTo 0
-        
-        
-       
-        
-        
-        
+End If
+On Error GoTo 0
 errorhandler:
     If Err.Number <> 0 Then
         Err.Clear
         MsgBox "CATIA 程序错误：" & Err.Description, vbCritical
         Exit Sub
     End If
-    
 End Sub
 Sub iniarr()
     Att(1) = "Mass"
@@ -118,7 +100,7 @@ Public Function Assmass(oprd)
 Public Function attLv2Prd(oprd)
     Dim tempdata, i, j
     tempdata = infoPrd(oprd)
-    If counter = 1 Then
+    If g_counter = 1 Then
         ReDim bigbom(1 To gfn, 0 To UBound(tempdata)) '初始化所有bigbom元素为""
             For i = 1 To gfn
                 For j = 0 To UBound(tempdata)
@@ -127,20 +109,20 @@ Public Function attLv2Prd(oprd)
             Next i
     End If
    For i = 1 To UBound(tempdata)
-       bigbom(counter, i) = tempdata(i)
+       bigbom(g_counter, i) = tempdata(i)
    Next
   
    Dim children As Products: Set children = oprd.Products
             If children.count > 0 Then
                 For j = 1 To children.count
-                    counter = counter + 1
+                    g_counter = g_counter + 1
                     tempdata = infoPrd(children.item(j))
                    For i = 1 To UBound(tempdata)
-                        bigbom(counter, i) = tempdata(i)
+                        bigbom(g_counter, i) = tempdata(i)
                    Next
                 Next
             End If
-  ReDim finalbom(1 To counter, 1 To UBound(tempdata))
+  ReDim finalbom(1 To g_counter, 1 To UBound(tempdata))
       For i = 1 To UBound(finalbom, 1)
         For j = 1 To UBound(finalbom, 2)
           
@@ -149,15 +131,13 @@ Public Function attLv2Prd(oprd)
         Next
       Next
         attLv2Prd = finalbom
-        counter = 1
+        g_counter = 1
 End Function
 
-Public Function recurInfoPrd(oprd, LV)
-
+Public Function recurInfoPrd(oprd, lv)
     Dim tempdata, i, j
     tempdata = infoPrd(oprd) '此数组是1-9
-    
-    If counter = 1 Then  '初始化所有bigbom元素为""
+    If g_counter = 1 Then  '初始化所有bigbom元素为""
         ReDim bigbom(1 To gfn, 0 To UBound(tempdata))
             For i = 1 To gfn
                 For j = 0 To UBound(tempdata)
@@ -168,9 +148,9 @@ Public Function recurInfoPrd(oprd, LV)
     '===================
    For i = 0 To UBound(tempdata)   'tempdata 数组是1-9
         Select Case i
-             Case 0: bigbom(counter, i) = LV
+             Case 0: bigbom(g_counter, i) = lv
              Case Else:
-                 bigbom(counter, i) = tempdata(i)
+                 bigbom(g_counter, i) = tempdata(i)
              End Select
    Next
        Dim children: Set children = oprd.Products
@@ -179,13 +159,13 @@ Public Function recurInfoPrd(oprd, LV)
                 For i = 1 To children.count
                     If bdict.Exists(children.item(i).PartNumber) = False Then
                        bdict(children.item(i).PartNumber) = 1
-                       counter = counter + 1
-                       recurInfoPrd children.item(i), LV + 1
+                       g_counter = g_counter + 1
+                       recurInfoPrd children.item(i), lv + 1
                     End If
                 Next
             End If
             
-    ReDim finalbom(1 To counter, 0 To UBound(tempdata))
+    ReDim finalbom(1 To g_counter, 0 To UBound(tempdata))
       For i = 1 To UBound(finalbom, 1)
         For j = 0 To UBound(finalbom, 2)
             finalbom(i, j) = bigbom(i, j)
@@ -195,14 +175,13 @@ Public Function recurInfoPrd(oprd, LV)
 End Function
 
 
-Public Function recurPrd(oprd, LV)
+Public Function recurPrd(oprd, lv)
     Dim mapping As Variant
     mapping = Array(0, 0, 0, 1, 2, 3, 4, 9, 7, 0, 5, 8, 0, 5, 6, 0, 0, 0)
-    
     Dim bomsize
         bomsize = UBound(mapping)
     Dim i, j
-        If counter = 1 Then
+        If g_counter = 1 Then
         ReDim bigbom(1 To gfn, 1 To bomsize)
             For i = 1 To gfn
                 For j = 1 To bomsize
@@ -214,13 +193,13 @@ Public Function recurPrd(oprd, LV)
     tempdata = infoPrd(oprd)
    '=====生成行数据 === bom行数据直接按最大列处理得到一行数据
         For i = 1 To UBound(bigbom, 2)  '从1到最大列
-            bigbom(counter, i) = ""  '默认赋值为空
+            bigbom(g_counter, i) = ""  '默认赋值为空
             Select Case i
-                Case 1: bigbom(counter, i) = counter  'counter是全局变量,遍历BOM时为1
-                Case 2: bigbom(counter, i) = LV
+                Case 1: bigbom(g_counter, i) = g_counter  'g_counter是全局变量,遍历BOM时为1
+                Case 2: bigbom(g_counter, i) = lv
                 Case Else
                     If mapping(i) <= UBound(tempdata) And mapping(i) >= LBound(tempdata) Then '当对应列map值在tempdata元素范围内，
-                        bigbom(counter, i) = tempdata(mapping(i))
+                        bigbom(g_counter, i) = tempdata(mapping(i))
                     End If
             End Select
            Next
@@ -232,12 +211,12 @@ Public Function recurPrd(oprd, LV)
                 For i = 1 To children.count
                     If bdict.Exists(children.item(i).PartNumber) = False Then
                        bdict(children.item(i).PartNumber) = 1
-                       counter = counter + 1
-                       recurPrd children.item(i), LV + 1
+                       g_counter = g_counter + 1
+                       recurPrd children.item(i), lv + 1
                     End If
                 Next
             End If
-  ReDim finalbom(1 To counter, 1 To 17)
+  ReDim finalbom(1 To g_counter, 1 To 17)
   For i = 1 To UBound(finalbom, 1)
     For j = 1 To UBound(finalbom, 2)
         finalbom(i, j) = bigbom(i, j)
@@ -494,7 +473,6 @@ Private Function getAtt(iName, collection)
         End If
     On Error GoTo 0
 End Function
-
 Private Function count_me(oprd)  '获取兄弟字典
      Dim i, oDict, QTy, pn
          QTy = 1
@@ -514,7 +492,6 @@ Private Function count_me(oprd)  '获取兄弟字典
           End If
     count_me = QTy
 End Function
-
 Public Function catSelx(prompt As String) As collection
     Set catSelx = New collection
     msel.Clear
@@ -528,7 +505,7 @@ Public Function catSelx(prompt As String) As collection
     End If
     msel.Clear
 End Function
-Public Function getiPrd()    '获取要读取或修改的  全局变量 gPrd定义
+Public Function getiPrd()    '获取要读取或修改的产品
   Dim oprd: Set oprd = Nothing
     Dim btn, bTitle, bResult
         bTitle = "请选择产品"
@@ -549,18 +526,14 @@ Public Function getiPrd()    '获取要读取或修改的  全局变量 gPrd定义
         Set getiPrd = oprd
         Set oprd = Nothing
 End Function
-Public Sub freePrd()
-     Set gPrd = Nothing
 
-End Sub
-
-Public Function gxBom(oprd, LV)
+Public Function gxBom(oprd, lv)
     Dim mapping As Variant
     mapping = Array(0, 0, 0, 0, 0, 0, 1, 0, 3, 2, 0, 9, 0, 7, 0, 5, 0)
     Dim bomsize
         bomsize = UBound(mapping)
     Dim i, j
-        If counter = 1 Then
+        If g_counter = 1 Then
         ReDim bigbom(1 To gfn, 1 To bomsize)
             For i = 1 To gfn
                 For j = 1 To bomsize
@@ -572,21 +545,21 @@ Public Function gxBom(oprd, LV)
     tempdata = infoPrd(oprd)
    '=====生成行数据 === bom行数据直接按最大列处理得到一行数据
         For i = 1 To UBound(bigbom, 2)  '从1到最大列
-            bigbom(counter, i) = ""  '默认赋值为空
+            bigbom(g_counter, i) = ""  '默认赋值为空
             Select Case i
-                Case 1: bigbom(counter, i) = counter  'counter是全局变量,遍历BOM时为1
+                Case 1: bigbom(g_counter, i) = g_counter  'g_counter是全局变量,遍历BOM时为1
                 Case 2, 3, 4, 5:
-                    If LV <= 4 Then
-                        If LV = i - 1 Then
-                            bigbom(counter, i) = LV
+                    If lv <= 4 Then
+                        If lv = i - 1 Then
+                            bigbom(g_counter, i) = lv
                         End If
                      Else
-                     bigbom(counter, i) = "error"
+                     bigbom(g_counter, i) = "error"
                     End If
             
                 Case Else
                     If mapping(i) <= UBound(tempdata) And mapping(i) >= LBound(tempdata) Then '当对应列map值在tempdata元素范围内，
-                        bigbom(counter, i) = tempdata(mapping(i))
+                        bigbom(g_counter, i) = tempdata(mapping(i))
                     End If
             End Select
            Next
@@ -598,12 +571,12 @@ Public Function gxBom(oprd, LV)
                 For i = 1 To children.count
                     If bdict.Exists(children.item(i).PartNumber) = False Then
                        bdict(children.item(i).PartNumber) = 1
-                       counter = counter + 1
-                       gxBom children.item(i), LV + 1
+                       g_counter = g_counter + 1
+                       gxBom children.item(i), lv + 1
                     End If
                 Next
             End If
-  ReDim finalbom(1 To counter, 1 To 16)
+  ReDim finalbom(1 To g_counter, 1 To 16)
   For i = 1 To UBound(finalbom, 1)
     For j = 1 To UBound(finalbom, 2)
         finalbom(i, j) = bigbom(i, j)
@@ -611,8 +584,6 @@ Public Function gxBom(oprd, LV)
   Next
         gxBom = finalbom
 End Function
-
-
 ' 属性：当前产品
 Public Property Get CurrentProduct() As Object
     Set CurrentProduct = mProduct
@@ -622,3 +593,6 @@ Public Property Set CurrentProduct(ByVal newProduct As Object)
     Set mProduct = newProduct
     RaiseEvent ProductChanged
 End Property
+Public Sub freePrd()
+     Set pdm.CurrentProduct = Nothing
+End Sub

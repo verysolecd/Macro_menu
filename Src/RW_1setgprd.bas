@@ -7,15 +7,10 @@ Attribute VB_Name = "RW_1setgprd"
 
 Sub setgprd()
     If Not CanExecute("ProductDocument") Then Exit Sub
-    If pdm Is Nothing Then
-        Set pdm = New Cls_PDM
-    End If
-
-    Set gPrd = pdm.getiPrd()
-    Set pdm.CurrentProduct = gPrd ' 这会自动触发事件
-
-        If Not gPrd Is Nothing Then
-           imsg = "你选择的产品是" & gPrd.PartNumber
+    If pdm Is Nothing Then Set pdm = New Cls_PDM
+    Set pdm.CurrentProduct = pdm.getiPrd()
+        If Not pdm.CurrentProduct Is Nothing Then
+           imsg = "被操作产品是" & pdm.CurrentProduct.PartNumber
             MsgBox imsg
         Else
              MsgBox "已退出，程序将结束"

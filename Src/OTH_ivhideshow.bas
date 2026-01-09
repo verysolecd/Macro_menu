@@ -13,9 +13,9 @@ Sub CATMain()
         Set pdm = New Cls_PDM
     End If
     
-    Set oSel = pdm.msel
-    Dim oDoc, cGroups, oGroup
-    Set oDoc = CATIA.ActiveDocument
+    Set osel = pdm.msel
+    Dim odoc, cGroups, oGroup
+    Set odoc = CATIA.ActiveDocument
     Set cGroups = rootprd.GetTechnologicalObject("Groups")
     Set oGroup = cGroups.AddFromSel    ' 当前选择产品添加到组
     
@@ -26,7 +26,7 @@ Sub CATMain()
       cGroups.Remove 1
       Set cGroups = Nothing
       Dim sel
-    Set sel = oDoc.Selection
+    Set sel = odoc.Selection
     Set VisPropertySet = sel.VisProperties
     sel.VisProperties.SetShow 1  '' 将所有选中元素设置为不可见
     'VisPropertySet.SetShow 0

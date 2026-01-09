@@ -1,19 +1,18 @@
 Attribute VB_Name = "global_var"
-Public gPrd As Object
+
 Public rootDoc
-Public rootprd  As Object  'È«¾Ö²úÆ·obj
-Public startrow, lastrow  'È«¾ÖexcelĞĞ¶¨Òå
-Public xlAPP As Object  'È«¾Öexcelcom×é¼ş
+Public rootprd  As Object
+Public startrow, lastrow
+Public xlAPP As Object
 Public gwb As Object
 Public gws  As Object
 Public pdm As New Cls_PDM
-Public xlm As Object
-Public allPN As Object
-Public counter As Integer
+Public xlm As New Cls_XLM
+Public g_allPN As Object
+Public g_counter As Integer
 Public Const gfn As Integer = 400
 Public gPic_Path
 
-Public uuus
 
 
 Sub clearall()
@@ -21,15 +20,15 @@ Sub clearall()
 End Sub
 
 'Dim btn, bTitle, bResult
-'imsg = "½«±¸·İµ½" & bckpath "ÄúÈ·ÈÏÂğ"
+'imsg = "å°†å¤‡ä»½åˆ°" & bckpath "æ‚¨ç¡®è®¤å—"
 
 'btn = vbYesNo + vbExclamation
 'bResult = MsgBox(imsg, btn, "bTitle")  ' Yes(6),No(7),cancel(2)
 
 'Select Case bResult
-'Case 7: Exit Sub '===Ñ¡Ôñ¡°·ñ¡±====
-'Case 6  '===Ñ¡Ôñ¡°ÊÇ¡±====
-'Case 2  '===Ñ¡Ôñ¡°È¡Ïû¡±====
+'Case 7: Exit Sub '===é€‰æ‹©â€œå¦â€====
+'Case 6  '===é€‰æ‹©â€œæ˜¯â€====
+'Case 2  '===é€‰æ‹©â€œå–æ¶ˆâ€====
 
 
 

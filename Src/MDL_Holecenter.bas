@@ -11,8 +11,8 @@ Sub ctrhole()
     
   If Not CanExecute("PartDocument") Then Exit Sub
 
-    Set oDoc = CATIA.ActiveDocument
-    Set oPart = oDoc.part
+    Set odoc = CATIA.ActiveDocument
+    Set oPart = odoc.part
     Set HSF = oPart.HybridShapeFactory
     '======= ÒªÇóÑ¡Ôñbody
     Dim imsg, filter(0)

@@ -17,7 +17,7 @@ Dim wds, WD
     End If
     For i = 1 To wds.count
         Set WD = wds.item(i)
-        If KCL.isobjtype(WD.Parent, "PartDocument") Then
+        If KCL.IsObj_T(WD.Parent, "PartDocument") Then
             WD.Close
         End If
     Next

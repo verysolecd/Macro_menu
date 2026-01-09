@@ -13,15 +13,15 @@ Sub pt2xl()
         Exit Sub
     End If
     
-    Dim oDoc
+    Dim odoc
     On Error Resume Next
-        Set oDoc = CATIA.ActiveDocument
+        Set odoc = CATIA.ActiveDocument
     On Error GoTo 0
     
-    Dim HSF:  Set HSF = oDoc.part.HybridShapeFactory
-    Dim HBS: Set HBS = oDoc.part.HybridBodies
-    Dim oSel: Set oSel = oDoc.Selection
-    oSel.Clear
+    Dim HSF:  Set HSF = odoc.part.HybridShapeFactory
+    Dim HBS: Set HBS = odoc.part.HybridBodies
+    Dim osel: Set osel = odoc.Selection
+    osel.Clear
     
     '=======要求选择点集和坐标
     Dim imsg, filter(0)
@@ -55,12 +55,12 @@ Sub pt2xl()
                 Dim fakept
                 Set fakept = HSF.AddNewPointCoordWithReference(0, 0, 0, opt)
                 oHB.AppendHybridShape fakept
-                oDoc.part.Update
+                odoc.part.Update
                fakept.GetCoordinates absCoord
-                  oSel.Clear
-                  oSel.Add fakept
-                  oSel.Delete
-                  oDoc.part.Update
+                  osel.Clear
+                  osel.Add fakept
+                  osel.Delete
+                  odoc.part.Update
                 If Not oAxi Is Nothing Then
                     fincoord = TransAxi(absCoord, oAxi)
                 Else

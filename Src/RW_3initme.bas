@@ -9,7 +9,7 @@ Attribute VB_Name = "RW_3initme"
 Sub iniThis()
  If Not KCL.CanExecute("ProductDocument,PartDocument") Then Exit Sub
  If pdm Is Nothing Then Set pdm = New Cls_PDM
-   Set allPN = KCL.InitDic(vbTextCompare): allPN.RemoveAll  'allPn 是全局变量，不需要传递
+   Set g_allPN = KCL.InitDic(vbTextCompare): g_allPN.RemoveAll  'g_allPN 是全局变量，不需要传递
     If KCL.checkDocType("PartDocument") Then
         Call initPrtdoc(CATIA.ActiveDocument)
         Set pdm = Nothing
@@ -19,7 +19,7 @@ Sub iniThis()
      If Not iprd Is Nothing Then
         On Error Resume Next
                Call recurInitPrd(iprd)
-               allPN.RemoveAll
+               g_allPN.RemoveAll
           If Error.Number = 0 Then
                    MsgBox "零件模板已经应用"
              Else
@@ -44,8 +44,8 @@ Sub initPrdDoc(doc)
 End Sub
 Sub recurInitPrd(oprd)
     If pdm Is Nothing Then Set pdm = New Cls_PDM
-        If allPN.Exists(oprd.PartNumber) = False Then
-            allPN(oprd.PartNumber) = 1
+        If g_allPN.Exists(oprd.PartNumber) = False Then
+            g_allPN(oprd.PartNumber) = 1
             Call pdm.initPrd(oprd)
         End If
     If oprd.Products.count > 0 Then

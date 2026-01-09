@@ -10,15 +10,15 @@ Sub sendDir()
 
     If Not CanExecute("ProductDocument,DrawingDocument") Then Exit Sub
     CATIA.DisplayFileAlerts = True
-    Dim oDoc: Set oDoc = CATIA.ActiveDocument
-    ipath_name = oDoc.path & "\" & oDoc.Name
+    Dim odoc: Set odoc = CATIA.ActiveDocument
+    ipath_name = odoc.path & "\" & odoc.Name
     Dim opath
-        opath = KCL.ofParentPath(oDoc.path)
+        opath = KCL.ofParentPath(odoc.path)
     Dim pn
-        If KCL.isobjtype(oDoc, "DrawingDocument") Then
-            pn = strbflast(oDoc.Name, ".")
+        If KCL.IsObj_T(odoc, "DrawingDocument") Then
+            pn = strbflast(odoc.Name, ".")
         Else
-            pn = oDoc.Product.PartNumber
+            pn = odoc.Product.PartNumber
         End If
         
     Dim bckFolderName As String
@@ -26,7 +26,7 @@ Sub sendDir()
     bckFolderName = KCL.strbflast(fname, "_") & "_" & KCL.timestamp("min")
     bckpath = opath & bckFolderName
     
-    If KCL.isExists(oDoc.path) Then
+    If KCL.isExists(odoc.path) Then
     
     Dim btn, bTitle, bResult
     imsg = "将备份到" & bckpath & "您确认吗？"
@@ -62,9 +62,9 @@ End Sub
 
 Sub mdlog()
 
-    Dim oDoc, currPath
-    Set oDoc = CATIA.ActiveDocument
-    currPath = IIf(oDoc.path = "", "", oDoc.path)
+    Dim odoc, currPath
+    Set odoc = CATIA.ActiveDocument
+    currPath = IIf(odoc.path = "", "", odoc.path)
     mdocPath = currPath & ".md"
     
     

@@ -11,10 +11,10 @@ Sub pt2xl()
     If Not CanExecute("PartDocument") Then
         Exit Sub
     End If
-    Dim oDoc: Set oDoc = CATIA.ActiveDocument
-    Dim HSF:  Set HSF = oDoc.part.HybridShapeFactory
-    Dim HBS: Set HBS = oDoc.part.HybridBodies
-    Dim oSel: Set oSel = oDoc.Selection
+    Dim odoc: Set odoc = CATIA.ActiveDocument
+    Dim HSF:  Set HSF = odoc.part.HybridShapeFactory
+    Dim HBS: Set HBS = odoc.part.HybridBodies
+    Dim osel: Set osel = odoc.Selection
     '=======要求选择点集和坐标
     Dim imsg
     imsg = "请选择点所在的几何图形集"
@@ -50,13 +50,13 @@ Sub pt2xl()
                 Dim fakept
                 Set fakept = HSF.AddNewPointCoordWithReference(0, 0, 0, opt)
                 oHB.AppendHybridShape fakept
-                oDoc.part.Update
+                odoc.part.Update
                fakept.GetCoordinates absCoord
                
-                  oSel.Clear
-                  oSel.Add fakept
-                  oSel.Delete
-                  oDoc.part.Update
+                  osel.Clear
+                  osel.Add fakept
+                  osel.Delete
+                  odoc.part.Update
                 If Not oAxi Is Nothing Then
                     fincoord = TransAxi(absCoord, oAxi)
                 Else

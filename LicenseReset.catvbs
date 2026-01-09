@@ -1,0 +1,88 @@
+Language="VBSCRIPT"
+
+Sub CATMain()
+    ' Get the License Setting Controller
+    Dim settingCtrl
+    Set settingCtrl = CATIA.SettingControllers.Item("CATSysLicenseSettingCtrl")
+
+    ' Get the list of available licenses
+    Dim licenses_array
+    ' The first argument is checking mode (Default usually works for retrieval)
+    ' However, GetLicensesList signature might vary. 
+    ' Standard automation: GetLicensesList(oObj) is not standard. 
+    ' Usually we simply iterate known licenses or use GetLicensesList logic.
+    ' Let's try the standard method:
+    ' GetLicensesList(CATBSTR & ioAdminLevel, CATSafeArrayVariant & oLicenseList)
+    
+    Dim adminLevel
+    adminLevel = "User" 
+    
+    On Error Resume Next
+    settingCtrl.GetLicensesList adminLevel, licenses_array
+    
+    If Err.Number <> 0 Then
+        MsgBox "Error retrieving license list. " & Err.Description
+        Err.Clear
+        Exit Sub
+    End If
+    On Error GoTo 0
+
+    ' Disable All Licenses
+    Dim i
+    Dim licName
+    Dim anyDisabled
+    anyDisabled = False
+    
+    If IsArray(licenses_array) Then
+        For i = LBound(licenses_array) To UBound(licenses_array)
+            licName = licenses_array(i)
+            
+            ' Check status
+            Dim isEnabled
+            isEnabled = settingCtrl.GetLicense(licName)
+            
+            If isEnabled Then
+                settingCtrl.SetLicense licName, False
+                anyDisabled = True
+            End If
+        Next
+    End If
+
+    ' Enable Target License (Optional)
+    ' Uncomment and change "AL2.slt" or "AL2" to your desired license name
+    ' Const TargetLicense = "HD2.slt" 
+    ' If TargetLicense <> "" Then
+    '     settingCtrl.SetLicense TargetLicense, True
+    '     MsgBox "Enabled " & TargetLicense
+    ' End If
+    
+    ' Ask user for a license to enable (simple input)
+    Dim userLic
+    userLic = InputBox("All licenses have been unchecked." & vbCrLf & vbCrLf & _
+                       "Enter the name of the SPECIAL LICENSE you want to enable (e.g., AL2.slt, MD2.slt)." & vbCrLf & _
+                       "Leave empty to just disable all.", "Select License")
+                       
+    If userLic <> "" Then
+        ' Try to enable
+        On Error Resume Next
+        settingCtrl.SetLicense userLic, True
+        If Err.Number <> 0 Then
+            MsgBox "Failed to enable license: " & userLic & vbCrLf & "Error: " & Err.Description
+        Else
+            MsgBox "License " & userLic & " enabled."
+        End If
+        On Error GoTo 0
+    Else
+        If anyDisabled Then
+            MsgBox "All active licenses have been disabled."
+        Else
+            MsgBox "No active licenses were found to disable."
+        End If
+    End If
+
+    ' Save changes
+    settingCtrl.SaveRepository
+    
+    MsgBox "Configuration saved. Please RESTART CATIA for changes to take effect."
+
+End Sub

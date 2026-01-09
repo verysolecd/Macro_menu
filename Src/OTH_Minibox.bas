@@ -62,11 +62,11 @@ Sub CATMain()
     Dim bdy
         Set bdy = KCL.getItem("MinimumBox", workPt.bodies)
         If Not KCL.IsNothing(bdy) Then
-           Dim oSel: Set oSel = CATIA.ActiveDocument.Selection
-            oSel.Clear
-            oSel.Add bdy
-            oSel.Delete
-             oSel.Clear
+           Dim osel: Set osel = CATIA.ActiveDocument.Selection
+            osel.Clear
+            osel.Add bdy
+            osel.Delete
+             osel.Clear
         End If
     
     Set minBody = workPt.bodies.Add
@@ -295,7 +295,7 @@ Private Function getAxisPlaneBrepName( _
     ByVal planeNo As Long) _
     As String
     Dim intName As String
-    intName = ax.getItem("ModelElement").InternalName
+    intName = ax.getItem("ModelElement").internalName
     getAxisPlaneBrepName = _
         "RSur:(Face:(Brp:(" + intName + ";" + CStr(planeNo + 1) + ");None:();Cf11:());" + _
         "WithPermanentBody;WithoutBuildError;WithSelectingFeatureSupport;MFBRepVersion_CXR15)"

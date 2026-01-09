@@ -8,7 +8,7 @@ Attribute VB_Name = "ASM_CMP"
 
 Sub myCMP()
  If Not CanExecute("ProductDocument") Then Exit Sub
-Dim rootprd As Product
+Dim rPrd As Product
 Dim colls As Products
 Dim oWB As OptimizerWorkBench
 Dim oComps As PartComps
@@ -19,8 +19,8 @@ Set rtDoc = CATIA.ActiveDocument
 Set docs = CATIA.Documents
 Set oWB = rtDoc.GetWorkbench("OptimizerWorkBench")
 Set oComps = oWB.PartComps
-Set rootprd = rtDoc.Product
-Set colls = rootprd.Products
+Set rPrd = rtDoc.Product
+Set colls = rPrd.Products
  Dim imsg, filter(0)
     imsg = "请依次选择旧版本、新版本零件"
     filter(0) = "Product"
@@ -43,9 +43,9 @@ Set colls = rootprd.Products
              KCL.DeleteMe (filePath(i))
             Next
             For i = 0 To 1
-                        Set oDoc = docs.item(mapName(i)): oDoc.Activate
-                        oDoc.SaveAs filePath(i)
-                        oDoc.Close
+                        Set odoc = docs.item(mapName(i)): odoc.Activate
+                        odoc.SaveAs filePath(i)
+                        odoc.Close
             Next
                 On Error GoTo 0
                     Set Prdvariant = colls

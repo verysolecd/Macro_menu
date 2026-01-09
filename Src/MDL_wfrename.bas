@@ -22,12 +22,12 @@ Sub wfrename()
         Exit Sub
     End If
     
-    Dim oDoc
+    Dim odoc
     On Error Resume Next
-        Set oDoc = CATIA.ActiveDocument
+        Set odoc = CATIA.ActiveDocument
     On Error GoTo 0
     Dim str
-    str = TypeName(oDoc)
+    str = TypeName(odoc)
     If Not str = "PartDocument" Then
     MsgBox "没有打开的part"
     Exit Sub

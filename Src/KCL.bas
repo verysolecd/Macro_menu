@@ -2,7 +2,6 @@ Attribute VB_Name = "KCL"
 'Attribute VB_Name = "KCL"
 Option Explicit
 Private mSW& ' 秒表开始时间
-
 Private Declare PtrSafe Function OpenClipboard Lib "user32" (ByVal hwnd As LongPtr) As Long
 Private Declare PtrSafe Function EmptyClipboard Lib "user32" () As Long
 Private Declare PtrSafe Function CloseClipboard Lib "user32" () As Long
@@ -18,7 +17,19 @@ Private Declare PtrSafe Function SetClipboardData Lib "user32" (ByVal wFormat As
     Private Declare  Function SetForegroundWindow Lib "user32" (ByVal hwnd As Long) As Long
 #End If
 
-' 主程序入口 - 循环选择项目
+'*****计时相关函数*****
+' 启动秒表
+Sub SW_Start()
+    mSW = timeGetTime
+End Sub
+' 获取计时时间
+''' @return:Double(Unit:s)
+Function SW_GetTime#()
+    SW_GetTime = IIf(mSW = 0, -1, (timeGetTime - mSW) * 0.001)
+End Function
+
+'*****CATIA相关函数*****=================================================
+' 循环选择项目
 Sub CATMain()
     Dim msg$: msg = "请选择项目 : 按ESC键退出"
     Dim SI As AnyObject
@@ -29,28 +40,26 @@ Sub CATMain()
         Stop
     Loop
 End Sub
-'*****CATIA相关函数*****=================================================================================================
 ' 检查是否可以执行操作
 ''' @param:DocTypes-array(string),string 指定可执行操作的文档类型
 ''' @return:Boolean
 Function CanExecute(ByVal docTypes As Variant) As Boolean
     CanExecute = False
-    If CATIA.Windows.count < 1 Then
-        MsgBox "没有打开的窗口"
-        Exit Function
-    End If
+    If CATIA.Windows.count < 1 Then: MsgBox "没有打开的窗口": Exit Function
     If VarType(docTypes) = vbString Then
       docTypes = VBA.LCase(docTypes)
         docTypes = Split(docTypes, ",") '过滤器转数组
     End If
-    
     If Not checkFilterType(docTypes) Then Exit Function '过滤器检查，非数组则退出
-    Dim ErrMsg As String
-    ErrMsg = "不支持当前活动文档类型。" + vbNewLine + "(" + Join(docTypes, ",") + " 类型除外)"
+    
+   Dim ErrMsg As String: ErrMsg = "不支持当前文档类型。" + vbNewLine + "(仅支持" + Join(docTypes, ",") + ")"
     CanExecute = checkDocType(docTypes)
     If Not CanExecute Then MsgBox ErrMsg, vbExclamation + vbOKOnly
 End Function
+' 检查文档类型
+''' @param:DocTypes-指定的文档类型
 Function checkDocType(ByVal docTypes As Variant)
+    If CATIA.Windows.count < 1 Then: MsgBox "没有打开的窗口": Exit Function
     checkDocType = False
     If VarType(docTypes) = vbString Then
          docTypes = VBA.LCase(docTypes)
@@ -62,16 +71,13 @@ Function checkDocType(ByVal docTypes As Variant)
         On Error Resume Next
             Set ActDoc = CATIA.ActiveDocument
         On Error GoTo 0
-    If ActDoc Is Nothing Then
-        MsgBox "无打开的文档"
-        Exit Function
-    End If
+    If ActDoc Is Nothing Then: Exit Function
      If UBound(filter(docTypes, VBA.LCase(TypeName(ActDoc)))) < 0 Then '此处filter函数是VBA中比较后返回数组的函数
         Exit Function
     End If
     checkDocType = True
 End Function
-' 选择项目
+' 选择项目 /产品/零件/body/几何图形集等
 ''' @param:Msg-提示信息
 ''' @param:Filter-array(string),string 选择过滤器(默认为AnyObject)
 ''' @return:AnyObject
@@ -95,8 +101,7 @@ Function SelectElement(ByVal msg$, _
     If IsEmpty(filter) Then filter = Array("AnyObject")
     If VarType(filter) = vbString Then filter = strToAry(filter)
     If Not checkFilterType(filter) Then Exit Function
-    Dim sel As Variant: Set sel = CATIA.ActiveDocument.Selection
-    sel.Clear
+    Dim sel: Set sel = CATIA.ActiveDocument.Selection: sel.Clear
     Select Case sel.SelectElement2(filter, msg, False)
         Case "Cancel", "Undo", "Redo"
              Set SelectElement = Nothing
@@ -105,16 +110,6 @@ Function SelectElement(ByVal msg$, _
     Set SelectElement = sel.item(1)
     sel.Clear
 End Function
-' ==  一些其他的选择方式
-'  Dim iType(0)
-'    iType(0) = "Product"
-'        MsgBox prompt
-'    If oSel.SelectElement2(iType, prompt, False) = "Normal" Then
-'        If oSel.count = 1 Then
-'            Set catSel1 = oSel.item(1).LeafProduct
-'        End If
-'    End If
-' ===================================
 
 ' 获取内部名称
 ''' @param:AOj-AnyObject
@@ -123,18 +118,17 @@ Function GetInternalName$(aoj)
     If IsNothing(aoj) Then
         GetInternalName = Empty: Exit Function
     End If
-    GetInternalName = aoj.getItem("ModelElement").InternalName
+    GetInternalName = aoj.getItem("ModelElement").internalName
 End Function
 
-' 获取指定类型的父对象
+' 获取obj的特定类型的父对象
 ''' @param:anyObj-AnyObject
 ''' @param:T-String
 ''' @return:AnyObject
 Function GetParent_Of_T( _
                         ByVal anyObj As AnyObject, _
                         ByVal t As String) As AnyObject
-    Dim anyObjName As String
-    Dim parentName As String
+    Dim anyObjName, parentName As String
     On Error Resume Next
         Set anyObj = asDisp(anyObj)
         anyObjName = anyObj.Name
@@ -156,6 +150,7 @@ Private Function asDisp(o As INFITF.CATBaseDispatch) As INFITF.CATBaseDispatch
     Set asDisp = o
 End Function
 
+'========================数组处理==========================================================================
 ' 获取数组指定范围的元素
 ''' @param:Ary-Variant(Of Array)
 ''' @param:StartIdx-Long
@@ -172,7 +167,8 @@ Function GetRangeAry(ByVal ary As Variant, ByVal startIdx&, ByVal endIdx&) As Va
         rngAry(i - startIdx) = ary(i)
     Next
     GetRangeAry = rngAry
-End Function ' 检查是否为字符串数组
+End Function
+' 检查是否为字符串数组
 Private Function IsStringAry(ByVal ary As Variant) As Boolean
     IsStringAry = False
     If Not IsArray(ary) Then Exit Function
@@ -182,10 +178,9 @@ Private Function IsStringAry(ByVal ary As Variant) As Boolean
     Next
     IsStringAry = True
 End Function
-' 将字符串转换为变体数组
+' 将字符串转换为数组变量
 Private Function strToAry(ByVal s$) As Variant
     Dim ary As Variant: ary = Split(s, ",")
-    
     Dim oAry() As Variant: ReDim oAry(UBound(ary))
     Dim i&
     For i = 0 To UBound(ary)
@@ -193,7 +188,7 @@ Private Function strToAry(ByVal s$) As Variant
     Next
     strToAry = oAry
 End Function
-' 检查过滤器类型是否有效
+' 检查过滤器类型是否有效（是字符串数组）
 Private Function checkFilterType(ByVal ary As Variant) As Boolean
     checkFilterType = False
     Dim ErrMsg$: ErrMsg = "过滤器类型无效" + vbNewLine + _
@@ -205,50 +200,51 @@ Private Function checkFilterType(ByVal ary As Variant) As Boolean
     End If
     checkFilterType = True
 End Function
-'*****通用相关函数*****
+
+
+
+'=========================================通用函数========================================
 ' 检查对象是否为Nothing
 ''' @param:OJ-Variant(Of Object)
 ''' @return:Boolean
 Function IsNothing(ByVal oj As Variant) As Boolean
     IsNothing = oj Is Nothing
 End Function
-
 ' 检查对象是否为指定类型
 ''' @param:OJ-Object
 ''' @param:T-String
 ''' @return:Boolean
-Function isobjtype(ByVal oj As Object, ByVal t$) As Boolean
-    isobjtype = IIf(TypeName(oj) = t, True, False)
+Function IsObj_T(ByVal oj As Object, ByVal t$) As Boolean
+    IsObj_T = IIf(TypeName(oj) = t, True, False)
 '    MsgBox TypeName(oj)
 End Function
-
-Public Function getItem(iName, colls)
- Dim itm ' 正确声明数组
-    Set itm = Nothing
-    On Error Resume Next
-        Set itm = colls.item(iName)
-            Err.Clear
-            Err.Number = 0
-    On Error GoTo 0
-   Set getItem = itm
-    Set itm = Nothing
-End Function
+'Public Function getItem(iName, colls)
+' Dim itm ' 正确声明数组
+'    Set itm = Nothing
+'    On Error Resume Next
+'        Set itm = colls.item(iName)
+'            Err.Clear
+'            Err.Number = 0
+'    On Error GoTo 0
+'   Set getItem = itm
+'    Set itm = Nothing
+'End Function
 
 Public Function getSearch(ByRef iDoc, ByRef ifilter As Variant)
     Set getSearch = Nothing
       On Error Resume Next
-             Dim oSel As Selection, i
-             Set oSel = iDoc.Selection
-              oSel.Clear
+             Dim osel As Selection, i
+             Set osel = iDoc.Selection
+              osel.Clear
     Select Case TypeName(ifilter)
         Case "string"
-        With oSel
+        With osel
             .Clear
             .Search (ifilter)
             .VisProperties.SetShow 1
         End With
     End Select
-        Set getSearch = oSel
+        Set getSearch = osel
 End Function
 
 '*****数组相关函数*****
@@ -495,16 +491,7 @@ Function ReadFile(ByVal path$) As Variant
     End With
     On Error GoTo 0
 End Function
-'*****计时相关函数*****
-' 启动秒表
-Sub SW_Start()
-    mSW = timeGetTime
-End Sub
-' 获取计时时间
-''' @return:Double(Unit:s)
-Function SW_GetTime#()
-    SW_GetTime = IIf(mSW = 0, -1, (timeGetTime - mSW) * 0.001)
-End Function
+
 
 Public Function GetInput(msg) As String
     Dim UserInput As String
@@ -633,11 +620,7 @@ Sub Appendtext(ByVal tfile As Object, _
     tfile.WriteLine (iText)
     Set tfile = Nothing
 End Sub
-
-
-' 获取语言
-'return-ISO 639-1 code
-'https://ja.wikipedia.org/wiki/ISO_639-1%E3%82%B3%E3%83%BC%E3%83%89%E4%B8%80%E8%A6%A7
+' 获取CATIA 程序语言
 Function GetLanguage() As String
     GetLanguage = "non"
     If CATIA.Windows.count < 1 Then Exit Function
@@ -734,7 +717,7 @@ Function ActivateExistingWindow(ByVal strPath As String) As Boolean
     Set shellApp = getshell
     For Each window In shellApp.Windows   ' 遍历所有资源管理器窗口
         On Error Resume Next
-        If VBA.InStr(VBA.UCase(window.FullName), "EXPLORER.EXE") > 0 Then   ' 检查是否为资源管理器窗口
+        If VBA.InStr(VBA.UCase(window.fullName), "EXPLORER.EXE") > 0 Then   ' 检查是否为资源管理器窗口
             Dim windowPath As String
             windowPath = window.Document.folder.Self.path      ' 获取窗口路径并比较（不区分大小写）
             If VBA.LCase(windowPath) = VBA.LCase(strPath) Then
@@ -901,4 +884,12 @@ Public Function getDecCode()
         DecCnt = mdl.CountOfDeclarationLines ' 获取声明行数
     If DecCnt < 1 Then Exit Function
         getDecCode = mdl.Lines(1, DecCnt) ' 获取声明代码
+End Function
+Function getmeas(itm)
+    Set getmeas = nothin
+   If Not itm Is Nothing Then
+       Dim odoc: Set odoc = CATIA.ActiveDocument
+      Dim spa:  Set spa = odoc.GetWorkbench("SPAWorkbench")
+        Set getmeas = spa.GetMeasurable(itm)
+    End If
 End Function

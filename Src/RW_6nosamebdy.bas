@@ -18,13 +18,12 @@ Sub nosamebdy()
     Exit Sub
  End If
   If pdm Is Nothing Then Set pdm = New Cls_PDM
-   
-  Set allPN = KCL.InitDic(vbTextCompare): allPN.RemoveAll  'allPn 是全局变量，不需要传递
+  Set g_allPN = KCL.InitDic(vbTextCompare): g_allPN.RemoveAll  'g_allPN 是全局变量，不需要传递
  Set iprd = pdm.getiPrd()
  If Not iprd Is Nothing Then
      On Error Resume Next
             Call nosamebdy_prds(iprd)
-            allPN.RemoveAll
+            g_allPN.RemoveAll
        If Error.Number = 0 Then
                 MsgBox "已删除重复实体"
           Else
@@ -34,13 +33,12 @@ Sub nosamebdy()
    Else
     MsgBox "没有产品或零件，将退出"
  End If
- 
- allPN.RemoveAll
+ g_allPN.RemoveAll
 End Sub
 Sub nosamebdy_prds(oprd)
     Dim Product
-        If allPN.Exists(oprd.PartNumber) = False Then
-            allPN(oprd.PartNumber) = 1
+        If g_allPN.Exists(oprd.PartNumber) = False Then
+            g_allPN(oprd.PartNumber) = 1
             Call nosamebdy_prd(oprd)
         End If
     If oprd.Products.count > 0 Then

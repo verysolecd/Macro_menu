@@ -12,7 +12,7 @@ Option Explicit
 Sub CATMain()
     If Not CanExecute("PartDocument") Then Exit Sub
     Dim BaseDoc As PartDocument: Set BaseDoc = CATIA.ActiveDocument
-    Dim BasePath As Variant: BasePath = Array(BaseDoc.FullName)
+    Dim BasePath As Variant: BasePath = Array(BaseDoc.fullName)
     Dim pt As part: Set pt = BaseDoc.part
     Dim LeafItems As collection: Set LeafItems = Get_LeafItemLst(pt.bodies)
     Dim msg As String
@@ -95,10 +95,10 @@ Private Sub Preparing_Copy(ByVal sel As Selection, ByVal itm As AnyObject)
         Case "OrderedGeometricalSet"
             Set ShpsLst = Get_All_OdrGeoSetShapes(itm, ShpsLst)
     End Select
-    Dim Shps As HybridShapes, Shp As HybridShape
+    Dim Shps As HybridShapes, shp As HybridShape
     For Each Shps In ShpsLst
-        For Each Shp In Shps
-            sel.Add Shp
+        For Each shp In Shps
+            sel.Add shp
         Next
     Next
 End Sub
