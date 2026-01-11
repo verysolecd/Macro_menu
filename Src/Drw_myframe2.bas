@@ -48,9 +48,6 @@ Private Name, m_MacroID, m_DisplayFormat As String
 Private m_RevRowHeight, m_checkRowHeight, m_RulerLength As Double
 Private m_Width, m_Height As Double
 Private X0, Y0, m_Offset As Double
-Private s0X, s0Y As Variant
-Private s1X, s1Y As Variant
-Private s2X, s2Y As Variant
 Private Nb_check, Nb_rv, m_NbOfRevision As Integer
 Private m_Col, m_Row, m_ColRev As Variant
 Sub CATMain()
@@ -86,12 +83,6 @@ m_RevRowHeight = 5
 m_checkRowHeight = 6
 m_RulerLength = 200
 
-
-s1X = Array(-180, -172)
-s1Y = Array(0, 36, 61)
-
-s2X = Array(-60, -50, -40, -30, -20)
-s2Y = Array(0, 6, 15, 20, 46, 46, 61)
 
 Nb_check = 6
 Nb_rv = 5
@@ -129,20 +120,15 @@ vtop = 61
     newLineV tb_X(4) + X0, tb_Y(1) + Y0, tb_Y(3) + Y0, "TitleBlock_Frame_line_Col_4"
     newLineV tb_X(5) + X0, tb_Y(0) + Y0, tb_Y(1) + Y0, "TitleBlock_Frame_line_Col_5"
     newLineV tb_X(6) + X0, tb_Y(1) + Y0, tb_Y(3) + Y0, "TitleBlock_Frame_line_Col_6"
-
-   
     
      'REV区域 行
     Rev_x = Array(-180, -164, -148, -134)
-    
         For i = 2 To Nb_check 'REV区域 行
             newLineH vleft + X0, tb_X(1) + X0, Y0 + m_checkRowHeight * i, "RevisionBlock_Line_row" & i
         Next
-        
         For i = 1 To UBound(Rev_x) 'REV区域 列
             newLineV Rev_x(i) + X0, Y0, tb_Y(6) + Y0, "RevisionBlock_Line_Col_1"
         Next
-        
     'Rev区域 行
         For i = 1 To Nb_rv - 1
            newLineH vleft + X0, tb_X(1) + X0, Y0 + tb_Y(4) + m_RevRowHeight * i, "RevisionBlock_Line_Row" & i

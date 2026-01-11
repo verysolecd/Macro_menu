@@ -50,8 +50,6 @@ Sub sendDir()
           End If
     End Select
 
-    
-    
     Else
         MsgBox bckFolder & vbNewLine & _
         "  " & vbNewLine & _

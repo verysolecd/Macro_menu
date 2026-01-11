@@ -16,9 +16,12 @@ Sub rvme()
 On Error GoTo errorhandler
         Dim odata As Variant: odata = xlm.extract_ary
 '--------map 修改ary------
-      Dim iCols: iCols = Array(0, 2, 4, 6, 8, 10, 12)
+    Dim iCols: iCols = Array(0, 2, 4, 6, 8, 10, 12)
     Dim outputArr As Variant, temparr(1 To 6)
     ReDim outputArr(1 To UBound(odata, 1), 1 To UBound(iCols))
+    
+    
+    
     For i = 1 To UBound(outputArr, 1) '-------遍历行
   '-------遍历获取X行要修改的数据
         For j = 1 To UBound(outputArr, 2) '-------遍历该行数组后输出一个一维数组作为要的修改参数
@@ -28,6 +31,7 @@ On Error GoTo errorhandler
         Next j
     '-------遍历按行区分要修改的产品
         Select Case i
+        Case 1
             Case 2  '第二行修改子总成
                 Call pdm.modatt(Prd2rv, temparr)
             Case Else '其他修改子产品
@@ -39,5 +43,5 @@ On Error GoTo errorhandler
 errorhandler:
     If Err.Number <> 0 Then: Err.Clear: MsgBox "程序错误：" & Err.Description, vbCritical
         Exit Sub
-    End If
+
 End Sub

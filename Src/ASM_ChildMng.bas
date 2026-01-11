@@ -7,7 +7,7 @@ Attribute VB_Name = "ASM_ChildMng"
 '{BackColor:}
 '------控件信息------------------------------
 ' %UI Label lbL_jpzcs  键盘造车手出品
-' %UI Button btn_copy 子件复制
+' %UI Button btn_copy 子件复制黏贴
 ' %UI Button btn_delete 删除子件
 '------其他------------------------------
 
