@@ -44,7 +44,7 @@ Exit Sub
   RC(0) = 3: RC(1) = 3
     On Error Resume Next
     Set CATIA = GetObject(, "CATIA.Application") '获取catia程序
-    Dim odoc: Set odoc = CATIA.ActiveDocument
+    Dim oDoc: Set oDoc = CATIA.ActiveDocument
     Set rootprd = CATIA.ActiveDocument.Product
          If Err.Number <> 0 Then
             MsgBox "请打开CATIA并打开你的产品，再运行本程序": Err.Clear
@@ -82,7 +82,7 @@ Function shotme()
      RC(0) = 3: RC(1) = 3
        On Error Resume Next
        Set CATIA = GetObject(, "CATIA.Application") '获取catia程序
-       Dim odoc: Set odoc = CATIA.ActiveDocument
+       Dim oDoc: Set oDoc = CATIA.ActiveDocument
        Set rootprd = CATIA.ActiveDocument.Product
             If Err.Number <> 0 Then
                MsgBox "请打开CATIA并打开你的产品，再运行本程序": Err.Clear

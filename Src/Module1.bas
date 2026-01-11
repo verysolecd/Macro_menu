@@ -5,15 +5,15 @@ Sub tube()
 '        Exit Sub
 '    End If
     Set mdict = KCL.InitDic
-        Set odoc = CATIA.ActiveDocument
-        Set spa = odoc.GetWorkbench("SPAWorkbench")
-        Set oprt = odoc.part
-        Set osel = odoc.Selection
+        Set oDoc = CATIA.ActiveDocument
+        Set spa = oDoc.GetWorkbench("SPAWorkbench")
+        Set oprt = oDoc.part
+        Set osel = oDoc.Selection
         Set oParas = oprt.Parameters
-        Set HSF = odoc.part.HybridShapeFactory
-        Set HBS = odoc.part.HybridBodies
+        Set HSF = oDoc.part.HybridShapeFactory
+        Set HBS = oDoc.part.HybridBodies
     
-Set oHB = oprt ' HBS.item(1)
+Set oHb = oprt ' HBS.item(1)
 Call GetShapesByRecursion(oprt)
 'Call GetShapesByParameters(oprt)
     Set lst = KCL.InitLst

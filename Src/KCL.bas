@@ -316,6 +316,16 @@ End Function
 Function GetFso() As Object
     Set GetFso = CreateObject("Scripting.FileSystemObject")
 End Function
+
+Public Function getRegexp() As Object
+    Dim regEx: Set regEx = CreateObject("VBScript.RegExp")
+    Set getRegexp = regEx
+End Function
+Public Function getshell()
+    Dim shellApp As Object
+    Set shellApp = CreateObject("Shell.Application")
+    Set getshell = shellApp
+End Function
 ' 创建Scripting.Dictionary对象
 ''' @param:CompareMode-Long
 ''' @return:Object(Of Dictionary)
@@ -445,7 +455,6 @@ On Error Resume Next
     Else
         Error.Clear
     End If
-    
     Set fso = Nothing
     Error.Clear
 On Error GoTo 0
@@ -491,8 +500,6 @@ Function ReadFile(ByVal path$) As Variant
     End With
     On Error GoTo 0
 End Function
-
-
 Public Function GetInput(msg) As String
     Dim UserInput As String
     UserInput = InputBox(msg, "输入提示")
@@ -677,18 +684,6 @@ Public Function GetApc() As Object
     Set GetApc = Apc
 End Function
 
-Public Function getRegexp() As Object
-    Dim regEx: Set regEx = CreateObject("VBScript.RegExp")
-    Set getRegexp = regEx
-End Function
-Public Function getshell()
-    Dim shellApp As Object
-    Set shellApp = CreateObject("Shell.Application")
-    Set getshell = shellApp
-
-End Function
-
-
 ' 智能打开路径（优先激活已存在窗口）
 Sub openpath(ByVal strPath As String)
     Dim fso As Object: Set fso = GetFso
@@ -699,9 +694,7 @@ Sub openpath(ByVal strPath As String)
         MsgBox "路径不存在: " & strPath, vbExclamation
         Exit Sub
     End If
-
     If Not ActivateExistingWindow(strPath) Then     ' 尝试激活已存在的窗口
-       
         If fso.FileExists(strPath) Then  ' 未找到已存在窗口，执行新打开操作
             OpenFileLocation strPath
         ElseIf fso.FolderExists(strPath) Then
@@ -825,7 +818,6 @@ End Function
 Function BtnClicked(key)
     BtnClicked = False
     Dim btnDic: Set btnDic = Nothing
-  
    On Error Resume Next
         Dim oFrm: Set oFrm = New Cls_DynaFrm
         Set btnDic = oFrm.Res
@@ -888,8 +880,8 @@ End Function
 Function getmeas(itm)
     Set getmeas = nothin
    If Not itm Is Nothing Then
-       Dim odoc: Set odoc = CATIA.ActiveDocument
-      Dim spa:  Set spa = odoc.GetWorkbench("SPAWorkbench")
+       Dim oDoc: Set oDoc = CATIA.ActiveDocument
+      Dim spa:  Set spa = oDoc.GetWorkbench("SPAWorkbench")
         Set getmeas = spa.GetMeasurable(itm)
     End If
 End Function

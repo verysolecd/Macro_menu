@@ -19,8 +19,8 @@ imsg = "请先选择body，再选择平面"
 filter(0) = "HybridBody"
 Set itm = KCL.SelectItem(imsg, filter)
 If Not itm Is Nothing Then
-    Set oHB = itm
-    Set oshapes = oHB.HybridShapes
+    Set oHb = itm
+    Set oshapes = oHb.HybridShapes
 Else
     Exit Sub
 End If

@@ -8,7 +8,6 @@ Attribute VB_Name = "OTH_designlog"
 
 Option Explicit
 Sub designlog()
-
     If Not KCL.CanExecute("ProductDocument") Then Exit Sub
     If pdm Is Nothing Then Set pdm = New Cls_PDM
     Dim oprd:  Set oprd = rootprd
@@ -16,15 +15,11 @@ Sub designlog()
     Dim tm: tm = KCL.timestamp("i")
     Dim imsg
      imsg = "请简短描述本次更新的设计内容"
-     
         str1 = str1 & vbCrLf & KCL.GetInput(imsg)
-        
         rootprd.DescriptionRef = str1
-        
     Debug.Print rootprd.DescriptionRef
     askdir.Show
     askdir.initFrmlog
-
 End Sub
 
 

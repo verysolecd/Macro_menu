@@ -11,8 +11,8 @@ Private oprt
 Sub newgeo()
  If Not CanExecute("PartDocument") Then Exit Sub
  
-    Set odoc = CATIA.ActiveDocument.Product
-    Set oprt = odoc.ReferenceProduct.Parent.part
+    Set oDoc = CATIA.ActiveDocument.Product
+    Set oprt = oDoc.ReferenceProduct.Parent.part
     Set colls = oprt.HybridBodies
     On Error Resume Next
     Set og = colls.item("Geo_sheet")

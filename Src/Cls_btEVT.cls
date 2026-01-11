@@ -54,9 +54,8 @@ End Sub
 
 Private Sub UpdateButtonText(ByVal up2New As Boolean, ary)
         mBtn.Caption = IIf(up2New, ary(0), ary(1))
-        MsgBox "CATIA.RefreshDisplay=" & CATIA.RefreshDisplay & vbNewLine _
-                                & "点击后" & mBtn.Caption
-
+'        MsgBox "CATIA.RefreshDisplay=" & CATIA.RefreshDisplay & vbNewLine _
+'                                & "点击后" & mBtn.Caption
 End Sub
 Private Function amWhite()
           amWhite = False

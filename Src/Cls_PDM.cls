@@ -17,6 +17,21 @@ Attribute VB_Exposed = False
 ' 7  recurPrd方法  调用infoPrd方法获取根产品及所有子产品的属性，返回为数组，数组第一列为编号，数组第二列为装配层级
 ' 对于产品发布谁？  质量mass来自usrp
 ' 对于零件发布谁？ usrp.mass part_info.thickness part_info.density usrp.material
+
+
+'hybridshape的类型识别
+' = 0 , Unknown
+' = 1 , Point
+' = 2 , Curve
+' = 3 , Line
+' = 4 , Circle
+' = 5 , Surface
+' = 6 , Plane
+' = 7 , Solid, Volume
+
+
+
+
 Option Explicit
 
 Public Event ProductChanged()  ' 事件声明
@@ -474,8 +489,8 @@ Private Function getAtt(iName, collection)
     On Error GoTo 0
 End Function
 Private Function count_me(oprd)  '获取兄弟字典
-     Dim i, oDict, QTy, pn
-         QTy = 1
+     Dim i, oDict, qty, pn
+         qty = 1
      On Error Resume Next
           If TypeOf oprd.Parent Is Products Then    '若有父级产品'获取兄弟字典
                    Dim oParent: Set oParent = oprd.Parent.Parent
@@ -488,9 +503,9 @@ Private Function count_me(oprd)  '获取兄弟字典
                                 oDict(pn) = 1
                             End If
                       Next
-            QTy = oDict(oprd.PartNumber)
+            qty = oDict(oprd.PartNumber)
           End If
-    count_me = QTy
+    count_me = qty
 End Function
 Public Function catSelx(prompt As String) As collection
     Set catSelx = New collection

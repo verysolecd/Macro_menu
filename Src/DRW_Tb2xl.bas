@@ -13,12 +13,12 @@ Sub Tb2xl()
           Exit Sub
      End If
 
-    Dim odoc As DrawingDocument
-    Set odoc = CATIA.ActiveDocument
+    Dim oDoc As DrawingDocument
+    Set oDoc = CATIA.ActiveDocument
     
 
     Dim oSHT As DrawingSheet
-    Set oSHT = odoc.Sheets.ActiveSheet
+    Set oSHT = oDoc.Sheets.ActiveSheet
     
     ' set drawing drwView
     Dim oView As DrawingView

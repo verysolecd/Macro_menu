@@ -6,62 +6,80 @@ Attribute VB_Name = "MDL_pt2xl_abscoord"
 '{Caption:批量点坐标}
 '{ControlTipText: 提示选择几何图形集后导出下面的点集}
 '{BackColor:}
+'----------弹窗信息=----------------------------------
+' %UI Label lbL_jpzcs  键盘造车手出品
+' %UI Button btnOK  直接导出
+' %UI Button btnWcoord 带相对坐标导出
+' %UI Button btncancel  取消
 
-Sub pt2xl()
-    If Not CanExecute("PartDocument") Then
+Private mDoc, HSF, mHBS, msel
+Private needtrans As Boolean
+
+Sub main()
+ If Not CanExecute("PartDocument") Then
         Exit Sub
     End If
-    Dim odoc: Set odoc = CATIA.ActiveDocument
-    Dim HSF:  Set HSF = odoc.part.HybridShapeFactory
-    Dim HBS: Set HBS = odoc.part.HybridBodies
-    Dim osel: Set osel = odoc.Selection
-    '=======要求选择点集和坐标
+Set mDoc = CATIA.ActiveDocument
+Set HSF = mDoc.part.HybridShapeFactory
+Set mHBS = mDoc.part.HybridBodies
+Set msel = mDoc.Selection
+needtrans = False
+
+Dim oFrm: Set oFrm = New Cls_DynaFrm
+    If oFrm.IsCancelled Then Exit Sub
+ 
+    Select Case oFrm.BtnClicked
+        Case "btnOK":
+            Call pt2xl(getHB())
+         Case "btnWcoord":
+                needtrans = True
+            Call pt2xl(getHB())
+         Case Else: Exit Sub
+         
+    End Select
+
+End Sub
+
+
+Function getHB()
     Dim imsg
-    imsg = "请选择点所在的几何图形集"
-    Dim oHB
-    Set oHB = KCL.SelectItem(imsg, HybridBody)
-    Dim oAxi
-    imsg = "请再选择坐标系"
-    Set oAxi = KCL.SelectItem(imsg, AxisSystem)
-    
-    If Not oHB Is Nothing Then
+       imsg = "请选择点所在的几何图形集"
+       Dim oHb
+       Set oHb = KCL.SelectItem(imsg, HybridBody)
+        Set getHB = oHb
+End Function
+
+Sub pt2xl(oHb)
+    If Not oHb Is Nothing Then
         Dim i, irow, ct
-        
-        Set oshapes = oHB.HybridShapes
+        Set oshapes = oHb.HybridShapes
         ct = oshapes.count
-        
         ReDim arr(0 To ct, 0 To 4)
-        irow = 0
-        arr(irow, 0) = "序号"
-        arr(irow, 1) = "名称"
-        arr(irow, 2) = "X"
-        arr(irow, 3) = "Y"
-        arr(irow, 4) = "Z"
-        
+        irow = 0  '获得表头
+            arr(irow, 0) = "序号"
+            arr(irow, 1) = "名称"
+            arr(irow, 2) = "X"
+            arr(irow, 3) = "Y"
+            arr(irow, 4) = "Z"
         irow = 1
-        
-        ReDim fincoord(2), absCoord(2)
-        
+        ReDim fincoord(2)
         For i = 1 To ct
             Set opt = oshapes.item(i)
             Dim str
             str = HSF.GetGeometricalFeatureType(opt)
             If str = 1 Then
-                Dim fakept
-                Set fakept = HSF.AddNewPointCoordWithReference(0, 0, 0, opt)
-                oHB.AppendHybridShape fakept
-                odoc.part.Update
-               fakept.GetCoordinates absCoord
-               
-                  osel.Clear
-                  osel.Add fakept
-                  osel.Delete
-                  odoc.part.Update
-                If Not oAxi Is Nothing Then
-                    fincoord = TransAxi(absCoord, oAxi)
-                Else
-                 fincoord = absCoord
-                End If
+               Dim fakept:  Set fakept = HSF.AddNewPointCoordWithReference(0, 0, 0, opt)
+                                oHb.AppendHybridShape fakept
+                                mDoc.part.Update
+               fakept.GetCoordinates fincoord
+               If needtrans Then
+                    Dim oAxi: Set oAxi = KCL.SelectItem("请选择坐标系", AxisSystem)
+                    If Not oAxi Is Nothing Then fincoord = TransAxi(abscoord, oAxi)
+               End If
+                  msel.Clear
+                  msel.Add fakept
+                  msel.Delete
+                  mDoc.part.Update
                 arr(irow, 0) = irow
                 arr(irow, 1) = opt.Name
                 arr(irow, 2) = fincoord(0)
@@ -109,11 +127,5 @@ Function TransAxi(acoor As Variant, axi1) As Variant
     result(2) = v(0) * zDir(0) + v(1) * zDir(1) + v(2) * zDir(2)
     TransAxi = result
 End Function
-' = 0 , Unknown
-' = 1 , Point
-' = 2 , Curve
-' = 3 , Line
-' = 4 , Circle
-' = 5 , Surface
-' = 6 , Plane
-' = 7 , Solid, Volume
+
+

@@ -27,7 +27,7 @@ End Sub
 
 Sub cpChildren()
     Dim imsg, filter(0), osel
-    Set odoc = CATIA.ActiveDocument
+    Set oDoc = CATIA.ActiveDocument
     Set osel = CATIA.ActiveDocument.Selection
     osel.Clear
     On Error GoTo errorhandler

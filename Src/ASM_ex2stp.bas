@@ -9,7 +9,7 @@ Attribute VB_Name = "ASM_ex2stp"
 
 '------窗体标题-------------------------------------------------
 '标题格式为 %Title <Caption/Text>
-'%Title 现在要导出stp,那请问你?
+'%Title 现在要导出stp,那请问你?-+-+
 
 '------控件清单--------------------------------------------------
 
@@ -31,7 +31,7 @@ Sub ex2stp_zip()
   On Error Resume Next ' 临时开启错误处理
     Err.Number = 0
     ErrorMessage = ""
-    Dim odoc: Set odoc = CATIA.ActiveDocument
+    Dim oDoc: Set oDoc = CATIA.ActiveDocument
     Dim outputpath As String: outputpath = ""
     
     Dim frmDic: Set frmDic = getFrmDic ' oFrm.Res
@@ -43,7 +43,7 @@ Sub ex2stp_zip()
     '===========路径设置
     If frmDic.Exists("chk_path") = True Then
                Select Case frmDic("chk_path")
-                    Case True: outputpath = IIf(odoc.path = "", "", odoc.path)
+                    Case True: outputpath = IIf(oDoc.path = "", "", oDoc.path)
                     Case fasle: outputpath = KCL.selFdl()
                 End Select
      End If
@@ -56,16 +56,16 @@ Sub ex2stp_zip()
            Dim ttp: ttp = KCL.timestamp("min")
                Select Case frmDic("chk_tm")
                     Case True:
-                           pn = KCL.strbflast(odoc.Product.PartNumber, "_")
+                           pn = KCL.strbflast(oDoc.Product.PartNumber, "_")
                                    If KCL.ExistsKey(pn, "_") Then
-                                       odoc.Product.PartNumber = pn & ttp
+                                       oDoc.Product.PartNumber = pn & ttp
                                    Else
-                                       odoc.Product.PartNumber = pn & "_" & ttp
+                                       oDoc.Product.PartNumber = pn & "_" & ttp
                                    End If
                     Case fasle:
                 End Select
       End If
-          pn = odoc.Product.PartNumber
+          pn = oDoc.Product.PartNumber
           
         '==========STP文件名处理
           stpname = KCL.strbf1st(pn, "_") & "_" & ttp
@@ -74,7 +74,7 @@ Sub ex2stp_zip()
             opath(1) = stpname
             opath(2) = "stp"
        Dim stpfilepath As String: stpfilepath = KCL.JoinPathName(opath)
-        odoc.ExportData stpfilepath, "stp"     '=======导出stp
+        oDoc.ExportData stpfilepath, "stp"     '=======导出stp
         If Not KCL.isExists(stpfilepath) Then '=======检查文件存在性
             ErrorMessage = "未找到STP文件：" & stpfilepath
             GoTo ShowMessage
@@ -108,7 +108,7 @@ ShowMessage:
                 "原始文件已删除。", vbInformation
         KCL.openpath (zippath)
     End If
-    Set odoc = Nothing
+    Set oDoc = Nothing
     On Error GoTo 0 ' 关闭错误处理
     ErrorMessage = "" ' 重置错误信息
 End Sub

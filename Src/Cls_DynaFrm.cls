@@ -183,6 +183,13 @@ Private Function ContainsAny(ByVal mainString As String, ByVal substringsList As
         End If
     Next substring
 End Function
+
+
+Private Function ExistsKey(ByVal txt As String, ByVal key As String) As Boolean
+    ExistsKey = IIf(VBA.InStr(VBA.LCase(txt), VBA.LCase(key)) > 0, True, False)
+End Function
+
+
 Private Function ParseCts(ByVal code As String) As Object
     Dim regEx As Object
     Dim matches As Object

@@ -43,9 +43,9 @@ Set colls = rPrd.Products
              KCL.DeleteMe (filePath(i))
             Next
             For i = 0 To 1
-                        Set odoc = docs.item(mapName(i)): odoc.Activate
-                        odoc.SaveAs filePath(i)
-                        odoc.Close
+                        Set oDoc = docs.item(mapName(i)): oDoc.Activate
+                        oDoc.SaveAs filePath(i)
+                        oDoc.Close
             Next
                 On Error GoTo 0
                     Set Prdvariant = colls

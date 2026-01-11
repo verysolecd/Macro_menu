@@ -253,7 +253,7 @@ Private Function getMeinfo(mFrm)
     Set mLbl = mFrm.Controls.Add("Forms.Label.1", "lblAuthor", True)
         With mLbl
             .Caption = itl ' 使用常量显示作者信息
-            .Top = MPgs.Top + MPgs.Height + FrmMargin(1) + 2 ' 放置在多页控件下方
+            .Top = MPgs.Top + MPgs.Height + FrmMargin(1) ' 放置在多页控件下方
             .Left = lblProductInfo.Left + 5 ' 与顶部信息栏左对齐
             .Width = lblProductInfo.Width ' 与顶部信息栏同宽
             .Height = lb_H
