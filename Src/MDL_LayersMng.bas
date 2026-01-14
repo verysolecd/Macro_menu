@@ -109,8 +109,8 @@ Function addDrw(iprd)
  i = 1
 If iprd.Products.count < 1 Then
     On Error Resume Next
-     Set oprt = iprd.ReferenceProduct.Parent.part
-     If Not oprt Is Nothing Then
+     Set oPrt = iprd.ReferenceProduct.Parent.part
+     If Not oPrt Is Nothing Then
         Set oV = oVs.Add("AutomaticNaming")
             Set ViewGen = oV.GenerativeLinks
             Set ViewGBH = oV.GenerativeBehavior
@@ -127,7 +127,7 @@ If iprd.Products.count < 1 Then
 Else
         For Each prd In iprd.Products
             Set oV = oVs.Add("AutomaticNaming")
-            oV.Name = prd.PartNumber & "VIEW YZ"
+            oV.Name = prd.partNumber & "VIEW YZ"
             Set ViewGen = oV.GenerativeLinks
             Set ViewGBH = oV.GenerativeBehavior
                 ViewGBH.Document = prd

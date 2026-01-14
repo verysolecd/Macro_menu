@@ -49,13 +49,13 @@ Sub cBom()
                             Dim Colpn, colPic
                             Colpn = 3: colPic = 6
                             Call xlm.inject_pic(gPic_Path, Colpn, colPic)
-                            GoTo CleanUp
-                    Case False: GoTo CleanUp
+                            GoTo Cleanup
+                    Case False: GoTo Cleanup
                 End Select
     End Select
-    GoTo CleanUp
+    GoTo Cleanup
 
-CleanUp:
+Cleanup:
     xlm.xlshow
    Set iprd = Nothing
    KCL.ClearDir (gPic_Path)

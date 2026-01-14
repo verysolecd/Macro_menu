@@ -13,7 +13,7 @@ Sub rvme()
         Set Prd2rv = pdm.CurrentProduct
             Prd2rv.ApplyWorkMode (3)
         Dim children: Set children = Prd2rv.Products
-On Error GoTo errorhandler
+On Error GoTo ErrorHandler
         Dim odata As Variant: odata = xlm.extract_ary
 '--------map 修改ary------
     Dim iCols: iCols = Array(0, 2, 4, 6, 8, 10, 12)
@@ -40,7 +40,7 @@ On Error GoTo errorhandler
     Next i
           Set Prd2rv = Nothing
     MsgBox "已经修改产品"
-errorhandler:
+ErrorHandler:
     If Err.Number <> 0 Then: Err.Clear: MsgBox "程序错误：" & Err.Description, vbCritical
         Exit Sub
 

@@ -34,14 +34,14 @@ Sub CATMain()
             If prod Is Nothing Then Exit Sub
             
                 On Error Resume Next
-                    Dim oprt:    Set oprt = Nothing
-                    Set oprt = prod.ReferenceProduct.Parent.part
+                    Dim oPrt:    Set oPrt = Nothing
+                    Set oPrt = prod.ReferenceProduct.Parent.part
                     If Err.Number <> 0 Then
                         Err.Clear
                     End If
                 On Error GoTo 0
             
-            If Not oprt Is Nothing Then
+            If Not oPrt Is Nothing Then
                 Set workDoc = prod.ReferenceProduct.Parent
             Else
                 Set workDoc = initPartDoc(prod)
@@ -220,7 +220,7 @@ Private Function initPartDoc( _
     Set prods = belongProd.Products
     Dim newProd As Product
     Set newProd = prods.AddNewComponent("Part", "")
-    newProd.PartNumber = "Mini_box_" & prod.PartNumber
+    newProd.partNumber = "Mini_box_" & prod.partNumber
     Set initPartDoc = newProd.ReferenceProduct.Parent
 End Function
 

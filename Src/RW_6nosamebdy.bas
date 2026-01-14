@@ -10,10 +10,10 @@ Option Explicit
 Sub nosamebdy()
  If Not KCL.CanExecute("ProductDocument,PartDocument") Then Exit Sub
 
-  Dim iprd, oprt
+  Dim iprd, oPrt
  If KCL.checkDocType("PartDocument") Then
-    Set oprt = CATIA.ActiveDocument.part
-    Call nosamebdy_bdylst(oprt)
+    Set oPrt = CATIA.ActiveDocument.part
+    Call nosamebdy_bdylst(oPrt)
     Set pdm = Nothing
     Exit Sub
  End If
@@ -37,8 +37,8 @@ Sub nosamebdy()
 End Sub
 Sub nosamebdy_prds(oprd)
     Dim Product
-        If g_allPN.Exists(oprd.PartNumber) = False Then
-            g_allPN(oprd.PartNumber) = 1
+        If g_allPN.Exists(oprd.partNumber) = False Then
+            g_allPN(oprd.partNumber) = 1
             Call nosamebdy_prd(oprd)
         End If
     If oprd.Products.count > 0 Then
@@ -48,26 +48,26 @@ Sub nosamebdy_prds(oprd)
     End If
 End Sub
 Public Sub nosamebdy_prd(oprd)
-    Dim colls, oprt
+    Dim colls, oPrt
 
     On Error Resume Next
-         Set oprt = oprd.ReferenceProduct.Parent.part
+         Set oPrt = oprd.ReferenceProduct.Parent.part
         If Err.Number <> 0 Then
             Err.Clear
-            Set oprt = Nothing
+            Set oPrt = Nothing
         End If
     On Error GoTo 0
     
-    If Not oprt Is Nothing Then
+    If Not oPrt Is Nothing Then
         On Error Resume Next
                 Call nosamebdy_bdylst(oprd)
                 Err.Clear
         On Error GoTo 0
     End If
 End Sub
-Sub nosamebdy_bdylst(oprt)
+Sub nosamebdy_bdylst(oPrt)
     Dim lstPara, lstbdys, colls, oDic, keeplst, currobj, objkey, itm, bdy
-    Set lstPara = oprt.Parameters.RootParameterSet.ParameterSets.item("Part_info")
+    Set lstPara = oPrt.Parameters.RootParameterSet.ParameterSets.item("Part_info")
     Set lstbdys = lstPara.DirectParameters.item("iBodys")
   Set colls = lstbdys.valuelist
     Set oDic = KCL.InitDic
@@ -82,7 +82,7 @@ Sub nosamebdy_bdylst(oprt)
      For Each itm In colls
       colls.Remove itm.Name
         Next itm
-    For Each bdy In oprt.bodies
+    For Each bdy In oPrt.bodies
            If keeplst.Exists(KCL.GetInternalName(bdy)) Then colls.Add bdy
     Next
 End Sub

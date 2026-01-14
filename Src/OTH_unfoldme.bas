@@ -11,8 +11,8 @@ Sub CATMain()
 If Not CanExecute("PartDocument") Then Exit Sub
 Dim osel: Set osel = CATIA.ActiveDocument.Selection
 osel.Clear
-Set oprt = CATIA.ActiveDocument.part
-Set HSF = oprt.HybridShapeFactory: Set HBS = oprt.HybridBodies
+Set oPrt = CATIA.ActiveDocument.part
+Set HSF = oPrt.HybridShapeFactory: Set HBS = oPrt.HybridBodies
 Dim uFold As HybridShapeUnfold: Set uFold = HSF.AddNewUnfold()
 Dim imsg, filter(0)
 imsg = "请先选择body，再选择平面"
@@ -28,22 +28,22 @@ End If
     Set itm = KCL.SelectItem(imsg, filter)
 If Not itm Is Nothing Then
     Set oPlane = itm
-    Set refplane = oprt.CreateReferenceFromObject(oPlane)
+    Set refplane = oPrt.CreateReferenceFromObject(oPlane)
 Else
     Exit Sub
 End If
-oprt.Update
+oPrt.Update
 Dim targetshape, ref
 For i = 1 To oshapes.count
     Set targetshape = oshapes.item(i)
-    oprt.Update
+    oPrt.Update
 
 FT = HSF.GetGeometricalFeatureType(targetshape)
 If FT <> 5 Then
 
-    oprt.Update
+    oPrt.Update
 Else
-    Set ref = oprt.CreateReferenceFromObject(targetshape)
+    Set ref = oPrt.CreateReferenceFromObject(targetshape)
     uFold.SurfaceToUnfold = ref
     Set dir1 = HSF.AddNewDirectionByCoord(1#, 0#, 0#)
     Set dir2 = HSF.AddNewDirectionByCoord(0#, 1#, 0#)
@@ -54,32 +54,32 @@ Else
     extm.ExtremumType2 = 1
     extm.Direction3 = dir3
     extm.ExtremumType3 = 1
-    Set reforg = oprt.CreateReferenceFromObject(extm)
+    Set reforg = oPrt.CreateReferenceFromObject(extm)
     uFold.OriginToUnfold = reforg
-    Set refDir = oprt.CreateReferenceFromObject(dir1)
+    Set refDir = oPrt.CreateReferenceFromObject(dir1)
     uFold.DirectionToUnfold = refDir
     uFold.TargetPlane = refplane
     uFold.SurfaceType = 0 '0
     uFold.TargetOrientationMode = 0
     uFold.EdgeToTearPositioningOrientation = 0
     uFold.Name = "unfold_" & targetshape.Name
-    oprt.Update
+    oPrt.Update
     osel.Clear
     osel.Add uFold
     osel.Copy
     osel.Clear
-    oprt.Update
+    oPrt.Update
     Set targetHB = HBS.Add()
     targetHB.Name = "unfold result" & i
-    oprt.Update
+    oPrt.Update
     osel.Add targetHB
     osel.Paste
     osel.Clear
-    oprt.Update
-    oprt.InWorkObject = targetHB
+    oPrt.Update
+    oPrt.InWorkObject = targetHB
 End If
 Next
-oprt.Update
+oPrt.Update
 
 End Sub
 

@@ -165,7 +165,7 @@ Function get_module_info( _
     get_module_info = _
         "项目名称:" & proj.Name & vbCrLf & _
         "总体步数:" & totalCharCount & vbCrLf & _
-        "文件路径:" & proj.Filename & vbCrLf & _
+        "文件路径:" & proj.fileName & vbCrLf & _
         "模块名称:" & moduleName & "." & get_extension(comp) & vbCrLf & _
         "模块步数:" & GetValidCharacterCount(comp) & vbCrLf & _
         "函数列表:" & vbCrLf & get_fanction_names(comp)
@@ -201,7 +201,7 @@ Sub import_project( _
     On Error GoTo 0
     If proj Is Nothing Then Exit Sub
     Dim key As String
-    key = Replace(proj.Filename, "\", SEPARATOR)
+    key = Replace(proj.fileName, "\", SEPARATOR)
     If Not mUserDict.Exists(key) Then Exit Sub
     Dim path As String
     path = mUserDict(key)("path")
@@ -338,7 +338,7 @@ Sub export_project_child_folder( _
     Dim fso As Object
     Set fso = mUtil.GetFso()
     Dim dirPath As String
-    dirPath = fso.GetParentFolderName(proj.Filename) & "\" & SOURCE_FOLDER_NAME
+    dirPath = fso.GetParentFolderName(proj.fileName) & "\" & SOURCE_FOLDER_NAME
     If Not fso.FolderExists(dirPath) Then
         fso.CreateFolder (dirPath)
     End If
@@ -354,7 +354,7 @@ Sub overwriting_project( _
     On Error GoTo 0
     If proj Is Nothing Then Exit Sub
     Dim key As String
-    key = Replace(proj.Filename, "\", SEPARATOR)
+    key = Replace(proj.fileName, "\", SEPARATOR)
     Dim dirPath As String
     dirPath = mUserDict(key)("path")
     Dim fso As Object
@@ -374,7 +374,7 @@ Sub open_folder( _
     On Error GoTo 0
     If proj Is Nothing Then Exit Sub
     Dim key As String
-    key = Replace(proj.Filename, "\", SEPARATOR)
+    key = Replace(proj.fileName, "\", SEPARATOR)
     Dim dirPath As String
     dirPath = mUserDict(key)("path")
     Dim fso As Object
@@ -391,7 +391,7 @@ Private Sub update_userdata( _
         ByVal proj As Object, _
         ByVal path As String)
     Dim key As String
-    key = Replace(proj.Filename, "\", SEPARATOR)
+    key = Replace(proj.fileName, "\", SEPARATOR)
     If mUserDict.Exists(key) Then
         mUserDict.Remove key
     End If
@@ -466,7 +466,7 @@ End Function
 'return: 此项目的文件夹路径
 Private Function get_this_dir_path() As String
     get_this_dir_path = mUtil.GetFso().GetParentFolderName( _
-        get_this_project().Filename _
+        get_this_project().fileName _
     )
 End Function
 '通过资源管理器打开文件夹
@@ -530,7 +530,7 @@ Function has_user_data( _
         Set proj = mProjectLst.item(projectIdx)
     On Error GoTo 0
     If proj Is Nothing Then Exit Function
-    has_user_data = mUserDict.Exists(Replace(proj.Filename, "\", SEPARATOR))
+    has_user_data = mUserDict.Exists(Replace(proj.fileName, "\", SEPARATOR))
 End Function
 '写入json
 'param: path-json文件路径

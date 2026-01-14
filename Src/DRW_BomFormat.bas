@@ -9,8 +9,8 @@ Option Explicit
 
 Sub CATMain()
  If Not CanExecute("ProductDocument") Then Exit Sub
-    Dim rootprd: Set rootprd = CATIA.ActiveDocument.Product
-    Dim Asm: Set Asm = rootprd.getItem("BillOfMaterial")
+    Dim rootPrd: Set rootPrd = CATIA.ActiveDocument.Product
+    Dim Asm: Set Asm = rootPrd.getItem("BillOfMaterial")
     Dim ary(7) 'change number if you have more custom columns/array...
     ary(0) = "Number"
     ary(1) = "Part Number"

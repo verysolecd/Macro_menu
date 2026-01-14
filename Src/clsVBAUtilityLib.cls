@@ -235,7 +235,7 @@ Function GetThisDir() As String
     Dim oApc As Object
     Set oApc = GetApc()
     Dim projFilePath As String
-    projFilePath = oApc.ExecutingProject.VBProject.Filename
+    projFilePath = oApc.ExecutingProject.VBProject.fileName
     GetThisDir = GetFso.GetParentFolderName(projFilePath)
 End Function
 'Scripting.Dictionary
@@ -573,12 +573,12 @@ End Function
 'param:FullPath-ÎÄ¼þÂ·¾¶
 'return:Variant(Of Array(Of String)) (0-Path 1-BaseName 2-Extension)
 Function SplitPathName( _
-        ByVal fullpath As String) As Variant
+        ByVal fullPath As String) As Variant
     Dim path(2) As Variant ' String
     With GetFso
-        path(0) = .GetParentFolderName(fullpath)
-        path(1) = .GetBaseName(fullpath)
-        path(2) = .GetExtensionName(fullpath)
+        path(0) = .GetParentFolderName(fullPath)
+        path(1) = .GetBaseName(fullPath)
+        path(2) = .GetExtensionName(fullPath)
     End With
     SplitPathName = path
 End Function

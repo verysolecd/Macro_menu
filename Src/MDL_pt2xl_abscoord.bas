@@ -35,17 +35,13 @@ Dim oFrm: Set oFrm = New Cls_DynaFrm
                 needtrans = True
             Call pt2xl(getHB())
          Case Else: Exit Sub
-         
     End Select
-
 End Sub
-
-
 Function getHB()
     Dim imsg
        imsg = "请选择点所在的几何图形集"
        Dim oHb
-       Set oHb = KCL.SelectItem(imsg, HybridBody)
+       Set oHb = KCL.SelectItem(imsg, "HybridBody")
         Set getHB = oHb
 End Function
 

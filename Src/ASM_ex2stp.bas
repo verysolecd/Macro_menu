@@ -56,16 +56,16 @@ Sub ex2stp_zip()
            Dim ttp: ttp = KCL.timestamp("min")
                Select Case frmDic("chk_tm")
                     Case True:
-                           pn = KCL.strbflast(oDoc.Product.PartNumber, "_")
+                           pn = KCL.strbflast(oDoc.Product.partNumber, "_")
                                    If KCL.ExistsKey(pn, "_") Then
-                                       oDoc.Product.PartNumber = pn & ttp
+                                       oDoc.Product.partNumber = pn & ttp
                                    Else
-                                       oDoc.Product.PartNumber = pn & "_" & ttp
+                                       oDoc.Product.partNumber = pn & "_" & ttp
                                    End If
                     Case fasle:
                 End Select
       End If
-          pn = oDoc.Product.PartNumber
+          pn = oDoc.Product.partNumber
           
         '==========STP文件名处理
           stpname = KCL.strbf1st(pn, "_") & "_" & ttp

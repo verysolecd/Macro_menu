@@ -31,7 +31,7 @@ Set colls = rPrd.Products
       If prd2 Is Nothing Then Exit Sub
     If Not IsNothing(prd1) And Not IsNothing(prd1) Then
             Dim CMPR: Set CMPR = oComps.Add(prd1, prd2, 1#, 1#, 2)
-                pn2 = KCL.rmchn(prd2.PartNumber)
+                pn2 = KCL.rmchn(prd2.partNumber)
                 opath(0) = prd2.ReferenceProduct.Parent.path
                 opath(2) = "3dmap"
                    Mt(0) = "AddedMaterial"

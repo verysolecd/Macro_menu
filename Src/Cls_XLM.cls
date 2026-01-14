@@ -132,7 +132,7 @@ Sub inject_ary(ByVal idata As Variant, Optional ByVal idcols As Variant, Optiona
 '                .Range(.Cells(startrow, 1), .Cells(lastRow, cols)).value = idata
 '              End With
       End If
-CleanUp:     ' ª÷∏¥Excel…Ë÷√
+Cleanup:     ' ª÷∏¥Excel…Ë÷√
     On Error GoTo 0
 End Sub
 Sub inject_bom(ByVal idata As Variant, Optional ByVal idcols As Variant, Optional ByVal idx As Variant)

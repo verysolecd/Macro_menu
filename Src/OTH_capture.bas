@@ -85,7 +85,7 @@ On Error Resume Next
     
     oDic = KCL.InitDic
     
-     Dim oprd: Set oprd = rootprd
+     Dim oprd: Set oprd = rootPrd
      If oprd Is Nothing Then Exit Sub
      
      oprd.ApplyWorkMode (3)  '3  DESIGN_MODE
@@ -123,9 +123,9 @@ Sub CaptureMe(iprd, oFolder)
      End With
      
       '--µÝ¹é²úÆ·½ØÍ¼
-     If oDic.Exists(iprd.PartNumber) = False Then  'µÝ¹é²úÆ·½ØÍ¼
-        oDic(iprd.PartNumber) = 1
-        imgfilename = oFolder & "\" & iprd.ReferenceProduct.PartNumber & ".jpg"
+     If oDic.Exists(iprd.partNumber) = False Then  'µÝ¹é²úÆ·½ØÍ¼
+        oDic(iprd.partNumber) = 1
+        imgfilename = oFolder & "\" & iprd.ReferenceProduct.partNumber & ".jpg"
         oViewer.CaptureToFile 5, imgfilename
      End If
      If thisdir = "" Then

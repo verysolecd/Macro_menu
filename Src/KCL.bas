@@ -343,12 +343,12 @@ End Function
 ' 分割路径名
 ''' @param:FullPath-完整路径
 ''' @return:Variant(Of Array(Of String)) (0-路径 1-文件名 2-扩展名)
-Function SplitPathName(ByVal fullpath$) As Variant
+Function SplitPathName(ByVal fullPath$) As Variant
     Dim path(2) As String
     With GetFso
-        path(0) = .GetParentFolderName(fullpath)
-        path(1) = .GetBaseName(fullpath)
-        path(2) = .GetExtensionName(fullpath)
+        path(0) = .GetParentFolderName(fullPath)
+        path(1) = .GetBaseName(fullPath)
+        path(2) = .GetExtensionName(fullPath)
     End With
     SplitPathName = path
 End Function
@@ -655,7 +655,7 @@ Function getVbaDir() As String
     Dim oApc As Object
     Set oApc = GetApc()
     Dim projFilePath As String
-    projFilePath = oApc.ExecutingProject.VBProject.Filename
+    projFilePath = oApc.ExecutingProject.VBProject.fileName
      getVbaDir = GetFso.GetParentFolderName(projFilePath)
 End Function
 '******* APC/VBE *********
@@ -705,12 +705,12 @@ End Sub
 
 ' 检查并激活已存在的窗口
 Function ActivateExistingWindow(ByVal strPath As String) As Boolean
-    On Error GoTo errorhandler
+    On Error GoTo ErrorHandler
     Dim shellApp As Object, window As Object
     Set shellApp = getshell
     For Each window In shellApp.Windows   ' 遍历所有资源管理器窗口
         On Error Resume Next
-        If VBA.InStr(VBA.UCase(window.fullName), "EXPLORER.EXE") > 0 Then   ' 检查是否为资源管理器窗口
+        If VBA.InStr(VBA.UCase(window.FullName), "EXPLORER.EXE") > 0 Then   ' 检查是否为资源管理器窗口
             Dim windowPath As String
             windowPath = window.Document.folder.Self.path      ' 获取窗口路径并比较（不区分大小写）
             If VBA.LCase(windowPath) = VBA.LCase(strPath) Then
@@ -722,33 +722,33 @@ Function ActivateExistingWindow(ByVal strPath As String) As Boolean
                 Exit Function
             End If
         End If
-        On Error GoTo errorhandler
+        On Error GoTo ErrorHandler
     Next window
     ActivateExistingWindow = False
     Exit Function
-errorhandler:
+ErrorHandler:
     ActivateExistingWindow = False
 End Function
 
 ' 打开文件夹
 Sub openDir(ByVal strPath As String)
-    On Error GoTo errorhandler
+    On Error GoTo ErrorHandler
     If InStr(strPath, " ") > 0 Then      ' 处理包含空格的路径
         strPath = """" & strPath & """"
     End If
     shell "explorer.exe " & strPath, vbMaximizedFocus
     Exit Sub
-errorhandler:
+ErrorHandler:
     MsgBox "无法打开路径: " & strPath & vbCrLf & "错误: " & Err.Description, vbExclamation
 End Sub
 
 ' 打开文件位置并选中文件
 Sub OpenFileLocation(ByVal strFilePath As String)
-    On Error GoTo errorhandler
+    On Error GoTo ErrorHandler
     strFilePath = """" & strFilePath & """"  ' 确保文件路径被引号包围
     shell "explorer.exe /select," & strFilePath, vbMaximizedFocus
     Exit Sub
-errorhandler:
+ErrorHandler:
     MsgBox "无法打开文件位置: " & strFilePath & vbCrLf & "错误: " & Err.Description, vbExclamation
 End Sub
 

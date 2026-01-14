@@ -12,7 +12,7 @@ Option Explicit
 Sub CATMain()
     If Not CanExecute("PartDocument") Then Exit Sub
     Dim BaseDoc As PartDocument: Set BaseDoc = CATIA.ActiveDocument
-    Dim BasePath As Variant: BasePath = Array(BaseDoc.fullName)
+    Dim BasePath As Variant: BasePath = Array(BaseDoc.FullName)
     Dim pt As part: Set pt = BaseDoc.part
     Dim LeafItems As collection: Set LeafItems = Get_LeafItemLst(pt.bodies)
     Dim msg As String

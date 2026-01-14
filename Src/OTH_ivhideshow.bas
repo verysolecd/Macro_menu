@@ -16,7 +16,7 @@ Sub CATMain()
     Set osel = pdm.msel
     Dim oDoc, cGroups, oGroup
     Set oDoc = CATIA.ActiveDocument
-    Set cGroups = rootprd.GetTechnologicalObject("Groups")
+    Set cGroups = rootPrd.GetTechnologicalObject("Groups")
     Set oGroup = cGroups.AddFromSel    ' 当前选择产品添加到组
     
     oGroup.ExtractMode = 1

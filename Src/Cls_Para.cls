@@ -24,7 +24,7 @@ Public Sub Reset()
     Me.str = ""
     Me.Desc = ""
     Set Me.obj = Nothing
-    Set Me.Target = Nothing
+    Set Me.target = Nothing
 End Sub
 Public Property Get Name() As String
     Name = pName
@@ -50,10 +50,10 @@ End Property
 Public Property Let str(ByVal value As Variant)
     pStr = value
 End Property
-Public Property Get Target()
-   Set Target = pTarget
+Public Property Get target()
+   Set target = pTarget
 End Property
-Public Property Set Target(value)
+Public Property Set target(value)
    Set pTarget = value
 End Property
 Public Property Get obj()

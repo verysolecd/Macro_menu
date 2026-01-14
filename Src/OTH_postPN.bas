@@ -23,8 +23,8 @@ If Not KCL.CanExecute("ProductDocument") Then Exit Sub
 End Sub
 
 Sub postPn(oprd)
-    pn = oprd.PartNumber
-    oprd.PartNumber = pn & "_" & oSuffix
+    pn = oprd.partNumber
+    oprd.partNumber = pn & "_" & oSuffix
     For Each Product In oprd.Products
         Call postPn(Product)
         Next

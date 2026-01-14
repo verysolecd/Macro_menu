@@ -196,7 +196,7 @@ Private Sub UpdateProductInfo()
     mcolor = vbRed
     msg = "´ýÑ¡Ôñ"
     If Not prdObserver.CurrentProduct Is Nothing Then
-          msg = prdObserver.CurrentProduct.PartNumber & "´ýÐÞ¸Ä"
+          msg = prdObserver.CurrentProduct.partNumber & "´ýÐÞ¸Ä"
           mcolor = vbGreen
     End If
         lblProductInfo.Caption = msg

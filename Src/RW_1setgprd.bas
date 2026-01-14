@@ -10,7 +10,7 @@ Sub setgprd()
     If pdm Is Nothing Then Set pdm = New Cls_PDM
     Set pdm.CurrentProduct = pdm.getiPrd()
         If Not pdm.CurrentProduct Is Nothing Then
-           imsg = "被操作产品是" & pdm.CurrentProduct.PartNumber
+           imsg = "被操作产品是" & pdm.CurrentProduct.partNumber
             MsgBox imsg
         Else
              MsgBox "已退出，程序将结束"

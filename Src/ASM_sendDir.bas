@@ -18,7 +18,7 @@ Sub sendDir()
         If KCL.IsObj_T(oDoc, "DrawingDocument") Then
             pn = strbflast(oDoc.Name, ".")
         Else
-            pn = oDoc.Product.PartNumber
+            pn = oDoc.Product.partNumber
         End If
         
     Dim bckFolderName As String

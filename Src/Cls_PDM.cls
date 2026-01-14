@@ -50,21 +50,21 @@ Private Sub Class_Initialize()
      Set g_allPN = KCL.InitDic
      Set mProduct = Nothing
       iniarr
-        On Error GoTo errorhandler
+        On Error GoTo ErrorHandler
 If CATIA.Documents.count = 0 Then
     MsgBox "当前未打开CATIA文档"
 Else
     Set rootDoc = CATIA.ActiveDocument
-    Set rootprd = CATIA.ActiveDocument.Product
+    Set rootPrd = CATIA.ActiveDocument.Product
         If Not rootDoc Is Nothing Then
         Set msel = CATIA.ActiveDocument.Selection: msel.Clear
         End If
-        If Not rootprd Is Nothing Then
-        rootprd.ApplyWorkMode (3)
+        If Not rootPrd Is Nothing Then
+        rootPrd.ApplyWorkMode (3)
         End If
 End If
 On Error GoTo 0
-errorhandler:
+ErrorHandler:
     If Err.Number <> 0 Then
         Err.Clear
         MsgBox "CATIA 程序错误：" & Err.Description, vbCritical
@@ -97,7 +97,7 @@ Public Function Assmass(oprd)
     Public Function infoPrd(oprd)
         Dim arr(1 To 9)
             With oprd.ReferenceProduct
-                arr(1) = .PartNumber
+                arr(1) = .partNumber
                 arr(2) = .Nomenclature
                 arr(3) = .Definition
                 arr(4) = oprd.Name
@@ -172,8 +172,8 @@ Public Function recurInfoPrd(oprd, lv)
             If children.count > 0 Then
                     Dim bdict: Set bdict = KCL.InitDic
                 For i = 1 To children.count
-                    If bdict.Exists(children.item(i).PartNumber) = False Then
-                       bdict(children.item(i).PartNumber) = 1
+                    If bdict.Exists(children.item(i).partNumber) = False Then
+                       bdict(children.item(i).partNumber) = 1
                        g_counter = g_counter + 1
                        recurInfoPrd children.item(i), lv + 1
                     End If
@@ -224,8 +224,8 @@ Public Function recurPrd(oprd, lv)
                     Dim bdict
                     Set bdict = KCL.InitDic
                 For i = 1 To children.count
-                    If bdict.Exists(children.item(i).PartNumber) = False Then
-                       bdict(children.item(i).PartNumber) = 1
+                    If bdict.Exists(children.item(i).partNumber) = False Then
+                       bdict(children.item(i).partNumber) = 1
                        g_counter = g_counter + 1
                        recurPrd children.item(i), lv + 1
                     End If
@@ -248,7 +248,7 @@ Public Function modatt(oprd, odata)
         If odata(i) <> "" And odata(i) <> currAtt(i) Then
             On Error Resume Next
                 Select Case i
-                    Case 1: refPrd.PartNumber = odata(i)
+                    Case 1: refPrd.partNumber = odata(i)
                     Case 2: refPrd.Nomenclature = odata(i)
                     Case 3: refPrd.Definition = odata(i)
                     Case 4: oprd.Name = odata(i)
@@ -287,15 +287,15 @@ Public Sub initPrd(oprd)
     Next
     
     On Error Resume Next
-         Dim oprt
-         Set oprt = refPrd.Parent.part
+         Dim oPrt
+         Set oPrt = refPrd.Parent.part
         If Err.Number <> 0 Then
             Err.Clear
-            Set oprt = Nothing
+            Set oPrt = Nothing
         End If
     On Error GoTo 0
     
-    If Not oprt Is Nothing Then
+    If Not oPrt Is Nothing Then
         On Error Resume Next
                 Call iniPrt(oprd)
         On Error GoTo 0
@@ -306,7 +306,7 @@ Public Sub initPrd(oprd)
            Set pubs = refPrd.Publications
             If getAtt(usrp(k).Name, pubs)(0) Is Nothing Then
                  Dim iName
-                 iName = refPrd.PartNumber & "\" & "Properties" & "\" & usrp(k).Name
+                 iName = refPrd.partNumber & "\" & "Properties" & "\" & usrp(k).Name
                 Set oref = refPrd.CreateReferenceFromName(iName)
 '                Debug.Print usrp(k).Name
                 Set oPub = pubs.Add(usrp(k).Name)
@@ -319,7 +319,7 @@ Private Sub iniPrt(oprd)
     Dim refPrd, colls
     Dim i
     Set refPrd = oprd.ReferenceProduct
-    Dim oprt: Set oprt = refPrd.Parent.part
+    Dim oPrt: Set oPrt = refPrd.Parent.part
 
 '============创建usrp属性=================
         Dim NT As Variant
@@ -341,7 +341,7 @@ Private Sub iniPrt(oprd)
         Dim infoset
         Set infoset = New Cls_Para
         infoset.SetNT "Part_info", "ParameterSet"
-        Set colls = oprt.Parameters.RootParameterSet.ParameterSets
+        Set colls = oPrt.Parameters.RootParameterSet.ParameterSets
         checkPara infoset, colls
         Set colls = infoset.obj.DirectParameters
      '====创建part_info内参数====
@@ -349,8 +349,8 @@ Private Sub iniPrt(oprd)
         Set iBodys = New Cls_Para
         iBodys.SetNT "iBodys", "list"
         checkPara iBodys, colls
-        If getPara(oprt.mainbody, iBodys.obj.valuelist)(0) Is Nothing Then
-            iBodys.obj.valuelist.Add oprt.mainbody
+        If getPara(oPrt.mainbody, iBodys.obj.valuelist)(0) Is Nothing Then
+            iBodys.obj.valuelist.Add oPrt.mainbody
         End If
         
         Dim infoPara(0 To 3)
@@ -373,7 +373,7 @@ Private Sub iniPrt(oprd)
           For k = 1 To 3
                If getAtt(infoPara(k).Name, pubs)(0) Is Nothing Then
                    Dim iName
-                   iName = refPrd.PartNumber & "\Parameters\Part_info\" & infoPara(k).Name
+                   iName = refPrd.partNumber & "\Parameters\Part_info\" & infoPara(k).Name
                    Set oref = refPrd.CreateReferenceFromName(iName)
                    Set oPub = pubs.Add(infoPara(k).Name)
                    pubs.SetDirect infoPara(k).Name, oref
@@ -382,7 +382,7 @@ Private Sub iniPrt(oprd)
                 End If
            Next
     '创建所有relations
-            Set colls = oprt.relations
+            Set colls = oPrt.relations
             Dim oRule
             Set oRule = New Cls_Para
                    '---创建EKL
@@ -397,28 +397,28 @@ Private Sub iniPrt(oprd)
             oRule.Desc = "计算重量"
     
             oRule.str = "round(Part_info\sumVol *Part_info\Density,""kg"",3)"   ''''"Part_info\sumVol *Part_info\Density"
-            Set oRule.Target = infoPara(3).obj
+            Set oRule.target = infoPara(3).obj
             checkPara oRule, colls
                     '---创建link_mass
             oRule.Reset
             oRule.SetNT "link_Mass", "Formula"
             oRule.Desc = "链接重量"
             oRule.str = "Part_info\Mass"
-            Set oRule.Target = refPrd.UserRefProperties.item("Mass")
+            Set oRule.target = refPrd.UserRefProperties.item("Mass")
             checkPara oRule, colls
                     '---创建link_thickness
             oRule.Reset
             oRule.SetNT "link_Thickness", "Formula"
             oRule.Desc = "链接厚度"
             oRule.str = "Part_info\Thickness"
-            Set oRule.Target = refPrd.UserRefProperties.item("Thickness")
+            Set oRule.target = refPrd.UserRefProperties.item("Thickness")
             checkPara oRule, colls
                     '---创建link_Density
             oRule.Reset
             oRule.SetNT "link_Density", "Formula"
             oRule.Desc = "链接密度"
             oRule.str = "Part_info\Density"
-            Set oRule.Target = refPrd.UserRefProperties.item("Density")
+            Set oRule.target = refPrd.UserRefProperties.item("Density")
             checkPara oRule, colls
             oRule.Reset
 End Sub
@@ -450,7 +450,7 @@ Private Function paraCreatobj(thispara, colls)
             Case "String"
                 Set thispara.obj = colls.CreateString(thispara.Name, thispara.str)
             Case "Formula"
-                Set thispara.obj = colls.CreateFormula(thispara.Name, thispara.Desc, thispara.Target, thispara.str)
+                Set thispara.obj = colls.CreateFormula(thispara.Name, thispara.Desc, thispara.target, thispara.str)
                  thispara.obj.Hidden = True
             Case "Program"
                   On Error Resume Next
@@ -496,14 +496,14 @@ Private Function count_me(oprd)  '获取兄弟字典
                    Dim oParent: Set oParent = oprd.Parent.Parent
                    Set oDict = KCL.InitDic
                    For i = 1 To oParent.Products.count
-                          pn = oParent.Products.item(i).PartNumber
+                          pn = oParent.Products.item(i).partNumber
                             If oDict.Exists(pn) = True Then
                                 oDict(pn) = oDict(pn) + 1
                             Else
                                 oDict(pn) = 1
                             End If
                       Next
-            qty = oDict(oprd.PartNumber)
+            qty = oDict(oprd.partNumber)
           End If
     count_me = qty
 End Function
@@ -584,8 +584,8 @@ Public Function gxBom(oprd, lv)
                     Dim bdict
                     Set bdict = KCL.InitDic
                 For i = 1 To children.count
-                    If bdict.Exists(children.item(i).PartNumber) = False Then
-                       bdict(children.item(i).PartNumber) = 1
+                    If bdict.Exists(children.item(i).partNumber) = False Then
+                       bdict(children.item(i).partNumber) = 1
                        g_counter = g_counter + 1
                        gxBom children.item(i), lv + 1
                     End If

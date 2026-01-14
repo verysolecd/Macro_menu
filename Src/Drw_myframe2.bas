@@ -450,7 +450,7 @@ Sub CATLinks()
     Dim txtItem
     txtItem = "TitleBlock_Text_" & wuliaobianma_assy_val
   
-    Texts.getItem(txtItem).Text = ProductDrawn.PartNumber
+    Texts.getItem(txtItem).Text = ProductDrawn.partNumber
     Texts.getItem("TitleBlock_Text_Title_1").Text = ProductDrawn.Definition
     Dim ProductAnalysis As Analyze
     Set ProductAnalysis = ProductDrawn.Analyze

@@ -18,8 +18,8 @@ Sub CATMain()
 End Sub
 
 Sub recurthisPrd(oprd)
-        If g_allPN.Exists(oprd.PartNumber) = False Then
-            g_allPN(oprd.PartNumber) = 1
+        If g_allPN.Exists(oprd.partNumber) = False Then
+            g_allPN(oprd.partNumber) = 1
             Call recurexcute(oprd)
             End If
         If oprd.Products.count > 0 Then
@@ -58,5 +58,33 @@ If oprd.Products.count < 1 Then
     End If
 End Sub
 
+Sub Pt_annotation()
 
+Set oDoc = CATIA.ActiveDocument
+ Set oprd = CATIA.ActiveDocument.Product
+    Set oPrt = oDoc.part
+ Set oHb = KCL.SelectItem("ÇëÑ¡Ôñgeoset", "HybridBody")
+  Set opt = oHb.HybridShapes.item(1)
+Set anSets = oPrt.AnnotationSets
+Set anset = anSets.Add("ISO_3D")
+Set ref = oPrt.CreateReferenceFromObject(opt)
+
+Set usfs = oPrt.UserSurfaces
+Set usf = usfs.Generate(ref)
+Set AnttF = anset.AnnotationFactory
+
+Set AnttF = anset.AnnotationFactory2
+
+'Set anote = AnttF.CreateEvoluateText(usf, 94.142136, 14.142136, 0#, True)
+'anote.Text.Text = "tetx1"
+oPrt.Update
+' Set anote = AnttF.CreateText(usf)
+ 
+' Set anote = AnttF.CreateTextNOA(usf)
+  Set anote = AnttF.CreateFlagNote(usf)
+    
+   anote.Name = "an1"
+'   anote.Text = "tetx1"
+    anote.FlagNote = "tetx2"
+End Sub
 

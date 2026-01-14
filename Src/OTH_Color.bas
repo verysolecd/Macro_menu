@@ -9,7 +9,7 @@ Attribute VB_Name = "OTH_Color"
 
 
 Sub CATMain()
-    On Error GoTo errorhandler
+    On Error GoTo ErrorHandler
     If CATIA.Windows.count < 1 Then
         MsgBox "没有打开的窗口"
         Exit Sub
@@ -37,7 +37,7 @@ Sub CATMain()
     
     On Error GoTo 0
     
-errorhandler:
+ErrorHandler:
     If Err.Number <> 0 Then
         Select Case Err.Number
             Case 1001

@@ -30,13 +30,13 @@ Sub cpChildren()
     Set oDoc = CATIA.ActiveDocument
     Set osel = CATIA.ActiveDocument.Selection
     osel.Clear
-    On Error GoTo errorhandler
+    On Error GoTo ErrorHandler
         Call KCL.setASM(False)
         imsg = "请先点击选择源父产品，再点击选择目标父产品": MsgBox imsg
         filter(0) = "Product"
         Dim sourcePrd, targetPrd As Product
         Set sourcePrd = KCL.SelectItem(imsg, filter)
-        If sourcePrd Is Nothing Then GoTo errorhandler
+        If sourcePrd Is Nothing Then GoTo ErrorHandler
             For Each prd In sourcePrd.Products
                osel.Add prd
             Next
@@ -44,7 +44,7 @@ Sub cpChildren()
         imsg = "请点击选择目标父产品"
         Set targetPrd = KCL.SelectItem(imsg, filter)
         If targetPrd Is Nothing Then
-          GoTo errorhandler
+          GoTo ErrorHandler
         Else
             osel.Add targetPrd
             osel.Paste
@@ -55,7 +55,7 @@ Sub cpChildren()
             Call KCL.setASM(True)
     On Error GoTo 0
 
-errorhandler:
+ErrorHandler:
         If Err.Number <> 0 Then
             Call KCL.setASM(True)
               osel.Clear
@@ -78,7 +78,7 @@ Sub DeleteChildren()
       osel.Add prd
     Next
       Dim btn, bTitle, bResult
-      imsg = "将删除" & iSel.PartNumber & iSel.Name & "下的所有子产品，您确认吗"
+      imsg = "将删除" & iSel.partNumber & iSel.Name & "下的所有子产品，您确认吗"
       btn = vbYesNo + vbExclamation
       bResult = MsgBox(imsg, btn, "bTitle")  ' Yes(6),No(7),cancel(2)
            Select Case bResult

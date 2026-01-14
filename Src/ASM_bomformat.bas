@@ -1,4 +1,4 @@
-Attribute VB_Name = "Module2"
+Attribute VB_Name = "ASM_bomformat"
 Sub GenerateRecapBOMToTable()
 '   Dim rootPrd: Set rootPrd = CATIA.ActiveDocument.Product
 '    Dim oConv: Set oConv = rootPrd.getItem("BillOfMaterial")

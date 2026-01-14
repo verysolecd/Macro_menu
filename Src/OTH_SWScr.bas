@@ -13,3 +13,13 @@ On Error Resume Next
     On Error GoTo 0
     
 End Sub
+
+
+Sub isRefresh()
+
+
+
+ istrue = CATIA.RefreshDisplay
+ MsgBox istrue
+ 
+End Sub

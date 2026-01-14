@@ -72,7 +72,7 @@ Function AddNode(PStack, D)
     On Error Resume Next
     oprd.Name = D("Name")
     With oprd.ReferenceProduct
-        .PartNumber = prj & D("PartNumber"): .Nomenclature = D("Nomenclature"): .Definition = D("Definition")
+        .partNumber = prj & D("PartNumber"): .Nomenclature = D("Nomenclature"): .Definition = D("Definition")
     End With
     oprd.Update
     Set AddNode = oprd

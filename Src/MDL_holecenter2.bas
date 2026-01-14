@@ -11,8 +11,8 @@ Sub Faceholecenter()
 
   If Not CanExecute("PartDocument") Then Exit Sub
     Set oDoc = CATIA.ActiveDocument
-    Set oprt = oDoc.part
-    Set HSF = oprt.HybridShapeFactory
+    Set oPrt = oDoc.part
+    Set HSF = oPrt.HybridShapeFactory
 '======= 选择要识别的面
     Dim imsg: imsg = "选择要识别的面"
     Dim filter(0): filter(0) = "Face"
@@ -22,18 +22,18 @@ Sub Faceholecenter()
     Set iSel = KCL.SelectItem(imsg, filter)
     On Error GoTo 0
     If Not iSel Is Nothing Then
-        Set oHb = oprt.HybridBodies.Add()
+        Set oHb = oPrt.HybridBodies.Add()
         oHb.Name = "extracted points"
         Set oExtact = HSF.AddNewExtract(iSel)
         oHb.AppendHybridShape oExtact
-        oprt.Update
-        Set oref = oprt.CreateReferenceFromObject(oExtact)
+        oPrt.Update
+        Set oref = oPrt.CreateReferenceFromObject(oExtact)
         Set oFace = HSF.AddNewSurfaceDatum(oref)
         HSF.DeleteObjectForDatum oref
         Dim oBdry As HybridShapeBoundary
         Set oBdry = HSF.AddNewBoundaryOfSurface(oFace)
         oHb.AppendHybridShape oBdry
-        oprt.Update
+        oPrt.Update
         Dim osel
         Set osel = CATIA.ActiveDocument.Selection
         osel.Clear
@@ -47,11 +47,11 @@ Sub Faceholecenter()
         For Each Hole In oHb.HybridShapes
             osel.Add Hole
             If TypeOf Hole Is HybridShapeCircleTritangent Then
-                Set oref = oprt.CreateReferenceFromObject(Hole)
+                Set oref = oPrt.CreateReferenceFromObject(Hole)
                 Set oCtr = HSF.AddNewPointCenter(oref)
                 oHb.AppendHybridShape oCtr
-                Set oref = oprt.CreateReferenceFromObject(oCtr)
-                oprt.Update
+                Set oref = oPrt.CreateReferenceFromObject(oCtr)
+                oPrt.Update
                 Set pt = HSF.AddNewPointDatum(oref): pt.Name = "pt_" & i
                 oHb.AppendHybridShape pt
                 osel.Add oCtr
