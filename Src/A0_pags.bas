@@ -1,4 +1,4 @@
-Attribute VB_Name = "Module3"
+Attribute VB_Name = "A0_pags"
 Sub main()
 
 CATIA.RefreshDisplay = False

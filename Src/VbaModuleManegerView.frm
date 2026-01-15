@@ -19,10 +19,6 @@ Option Explicit
 Private mUtil As clsVBAUtilityLib
 Private mModuleMgr As clsVbaModuleManagerModel
 
-Private Sub TextBox1_Change()
-
-End Sub
-
 Private Sub UserForm_Initialize()
     Set mUtil = New clsVBAUtilityLib
     Set mModuleMgr = New clsVbaModuleManagerModel

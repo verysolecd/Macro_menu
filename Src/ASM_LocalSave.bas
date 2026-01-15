@@ -13,8 +13,8 @@ Sub CATMain()
     Dim rootProd As Product: Set rootProd = CATIA.ActiveDocument.Product
     Set docs = KCL.InitDic   ' 初始化字典，仅一次
     Dim maxLvl As Integer: maxLvl = 0
-    Call SlurpAssembly(1, rootProd, docs, maxLvl)
-    Call SaveProductsByLevel(docs, maxLvl, savePath)
+    Call recurTreeLV(1, rootProd, docs, maxLvl)
+    Call SaveByLV(docs, maxLvl, savePath)
     MsgBox "批量保存完成！" & vbCrLf & "保存路径：" & savePath, vbInformation, "CATIA批量保存"
 Cleanup:
     CATIA.DisplayFileAlerts = origAlert
@@ -27,7 +27,7 @@ ErrHandler:
 End Sub
 
 ' 递归遍历装配体，使用数组 (level, product) 作为字典值
-Sub SlurpAssembly(ByVal lvl As Integer, ByRef aProd As Product, ByRef dict As Object, ByRef maxLvl As Integer)
+Sub recurTreeLV(ByVal lvl As Integer, ByRef aProd As Product, ByRef dict As Object, ByRef maxLvl As Integer)
     If lvl > maxLvl Then maxLvl = lvl
     Dim pn As String: pn = Trim(aProd.partNumber)
     If pn = "" Then pn = "Unnamed_" & Replace(CreateObject("Scriptlet.TypeLib").GUID, "-", "")
@@ -36,12 +36,12 @@ Sub SlurpAssembly(ByVal lvl As Integer, ByRef aProd As Product, ByRef dict As Ob
     End If
     Dim i As Integer
     For i = 1 To aProd.Products.count
-        Call SlurpAssembly(lvl + 1, aProd.Products.item(i), dict, maxLvl)
+        Call recurTreeLV(lvl + 1, aProd.Products.item(i), dict, maxLvl)
     Next i
 End Sub
 
 ' 按层级从深到浅保存，读取数组中的信息
-Sub SaveProductsByLevel(ByRef dict As Object, ByVal maxLvl As Integer, ByVal folder As String)
+Sub SaveByLV(ByRef dict As Object, ByVal maxLvl As Integer, ByVal folder As String)
     Dim lvl As Integer, key As Variant, info As Variant, suffix As String, target As Document, fullPath As String, i
     For lvl = maxLvl To 1 Step -1
         For Each key In dict.keys
@@ -55,9 +55,9 @@ Sub SaveProductsByLevel(ByRef dict As Object, ByVal maxLvl As Integer, ByVal fol
                                 Case 1: suffix = ".CATProduct"
                                 Case Else
                                     Dim str1: str1 = info(1).ReferenceProduct.Parent.FullName
-                                    Dim ary: ary = Split(str1, ".")
-                                         For i = LBound(ary) To UBound(ary)
-                                              If info(1).ReferenceProduct.partNumber = ary(i) Then suffix = ".CATProduct"
+                                    Dim Ary: Ary = Split(str1, ".")
+                                         For i = LBound(Ary) To UBound(Ary)
+                                              If info(1).ReferenceProduct.partNumber = Ary(i) Then suffix = ".CATProduct"
                                          Next i
                             End Select
                 End Select

@@ -1,30 +1,32 @@
 Attribute VB_Name = "ASM_bomformat"
 Sub GenerateRecapBOMToTable()
-'   Dim rootPrd: Set rootPrd = CATIA.ActiveDocument.Product
-'    Dim oConv: Set oConv = rootPrd.getItem("BillOfMaterial")
-'
-'    Dim Ary(7) 'change number if you have more custom columns/array...
-'    Ary(0) = "Number"
-'    Ary(1) = "Part Number"
-'    Ary(2) = "Quantity"
-'    Ary(3) = "Nomenclature"
-'    Ary(4) = "Defintion"
-'    Ary(5) = "Mass"
-'    Ary(6) = "Density"
-'    Ary(7) = "Material"
-''    oCONv.SetCurrentFormat Ary
-'    oConv.SetSecondaryFormat Ary
-'
+
+Set CATIA = GetObject(, "CATIA.Application")
+   Dim rootPrd: Set rootPrd = CATIA.ActiveDocument.Product
+    Dim oConv: Set oConv = rootPrd.getItem("BillOfMaterial")
+
+    Dim Ary(7) 'change number if you have more custom columns/array...
+    Ary(0) = "Number"
+    Ary(1) = "Part Number"
+    Ary(2) = "Quantity"
+    Ary(3) = "Nomenclature"
+    Ary(4) = "Defintion"
+    Ary(5) = "Mass"
+    Ary(6) = "Density"
+    Ary(7) = "Material"
+'    oCONv.SetCurrentFormat Ary
+    oConv.SetSecondaryFormat Ary
+
 
     Set doc = CATIA.ActiveDocument
     
-    Set byt = doc.Sheets.ActiveSheet
-    
+  
+
     
     Dim ss: Set ss = CATIA.SystemService
 
 
-    
+    ss.Print "ÄãºÃ"
     
     
 

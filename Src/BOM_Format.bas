@@ -1,5 +1,5 @@
-Attribute VB_Name = "DRW_BomFormat"
-'{GP:5}
+Attribute VB_Name = "BOM_Format"
+'{GP:444}
 '{EP:CATMain}
 '{Caption:设定BOM格式}
 '{ControlTipText: 按初始化模板设定BOM格式}
@@ -11,16 +11,16 @@ Sub CATMain()
  If Not CanExecute("ProductDocument") Then Exit Sub
     Dim rootPrd: Set rootPrd = CATIA.ActiveDocument.Product
     Dim Asm: Set Asm = rootPrd.getItem("BillOfMaterial")
-    Dim ary(7) 'change number if you have more custom columns/array...
-    ary(0) = "Number"
-    ary(1) = "Part Number"
-    ary(2) = "Quantity"
-    ary(3) = "Nomenclature"
-    ary(4) = "Defintion"
-    ary(5) = "Mass"
-    ary(6) = "Density"
-    ary(7) = "Material"
-    Asm.SetCurrentFormat ary
+    Dim Ary(7) 'change number if you have more custom columns/array...
+    Ary(0) = "Number"
+    Ary(1) = "Part Number"
+    Ary(2) = "Quantity"
+    Ary(3) = "Nomenclature"
+    Ary(4) = "Defintion"
+    Ary(5) = "Mass"
+    Ary(6) = "Density"
+    Ary(7) = "Material"
+    Asm.SetCurrentFormat Ary
 
 Dim opath: opath = KCL.GetPath(KCL.getVbaDir & "\" & "oTemp")
 

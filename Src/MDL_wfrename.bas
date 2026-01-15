@@ -1,7 +1,7 @@
 Attribute VB_Name = "MDL_wfrename"
 'Attribute VB_Name = "m24_wfRename"
 ' 线框元素的重命名
-'{GP:2}
+'{GP:4}
 '{EP:wfname}
 '{Caption:线框重命名}
 '{ControlTipText: 提示选择几何图形集后将下面元素重命名}

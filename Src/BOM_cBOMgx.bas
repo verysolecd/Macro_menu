@@ -1,5 +1,5 @@
-Attribute VB_Name = "RW_cGXBOM"
-'{GP:1}
+Attribute VB_Name = "BOM_cBOMgx"
+'{GP:2}
 '{Ep:cgxBom}
 '{Caption:GXBOM}
 '{ControlTipText:选择要被读取或修改的产品}

@@ -206,13 +206,13 @@ Private Sub UpdateScene(ByVal Scene As Variant)
     Dim viewer As Viewer3D: Set viewer = CATIA.ActiveWindow.ActiveViewer
     Dim VPnt3D As Variant
     Set VPnt3D = viewer.Viewpoint3D
-    Dim ary As Variant
-    ary = GetRangeAry(Scene, 0, 2)
-    Call VPnt3D.PutOrigin(ary)
-    ary = GetRangeAry(Scene, 3, 5)
-    Call VPnt3D.PutSightDirection(ary)
-    ary = GetRangeAry(Scene, 6, 8)
-    Call VPnt3D.PutUpDirection(ary)
+    Dim Ary As Variant
+    Ary = GetRangeAry(Scene, 0, 2)
+    Call VPnt3D.PutOrigin(Ary)
+    Ary = GetRangeAry(Scene, 3, 5)
+    Call VPnt3D.PutSightDirection(Ary)
+    Ary = GetRangeAry(Scene, 6, 8)
+    Call VPnt3D.PutUpDirection(Ary)
     VPnt3D.FieldOfView = Scene(9)
     VPnt3D.FocusDistance = Scene(10)
     Call viewer.Update

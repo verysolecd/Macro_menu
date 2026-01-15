@@ -38,7 +38,7 @@ Private Const TAG_MDLNAME = "mdl_name"      ' 模块名称标签
 Sub CATMain()
     Set PageMap = Get_KeyValue(groupName, True)  '获取page编号和名称对应map  ：1  R&W 2...
    
-        showdict PageMap
+showdict PageMap
     
     Dim ButtonInfos As Object
     Set ButtonInfos = Get_ButtonInfo() '获取所有的具有可执行按钮的模块信息dic
@@ -134,7 +134,7 @@ Try_TAG_ENTRY_DEF:
         ' Item 7 "mdl_name”
         
         BtnInfos.Add MdlInfo
-    Debug.Print showdict(MdlInfo)
+    'Debug.Print showdict(MdlInfo)
 Continue:
     Next
     If BtnInfos.count < 1 Then Exit Function

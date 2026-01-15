@@ -1,6 +1,6 @@
-Attribute VB_Name = "RW_Cbom"
+Attribute VB_Name = "BOM_Cbom"
 '------宏信息-----------------------------------------------------
-'{GP:1}
+'{GP:2}
 '{Ep:cBom}
 '{Caption:生成BOM}
 '{ControlTipText:一键生成带有截图的BOM}

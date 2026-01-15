@@ -1,7 +1,7 @@
-Attribute VB_Name = "ASM_closePartWindows"
+Attribute VB_Name = "OTH_closePartWindows"
 'Attribute VB_Name = "m10_closePartWindows"
 ' Part窗口一次性全关闭
-'{GP:3}
+'{GP:6}
 '{EP:CLSpart}
 '{Caption:关闭零件窗}
 '{ControlTipText: 点击后一次性全关闭所有零件窗口}

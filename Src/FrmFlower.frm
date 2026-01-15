@@ -34,10 +34,6 @@ Call iPos(pp)
 
 End Sub
 
-Private Sub Label7_Click()
-
-End Sub
-
 Private Sub Op1_Click()
 ScrR3.value = 255
 ScrG3.value = 0
@@ -128,10 +124,6 @@ ScrG4.value = 225
 ScrB4.value = 0
 End Sub
 
-Private Sub qtydrw2_Change()
-
-End Sub
-
 Private Sub ScrB1_Change()
 Lbl1.BackColor = RGB(ScrR1.value, ScrG1.value, ScrB1.value)
 Frame1.Caption = "Stem; R:" & CStr(ScrR1.value) & ", G:" & CStr(ScrG1.value) & ", B:" & CStr(ScrB1.value)
@@ -208,10 +200,6 @@ Private Sub TxtTPlywood_Change()
 
 End Sub
 
-Private Sub TxtX0_Change()
-
-End Sub
-
 Private Sub UserForm_Activate()
     Lbl1.BackColor = RGB(ScrR1.value, ScrG1.value, ScrB1.value)
     Lbl2.BackColor = RGB(ScrR2.value, ScrG2.value, ScrB2.value)
@@ -223,6 +211,3 @@ Private Sub UserForm_Activate()
     Frame1.Caption = "Stem; R:" & CStr(ScrR1.value) & ", G:" & CStr(ScrG1.value) & ", B:" & CStr(ScrB1.value)
 End Sub
 
-Private Sub UserForm_Click()
-
-End Sub

@@ -1,6 +1,6 @@
-Attribute VB_Name = "OTH_NewBH"
+Attribute VB_Name = "ASM_NewBH"
 'Attribute VB_Name = "OTH_NewBH"
-'{GP:6}
+'{GP:3}
 '{Ep:CATMain}
 '{Caption:新电池箱体}
 '{ControlTipText:新建一个电池箱体的结构树}

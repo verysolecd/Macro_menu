@@ -342,31 +342,31 @@ Sub CATTitleBlockText()
   CATLinks
 End Sub
 
-Sub ComputeTitleBlockTranslation(ary)
-  ary(0) = 0
-  ary(1) = 0
+Sub ComputeTitleBlockTranslation(Ary)
+  Ary(0) = 0
+  Ary(1) = 0
   On Error Resume Next
     Set Text = Texts.getItem("Reference_" + m_MacroID) 'Get the reference text
     If Err.Number <> 0 Then
       Err.Clear
     Else
-      ary(0) = X0 - Text.X
-      ary(1) = Y0 - Text.Y
-      Text.X = Text.X + ary(0)
-      Text.Y = Text.Y + ary(1)
+      Ary(0) = X0 - Text.X
+      Ary(1) = Y0 - Text.Y
+      Text.X = Text.X + Ary(0)
+      Text.Y = Text.Y + Ary(1)
     End If
   On Error GoTo 0
 End Sub
-Sub ComputeRevisionBlockTranslation(ary)
-  ary(0) = 0
-  ary(1) = 0
+Sub ComputeRevisionBlockTranslation(Ary)
+  Ary(0) = 0
+  Ary(1) = 0
   On Error Resume Next
     Set Text = Texts.getItem("RevisionBlock_Text_Init") 'Get the reference text
     If Err.Number <> 0 Then
       Err.Clear
     Else
-      ary(0) = X0 + m_ColRev(4) - Text.X
-      ary(1) = m_Height - m_Offset - 0.5 * m_RevRowHeight - Text.Y
+      Ary(0) = X0 + m_ColRev(4) - Text.X
+      Ary(1) = m_Height - m_Offset - 0.5 * m_RevRowHeight - Text.Y
     End If
   On Error GoTo 0
 End Sub

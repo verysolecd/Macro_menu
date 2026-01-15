@@ -60,7 +60,7 @@ Sub CATMain()
     maxBox = getMaxSize_Bodies(workPt, targetBodies, ax)
     Dim minBody As body
     Dim bdy
-        Set bdy = KCL.getItem("MinimumBox", workPt.bodies)
+        Set bdy = KCL.getItm("MinimumBox", workPt.bodies)
         If Not KCL.IsNothing(bdy) Then
            Dim osel: Set osel = CATIA.ActiveDocument.Selection
             osel.Clear
@@ -189,19 +189,19 @@ Private Function initAxis( _
     Set axiss = pt.AxisSystems
     Dim ax As Variant ' AxisSystem
     Set ax = axiss.Add()
-    Dim ary As Variant
-    ary = Array(0#, 0#, 0#)
+    Dim Ary As Variant
+    Ary = Array(0#, 0#, 0#)
     ax.OriginType = catAxisSystemOriginByCoordinates
     Set ax = ax
-    ax.PutOrigin ary
-    ary = Array(1#, 0#, 0#)
+    ax.PutOrigin Ary
+    Ary = Array(1#, 0#, 0#)
     ax.XAxisType = catAxisSystemAxisByCoordinates
     Set ax = ax
-    ax.PutXAxis ary
-    ary = Array(0#, 1#, 0#)
+    ax.PutXAxis Ary
+    Ary = Array(0#, 1#, 0#)
     ax.YAxisType = catAxisSystemAxisByCoordinates
     Set ax = ax
-    ax.PutYAxis ary
+    ax.PutYAxis Ary
     ax.IsCurrent = True
     pt.Update
     Set initAxis = ax

@@ -1,150 +1,123 @@
-Option Explicit
 
-' ==============================================================================
-' º¯ÊıÃû³Æ: CheckClashBetweenTwoProducts
-' ¹¦ÄÜ: Ğ£ºËÁ½¸öÁã²¿¼ş/×é¼şÖ®¼äµÄ¸ÉÉæ»ò¼äÏ¶
-' ÊäÈë:
-'   - p1 (Product): µÚÒ»¸ö²úÆ·
-'   - p2 (Product): µÚ¶ş¸ö²úÆ·
-'   - clearanceVal (Double): °²È«¼äÏ¶Öµ(mm)¡£
-'       * ÉèÎª 0 ±íÊ¾½ö¼ì²éÓ²¸ÉÉæºÍ½Ó´¥¡£
-'       * ÉèÎª >0 (ÀıÈç 2.0) ±íÊ¾¼ì²é 2mm ÄÚµÄ¼äÏ¶£¬Ğ¡ÓÚ´Ë¾àÀëÊÓÎª¸ÉÉæ¡£
-' Êä³ö:
-'   - String: ·µ»Ø "Interference" (Ó²¸ÉÉæ), "Contact" (½Ó´¥), "Clearance Violation" (¼äÏ¶Î¥¹æ) »ò "Safe" (°²È«)
-'   - CATIA½çÃæ: ÔÚ½á¹¹Ê÷ Applications -> Clash ÏÂÉú³É·ÖÎö¶ÔÏó
-' ==============================================================================
-Function CheckClashBetweenTwoProducts(p1 As Product, p2 As Product, Optional clearanceVal As Double = 0#) As String
-    
-    Dim doc As ProductDocument
-    Set doc = CATIA.ActiveDocument
-    
-    Dim rootProd As Product
-    Set rootProd = doc.Product
-    
-    ' 1. »ñÈ¡ DMU Clash ¹ÜÀí¶ÔÏó
-    ' ×¢Òâ£ºĞèÒªÓĞ SPA (Space Analysis) Ïà¹ØµÄĞí¿ÉÖ¤
-    Dim cClashes As Clashes
-    On Error Resume Next
-    Set cClashes = rootProd.GetTechnologicalObject("Clashes")
-    On Error GoTo 0
-    
-    If cClashes Is Nothing Then
-        MsgBox "ÎŞ·¨»ñÈ¡Clashes¶ÔÏó£¬Çë¼ì²éÊÇ·ñÓµÓĞ SPA/DMU Ğí¿ÉÖ¤¡£", vbCritical
-        CheckClashBetweenTwoProducts = "Error"
-        Exit Function
-    End If
-    
-    ' 2. ´´½¨Ò»¸öĞÂµÄ¸ÉÉæ·ÖÎö
-    Dim oClash As Clash
-    Set oClash = cClashes.Add()
-    
-    ' 3. ÉèÖÃ¼ÆËãÀàĞÍ£ºÁ½×éÖ®¼ä (Between two selections)
-    oClash.ComputationType = catClashComputationTypeBetweenTwo
-    
-    ' 4. ¶¨ÒåÁ½×é²úÆ·
-    oClash.FirstGroup.Add p1
-    oClash.SecondGroup.Add p2
-    
-    ' 5. ÉèÖÃ¸ÉÉæÀàĞÍºÍ¼äÏ¶Öµ
-    If clearanceVal > 0 Then
-        ' ¼ì²é¼äÏ¶Ä£Ê½
-        oClash.InterferenceType = catClashInterferenceTypeClearance
-        oClash.Clearance = clearanceVal
-    Else
-        ' ½ö½Ó´¥/¸ÉÉæÄ£Ê½
-        oClash.InterferenceType = catClashInterferenceTypeContact
-    End If
-    
-    ' 6. ÔËĞĞ¼ÆËã
-    oClash.Compute
-    
-    ' 7. ÖØÃüÃûÊ÷ÉÏµÄ½Úµã£¬·½±ãÓÃ»§Ê¶±ğ
-    oClash.Name = "Check_" & p1.PartNumber & "_VS_" & p2.PartNumber
-    
-    ' 8. ·ÖÎö½á¹ûÂß¼­
-    ' ±éÀúËùÓĞ³åÍ»£¬ÅĞ¶Ï×îÑÏÖØµÄ¸ÉÉæ¼¶±ğ
-    ' ÓÅÏÈ¼¶: Clash (Ó²¸ÉÉæ) > Contact (½Ó´¥) > Clearance (¼äÏ¶²»×ã) > Safe
-    
-    Dim resultStr As String
-    resultStr = "Safe"
-    
-    If oClash.Conflicts.Count > 0 Then
-        Dim i As Integer
-        Dim oConflict As Conflict
-        
-        ' Ô¤Éè×´Ì¬
-        Dim hasClash As Boolean: hasClash = False
-        Dim hasContact As Boolean: hasContact = False
-        Dim hasClearanceIssue As Boolean: hasClearanceIssue = False
-        
-        For i = 1 To oClash.Conflicts.Count
-            Set oConflict = oClash.Conflicts.Item(i)
-            
-            If oConflict.Type = catConflictTypeClash Then
-                hasClash = True
-                Exit For ' ·¢ÏÖÓ²¸ÉÉæ£¬ÕâÊÇ×îÑÏÖØµÄ£¬Ö±½ÓÍË³öÑ­»·
-            ElseIf oConflict.Type = catConflictTypeContact Then
-                hasContact = True
-            ElseIf oConflict.Type = catConflictTypeClearance Then
-                hasClearanceIssue = True
-            End If
-        Next i
-        
-        ' ¸ù¾İÓÅÏÈ¼¶ÅĞ¶¨×îÖÕ½á¹û
-        If hasClash Then
-            resultStr = "Interference"   ' ´æÔÚÓ²¸ÉÉæ
-        ElseIf hasContact Then
-            resultStr = "Contact"        ' ´æÔÚ½Ó´¥ (Èç¹û clearanceVal=0£¬ÕâÍ¨³£²»ËãÓ²¸ÉÉæ£¬ÊÓĞèÇó¶ø¶¨)
-        ElseIf hasClearanceIssue Then
-            resultStr = "Clearance Violation" ' ¼äÏ¶Ğ¡ÓÚÉè¶¨Öµ
-        End If
-    End If
-    
-    CheckClashBetweenTwoProducts = resultStr
-
-End Function
-
-' ==============================================================================
-' ²âÊÔ¹ı³Ì£ºÔËĞĞ´Ë Sub À´²âÊÔÉÏÊöº¯Êı
-' ==============================================================================
-Sub Test_Clash_Check()
-    ' 1. »·¾³¼ì²é
-    Dim doc As Document
-    Set doc = CATIA.ActiveDocument
-    
-    If TypeName(doc) <> "ProductDocument" Then
-        MsgBox "Çë´ò¿ªÒ»¸ö Product (×°ÅäÌå) ÎÄ¼ş¡£", vbExclamation
-        Exit Sub
-    End If
-    
-    Dim root As Product
-    Set root = doc.Product
-    
-    ' 2. ¼ì²éÊÇ·ñÓĞ×ã¹»µÄ²úÆ·
-    If root.Products.Count < 2 Then
-        MsgBox "×°ÅäÌåÖĞÖÁÉÙĞèÒªÁ½¸ö×Ó×é¼ş²ÅÄÜ½øĞĞÑİÊ¾¡£", vbExclamation
-        Exit Sub
-    End If
-    
-    ' 3. »ñÈ¡Ç°Á½¸ö×é¼ş½øĞĞ²âÊÔ (Êµ¼ÊÊ¹ÓÃÖĞÄã¿ÉÒÔĞŞ¸ÄÎª Selection »ñÈ¡)
-    Dim prod1 As Product
-    Dim prod2 As Product
-    Set prod1 = root.Products.Item(1)
-    Set prod2 = root.Products.Item(2)
-    
-    ' 4. µ÷ÓÃº¯Êı
-    ' Ê¾Àı£º¼ì²é prod1 ºÍ prod2£¬ÒªÇó×îĞ¡¼äÏ¶Îª 3.0mm
-    Dim checkResult As String
-    checkResult = CheckClashBetweenTwoProducts(prod1, prod2, 3.0)
-    
-    ' 5. Êä³ö½á¹û
-    Dim msg As String
-    msg = "Ğ£ºËÍê³É£¡" & vbCrLf & vbCrLf
-    msg = msg & "×é¼ş 1: " & prod1.PartNumber & vbCrLf
-    msg = msg & "×é¼ş 2: " & prod2.PartNumber & vbCrLf
-    msg = msg & "½á¹û×´Ì¬: " & checkResult & vbCrLf & vbCrLf
-    msg = msg & "ÇëÔÚ½á¹¹Ê÷µ×²¿µÄ 'Applications -> Clash' ÖĞ²é¿´ÏêÏ¸µÄ¿ÉÊÓ»¯½á¹û¡£"
-    
-    MsgBox msg, vbInformation, "¸ÉÉæ¼ì²é½á¹û"
-    
+Private Sub ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½É¹ï¿½ï¿½ï¿½Í¼()
+    Dim documents1 As Documents
+    Set documents1 = CATIA.Documents
+    Dim drawingDocument1 As DrawingDocument
+    Dim productDocument1 As Document
+    Dim product1 As Product
+    Dim drawingView2 As DrawingView
+    Dim drawingViewGenerativeLinks2 As DrawingViewGenerativeLinks
+    Dim drawingViewGenerativeBehavior2 As DrawingViewGenerativeBehavior
+    Dim drawingView3 As DrawingView
+    Dim drawingViewGenerativeLinks3 As DrawingViewGenerativeLinks
+    Dim drawingViewGenerativeBehavior3 As DrawingViewGenerativeBehavior
+    Dim drawingSheets1 As DrawingSheets
+    Dim drawingSheet1 As DrawingSheet
+    Dim drawingViews1 As DrawingViews
+    Dim drawingView1 As DrawingView
+    Dim drawingViewGenerativeLinks1 As DrawingViewGenerativeLinks
+    Dim drawingViewGenerativeBehavior1 As DrawingViewGenerativeBehavior
+    Dim specsAndGeomWindow1 As Window
+    Dim viewer3D1 As Viewer
+    Dim PaperW As Double, PaperH As Double
+    Set drawingDocument1 = documents1.Add("Drawing")
+    drawingDocument1.Standard = catISO
+    Set drawingSheets1 = drawingDocument1.Sheets
+    Dim i As Integer
+    For i = 1 To documents1.Count
+        Set productDocument1 = documents1.Item(i)
+        If TypeName(productDocument1) <> "ProductDocument" And TypeName(productDocument1) <> "PartDocument" Then GoTo NextFor
+        Set drawingSheet1 = drawingSheets1.Add(productDocument1.Name)
+        drawingSheet1.PaperSize = catPaperA4
+        drawingSheet1.[Scale] = 1#
+        drawingSheet1.Orientation = catPaperPortrait
+        Set drawingViews1 = drawingSheet1.Views
+        Set drawingView1 = drawingViews1.Add("AutomaticNaming")
+        PaperW = drawingSheet1.GetPaperWidth
+        PaperH = drawingSheet1.GetPaperHeight
+        drawingView1.x = PaperW / 4
+        drawingView1.Y = PaperH * 3 / 4
+        drawingView1.[Scale] = 1#
+        Set drawingViewGenerativeLinks1 = drawingView1.GenerativeLinks
+        Set drawingViewGenerativeBehavior1 = drawingView1.GenerativeBehavior
+        Set product1 = productDocument1.Product
+        drawingViewGenerativeBehavior1.Document = product1
+        drawingViewGenerativeBehavior1.DefineFrontView 1#, 0#, 0#, 0#, 1#, 0#
+        drawingViewGenerativeBehavior1.Update
+        Set drawingView1 = drawingViews1.Add("AutomaticNaming")
+        drawingView1.x = PaperW / 4
+        drawingView1.Y = PaperH / 3
+        drawingView1.[Scale] = 1#
+        Set drawingViewGenerativeLinks1 = drawingView1.GenerativeLinks
+        Set drawingViewGenerativeBehavior1 = drawingView1.GenerativeBehavior
+        drawingViewGenerativeBehavior1.Document = product1
+        Set drawingViewGenerativeBehavior1 = drawingView1.GenerativeBehavior
+        drawingViewGenerativeBehavior1.DefineProjectionView drawingViewGenerativeBehavior1, catTopView
+        drawingViewGenerativeBehavior1.Update
+        Set drawingView1 = drawingViews1.Add("AutomaticNaming")
+        drawingView1.x = PaperW * 3 / 4
+        drawingView1.Y = PaperH * 3 / 4
+        drawingView1.[Scale] = 1#
+        Set drawingViewGenerativeLinks1 = drawingView1.GenerativeLinks
+        Set drawingViewGenerativeBehavior1 = drawingView1.GenerativeBehavior
+        drawingViewGenerativeBehavior1.Document = product1
+        Set drawingViewGenerativeBehavior1 = drawingView1.GenerativeBehavior
+        drawingViewGenerativeBehavior1.DefineProjectionView drawingViewGenerativeBehavior1, catLeftView
+        drawingViewGenerativeBehavior1.Update
+        drawingView1.Activate
+        Set specsAndGeomWindow1 = CATIA.ActiveWindow
+        Set viewer3D1 = specsAndGeomWindow1.ActiveViewer
+        viewer3D1.Reframe
+NextFor:
+    Next
+    drawingSheets1.Remove 1
+    drawingSheets1.Item(1).Activate
 End Sub
+
+
+
+Attribute VB_Name = "Module1"
+Sub CATMain()
+
+    Dim Slct
+
+    Set Slct = CATIA.ActiveDocument.Selection
+    
+    Dim view
+    Set view = CATIA.ActiveDocument.Sheets.ActiveSheet.Views.ActiveView
+    
+    Slct.Clear
+
+    For Each Text In view.Texts
+        'è‹±æ–‡ç¯å¢ƒä¸‹é›¶ä»¶åºå·æ”¹ä¸ºBalloon
+        If InStr(Text.Name, "é›¶ä»¶åºå·") <> O Then
+        
+        Dim MyStr
+
+        MyStr = Text.Text
+
+        Dim TextPosX, TextPosY, LeaderPosX, LeaderPosY
+        TextPosX = Text.X
+        TextPosY = Text.Y
+        Text.Leaders.Item(1).GetPoint 1, LeaderPosX, LeaderPosY
+        
+        Slct.Add (Text)
+        Set t = view.Texts.Add(MyStr, TextPosX, TextPosY)
+        Set l = t.Leaders.Add(LeaderPosX, LeaderPosY)
+        t.SetFontSize 0, 0, 10
+        
+    End If
+    
+Next
+
+Slct.Delete
+
+End Sub
+
+
+
+StartCommand ("SpecificationsLevel1")â€”â€”â€”â€”å±•å¼€ç¬¬ä¸€å±‚ 
+StartCommand ("SpecificationsLevel2")â€”â€”â€”â€”å±•å¼€ç¬¬äºŒå±‚ 
+StartCommand ("SpecificationsLevel3")â€”â€”â€”â€”å±•å¼€ç¬¬ä¸‰å±‚ 
+StartCommand ("SpecificationsLevelSelect")â€”â€”â€”â€”é€‰æ‹©å±•å¼€æ·±åº¦ 
+StartCommand ("SpecificationsLevelAll")â€”â€”â€”â€”å±•å¼€æ‰€æœ‰å±‚

@@ -202,7 +202,7 @@ Private Function ParseCts(ByVal code As String) As Object
         ' ∏Ò Ω: ' %UI <ControlType> <ControlName> <Caption/Text>
         .Pattern = "^\s*'\s*%UI\s+(\w+)\s+(\w+)\s+(.*)$"
     End With
-    Dim lst: Set lst = InitLst
+    Dim lst: Set lst = KCL.InitLst
     If regEx.test(code) Then
         Set matches = regEx.Execute(code)
         For Each match In matches

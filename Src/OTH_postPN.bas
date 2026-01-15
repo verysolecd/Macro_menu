@@ -1,6 +1,6 @@
 Attribute VB_Name = "OTH_postPN"
 'Attribute VB_Name = "m30_postPN"
-'{GP:6}
+'{GP:3}
 '{Ep:CATMain}
 '{Caption:零件号后缀}
 '{ControlTipText:为所有零件号增加项目前缀}

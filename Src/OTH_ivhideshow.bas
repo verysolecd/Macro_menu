@@ -1,33 +1,50 @@
 Attribute VB_Name = "OTH_ivhideshow"
-'Attribute VB_Name = "m64_hide&show"
-'{GP:6}
-'{Ep:CATMain}
-'{Caption:反选隐藏}
-'{ControlTipText:反选并隐藏结构树}
-'{BackColor:}
+Option Explicit
+
+' Module-level state
+Private isHidden As Boolean
+Private hiddenElements As Collection
 
 Sub CATMain()
-
     If Not KCL.CanExecute("ProductDocument") Then Exit Sub
-    If pdm Is Nothing Then
-        Set pdm = New Cls_PDM
-    End If
-    
+
+    ' Ensure PDM instance
+    If pdm Is Nothing Then Set pdm = New Cls_PDM
+
     Set osel = pdm.msel
-    Dim oDoc, cGroups, oGroup
+    Dim oDoc As Document, cGroups As Object, oGroup As Object
     Set oDoc = CATIA.ActiveDocument
     Set cGroups = rootPrd.GetTechnologicalObject("Groups")
-    Set oGroup = cGroups.AddFromSel    ' 当前选择产品添加到组
-    
-    oGroup.ExtractMode = 1
-    oGroup.FillSelWithInvert   '  反选
-    
-    'oGroup.FillSelWithExtract
-      cGroups.Remove 1
-      Set cGroups = Nothing
-      Dim sel
-    Set sel = oDoc.Selection
-    Set VisPropertySet = sel.VisProperties
-    sel.VisProperties.SetShow 1  '' 将所有选中元素设置为不可见
-    'VisPropertySet.SetShow 0
+
+    If Not isHidden Then
+        ' First execution: hide inverted selection and store elements
+        Set oGroup = cGroups.AddFromSel
+        oGroup.ExtractMode = 1
+        oGroup.FillSelWithInvert
+        cGroups.Remove 1
+        Set cGroups = Nothing
+
+        ' Store the elements that were selected (now hidden)
+        Set hiddenElements = New Collection
+        Dim sel As Selection
+        Set sel = oDoc.Selection
+        Dim i As Long
+        For i = 1 To sel.Count
+            hiddenElements.Add sel.Item(i)
+        Next i
+
+        ' Hide them
+        sel.VisProperties.SetShow 1
+        isHidden = True
+    Else
+        ' Second execution: restore visibility
+        If Not hiddenElements Is Nothing Then
+            Dim elem As Object
+            For Each elem In hiddenElements
+                elem.VisProperties.SetShow 0
+            Next elem
+        End If
+        Set hiddenElements = Nothing
+        isHidden = False
+    End If
 End Sub

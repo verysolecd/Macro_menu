@@ -22,8 +22,6 @@ Private m_DebugMode As Boolean
 Private Sub Class_Initialize()
     m_DebugMode = True
 End Sub
-Private Sub Class_Terminate()
-End Sub
 Property Get DebugMode() As Boolean
     DebugMode = m_DebugMode
 End Property
@@ -127,7 +125,7 @@ Function DumpVariable( _
                     End If
                     DumpVariable = "Array(" & Join(ar, ", ") & IIf(xb < ub, ", ...", "") & ")"
                 Else
-                    DumpVariable = Replace(ty, "()", "(" & String(rnk - 1, ",") & ")"
+                    DumpVariable = Replace(ty, "()", "(" & String(rnk - 1, ",") & ")")
                 End If
             Else
                 Err.Raise 51
@@ -152,7 +150,9 @@ Private Function ReMatch( _
         Optional ByVal iCase As Boolean = False) As Variant
     Dim ret As Variant: ret = Array()
     Dim regEx As Object:  Set regEx = CreateRegExp(ptrnFind, IIf(iCase, "i", ""))
+    
     Dim ms As Object:     Set ms = regEx.Execute(expr)
+    
     If ms.count < 1 Then: GoTo Ending
     Dim sms As Object:    Set sms = ms(0).SubMatches
     ReDim ret(sms.count)
@@ -323,20 +323,20 @@ End Function
 Function InitArray( _
         ByVal count As Long, _
         Optional ByVal value As Variant = Empty) As Variant
-    Dim ary() As Variant
+    Dim Ary() As Variant
     If count < 0 Then
-        ary = Array()
+        Ary = Array()
     Else
-        ReDim ary(count)
+        ReDim Ary(count)
     End If
     If IsEmpty(value) Then
-        InitArray = ary
+        InitArray = Ary
     End If
     Dim i As Long
-    For i = 0 To UBound(ary)
-        ary(i) = value
+    For i = 0 To UBound(Ary)
+        Ary(i) = value
     Next
-    InitArray = ary
+    InitArray = Ary
 End Function
 '创建连接的数组 - 不是连接而是创建新的数组
 'param:ary1-Variant(Of Array)
@@ -385,18 +385,18 @@ End Function
 'param:endIdx-Long
 'return:Variant(Of Array)
 Function Slice( _
-        ByVal ary As Variant, _
+        ByVal Ary As Variant, _
         ByVal startIdx As Long, _
         ByVal endIdx As Long) As Variant
-    If Not IsArray(ary) Then Exit Function
+    If Not IsArray(Ary) Then Exit Function
     If endIdx - startIdx < 0 Then Exit Function
     If startIdx < 0 Then Exit Function
-    If endIdx > UBound(ary) Then Exit Function
+    If endIdx > UBound(Ary) Then Exit Function
     Dim rngAry() As Variant
     ReDim rngAry(endIdx - startIdx)
     Dim i As Long
     For i = startIdx To endIdx
-        rngAry(i - startIdx) = ary(i)
+        rngAry(i - startIdx) = Ary(i)
     Next
     Slice = rngAry
 End Function
@@ -404,9 +404,9 @@ End Function
 'param:ary-Variant(Of Array)
 'return:Variant(Of Array)
 Function DeepCopyArray( _
-        ByVal ary As Variant) As Variant
-    If Not IsArray(ary) Then Exit Function
-    DeepCopyArray = Slice(ary, 0, UBound(ary))
+        ByVal Ary As Variant) As Variant
+    If Not IsArray(Ary) Then Exit Function
+    DeepCopyArray = Slice(Ary, 0, UBound(Ary))
 End Function
 '数组是否一致？
 'param:ary1-Variant(Of Array)
@@ -451,13 +451,13 @@ Function CollectionToArraySet( _
         CollectionToArraySet = Array()
         Exit Function
     End If
-    Dim ary() As Variant
-    ReDim ary(lstCount - 1)
+    Dim Ary() As Variant
+    ReDim Ary(lstCount - 1)
     Dim i As Long
     For i = 1 To lst.count
-        Set ary(i - 1) = lst(i)
+        Set Ary(i - 1) = lst(i)
     Next
-    CollectionToArraySet = ary
+    CollectionToArraySet = Ary
 End Function
 '-集合的数组化-let
 'param:lst-collection
@@ -470,24 +470,24 @@ Function CollectionToArrayLet( _
         CollectionToArrayLet = Array()
         Exit Function
     End If
-    Dim ary() As Variant
-    ReDim ary(lstCount - 1)
+    Dim Ary() As Variant
+    ReDim Ary(lstCount - 1)
     Dim i As Long
     For i = 1 To lst.count
-        Let ary(i - 1) = lst(i)
+        Let Ary(i - 1) = lst(i)
     Next
-    CollectionToArrayLet = ary
+    CollectionToArrayLet = Ary
 End Function
 '数组的集合化
 'param:Variant(Of Array)
 'return:collection
 Function ArrayToCollection( _
-        ByVal ary As Variant) As collection
+        ByVal Ary As Variant) As collection
     Dim lst As collection
     Set lst = New collection
-    If UBound(ary) < 0 Then Exit Function
+    If UBound(Ary) < 0 Then Exit Function
     Dim v As Variant
-    For Each v In ary
+    For Each v In Ary
         lst.Add v
     Next
     Set ArrayToCollection = lst
