@@ -223,10 +223,10 @@ Function get_dir_by_project_name( _
     If proj Is Nothing Then Exit Function
     Dim path As String
     path = parentDirPath & "\" & proj.Name
-    Dim fso As Object
-    Set fso = mUtil.GetFso()
-    If Not fso.FolderExists(path) Then
-        fso.CreateFolder path
+    Dim Fso As Object
+    Set Fso = mUtil.GetFso()
+    If Not Fso.FolderExists(path) Then
+        Fso.CreateFolder path
     End If
     get_dir_by_project_name = path
 End Function
@@ -262,14 +262,14 @@ Private Function get_target_file_path_list( _
     Dim lst As collection
     Set lst = New collection
     Set get_target_file_path_list = lst
-    Dim fso As Object
-    Set fso = mUtil.GetFso()
+    Dim Fso As Object
+    Set Fso = mUtil.GetFso()
     Dim dir As Object
-    Set dir = fso.GetFolder(path)
+    Set dir = Fso.GetFolder(path)
     Dim file As Object
     Dim ext As String
     For Each file In dir.Files
-        ext = fso.GetExtensionName(file.Name)
+        ext = Fso.GetExtensionName(file.Name)
         If Not UBound(filter(targetExtensions, ext)) < 0 Then
             lst.Add file.path
         End If
@@ -335,12 +335,12 @@ Sub export_project_child_folder( _
         Set proj = mProjectLst.item(projectIdx)
     On Error GoTo 0
     If proj Is Nothing Then Exit Sub
-    Dim fso As Object
-    Set fso = mUtil.GetFso()
+    Dim Fso As Object
+    Set Fso = mUtil.GetFso()
     Dim dirPath As String
-    dirPath = fso.GetParentFolderName(proj.fileName) & "\" & SOURCE_FOLDER_NAME
-    If Not fso.FolderExists(dirPath) Then
-        fso.CreateFolder (dirPath)
+    dirPath = Fso.GetParentFolderName(proj.fileName) & "\" & SOURCE_FOLDER_NAME
+    If Not Fso.FolderExists(dirPath) Then
+        Fso.CreateFolder (dirPath)
     End If
     Call export_project(projectIdx, dirPath)
 End Sub
@@ -357,10 +357,10 @@ Sub overwriting_project( _
     key = Replace(proj.fileName, "\", SEPARATOR)
     Dim dirPath As String
     dirPath = mUserDict(key)("path")
-    Dim fso As Object
-    Set fso = mUtil.GetFso()
+    Dim Fso As Object
+    Set Fso = mUtil.GetFso()
     '找不到的话删除就可以了吗？
-    If Not fso.FolderExists(dirPath) Then Exit Sub
+    If Not Fso.FolderExists(dirPath) Then Exit Sub
     Call remove_module_files(dirPath)
     Call export_project(projectIdx, dirPath)
 End Sub
@@ -377,10 +377,10 @@ Sub open_folder( _
     key = Replace(proj.fileName, "\", SEPARATOR)
     Dim dirPath As String
     dirPath = mUserDict(key)("path")
-    Dim fso As Object
-    Set fso = mUtil.GetFso()
+    Dim Fso As Object
+    Set Fso = mUtil.GetFso()
     '找不到的话删除就可以了吗？
-    If Not fso.FolderExists(dirPath) Then Exit Sub
+    If Not Fso.FolderExists(dirPath) Then Exit Sub
     Call open_folder_dy_explorer(dirPath)
 End Sub
 '更新用户数据
@@ -427,9 +427,9 @@ End Function
 '删除模块文件
 Private Sub remove_module_files( _
         ByVal dirPath As String)
-    Dim fso As Object
-    Set fso = mUtil.GetFso()
-    If Not fso.FolderExists(dirPath) Then Exit Sub
+    Dim Fso As Object
+    Set Fso = mUtil.GetFso()
+    If Not Fso.FolderExists(dirPath) Then Exit Sub
     Dim Paths As collection
     Set Paths = get_target_file_path_list( _
         dirPath, _
@@ -443,7 +443,7 @@ Private Sub remove_module_files( _
     Dim path As Variant ' String
     For Each path In Paths
         On Error Resume Next
-            fso.DeleteFile path
+            Fso.DeleteFile path
         On Error GoTo 0
     Next
     '等待
@@ -495,8 +495,8 @@ Private Function get_user_data() As Object
 End Function
 '清理用户数据
 Private Sub cleanUp_userdata()
-    Dim fso As Object
-    Set fso = mUtil.GetFso()
+    Dim Fso As Object
+    Set Fso = mUtil.GetFso()
     Dim removeLst As collection
     Set removeLst = New collection
     Dim filePath As String
@@ -505,12 +505,12 @@ Private Sub cleanUp_userdata()
     For Each key In mUserDict.keys()
         If key = "ver" Then GoTo Continue
         filePath = Replace(key, SEPARATOR, "\")
-        If Not fso.FileExists(filePath) Then
+        If Not Fso.FileExists(filePath) Then
             removeLst.Add key
             GoTo Continue
         End If
         dirPath = mUserDict(key)("path")
-        If Not fso.FolderExists(dirPath) Then
+        If Not Fso.FolderExists(dirPath) Then
             removeLst.Add key
             GoTo Continue
         End If

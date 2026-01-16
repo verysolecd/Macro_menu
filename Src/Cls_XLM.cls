@@ -125,12 +125,12 @@ Sub inject_ary(ByVal idata As Variant, Optional ByVal idcols As Variant, Optiona
             For j = 1 To UBound(idcols)
                 ws.Cells(startrow, idcols(j)).Resize(UBound(idata, 1)).value = Application.index(idata, , idx(j))
             Next j
-'        Else
-'            startrow = 2:  lastRow = UBound(idata, 1) + startrow - 1
-'            cols = UBound(idata, 2)
-'              With ws
-'                .Range(.Cells(startrow, 1), .Cells(lastRow, cols)).value = idata
-'              End With
+        Else
+            startrow = 2:  lastrow = UBound(idata, 1) + startrow - 1
+            cols = UBound(idata, 2)
+              With ws
+                .Range(.Cells(startrow, 1), .Cells(lastrow, cols)).value = idata
+              End With
       End If
 Cleanup:     ' 恢复Excel设置
     On Error GoTo 0
@@ -170,15 +170,15 @@ End Sub
 Public Function extract_data(indRow)
     Dim iCols
     iCols = Array(0, 2, 4, 6, 8, 10, 12)
-    Dim temparr As Variant
-    temparr = ws.Rows(indRow).Resize(1, 14).value
+    Dim tempArr As Variant
+    tempArr = ws.Rows(indRow).Resize(1, 14).value
     Dim j As Long
     Dim outputArr As Variant
     ReDim outputArr(1 To UBound(iCols))
     For j = 1 To UBound(iCols)
          outputArr(j) = ""
-         If IsEmpty(temparr(1, iCols(j))) = False Then
-         outputArr(j) = temparr(1, iCols(j))
+         If IsEmpty(tempArr(1, iCols(j))) = False Then
+         outputArr(j) = tempArr(1, iCols(j))
          End If
     Next
     extract_data = outputArr ' 返回提取的数据
@@ -190,10 +190,10 @@ Public Function extract_ary()
     cnty = 14
  ReDim resultAry(1 To cntx, 1 To cnty)
   For idrow = 2 To cntx
-         Dim temparr As Variant
-            temparr = ws.Rows(idrow).Resize(1, cnty).value
+         Dim tempArr As Variant
+            tempArr = ws.Rows(idrow).Resize(1, cnty).value
         For j = 1 To cnty
-            resultAry(idrow, j) = temparr(1, j)
+            resultAry(idrow, j) = tempArr(1, j)
         Next j
    Next idrow
     extract_ary = resultAry ' 返回提取的数据

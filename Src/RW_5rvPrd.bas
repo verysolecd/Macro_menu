@@ -17,7 +17,7 @@ On Error GoTo ErrorHandler
         Dim odata As Variant: odata = xlm.extract_ary
 '--------map 修改ary------
     Dim iCols: iCols = Array(0, 2, 4, 6, 8, 10, 12)
-    Dim outputArr As Variant, temparr(1 To 6)
+    Dim outputArr As Variant, tempArr(1 To 6)
     ReDim outputArr(1 To UBound(odata, 1), 1 To UBound(iCols))
     
     
@@ -27,15 +27,15 @@ On Error GoTo ErrorHandler
         For j = 1 To UBound(outputArr, 2) '-------遍历该行数组后输出一个一维数组作为要的修改参数
              outputArr(i, j) = ""  '-------初始化为空数组
              If IsEmpty(odata(i, iCols(j))) = False Then outputArr(i, j) = odata(i, iCols(j))
-             temparr(j) = outputArr(i, j) '------
+             tempArr(j) = outputArr(i, j) '------
         Next j
     '-------遍历按行区分要修改的产品
         Select Case i
         Case 1
             Case 2  '第二行修改子总成
-                Call pdm.modatt(Prd2rv, temparr)
+                Call pdm.modatt(Prd2rv, tempArr)
             Case Else '其他修改子产品
-                Call pdm.modatt(children.item(i - currRow), temparr)
+                Call pdm.modatt(children.item(i - currRow), tempArr)
          End Select
     Next i
           Set Prd2rv = Nothing

@@ -367,33 +367,33 @@ End Function
 ''' @return:Boolean
 Function isExists(ByVal path$) As Boolean
     isExists = False
-    Dim fso As Object: Set fso = GetFso
-    If fso.FileExists(path) Then
+    Dim Fso As Object: Set Fso = GetFso
+    If Fso.FileExists(path) Then
         isExists = True: Exit Function ' 文件
-    ElseIf fso.FolderExists(path) Then
+    ElseIf Fso.FolderExists(path) Then
         isExists = True: Exit Function ' 文件夹
     End If
-    Set fso = Nothing
+    Set Fso = Nothing
 End Function
 Function GetPath(ByVal path$)
     GetPath = ""
-     Dim fso As Object: Set fso = GetFso
+     Dim Fso As Object: Set Fso = GetFso
      If isExists(path) Then
          GetPath = path
      Else
-         GetPath = fso.CreateFolder(path)
+         GetPath = Fso.CreateFolder(path)
      End If
-     Set fso = Nothing
+     Set Fso = Nothing
 End Function
 Sub explorepath(ByVal ipath)
  Dim thisdir, shell, cmd
     thisdir = ""
-    Dim fso As Object: Set fso = GetFso
-        If fso.FileExists(ipath) Then
+    Dim Fso As Object: Set Fso = GetFso
+        If Fso.FileExists(ipath) Then
             thisdir = ipath
-        ElseIf fso.FolderExists(ipath) Then
+        ElseIf Fso.FolderExists(ipath) Then
           Dim Fdl, file
-            Set Fdl = fso.GetFolder(ipath)
+            Set Fdl = Fso.GetFolder(ipath)
             For Each file In Fdl.Files
                 thisdir = file.path
             Exit For
@@ -404,7 +404,7 @@ Sub explorepath(ByVal ipath)
          cmd = "explorer.exe /select, """ & thisdir & """"
          shell.Run (cmd)
     End If
-    Set fso = Nothing
+    Set Fso = Nothing
     Set shell = Nothing
 End Sub
 '获取用户选择路径
@@ -431,25 +431,25 @@ If idx > 0 Then
 End Function
 
 Sub ClearDir(folderPath As String)
-    Dim fso As Object::  Set fso = GetFso()
+    Dim Fso As Object::  Set Fso = GetFso()
     ' 检查目录是否存在
-    If fso.FolderExists(folderPath) Then
+    If Fso.FolderExists(folderPath) Then
         Dim folder As Object
-        Set folder = fso.GetFolder(folderPath)
+        Set folder = Fso.GetFolder(folderPath)
         ' 删除目录中的所有文件
         Dim file As Object
         For Each file In folder.Files
-            fso.DeleteFile file.path, True ' True表示强制删除只读文件
+            Fso.DeleteFile file.path, True ' True表示强制删除只读文件
         Next
     End If
-    Set fso = Nothing     ' 释放对象
+    Set Fso = Nothing     ' 释放对象
 End Sub
 Function DeleteMe(ByVal path$) As Boolean
 DeleteMe = False
 On Error Resume Next
-    Dim fso As Object: Set fso = GetFso
-    If fso.FileExists(path) Then
-        fso.DeleteFile path, True
+    Dim Fso As Object: Set Fso = GetFso
+    If Fso.FileExists(path) Then
+        Fso.DeleteFile path, True
         DeleteMe = True
     End If
     If Error.Number = 0 Then
@@ -457,7 +457,7 @@ On Error Resume Next
     Else
         Error.Clear
     End If
-    Set fso = Nothing
+    Set Fso = Nothing
     Error.Clear
 On Error GoTo 0
 End Function
@@ -610,13 +610,13 @@ If idx > 0 Then
 End Function
 '创建md文件
 Function getmd(ByVal ipath_name As String)
-     Dim fso
-    Set fso = GetFso()
+     Dim Fso
+    Set Fso = GetFso()
     Dim mdfile
     If Not KCL.isExists(ipath_name) Then
-        Set mdfile = fso.CreateTextFile(ipath_name, False) '不存在则创建
+        Set mdfile = Fso.CreateTextFile(ipath_name, False) '不存在则创建
     Else
-        Set mdfile = fso.OpenTextFile(ipath_name, ForAppending, TristateFalse) '存在则
+        Set mdfile = Fso.OpenTextFile(ipath_name, ForAppending, TristateFalse) '存在则
     End If
     Set getmd = mdfile
     Set mdfile = Nothing
@@ -688,18 +688,18 @@ End Function
 
 ' 智能打开路径（优先激活已存在窗口）
 Sub openpath(ByVal strPath As String)
-    Dim fso As Object: Set fso = GetFso
+    Dim Fso As Object: Set Fso = GetFso
     If Len(strPath) > 3 And Right(strPath, 1) = "\" Then
         strPath = Left(strPath, Len(strPath) - 1)
     End If
-    If Not (fso.FileExists(strPath) Or fso.FolderExists(strPath)) Then
+    If Not (Fso.FileExists(strPath) Or Fso.FolderExists(strPath)) Then
         MsgBox "路径不存在: " & strPath, vbExclamation
         Exit Sub
     End If
     If Not ActivateExistingWindow(strPath) Then     ' 尝试激活已存在的窗口
-        If fso.FileExists(strPath) Then  ' 未找到已存在窗口，执行新打开操作
+        If Fso.FileExists(strPath) Then  ' 未找到已存在窗口，执行新打开操作
             OpenFileLocation strPath
-        ElseIf fso.FolderExists(strPath) Then
+        ElseIf Fso.FolderExists(strPath) Then
             openDir strPath
         End If
     End If
