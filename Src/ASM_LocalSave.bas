@@ -55,9 +55,9 @@ Sub SaveByLV(ByRef dict As Object, ByVal maxLvl As Integer, ByVal folder As Stri
                                 Case 1: suffix = ".CATProduct"
                                 Case Else
                                     Dim str1: str1 = info(1).ReferenceProduct.Parent.FullName
-                                    Dim Ary: Ary = Split(str1, ".")
-                                         For i = LBound(Ary) To UBound(Ary)
-                                              If info(1).ReferenceProduct.partNumber = Ary(i) Then suffix = ".CATProduct"
+                                    Dim ary: ary = Split(str1, ".")
+                                         For i = LBound(ary) To UBound(ary)
+                                              If info(1).ReferenceProduct.partNumber = ary(i) Then suffix = ".CATProduct"
                                          Next i
                             End Select
                 End Select

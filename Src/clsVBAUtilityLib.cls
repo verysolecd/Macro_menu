@@ -70,7 +70,7 @@ Function DumpVariable( _
         Case "Date"
             Dim D As String, t As String
             If Abs(X) >= 1 Then D = Month(X) & "/" & Day(X) & "/" & Year(X)
-            If Not IsInt(X) Then t = Format(X, "h:nn:ss AM/PM")
+            If Not IsInt(X) Then t = format(X, "h:nn:ss AM/PM")
             DumpVariable = "#" & VBA.Trim(D & " " & t) & "#"
         Case "String"
             If StrPtr(X) = 0 Then
@@ -323,20 +323,20 @@ End Function
 Function InitArray( _
         ByVal count As Long, _
         Optional ByVal value As Variant = Empty) As Variant
-    Dim Ary() As Variant
+    Dim ary() As Variant
     If count < 0 Then
-        Ary = Array()
+        ary = Array()
     Else
-        ReDim Ary(count)
+        ReDim ary(count)
     End If
     If IsEmpty(value) Then
-        InitArray = Ary
+        InitArray = ary
     End If
     Dim i As Long
-    For i = 0 To UBound(Ary)
-        Ary(i) = value
+    For i = 0 To UBound(ary)
+        ary(i) = value
     Next
-    InitArray = Ary
+    InitArray = ary
 End Function
 '创建连接的数组 - 不是连接而是创建新的数组
 'param:ary1-Variant(Of Array)
@@ -385,18 +385,18 @@ End Function
 'param:endIdx-Long
 'return:Variant(Of Array)
 Function Slice( _
-        ByVal Ary As Variant, _
+        ByVal ary As Variant, _
         ByVal startIdx As Long, _
         ByVal endIdx As Long) As Variant
-    If Not IsArray(Ary) Then Exit Function
+    If Not IsArray(ary) Then Exit Function
     If endIdx - startIdx < 0 Then Exit Function
     If startIdx < 0 Then Exit Function
-    If endIdx > UBound(Ary) Then Exit Function
+    If endIdx > UBound(ary) Then Exit Function
     Dim rngAry() As Variant
     ReDim rngAry(endIdx - startIdx)
     Dim i As Long
     For i = startIdx To endIdx
-        rngAry(i - startIdx) = Ary(i)
+        rngAry(i - startIdx) = ary(i)
     Next
     Slice = rngAry
 End Function
@@ -404,9 +404,9 @@ End Function
 'param:ary-Variant(Of Array)
 'return:Variant(Of Array)
 Function DeepCopyArray( _
-        ByVal Ary As Variant) As Variant
-    If Not IsArray(Ary) Then Exit Function
-    DeepCopyArray = Slice(Ary, 0, UBound(Ary))
+        ByVal ary As Variant) As Variant
+    If Not IsArray(ary) Then Exit Function
+    DeepCopyArray = Slice(ary, 0, UBound(ary))
 End Function
 '数组是否一致？
 'param:ary1-Variant(Of Array)
@@ -451,13 +451,13 @@ Function CollectionToArraySet( _
         CollectionToArraySet = Array()
         Exit Function
     End If
-    Dim Ary() As Variant
-    ReDim Ary(lstCount - 1)
+    Dim ary() As Variant
+    ReDim ary(lstCount - 1)
     Dim i As Long
     For i = 1 To lst.count
-        Set Ary(i - 1) = lst(i)
+        Set ary(i - 1) = lst(i)
     Next
-    CollectionToArraySet = Ary
+    CollectionToArraySet = ary
 End Function
 '-集合的数组化-let
 'param:lst-collection
@@ -470,24 +470,24 @@ Function CollectionToArrayLet( _
         CollectionToArrayLet = Array()
         Exit Function
     End If
-    Dim Ary() As Variant
-    ReDim Ary(lstCount - 1)
+    Dim ary() As Variant
+    ReDim ary(lstCount - 1)
     Dim i As Long
     For i = 1 To lst.count
-        Let Ary(i - 1) = lst(i)
+        Let ary(i - 1) = lst(i)
     Next
-    CollectionToArrayLet = Ary
+    CollectionToArrayLet = ary
 End Function
 '数组的集合化
 'param:Variant(Of Array)
 'return:collection
 Function ArrayToCollection( _
-        ByVal Ary As Variant) As collection
+        ByVal ary As Variant) As collection
     Dim lst As collection
     Set lst = New collection
-    If UBound(Ary) < 0 Then Exit Function
+    If UBound(ary) < 0 Then Exit Function
     Dim v As Variant
-    For Each v In Ary
+    For Each v In ary
         lst.Add v
     Next
     Set ArrayToCollection = lst

@@ -93,7 +93,7 @@ End If
 End Sub
 Function addDrw(iprd)
     Dim docs As Documents
-    Dim Shts As DrawingSheets
+    Dim shts As DrawingSheets
     Dim drwDoc As DrawingDocument
     Dim sht As DrawingSheet
     Dim oVs As DrawingViews
@@ -102,8 +102,8 @@ Function addDrw(iprd)
     Dim ViewGBH As DrawingViewGenerativeBehavior
     Set docs = CATIA.Documents
     Set drwDoc = docs.Add("Drawing")
-    Set Shts = drwDoc.Sheets
-    Set sht = Shts.item("Sheet.1")
+    Set shts = drwDoc.sheets
+    Set sht = shts.item("Sheet.1")
     Set oVs = sht.Views
  xdis = 200
  i = 1

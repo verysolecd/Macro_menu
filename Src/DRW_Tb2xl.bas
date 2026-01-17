@@ -17,12 +17,12 @@ Sub Tb2xl()
     Set oDoc = CATIA.ActiveDocument
     
 
-    Dim oSHT As DrawingSheet
-    Set oSHT = oDoc.Sheets.ActiveSheet
+    Dim osht As DrawingSheet
+    Set osht = oDoc.sheets.ActiveSheet
     
     ' set drawing drwView
     Dim oView As DrawingView
-    Set oView = oSHT.Views.ActiveView
+    Set oView = osht.Views.ActiveView
     
 
     Dim imsg
@@ -64,7 +64,7 @@ Sub ArrayToxl(arr2D() As Variant)
     Dim wbook As Object
     Set wbook = xlAPP.Workbooks.Add
     Dim rng As Object
-    Set rng = wbook.Sheets(1).Range("B2")
+    Set rng = wbook.sheets(1).Range("B2")
     With rng.Resize(UBound(arr2D, 1) + 1, UBound(arr2D, 2) + 1)
         .value = arr2D
         .Borders.LineStyle = xlContinuous

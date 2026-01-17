@@ -43,7 +43,7 @@ Attribute VB_Name = "Drw_myframe2"
 'titleblock_revision_Line_
 
 Public ActiveDoc, Fact, Selection
-Private Sheets, Sheet, targetSheet, Views, View, Texts, Text
+Private sheets, Sheet, targetsheet, Views, View, Texts, Text
 Private Name, m_MacroID, m_DisplayFormat As String
 Private m_RevRowHeight, m_checkRowHeight, m_RulerLength As Double
 Private m_Width, m_Height As Double
@@ -61,19 +61,19 @@ Sub CATMain()
     Dim oFrm: Set oFrm = New Cls_DynaFrm
     If oFrm.IsCancelled Then Exit Sub
     Select Case oFrm.BtnClicked
-        Case "btn_create": If (Name = "none") Then CATDrw_Creation targetSheet
-        Case "btn_delete": If (Name <> "none") Then CATDrw_Deletion targetSheet
+        Case "btn_create": If (Name = "none") Then CATDrw_Creation targetsheet
+        Case "btn_delete": If (Name <> "none") Then CATDrw_Deletion targetsheet
         Case "btn_resize"
             If (Name <> "none") Then
-             CATDrw_Resizing targetSheet
-              CATDrw_Update targetSheet
+             CATDrw_Resizing targetsheet
+              CATDrw_Update targetsheet
             End If
     End Select
       
 '         Case Else
 '            MsgBox "未点击任何按钮，或按钮名称未匹配", vbExclamation
 '    End Select
-    CATExit targetSheet
+    CATExit targetsheet
 End Sub
 Sub CATCreateTitleBlockFrame()
 
@@ -137,7 +137,7 @@ vtop = 61
         newLineV -172 + X0, 36 + Y0, tb_Y(6) + Y0, "RevisionBlock_Line_Col_1"
 
 End Sub
-Sub CATDrw_Creation(targetSheet)
+Sub CATDrw_Creation(targetsheet)
   If Not CATInit() Then Exit Sub
   If CATCheckRef(1) Then Exit Sub 'To check whether a FTB exists already in the sheet
   CATCreateReference          'To place on the drawing a reference point
@@ -146,25 +146,25 @@ Sub CATDrw_Creation(targetSheet)
   CATCreateTitleBlockStandard 'To draw the standard representation
   CATTitleBlockText     'To fill in the title block
   CATColorGeometry 'To change the geometry color
-  CATExit targetSheet      'To save the sketch edition
+  CATExit targetsheet      'To save the sketch edition
 End Sub
-Sub CATDrw_Deletion(targetSheet)
+Sub CATDrw_Deletion(targetsheet)
   If Not CATInit() Then Exit Sub
   If CATCheckRef(0) Then Exit Sub
     DeleteAll "..Name=Frame_*"
     DeleteAll "..Name=TitleBlock_*"
     DeleteAll "..Name=RevisionBlock_*"
     DeleteAll "..Name=Reference_*"
-    CATExit targetSheet
+    CATExit targetsheet
 End Sub
-Sub CATDrw_Update(targetSheet)
+Sub CATDrw_Update(targetsheet)
   If Not CATInit() Then Exit Sub
   If CATCheckRef(0) Then Exit Sub
   CATDeleteTitleBlockStandard
   CATCreateTitleBlockStandard
   CATLinks
   CATColorGeometry
-  CATExit targetSheet
+  CATExit targetsheet
 End Sub
 Function CATCheckRev()
   SelectAll "CATDrwSearch.DrwText.Name=RevisionBlock_Text_Rev_*"
@@ -342,31 +342,31 @@ Sub CATTitleBlockText()
   CATLinks
 End Sub
 
-Sub ComputeTitleBlockTranslation(Ary)
-  Ary(0) = 0
-  Ary(1) = 0
+Sub ComputeTitleBlockTranslation(ary)
+  ary(0) = 0
+  ary(1) = 0
   On Error Resume Next
     Set Text = Texts.getItem("Reference_" + m_MacroID) 'Get the reference text
     If Err.Number <> 0 Then
       Err.Clear
     Else
-      Ary(0) = X0 - Text.X
-      Ary(1) = Y0 - Text.Y
-      Text.X = Text.X + Ary(0)
-      Text.Y = Text.Y + Ary(1)
+      ary(0) = X0 - Text.X
+      ary(1) = Y0 - Text.Y
+      Text.X = Text.X + ary(0)
+      Text.Y = Text.Y + ary(1)
     End If
   On Error GoTo 0
 End Sub
-Sub ComputeRevisionBlockTranslation(Ary)
-  Ary(0) = 0
-  Ary(1) = 0
+Sub ComputeRevisionBlockTranslation(ary)
+  ary(0) = 0
+  ary(1) = 0
   On Error Resume Next
     Set Text = Texts.getItem("RevisionBlock_Text_Init") 'Get the reference text
     If Err.Number <> 0 Then
       Err.Clear
     Else
-      Ary(0) = X0 + m_ColRev(4) - Text.X
-      Ary(1) = m_Height - m_Offset - 0.5 * m_RevRowHeight - Text.Y
+      ary(0) = X0 + m_ColRev(4) - Text.X
+      ary(1) = m_Height - m_Offset - 0.5 * m_RevRowHeight - Text.Y
     End If
   On Error GoTo 0
 End Sub
@@ -469,10 +469,10 @@ Sub CATLinks()
   
   Dim nbSheet, curSheet
   If Not DrwSheet.IsDetail Then
-    For Each itSheet In Sheets
+    For Each itSheet In sheets
       If Not itSheet.IsDetail Then nbSheet = nbSheet + 1
     Next
-    For Each itSheet In Sheets
+    For Each itSheet In sheets
       If Not itSheet.IsDetail Then
         curSheet = curSheet + 1
         
@@ -708,7 +708,7 @@ End Sub
 
 
 
-Sub CATDrw_Resizing(targetSheet)
+Sub CATDrw_Resizing(targetsheet)
    If Not CATInit() Then Exit Sub
   If CATCheckRef(0) Then Exit Sub
   Dim TbTranslation(2)
@@ -740,7 +740,7 @@ Sub CATDrw_Resizing(targetSheet)
     CATMoveViews TbTranslation
     CATLinks
   End If
-  CATExit targetSheet
+  CATExit targetsheet
 End Sub
 
 
@@ -762,13 +762,13 @@ Dim osheet, GeomElems, msg, title
   CATInit = False
   On Error Resume Next
     Set osheet = Nothing
-    Set osheet = CATIA.ActiveDocument.Sheets.item(1)
+    Set osheet = CATIA.ActiveDocument.sheets.item(1)
   On Error GoTo 0
   If osheet Is Nothing Then Exit Function
-  Set Sheets = osheet.Parent
-  Set ActiveDoc = Sheets.Parent
-  Set targetSheet = Sheets.ActiveSheet
-  Set Sheet = targetSheet
+  Set sheets = osheet.Parent
+  Set ActiveDoc = sheets.Parent
+  Set targetsheet = sheets.ActiveSheet
+  Set Sheet = targetsheet
   Set Views = Sheet.Views
   Set View = Views.item("Background View") 'Get the background view  Set oView = oViews.item("Background View")
     View.Activate
@@ -808,7 +808,7 @@ Dim osheet, GeomElems, msg, title
   m_DisplayFormat = Array("Letter", "Legal", "A0", "A1", "A2", "A3", "A4", "A", "B", "C", "D", "E", "F", "User")(Sheet.PaperSize)
   CATInit = True 'Exit without error
 End Function
-Sub CATExit(targetSheet)
+Sub CATExit(targetsheet)
   If Not IsEmpty(CATIA) Then
     Selection.Clear
     CATIA.HSOSynchronized = True
@@ -816,7 +816,7 @@ Sub CATExit(targetSheet)
     View.SaveEdition
 End Sub
 
-Sub CAT2DL_ViewLayout(targetSheet)
+Sub CAT2DL_ViewLayout(targetsheet)
   If Not CATInit() Then Exit Sub
   On Error Resume Next
     Name = Texts.getItem("Reference_" + m_MacroID).Name
@@ -825,27 +825,27 @@ Sub CAT2DL_ViewLayout(targetSheet)
   End If
   On Error GoTo 0
     If (Name = "none") Then
-      CATDrw_Creation (targetSheet)
+      CATDrw_Creation (targetsheet)
     Else
-      CATDrw_Resizing (targetSheet)
-      CATDrw_Update (targetSheet)
+      CATDrw_Resizing (targetsheet)
+      CATDrw_Update (targetsheet)
     End If
-  CATExit (targetSheet)
+  CATExit (targetsheet)
 End Sub
-Sub CATDrw_CheckedBy(targetSheet)
+Sub CATDrw_CheckedBy(targetsheet)
   If Not CATInit() Then Exit Sub
   If CATCheckRef(0) Then Exit Sub
   CATFillField "TitleBlock_Text_Controller_1", "TitleBlock_Text_CDate_1", "checked"
-  CATExit targetSheet
+  CATExit targetsheet
 End Sub
-Sub CATDrw_AddRevisionBlock(targetSheet)
+Sub CATDrw_AddRevisionBlock(targetsheet)
    If Not CATInit() Then Exit Sub
   If CATCheckRef(0) Then Exit Sub
   CATAddRevisionBlockText 'To fill in the title block
   CATDeleteRevisionBlockFrame
   CATCreateRevisionBlockFrame 'To draw the geometry
   CATColorGeometry
-  CATExit targetSheet
+  CATExit targetsheet
 End Sub
 Function CATCheckRef(Mode)
 Dim nbtexts, i, notfound, wholename, leftText, refText

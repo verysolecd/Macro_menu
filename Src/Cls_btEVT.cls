@@ -29,7 +29,7 @@ End Sub
 Private Sub mBtn_click()
 
     If Not mCloseType Then Unload mParentForm
-    Dim Ary: Ary = Array()  '这里按照传入按钮信息执行按钮对应的module宏
+    Dim ary: ary = Array()  '这里按照传入按钮信息执行按钮对应的module宏
     Dim ss: Set ss = CATIA.SystemService
     Call ss.ExecuteScript(mInfo(TAG_PJTPATH), _
                           catScriptLibraryTypeVBAProject, _
@@ -52,8 +52,8 @@ Private Sub mBtn_click()
                
 End Sub
 
-Private Sub UpdateButtonText(ByVal up2New As Boolean, Ary)
-        mBtn.Caption = IIf(up2New, Ary(0), Ary(1))
+Private Sub UpdateButtonText(ByVal up2New As Boolean, ary)
+        mBtn.Caption = IIf(up2New, ary(0), ary(1))
 '        MsgBox "CATIA.RefreshDisplay=" & CATIA.RefreshDisplay & vbNewLine _
 '                                & "点击后" & mBtn.Caption
 End Sub

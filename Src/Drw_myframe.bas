@@ -11,7 +11,7 @@ Attribute VB_Name = "Drw_myframe"
 ' Reg. Settings: English (United States)
 ' ****************************************************************************
 Public ActiveDoc
-Public Sheets
+Public sheets
 Public Sheet
 Public Views
 Public View
@@ -19,7 +19,7 @@ Public Texts
 Public Text
 Public Fact
 Public Selection
-Public targetSheet
+Public targetsheet
 Sub CATMain()
   If Not CATInit() Then Exit Sub
   On Error Resume Next
@@ -30,12 +30,12 @@ Sub CATMain()
   End If
   On Error GoTo 0
   If (Name = "none") Then
-    CATDrw_Creation targetSheet
+    CATDrw_Creation targetsheet
   Else
-    CATDrw_Resizing targetSheet
-    CATDrw_Update targetSheet
+    CATDrw_Resizing targetsheet
+    CATDrw_Update targetsheet
   End If
-    CATExit targetSheet
+    CATExit targetsheet
 End Sub
 
 Function CreateLine(iX1, iY1, iX2, iY2, iName) As Curve2D
@@ -87,7 +87,7 @@ Sub DeleteAll(iQuery As String)
   If Selection.Count2 <> 0 Then Selection.Delete
 End Sub
 
-Sub CAT2DL_ViewLayout(targetSheet)
+Sub CAT2DL_ViewLayout(targetsheet)
   If Not CATInit() Then Exit Sub
   On Error Resume Next
     Name = Texts.getItem("Reference_" + GetMacroID()).Name
@@ -97,14 +97,14 @@ Sub CAT2DL_ViewLayout(targetSheet)
   End If
   On Error GoTo 0
   If (Name = "none") Then
-    CATDrw_Creation (targetSheet)
+    CATDrw_Creation (targetsheet)
   Else
-    CATDrw_Resizing (targetSheet)
-    CATDrw_Update (targetSheet)
+    CATDrw_Resizing (targetsheet)
+    CATDrw_Update (targetsheet)
   End If
-  CATExit (targetSheet)
+  CATExit (targetsheet)
 End Sub
-Sub CATDrw_Creation(targetSheet)
+Sub CATDrw_Creation(targetsheet)
   '-------------------------------------------------------------------------------
   'How to create the FTB
   '-------------------------------------------------------------------------------
@@ -116,9 +116,9 @@ Sub CATDrw_Creation(targetSheet)
   CATCreateTitleBlockStandard 'To draw the standard representation
   CATTitleBlockText     'To fill in the title block
   CATColorGeometry 'To change the geometry color
-  CATExit targetSheet      'To save the sketch edition
+  CATExit targetsheet      'To save the sketch edition
 End Sub
-Sub CATDrw_Deletion(targetSheet)
+Sub CATDrw_Deletion(targetsheet)
   '-------------------------------------------------------------------------------
   'How to delete the FTB
   '-------------------------------------------------------------------------------
@@ -128,9 +128,9 @@ Sub CATDrw_Deletion(targetSheet)
   DeleteAll "..Name=TitleBlock_*"
   DeleteAll "..Name=RevisionBlock_*"
   DeleteAll "..Name=Reference_*"
-  CATExit targetSheet
+  CATExit targetsheet
 End Sub
-Sub CATDrw_Resizing(targetSheet)
+Sub CATDrw_Resizing(targetsheet)
   '-------------------------------------------------------------------------------
   'How to resize the FTB
   '-------------------------------------------------------------------------------
@@ -161,9 +161,9 @@ Sub CATDrw_Resizing(targetSheet)
     CATMoveViews TbTranslation
     CATLinks
   End If
-  CATExit targetSheet
+  CATExit targetsheet
 End Sub
-Sub CATDrw_Update(targetSheet)
+Sub CATDrw_Update(targetsheet)
   '-------------------------------------------------------------------------------
   'How to update the FTB
   '-------------------------------------------------------------------------------
@@ -173,7 +173,7 @@ Sub CATDrw_Update(targetSheet)
   CATCreateTitleBlockStandard
   CATLinks
   CATColorGeometry
-  CATExit targetSheet
+  CATExit targetsheet
 End Sub
 Function GetContext()
   ' Find execution context
@@ -188,16 +188,16 @@ Function GetContext()
     Case Else: GetContext = "Unexpected"
   End Select
 End Function
-Sub CATDrw_CheckedBy(targetSheet)
+Sub CATDrw_CheckedBy(targetsheet)
   '-------------------------------------------------------------------------------
   'How to update a bit more the FTB
   '-------------------------------------------------------------------------------
   If Not CATInit() Then Exit Sub
   If CATCheckRef(0) Then Exit Sub
   CATFillField "TitleBlock_Text_Controller_1", "TitleBlock_Text_CDate_1", "checked"
-  CATExit targetSheet
+  CATExit targetsheet
 End Sub
-Sub CATDrw_AddRevisionBlock(targetSheet)
+Sub CATDrw_AddRevisionBlock(targetsheet)
   '-------------------------------------------------------------------------------
   'How to create or modify a revison block
   '-------------------------------------------------------------------------------
@@ -207,7 +207,7 @@ Sub CATDrw_AddRevisionBlock(targetSheet)
   CATDeleteRevisionBlockFrame
   CATCreateRevisionBlockFrame 'To draw the geometry
   CATColorGeometry
-  CATExit targetSheet
+  CATExit targetsheet
 End Sub
 
 Function CATInit()
@@ -220,13 +220,13 @@ Function CATInit()
   
   'Set Sheet = targetSheet
   
- Set osheet = CATIA.ActiveDocument.Sheets.item(1)
+ Set osheet = CATIA.ActiveDocument.sheets.item(1)
  
- Set targetSheet = osheet
- Set Sheet = targetSheet
+ Set targetsheet = osheet
+ Set Sheet = targetsheet
  
-  Set Sheets = Sheet.Parent
-  Set ActiveDoc = Sheets.Parent
+  Set sheets = Sheet.Parent
+  Set ActiveDoc = sheets.Parent
   Set Views = Sheet.Views
   Set View = Views.item(2)        'Get the background view
   Set Texts = View.Texts
@@ -245,7 +245,7 @@ Function CATInit()
   End If
   CATInit = True 'Exit without error
 End Function
-Sub CATExit(targetSheet)
+Sub CATExit(targetsheet)
   '-------------------------------------------------------------------------------
   'How to restore the document working mode
   '-------------------------------------------------------------------------------
@@ -754,10 +754,10 @@ Sub CATLinks()
   Dim nbSheet
   Dim curSheet
   If Not DrwSheet.IsDetail Then
-    For Each itSheet In Sheets
+    For Each itSheet In sheets
       If Not itSheet.IsDetail Then nbSheet = nbSheet + 1
     Next
-    For Each itSheet In Sheets
+    For Each itSheet In sheets
       If Not itSheet.IsDetail Then
         curSheet = curSheet + 1
         itSheet.Views.item(2).Texts.getItem("TitleBlock_Text_Sheet_1").Text = CStr(curSheet) & "/" & CStr(nbSheet)

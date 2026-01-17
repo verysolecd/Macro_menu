@@ -198,22 +198,22 @@ Private Function initAxis( _
     Dim ax As Variant ' AxisSystem
     Set ax = axiss.Add()
 
-    Dim Ary As Variant
-    Ary = Array(0#, 0#, 0#)
+    Dim ary As Variant
+    ary = Array(0#, 0#, 0#)
     
     ax.OriginType = catAxisSystemOriginByCoordinates
     Set ax = ax
-    ax.PutOrigin Ary
+    ax.PutOrigin ary
 
-    Ary = Array(1#, 0#, 0#)
+    ary = Array(1#, 0#, 0#)
     ax.XAxisType = catAxisSystemAxisByCoordinates
     Set ax = ax
-    ax.PutXAxis Ary
+    ax.PutXAxis ary
 
-    Ary = Array(0#, 1#, 0#)
+    ary = Array(0#, 1#, 0#)
     ax.YAxisType = catAxisSystemAxisByCoordinates
     Set ax = ax
-    ax.PutYAxis Ary
+    ax.PutYAxis ary
 
     ax.IsCurrent = True
    ' pt.Update

@@ -235,7 +235,7 @@ xlhide
 End Sub
 Public Sub inject_gxbom(Data)
 xlhide
-     ws.Name = "BOM_xx" & Format(Now, "yymmdd_hhmm")
+     ws.Name = "BOM_xx" & format(Now, "yymmdd_hhmm")
       startrow = 5
      Call set_Header(hdgx, startrow - 1)
      lastrow = g_counter + startrow - 1

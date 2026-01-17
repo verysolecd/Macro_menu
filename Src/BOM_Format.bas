@@ -4,25 +4,126 @@ Attribute VB_Name = "BOM_Format"
 '{Caption:设定BOM格式}
 '{ControlTipText: 按初始化模板设定BOM格式}
 '{背景颜色: 12648447}
+Private targetsheet
+Private shts, oViews, Fct2, iformat(0 To 7), bfile
+
+
+Private Sub m_init()
+ 
+iformat(0) = "Number"
+iformat(1) = "Part Number"
+iformat(2) = "Quantity"
+iformat(3) = "Nomenclature"
+iformat(4) = "Defintion"
+iformat(5) = "Mass"
+iformat(6) = "Density"
+iformat(7) = "Material"
+ opath = KCL.GetPath(KCL.getVbaDir & "\" & "oTemp")
+ bfile = opath & "\bom_recap.txt"
+
+End Sub
+Sub DRW_create_BomTable()
+ CATIA.RefreshDisplay = False
+    Call m_init
+  Dim osht
+  On Error Resume Next
+    Set osht = Nothing
+    Set osht = CATIA.ActiveDocument.sheets.item(1)
+    Set osel = CATIA.ActiveDocument.Selection
+  On Error GoTo 0
+  If osht Is Nothing Then Exit Sub
+  Set shts = osht.Parent
+  Set drwDoc = shts.Parent
+  Set osht = shts.ActiveSheet
+  Set oViews = osht.Views
+  Set bcgView = oViews.item("Background View") ' Set oView = oViews.item("Background View")
+  Set mainview = oViews.item("Main View")
+  Set bomview = KCL.SelectItem("请选择bom视图", "DrawingView")
+  
+  If bomview Is Nothing Then Exit Sub
+    
+    Set dprd = bomview.GenerativeBehavior.Document 'DrawingViewGenerativeBehavior/DrawingViewGenerativeBehavior
+  
+   ary = getPrd_BomAry(dprd, iformat)
+
+   
+ tolrow = UBound(ary, 1)
+ tolcol = UBound(ary, 2)
+ pos_x = 90
+    pos_y = 150
+On Error Resume Next
+
+
+    
+    Set otable = bomview.Tables.item("bbom")
+    If Not otable Is Nothing Then
+        pos_x = otable.X - 18
+        pos_y = otable.Y - 30
+            osel.Clear
+            osel.Add bomview.Tables.item("bbom")
+            osel.Delete
+            osel.Clear
+    End If
+Err.Clear
+On Error GoTo 0
+
+    Set otable = bomview.Tables.Add(pos_x, pos_y, tolrow, tolcol, 10, 20)
+    otable.Name = "bbom"
+
+
+For i = 1 To tolrow
+    
+    For j = 1 To tolcol
+            ostr = Trim(CStr((ary(i, j))))
+    
+    Call otable.SetCellString(i, j, ostr)
+    
+    Next j
+Next i
+        
+  CATIA.RefreshDisplay = True
+
+
+
+End Sub
+
+
+
+Function getPrd_BomAry(iprd, ary)
+
+Dim ASMConv
+Set ASMConv = iprd.getItem("BillOfMaterial")
+'   ASMConv.SetCurrentFormat Ary
+ASMConv.SetSecondaryFormat ary
+CallByName ASMConv, "Print", VbMethod, "TXT", bfile, iprd
+Set olns = getBomlns(bfile)
+bomary = Parse2ary(olns)
+getPrd_BomAry = bomary
+End Function
+
+
+
+
 
 
 Sub CATMain()
+
  If Not CanExecute("ProductDocument") Then Exit Sub
      Dim opath: opath = KCL.GetPath(KCL.getVbaDir & "\" & "oTemp")
     Dim bfile:    bfile = opath & "\bom_recap.txt"
     Dim rootPrd: Set rootPrd = CATIA.ActiveDocument.Product
     Dim ASMConv: Set ASMConv = rootPrd.getItem("BillOfMaterial")
-    Dim Ary(7) 'change number if you have more custom columns/array...
-    Ary(0) = "Number"
-    Ary(1) = "Part Number"
-    Ary(2) = "Quantity"
-    Ary(3) = "Nomenclature"
-    Ary(4) = "Defintion"
-    Ary(5) = "Mass"
-    Ary(6) = "Density"
-    Ary(7) = "Material"
+    Dim ary(7) 'change number if you have more custom columns/array...
+    ary(0) = "Number"
+    ary(1) = "Part Number"
+    ary(2) = "Quantity"
+    ary(3) = "Nomenclature"
+    ary(4) = "Defintion"
+    ary(5) = "Mass"
+    ary(6) = "Density"
+    ary(7) = "Material"
 '   ASMConv.SetCurrentFormat Ary
-   ASMConv.SetSecondaryFormat Ary
+   ASMConv.SetSecondaryFormat ary
   
     CallByName ASMConv, "Print", VbMethod, "TXT", bfile, rootPrd
    Set olns = getBomlns(bfile)
@@ -106,17 +207,13 @@ End Function
 
 Function ParseLineToArray(lineStr)
     Dim tempStr:   tempStr = Trim(lineStr)
-   
     If Left(tempStr, 1) = "|" Then tempStr = Mid(tempStr, 2)
     If Right(tempStr, 1) = "|" Then tempStr = Left(tempStr, Len(tempStr) - 1)
-
     Dim arr:    arr = Split(tempStr, "|")
-    
     Dim k As Integer
     For k = LBound(arr) To UBound(arr)
         arr(k) = Trim(arr(k))
     Next k
-    
     ParseLineToArray = arr
 End Function
  

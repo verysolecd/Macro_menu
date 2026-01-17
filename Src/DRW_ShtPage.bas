@@ -1,28 +1,28 @@
 Attribute VB_Name = "DRW_ShtPage"
 Sub main()
     CATIA.RefreshDisplay = False
-    Set Shts = CATIA.ActiveDocument.Sheets
-    Set oSHT = Nothing
+    Set shts = CATIA.ActiveDocument.sheets
+    Set osht = Nothing
     Set lst = InitDic()
     j = 1
-       For i = 1 To Shts.count
-           Set oSHT = Shts.item(i)
-               If oSHT.IsDetail = False Then
-                 lst.Add j, oSHT
+       For i = 1 To shts.count
+           Set osht = shts.item(i)
+               If osht.IsDetail = False Then
+                 lst.Add j, osht
                     j = j + 1
                End If
        Next
     For i = 1 To lst.count
-       Set oSHT = lst(i)
-       If oSHT.IsDetail = False Then
-            oSHT.Activate
-                    oo = straf1st(oSHT.Name, " ")
+       Set osht = lst(i)
+       If osht.IsDetail = False Then
+            osht.Activate
+                    oo = straf1st(osht.Name, " ")
             If i > 9 Then
-                    oSHT.Name = "SH" & i & oo
+                    osht.Name = "SH" & i & oo
              Else
-                    oSHT.Name = "SH0" & i & oo
+                    osht.Name = "SH0" & i & oo
             End If
-            Set oView = oSHT.Views.item("Background View")
+            Set oView = osht.Views.item("Background View")
 '            oView.Activate
             Set ots = oView.Texts
             Set oDict = InitDic()
@@ -31,7 +31,7 @@ Sub main()
             Next
             
             Set Pg1 = oDict("gongxxzhang")
-            Pg1.Text = "¹²" & Shts.count - 1 & "Ò³"
+            Pg1.Text = "¹²" & shts.count - 1 & "Ò³"
             Set Pg2 = oDict("dixxzhang")
             Pg2.Text = "µÚ" & i & "Ò³"
             oView.SaveEdition
@@ -39,7 +39,7 @@ Sub main()
     Next
      CATIA.RefreshDisplay = True
      lst(lst.count).Activate
-     Set oView = oSHT.Views.item(1)
+     Set oView = osht.Views.item(1)
 End Sub
 Function straf1st(iStr, iext)
 Dim idx
