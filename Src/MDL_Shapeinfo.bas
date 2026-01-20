@@ -209,7 +209,7 @@ Function GetInternalName$(aoj)
     If IsNothing(aoj) Then
         GetInternalName = Empty: Exit Function
     End If
-    GetInternalName = aoj.getItem("ModelElement").internalName
+    GetInternalName = aoj.GetItem("ModelElement").internalName
 End Function
 
 Function strbflast(str, iext)

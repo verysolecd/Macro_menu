@@ -294,13 +294,13 @@ Private Function createPlane( _
     ByVal axRef As Reference, _
     ByVal A As Double, _
     ByVal b As Double, _
-    ByVal C As Double) _
+    ByVal c As Double) _
     As HybridShapePlaneEquation
     
     Dim HBF As HybridShapeFactory
     Set HBF = pt.HybridShapeFactory
     
-    Set createPlane = HBF.AddNewPlaneEquation(A, b, C, DMYLNG)
+    Set createPlane = HBF.AddNewPlaneEquation(A, b, c, DMYLNG)
     
     If Not axRef Is Nothing Then
         createPlane.RefAxisSystem = axRef
@@ -334,7 +334,7 @@ Private Function getAxisPlaneBrepName( _
     As String
     
     Dim intName As String
-    intName = ax.getItem("ModelElement").internalName
+    intName = ax.GetItem("ModelElement").internalName
     getAxisPlaneBrepName = _
         "RSur:(Face:(Brp:(" + intName + ";" + CStr(planeNo + 1) + ");None:();Cf11:());" + _
         "WithPermanentBody;WithoutBuildError;WithSelectingFeatureSupport;MFBRepVersion_CXR15)"

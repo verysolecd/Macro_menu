@@ -35,13 +35,13 @@ Sub CATMain()
         Case Else
             Exit Sub
     End Select
-    KCL.SW_Start
+   ' KCL.SW_Start
     Dim BaseScene As Variant: BaseScene = GetScene3D(GetViewPnt3D())
     Dim TopDoc As ProductDocument: Set TopDoc = CATIA.Documents.Add("Product")
     Call ToProduct(TopDoc, LeafItems, PasteType)
     Call UpdateScene(BaseScene)
     TopDoc.Product.Update
-    Debug.Print "时间:" & KCL.SW_GetTime & "s"
+    'Debug.Print "时间:" & KCL.SW_GetTime & "s"
     MsgBox "完成"
 End Sub
 

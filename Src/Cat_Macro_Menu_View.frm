@@ -148,7 +148,7 @@ Private Sub Try_SetProperty(ByVal ctrl As Object, _
         Dim tmp As Variant
         tmp = CallByName(ctrl, PptyName, VbGet)
         If Not Err.Number = 0 Then
-            Debug.Print PptyName & ": 获取属性失败(" & Err.Number & ")"
+           ' Debug.Print PptyName & ": 获取属性失败(" & Err.Number & ")"
             Exit Sub
         End If
         Select Case TypeName(tmp)
@@ -162,12 +162,12 @@ Private Sub Try_SetProperty(ByVal ctrl As Object, _
                 value = CCur(value)
         End Select
         If Not Err.Number = 0 Then
-            Debug.Print value & ": 类型转换失败(" & Err.Number & ")"
+          '  Debug.Print value & ": 类型转换失败(" & Err.Number & ")"
             Exit Sub
         End If
         Call CallByName(ctrl, PptyName, VbLet, value)
         If Not Err.Number = 0 Then
-            Debug.Print value & ": 设置属性失败(" & Err.Number & ")"
+           ' Debug.Print value & ": 设置属性失败(" & Err.Number & ")"
             Exit Sub
         End If
     On Error GoTo 0
@@ -185,7 +185,7 @@ Private Function Get_Page(ByVal Pgs As Pages, ByVal Name As String) As Page
 End Function
 ' 产品变化事件处理程序
 Private Sub prdObserver_ProductChanged()
- Debug.Print "事件触发"
+ 'Debug.Print "事件触发"
     UpdateProductInfo
 End Sub
 

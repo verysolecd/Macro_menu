@@ -21,7 +21,7 @@ On Error Resume Next
  tolrow = UBound(tempAry, 1)
  tolcol = UBound(tempAry, 2)
  pos_x = 50: pos_y = 50
- Set otable = bomview.Tables.item("bbom")
+Set otable = bomview.Tables.GetItem("bbom")
     If Not otable Is Nothing Then
         pos_x = otable.X - 20
         pos_y = otable.Y - 20
@@ -72,7 +72,7 @@ iformat(7) = "Material"
 End Sub
 Function getPrd_BomAry(iprd, ary)
 Dim ASMConv
-Set ASMConv = iprd.getItem("BillOfMaterial")
+Set ASMConv = iprd.GetItem("BillOfMaterial")
 '   ASMConv.SetCurrentFormat Ary
 ASMConv.SetSecondaryFormat ary
 CallByName ASMConv, "Print", VbMethod, "TXT", bfile, iprd
@@ -85,7 +85,7 @@ Sub AsmConv2xl()
      Dim opath: opath = KCL.GetPath(KCL.getVbaDir & "\" & "oTemp")
     Dim bfile:    bfile = opath & "\bom_recap.txt"
     Dim rootPrd: Set rootPrd = CATIA.ActiveDocument.Product
-    Dim ASMConv: Set ASMConv = rootPrd.getItem("BillOfMaterial")
+    Dim ASMConv: Set ASMConv = rootPrd.GetItem("BillOfMaterial")
     Dim ary(7) 'change number if you have more custom columns/array...
     ary(0) = "Number"
     ary(1) = "Part Number"
@@ -129,8 +129,8 @@ Function Parse2ary(lns)
 End Function
 
 Function getBomlns(BomTxTfile)
-    Dim Fso: Set Fso = KCL.GetFso
-    Dim ts: Set ts = Fso.OpenTextFile(BomTxTfile, 1)
+    Dim fso: Set fso = KCL.GetFso
+    Dim ts: Set ts = fso.OpenTextFile(BomTxTfile, 1)
     Dim lns: Set lns = New collection
     Dim startLn: startLn = False
     Do Until ts.AtEndOfStream

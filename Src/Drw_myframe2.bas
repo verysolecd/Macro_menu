@@ -53,7 +53,7 @@ Private m_Col, m_Row, m_ColRev As Variant
 Sub CATMain()
   If Not CATInit() Then Exit Sub
   On Error Resume Next
-      Name = Texts.getItem("Reference_" + m_MacroID).Name
+      Name = Texts.GetItem("Reference_" + m_MacroID).Name
     If Err.Number <> 0 Then
       Err.Clear: Name = "none"
     End If
@@ -346,7 +346,7 @@ Sub ComputeTitleBlockTranslation(ary)
   ary(0) = 0
   ary(1) = 0
   On Error Resume Next
-    Set Text = Texts.getItem("Reference_" + m_MacroID) 'Get the reference text
+    Set Text = Texts.GetItem("Reference_" + m_MacroID) 'Get the reference text
     If Err.Number <> 0 Then
       Err.Clear
     Else
@@ -361,7 +361,7 @@ Sub ComputeRevisionBlockTranslation(ary)
   ary(0) = 0
   ary(1) = 0
   On Error Resume Next
-    Set Text = Texts.getItem("RevisionBlock_Text_Init") 'Get the reference text
+    Set Text = Texts.GetItem("RevisionBlock_Text_Init") 'Get the reference text
     If Err.Number <> 0 Then
       Err.Clear
     Else
@@ -450,14 +450,14 @@ Sub CATLinks()
     Dim txtItem
     txtItem = "TitleBlock_Text_" & wuliaobianma_assy_val
   
-    Texts.getItem(txtItem).Text = ProductDrawn.partNumber
-    Texts.getItem("TitleBlock_Text_Title_1").Text = ProductDrawn.Definition
+    Texts.GetItem(txtItem).Text = ProductDrawn.partNumber
+    Texts.GetItem("TitleBlock_Text_Title_1").Text = ProductDrawn.Definition
     Dim ProductAnalysis As Analyze
     Set ProductAnalysis = ProductDrawn.Analyze
-    Texts.getItem("TitleBlock_Text_Weight_1").Text = FormatNumber(ProductAnalysis.Mass, 2)
+    Texts.GetItem("TitleBlock_Text_Weight_1").Text = FormatNumber(ProductAnalysis.Mass, 2)
   End If
  
-  Dim textFormat: Set textFormat = Texts.getItem("TitleBlock_Text_Size_1")
+  Dim textFormat: Set textFormat = Texts.GetItem("TitleBlock_Text_Size_1")
   textFormat.Text = m_DisplayFormat
   If Len(m_DisplayFormat) > 4 Then
     textFormat.SetFontSize 0, 0, 3.5
@@ -478,9 +478,9 @@ Sub CATLinks()
         
         oPagetext = "TitleBlock_Text_" & "gongxxzhang"
         
-        itSheet.Views.item(2).Texts.getItem(oPagetext).Text = "共" & CStr(nbSheet) & "页"
+        itSheet.Views.item(2).Texts.GetItem(oPagetext).Text = "共" & CStr(nbSheet) & "页"
          oPagetext = "TitleBlock_Text_" & "dixxzhang"
-        itSheet.Views.item(2).Texts.getItem(oPagetext).Text = "第" & CStr(curSheet) & "页"
+        itSheet.Views.item(2).Texts.GetItem(oPagetext).Text = "第" & CStr(curSheet) & "页"
       End If
     Next
   End If
@@ -489,8 +489,8 @@ End Sub
 Sub CATFillField(string1 As String, string2 As String, string3 As String)
   Dim TextToFill_1, TextToFill_2 As DrawingText
   Dim Person As String
-  Set TextToFill_1 = Texts.getItem(string1)
-  Set TextToFill_2 = Texts.getItem(string2)
+  Set TextToFill_1 = Texts.GetItem(string1)
+  Set TextToFill_2 = Texts.GetItem(string2)
   Person = TextToFill_1.Text
   If Person = "XXX" Then Person = "John Smith"
   Person = InputBox("This Document has been " + string3 + " by:", "Controller's name", Person)
@@ -758,14 +758,14 @@ Function GetContext()
 End Function
 
 Function CATInit()
-Dim osheet, GeomElems, msg, title
+Dim oSheet, GeomElems, msg, title
   CATInit = False
   On Error Resume Next
-    Set osheet = Nothing
-    Set osheet = CATIA.ActiveDocument.sheets.item(1)
+    Set oSheet = Nothing
+    Set oSheet = CATIA.ActiveDocument.sheets.item(1)
   On Error GoTo 0
-  If osheet Is Nothing Then Exit Function
-  Set sheets = osheet.Parent
+  If oSheet Is Nothing Then Exit Function
+  Set sheets = oSheet.Parent
   Set ActiveDoc = sheets.Parent
   Set targetsheet = sheets.ActiveSheet
   Set Sheet = targetsheet
@@ -819,7 +819,7 @@ End Sub
 Sub CAT2DL_ViewLayout(targetsheet)
   If Not CATInit() Then Exit Sub
   On Error Resume Next
-    Name = Texts.getItem("Reference_" + m_MacroID).Name
+    Name = Texts.GetItem("Reference_" + m_MacroID).Name
   If Err.Number <> 0 Then
     Err.Clear: Name = "none"
   End If

@@ -603,11 +603,11 @@ Function GetUniquePath( _
     path(2) = "." & path(2)
     '替换文件名中不能使用的字符
     path(1) = ReplaceInvalidChars(path(1))
-    Dim Fso As Object
-    Set Fso = GetFso()
+    Dim fso As Object
+    Set fso = GetFso()
     Dim newPath As String
     newPath = path(0) + "\" + path(1)
-    If Not Fso.FileExists(newPath + path(2)) Then
+    If Not fso.FileExists(newPath + path(2)) Then
         GetUniquePath = newPath + path(2)
         Exit Function
     End If
@@ -617,7 +617,7 @@ Function GetUniquePath( _
     Do
         i = i + 1
         tempName = newPath + "_" + CStr(i) + path(2)
-        If Not Fso.FileExists(tempName) Then
+        If Not fso.FileExists(tempName) Then
             GetUniquePath = tempName
             Exit Function
         End If

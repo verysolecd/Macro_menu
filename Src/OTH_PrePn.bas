@@ -24,11 +24,11 @@ Else
 End If
 End Sub
 
-Sub rePn(oprd)
-    pn = oprd.partNumber
+Sub rePn(oPrd)
+    pn = oPrd.partNumber
     purePN = KCL.straf1st(pn, "_")
-    oprd.partNumber = prj & "_" & purePN
-    For Each Product In oprd.Products
+    oPrd.partNumber = prj & "_" & purePN
+    For Each Product In oPrd.Products
         Call rePn(Product)
         Next
 End Sub
@@ -38,7 +38,7 @@ End Sub
 Sub shot()
 MsgBox "没编呢"
 Exit Sub
- Dim iprd, rootPrd, oprd, children
+ Dim iprd, rootPrd, oPrd, children
  Dim xlsht, rng, RC(0 To 1), oArry()
  Dim i, oRowNb
   RC(0) = 3: RC(1) = 3
@@ -76,7 +76,7 @@ MsgBox ("已经保存图片")
 oWindow.Layout = catWindowSpecsAndGeom 'catWindowSpecsOnly ' catWindowGeomOnly
 End Sub
 Function shotme()
-    Dim iprd, rootPrd, oprd, children
+    Dim iprd, rootPrd, oPrd, children
     Dim xlsht, rng, RC(0 To 1), oArry()
     Dim i, oRowNb
      RC(0) = 3: RC(1) = 3

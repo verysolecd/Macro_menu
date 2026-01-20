@@ -48,12 +48,12 @@ oPrt.InWorkObject = oSkt
 Set factory2D1 = oSkt.OpenEdition()
 Set geometricElements1 = oSkt.GeometricElements
 Set axis2D1 = geometricElements1.item("AbsoluteAxis")
-Set line2D1 = axis2D1.getItem("HDirection")
+Set line2D1 = axis2D1.GetItem("HDirection")
 line2D1.ReportName = 1
-Set line2D2 = axis2D1.getItem("VDirection")
+Set line2D2 = axis2D1.GetItem("VDirection")
 line2D2.ReportName = 2
 Set circle2D1 = factory2D1.CreateClosedCircle(0#, 0#, 10#)
-Set point2D1 = axis2D1.getItem("Origin")
+Set point2D1 = axis2D1.GetItem("Origin")
 circle2D1.CenterPoint = point2D1
 circle2D1.ReportName = 3
 oSkt.CloseEdition

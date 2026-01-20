@@ -42,14 +42,14 @@ Sub initPrdDoc(doc)
     Set iprd = doc.Product
     Call recurInitPrd(rootPrd)
 End Sub
-Sub recurInitPrd(oprd)
+Sub recurInitPrd(oPrd)
     If pdm Is Nothing Then Set pdm = New Cls_PDM
-        If g_allPN.Exists(oprd.partNumber) = False Then
-            g_allPN(oprd.partNumber) = 1
-            Call pdm.initPrd(oprd)
+        If g_allPN.Exists(oPrd.partNumber) = False Then
+            g_allPN(oPrd.partNumber) = 1
+            Call pdm.initPrd(oPrd)
         End If
-    If oprd.Products.count > 0 Then
-            For Each Product In oprd.Products
+    If oPrd.Products.count > 0 Then
+            For Each Product In oPrd.Products
                 Call recurInitPrd(Product)
              Next
     End If

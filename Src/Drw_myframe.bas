@@ -23,7 +23,7 @@ Public targetsheet
 Sub CATMain()
   If Not CATInit() Then Exit Sub
   On Error Resume Next
-    Name = Texts.getItem("Reference_" + GetMacroID()).Name
+    Name = Texts.GetItem("Reference_" + GetMacroID()).Name
   If Err.Number <> 0 Then
     Err.Clear
     Name = "none"
@@ -90,7 +90,7 @@ End Sub
 Sub CAT2DL_ViewLayout(targetsheet)
   If Not CATInit() Then Exit Sub
   On Error Resume Next
-    Name = Texts.getItem("Reference_" + GetMacroID()).Name
+    Name = Texts.GetItem("Reference_" + GetMacroID()).Name
   If Err.Number <> 0 Then
     Err.Clear
     Name = "none"
@@ -220,9 +220,9 @@ Function CATInit()
   
   'Set Sheet = targetSheet
   
- Set osheet = CATIA.ActiveDocument.sheets.item(1)
+ Set oSheet = CATIA.ActiveDocument.sheets.item(1)
  
- Set targetsheet = osheet
+ Set targetsheet = oSheet
  Set Sheet = targetsheet
  
   Set sheets = Sheet.Parent
@@ -534,7 +534,7 @@ Sub CATTitleBlockText()
   ' Insert Text Attribute link on sheet's scale
   Set Text = CreateTextAF("", GetOH() + 0.5 * (Col(1) + Col(2)) - 4, GetOV() + Row(1), "TitleBlock_Text_Scale_1", catBottomCenter, 5)
   Select Case GetContext():
-    Case "LAY": Text.InsertVariable 0, 0, ActiveDoc.part.getItem("CATLayoutRoot").Parameters.item(ActiveDoc.part.getItem("CATLayoutRoot").Name + "\" + Sheet.Name + "\ViewMakeUp2DL.1\Scale")
+    Case "LAY": Text.InsertVariable 0, 0, ActiveDoc.part.GetItem("CATLayoutRoot").Parameters.item(ActiveDoc.part.GetItem("CATLayoutRoot").Name + "\" + Sheet.Name + "\ViewMakeUp2DL.1\Scale")
     Case "DRW": Text.InsertVariable 0, 0, ActiveDoc.DrawingRoot.Parameters.item("Drawing\" + Sheet.Name + "\ViewMakeUp.1\Scale")
     Case Else: Text.Text = "XX"
   End Select
@@ -607,7 +607,7 @@ Sub CATAddRevisionBlockText()
   CreateTextAF Description, X + GetColRev(3) + 1, Y - GetRevRowHeight(), "RevisionBlock_Text_Description_" + GetRevLetter(Revision), catMiddleLeft, 2.5
   CreateTextAF init, X + 0.5 * GetColRev(4), Y - GetRevRowHeight(), "RevisionBlock_Text_Init_" + GetRevLetter(Revision), catMiddleCenter, 5
   On Error Resume Next
-    Texts.getItem("TitleBlock_Text_MDate_" + GetRevLetter(Revision)).Text = "" & Date
+    Texts.GetItem("TitleBlock_Text_MDate_" + GetRevLetter(Revision)).Text = "" & Date
     If Err.Number <> 0 Then Err.Clear
   On Error GoTo 0
 End Sub
@@ -615,7 +615,7 @@ Sub ComputeTitleBlockTranslation(TranslationTab)
   TranslationTab(0) = 0
   TranslationTab(1) = 0
   On Error Resume Next
-    Set Text = Texts.getItem("Reference_" + GetMacroID()) 'Get the reference text
+    Set Text = Texts.GetItem("Reference_" + GetMacroID()) 'Get the reference text
     If Err.Number <> 0 Then
       Err.Clear
     Else
@@ -630,7 +630,7 @@ Sub ComputeRevisionBlockTranslation(TranslationTab)
   TranslationTab(0) = 0
   TranslationTab(1) = 0
   On Error Resume Next
-    Set Text = Texts.getItem("RevisionBlock_Text_Init") 'Get the reference text
+    Set Text = Texts.GetItem("RevisionBlock_Text_Init") 'Get the reference text
     If Err.Number <> 0 Then
       Err.Clear
     Else
@@ -731,17 +731,17 @@ Sub CATLinks()
     Set ViewDocument = ViewDocument.Parent
   Next
   If Not ProductDrawn Is Nothing Then
-    Texts.getItem("TitleBlock_Text_EnoviaV5_Effectivity").Text = ProductDrawn.partNumber
-    Texts.getItem("TitleBlock_Text_Title_1").Text = ProductDrawn.Definition
+    Texts.GetItem("TitleBlock_Text_EnoviaV5_Effectivity").Text = ProductDrawn.partNumber
+    Texts.GetItem("TitleBlock_Text_Title_1").Text = ProductDrawn.Definition
     Dim ProductAnalysis As Analyze
     Set ProductAnalysis = ProductDrawn.Analyze
-    Texts.getItem("TitleBlock_Text_Weight_1").Text = FormatNumber(ProductAnalysis.Mass, 2)
+    Texts.GetItem("TitleBlock_Text_Weight_1").Text = FormatNumber(ProductAnalysis.Mass, 2)
   End If
   '-------------------------------------------------------------------------------
   'Display sheet format
   '-------------------------------------------------------------------------------
   Dim textFormat As DrawingText
-  Set textFormat = Texts.getItem("TitleBlock_Text_Size_1")
+  Set textFormat = Texts.GetItem("TitleBlock_Text_Size_1")
   textFormat.Text = GetDisplayFormat()
   If Len(GetDisplayFormat()) > 4 Then
     textFormat.SetFontSize 0, 0, 3.5
@@ -760,7 +760,7 @@ Sub CATLinks()
     For Each itSheet In sheets
       If Not itSheet.IsDetail Then
         curSheet = curSheet + 1
-        itSheet.Views.item(2).Texts.getItem("TitleBlock_Text_Sheet_1").Text = CStr(curSheet) & "/" & CStr(nbSheet)
+        itSheet.Views.item(2).Texts.GetItem("TitleBlock_Text_Sheet_1").Text = CStr(curSheet) & "/" & CStr(nbSheet)
       End If
     Next
   End If
@@ -773,8 +773,8 @@ Sub CATFillField(string1 As String, string2 As String, string3 As String)
   Dim TextToFill_1 As DrawingText
   Dim TextToFill_2 As DrawingText
   Dim Person As String
-  Set TextToFill_1 = Texts.getItem(string1)
-  Set TextToFill_2 = Texts.getItem(string2)
+  Set TextToFill_1 = Texts.GetItem(string1)
+  Set TextToFill_2 = Texts.GetItem(string2)
   Person = TextToFill_1.Text
   If Person = "XXX" Then Person = "John Smith"
   Person = InputBox("This Document has been " + string3 + " by:", "Controller's name", Person)

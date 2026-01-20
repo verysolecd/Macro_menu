@@ -99,7 +99,7 @@ Sub UnlockSelection()
                     SetAttr docPath, vbNormal
                     If Err.Number = 0 Then
                         unlockedCount = unlockedCount + 1
-                        Debug.Print "已解锁(变更为可写): " & doc.Name
+                       ' Debug.Print "已解锁(变更为可写): " & doc.Name
                     End If
                 End If
             End If
@@ -160,9 +160,9 @@ Sub CheckAndSaveUnlocked()
                 
                 If Err.Number = 0 Then
                     savedCount = savedCount + 1
-                    Debug.Print "已保存: " & doc.Name
+                   ' Debug.Print "已保存: " & doc.Name
                 Else
-                    Debug.Print "保存失败: " & doc.Name & " - " & Err.Description
+                  '  Debug.Print "保存失败: " & doc.Name & " - " & Err.Description
                     Err.Clear
                 End If
                 
