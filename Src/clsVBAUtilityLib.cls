@@ -511,21 +511,21 @@ Function ArraySlice( _
         Exit Function
     End If
     ' 设置结果数组的大小
-    Dim result() As Variant
-    ReDim result(0 To EndIndex - StartIndex)
+    Dim Result() As Variant
+    ReDim Result(0 To EndIndex - StartIndex)
     ' 数组切片
     Dim j As Long
     j = 0
     Dim i As Long
     For i = StartIndex To EndIndex
         If IsObject(arr(0)) Then
-            Set result(j) = arr(i)
+            Set Result(j) = arr(i)
         Else
-            Let result(j) = arr(i)
+            Let Result(j) = arr(i)
         End If
         j = j + 1
     Next i
-    ArraySlice = result
+    ArraySlice = Result
 End Function
 '************************************************************************
 '*  冒泡排序

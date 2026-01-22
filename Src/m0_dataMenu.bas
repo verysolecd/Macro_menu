@@ -36,10 +36,7 @@ Private Const TAG_MDLNAME = "mdl_name"      ' 模块名称标签
 '-----------------------------------------------------------------
 ' 菜单入口点
 Public Sub CATMain()
-    Set PageMap = Get_KeyValue(groupName, True)  '获取page编号和名称对应map  ：1  R&W 2...
-   
-showdict PageMap
-    
+    Set PageMap = Get_KeyValue(groupName, True)  '获取page编号和名称对应map  ：1  R&W 2...showdict PageMap
     Dim ButtonInfos As Object
     Set ButtonInfos = Get_ButtonInfo() '获取所有的具有可执行按钮的模块信息dic
     If ButtonInfos Is Nothing Then
@@ -75,14 +72,12 @@ Private Function Get_ButtonInfo() As Object
     Set AllComps = GetModuleLst(ExecPjt.ProjectItems.VBComponents)
     If AllComps Is Nothing Then Exit Function
     
-    Dim comp As Object 'VBComponent
-    Dim mdl As Object 'CodeModule
-    Dim DecCode As String
+    Dim comp, mdl, MdlInfo, BtnInfos As Object 'VBComponent
+    Dim  As Object 'CodeModule
+    Dim DecCode, CanExecMethod As String
     Dim DecCnt As Long
-    Dim MdlInfo As Object
-    Dim CanExecMethod As String
     
-    Dim BtnInfos As Object: Set BtnInfos = KCL.InitLst()
+    Set BtnInfos = KCL.InitLst()
     
     For Each comp In AllComps
         Set mdl = comp.codemodule
@@ -113,7 +108,7 @@ Try_TAG_ENTRY_DEF:
             If Exist_Method(mdl, TAG_ENTRY_DEF) Then
                  CanExecMethod = TAG_ENTRY_DEF
             End If
-            
+        
         End If
         
         If CanExecMethod = vbNullString Then GoTo Continue
@@ -192,13 +187,8 @@ Private Function Get_KeyValue( _
         Set Dic = Push_Dic(Dic, key, Var)
 Continue:
     Next
-    
     If Dic.count < 1 Then Exit Function
-    
     Set Get_KeyValue = Dic
-    
-
-    
 End Function
 ' 将按钮信息按分组排序
 ' 参数  :lst(Dict)
@@ -218,16 +208,13 @@ Private Function To_SortedList(ByVal Infos As Object) As Object
             SoLst.Add info(TAG_GROUP), lst
         End If
     Next
-    
     If SoLst.count < 1 Then Exit Function
-    
     ' 按模块名称排序
     Dim i As Long
     Dim InfoDic As Object: Set InfoDic = KCL.InitDic(vbTextCompare)
     For i = 0 To SoLst.count - 1
         InfoDic.Add SoLst.GetKey(i), Sort_by(SoLst.GetByIndex(i))
     Next
-    
     Set To_SortedList = InfoDic
 End Function
 ' 按模块名称排序

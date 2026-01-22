@@ -59,8 +59,11 @@ Sub Set_FormInfo(ByVal InfoLst As Object, _
     Dim key As Long, KeyStr As Variant, Pg As Page, pName As String
     Dim BtnInfos As Object, info As Variant
     Dim btns As Object: Set btns = KCL.InitLst()
+    
     Dim btn As MSForms.CommandButton
+    
     Dim BtnEvt As Cls_btEVT
+    
     For Each KeyStr In InfoLst
         key = CLng(KeyStr)
         If Not PageMap.Exists(key) Then GoTo Continue
@@ -188,7 +191,6 @@ Private Sub prdObserver_ProductChanged()
  'Debug.Print "事件触发"
     UpdateProductInfo
 End Sub
-
 
 ' 更新产品信息的方法
 Private Sub UpdateProductInfo()

@@ -9,7 +9,7 @@ Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
 Private WithEvents pWb As Workbook
 Attribute pWb.VB_VarHelpID = -1
-Public Sub init(wbInstance)
+Public Sub Init(wbInstance)
     Set pWb = wbInstance
 End Sub
 Private Sub pWb_BeforeClose(Cancel As Boolean)

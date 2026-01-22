@@ -560,7 +560,7 @@ Function isPathchn(pathToCheck) As Boolean
     regEx.Pattern = "[\u4e00-\u9fa5]"   ' 设置正则表达式模式，匹配中文字符
     regEx.IgnoreCase = True
     regEx.Global = True
-    isPathchn = regEx.test(pathToCheck)   ' 执行匹配并返回结果
+    isPathchn = regEx.TEST(pathToCheck)   ' 执行匹配并返回结果
     Set regEx = Nothing
 End Function
 ''替换字符串的所有中文为横线
@@ -810,7 +810,7 @@ Public Function GetBrepName(MyBRepName As String) As String
 End Function
 
 Function getFrmDic()
-   Dim oFrm: Set oFrm = New Cls_DynaFrm
+   Dim oFrm: Set oFrm = New cls_dynaFrm
    Dim frmDic: Set frmDic = oFrm.Res
     Set getFrmDic = frmDic
     Set frmDic = Nothing
@@ -821,7 +821,7 @@ Function BtnClicked(key)
     BtnClicked = False
     Dim btnDic: Set btnDic = Nothing
    On Error Resume Next
-        Dim oFrm: Set oFrm = New Cls_DynaFrm
+        Dim oFrm: Set oFrm = New cls_dynaFrm
         Set btnDic = oFrm.Res
    On Error GoTo 0
    If btnDic Is Nothing Then BtnClicked = Null: Exit Function

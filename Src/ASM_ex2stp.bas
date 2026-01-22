@@ -28,16 +28,19 @@ Sub ex2stp_zip()
     ErrorMessage = ""
     Dim oDoc: Set oDoc = CATIA.ActiveDocument
     Dim outputpath As String: outputpath = ""
-    
-    Dim frmDic: Set frmDic = getFrmDic ' oFrm.Res
-    
-    If frmDic("btn_clicked") <> "btnOK" Then   ' 2. 检查是否点击了确定 (btnOK)
+  
+    Dim oFrm: Set oFrm = New cls_dynaFrm
+    Set oFrm.mdl = KCL.getmdl
+    If oFrm.IsCancelled Then Exit Sub
+    If oFrm.Res("btn_clicked") <> "btnOK" Then
+'    If frmDic("btn_clicked") <> "btnOK" Then   ' 2. 检查是否点击了确定 (btnOK)
         MsgBox "用户取消了操作"
         Exit Sub
     End If
     '===========路径设置
-    If frmDic.Exists("chk_path") = True Then
-               Select Case frmDic("chk_path")
+      If oFrm.Res("chk_path") = True Then
+'    If frmDic.Exists("chk_path") = True Then
+               Select Case oFrm.Res("chk_path")
                     Case True: outputpath = IIf(oDoc.path = "", "", oDoc.path)
                     Case fasle: outputpath = KCL.selFdl()
                 End Select
@@ -46,10 +49,12 @@ Sub ex2stp_zip()
             ErrorMessage = "缺少导出路径，操作取消！"
             GoTo ShowMessage
         End If
+        
     '===========零件号时间戳处理
-      If frmDic.Exists("chk_tm") = True Then
+      'If frmDic.Exists("chk_tm") = True Then
+      If oFrm.Res("chk_tm") Then
            Dim ttp: ttp = KCL.timestamp("min")
-               Select Case frmDic("chk_tm")
+               Select Case oFrm.Res("chk_tm")
                     Case True:
                            pn = KCL.strbflast(oDoc.Product.partNumber, "_")
                                    If KCL.ExistsKey(pn, "_") Then
@@ -111,7 +116,7 @@ End Sub
 Function ex2zip(oFilepath) As Boolean
  On Error GoTo seterror
     ex2zip = False
-    Dim result, shell, cmd, path7z
+    Dim Result, shell, cmd, path7z
     '=======================
         path7z = "D:\for use\7-Zip\7z.exe"
         If KCL.isExists(path7z) Then
@@ -123,8 +128,8 @@ Function ex2zip(oFilepath) As Boolean
         End If
     '=======================
     Set shell = CreateObject("WScript.Shell")
-    result = shell.Run(cmd, 0, True)
-    If result <> 0 Then
+    Result = shell.Run(cmd, 0, True)
+    If Result <> 0 Then
         Err.Clear
     End If
     If KCL.isExists(zippath) Then

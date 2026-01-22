@@ -594,7 +594,7 @@ Sub CATAddRevisionBlockText()
   Revision = CATCheckRev() + 1
   X = GetOH()
   Y = GetHeight() - GetOV() - GetRevRowHeight() * (Revision - 0.5)
-  init = InputBox("This review has been done by:", "Reviewer's name", "XXX")
+  Init = InputBox("This review has been done by:", "Reviewer's name", "XXX")
   Description = InputBox("Comment to be inserted:", "Description", "None")
   If Revision = 1 Then
     CreateTextAF "REV", X + GetColRev(1) + 1, Y, "RevisionBlock_Text_Rev", catMiddleLeft, 5
@@ -605,7 +605,7 @@ Sub CATAddRevisionBlockText()
   CreateTextAF GetRevLetter(Revision), X + 0.5 * (GetColRev(1) + GetColRev(2)), Y - GetRevRowHeight(), "RevisionBlock_Text_Rev_" + GetRevLetter(Revision), catMiddleCenter, 5
   CreateTextAF "" & Date, X + 0.5 * (GetColRev(2) + GetColRev(3)), Y - GetRevRowHeight(), "RevisionBlock_Text_Date_" + GetRevLetter(Revision), catMiddleCenter, 3.5
   CreateTextAF Description, X + GetColRev(3) + 1, Y - GetRevRowHeight(), "RevisionBlock_Text_Description_" + GetRevLetter(Revision), catMiddleLeft, 2.5
-  CreateTextAF init, X + 0.5 * GetColRev(4), Y - GetRevRowHeight(), "RevisionBlock_Text_Init_" + GetRevLetter(Revision), catMiddleCenter, 5
+  CreateTextAF Init, X + 0.5 * GetColRev(4), Y - GetRevRowHeight(), "RevisionBlock_Text_Init_" + GetRevLetter(Revision), catMiddleCenter, 5
   On Error Resume Next
     Texts.GetItem("TitleBlock_Text_MDate_" + GetRevLetter(Revision)).Text = "" & Date
     If Err.Number <> 0 Then Err.Clear

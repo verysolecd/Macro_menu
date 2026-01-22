@@ -27,16 +27,15 @@ Sub set_ButtonEvent(ByVal btn As MSForms.CommandButton, _
     mCloseType = CloseType
 End Sub
 Private Sub mBtn_click()
-
     If Not mCloseType Then Unload mParentForm
     Dim ary: ary = Array()  '这里按照传入按钮信息执行按钮对应的module宏
     Dim ss: Set ss = CATIA.SystemService
+    
     Call ss.ExecuteScript(mInfo(TAG_PJTPATH), _
                           catScriptLibraryTypeVBAProject, _
                           mInfo(TAG_MDLNAME), _
                           mInfo(TAG_ENTRYPNT), _
                           Array())
-                          
     Dim capUp, icap
     icap = Array(0, 0)
     Select Case VBA.UCase(mInfo(TAG_MDLNAME))

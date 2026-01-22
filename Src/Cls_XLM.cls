@@ -41,7 +41,7 @@ If Error.Number <> 0 Then
      End If
 On Error GoTo 0
     Set wsEVT = New Cls_WsEvt
-    wsEVT.init WB
+    wsEVT.Init WB
     iniarr
 End Sub
 Private Sub iniarr()

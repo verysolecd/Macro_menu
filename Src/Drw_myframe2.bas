@@ -58,7 +58,7 @@ Sub drwFormat()
       Err.Clear: Name = "none"
     End If
   On Error GoTo 0
-    Dim oFrm: Set oFrm = New Cls_DynaFrm
+    Dim oFrm: Set oFrm = New cls_dynaFrm
     If oFrm.IsCancelled Then Exit Sub
     Select Case oFrm.BtnClicked
         Case "btn_create": If (Name = "none") Then CATDrw_Creation targetsheet
@@ -571,7 +571,7 @@ Private Function ParseDec(ByVal code As String) As Object
     Dim lst, mdic
     Set lst = InitLst
 
-    If regEx.test(code) Then
+    If regEx.TEST(code) Then
         Set matches = regEx.Execute(code)
         For Each match In matches
                 Set mdic = InitDic

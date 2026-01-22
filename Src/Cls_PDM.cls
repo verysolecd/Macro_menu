@@ -29,9 +29,6 @@ Attribute VB_Exposed = False
 ' = 6 , Plane
 ' = 7 , Solid, Volume
 
-
-
-
 Option Explicit
 
 Public Event ProductChanged()  ' ÊÂ¼şÉùÃ÷

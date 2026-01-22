@@ -13,10 +13,12 @@ Attribute VB_Name = "BOM_Cbom"
 
 Sub cBom()
     If Not KCL.CanExecute("ProductDocument") Then Exit Sub
-'弹窗提问
+    '弹窗提问
     CATIA.StartCommand ("* iso")
-    Dim oFrm: Set oFrm = New Cls_DynaFrm
-    If oFrm.IsCancelled Then Exit Sub
+    Dim oFrm: Set oFrm = New cls_dynaFrm
+    Set oFrm.mdl = KCL.GetApc().ExecutingProject.VBProject.VBE.Activecodepane.codemodule
+    
+'    If oFrm.IsCancelled Then Exit Sub
     Select Case oFrm.BtnClicked
         Case "btnOK":
                 If pdm Is Nothing Then Set pdm = New Cls_PDM
@@ -53,12 +55,13 @@ Sub cBom()
                 End Select
         Case Else: Exit Sub
     End Select
-    
-    
+  
+  Set oFrm = Nothing
     GoTo Cleanup
 
 Cleanup:
 On Error Resume Next
+ Set oFrm = Nothing
     xlm.xlshow
    Set iprd = Nothing
    KCL.ClearDir (gPic_Path)
