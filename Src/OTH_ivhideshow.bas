@@ -1,12 +1,12 @@
 Attribute VB_Name = "OTH_ivhideshow"
 'Attribute VB_Name = "m64_hide&show"
 '{GP:6}
-'{Ep:CATMain}
+'{Ep:RevertHide}
 '{Caption:反选隐藏}
 '{ControlTipText:反选并隐藏结构树}
 '{BackColor:}
 
-Sub CATMain()
+Sub RevertHide()
 
     If Not KCL.CanExecute("ProductDocument") Then Exit Sub
     If pdm Is Nothing Then

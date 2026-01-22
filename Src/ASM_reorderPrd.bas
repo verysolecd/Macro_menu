@@ -1,12 +1,12 @@
 Attribute VB_Name = "ASM_reorderPrd"
 'Attribute VB_Name = "sample_ReOrder_Product"
 '{GP:3}
-'{Ep:CATMain}
+'{Ep:reorderPrds}
 '{Caption:产品排序}
 '{ControlTipText:产品排序}
 '{BackColor: }
 Option Explicit
-Sub CATMain()
+Sub reorderPrds()
     If Not CanExecute("ProductDocument") Then Exit Sub
     Dim prodoc As ProductDocument:
     Set prodoc = CATIA.ActiveDocument

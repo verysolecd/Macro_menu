@@ -1,13 +1,13 @@
 Attribute VB_Name = "OTH_unfoldme"
 'Attribute VB_Name = "OTH_unfoldme"
 '{GP:6}
-'{Ep:CATMain}
+'{Ep:unfold_children}
 '{Caption:展开子图形}
 '{ControlTipText:遍历几何图形集的图形并展开}
 '{BackColor:16744703}
 
 
-Sub CATMain()
+Sub unfold_children()
 If Not CanExecute("PartDocument") Then Exit Sub
 Dim osel: Set osel = CATIA.ActiveDocument.Selection
 osel.Clear

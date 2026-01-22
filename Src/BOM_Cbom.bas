@@ -21,15 +21,13 @@ Sub cBom()
         Case "btnOK":
                 If pdm Is Nothing Then Set pdm = New Cls_PDM
                 If pdm.CurrentProduct Is Nothing Then Set pdm.CurrentProduct = pdm.getiPrd()
-                Dim iprd
-                Set iprd = pdm.CurrentProduct
+                Dim iprd: Set iprd = pdm.CurrentProduct
                 If iprd Is Nothing Then Exit Sub
                 If gws Is Nothing Then Set xlm = New Cls_XLM
+                
                 Call Cal_Mass2
-                g_counter = 1
-                lv = 1
-                Dim tmpData()
-                tmpData() = pdm.recurInfoPrd(iprd, lv)
+                g_counter = 1: lv = 1
+                Dim tmpData(): tmpData() = pdm.recurInfoPrd(iprd, lv)
                 ReDim resultAry(1 To UBound(tmpData, 1), 1 To UBound(tmpData, 2) + 2)
                 For i = 1 To UBound(tmpData, 1)
                      For j = 1 To UBound(resultAry, 2)
@@ -43,6 +41,7 @@ Sub cBom()
                     idcol = Array(0, 1, 2, 3, 4, 5, 7, 8, 10, 11, 13) ' 目标列号, 0号元素不占位置
                       idx = Array(0, 1, 2, 3, 4, 5, 11, 9, 7, 10, 7)  ' 需提取属性索引（0-based)
                     xlm.inject_bom resultAry, idcol, idx
+                    
                Select Case oFrm.Res("chk_capture")
                     Case True:
                           Call Capme
@@ -52,13 +51,19 @@ Sub cBom()
                             GoTo Cleanup
                     Case False: GoTo Cleanup
                 End Select
+        Case Else: Exit Sub
     End Select
+    
+    
     GoTo Cleanup
 
 Cleanup:
+On Error Resume Next
     xlm.xlshow
    Set iprd = Nothing
    KCL.ClearDir (gPic_Path)
    gPic_Path = ""
       xlm.freesheet
+      Error.Clear
+      On Error GoTo 0
 End Sub

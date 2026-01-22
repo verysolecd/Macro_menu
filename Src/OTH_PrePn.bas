@@ -1,13 +1,13 @@
 Attribute VB_Name = "OTH_PrePn"
 'Attribute VB_Name = "m30_PrePn"
 '{GP:6}
-'{Ep:CATMain}
+'{Ep:prePn}
 '{Caption:零件号前缀}
 '{ControlTipText:为所有零件号增加项目前缀}
 '{BackColor:}
 
 Private prj
-Sub CATMain()
+Sub prePn()
 
 If Not KCL.CanExecute("ProductDocument") Then Exit Sub
     Set rootPrd = CATIA.ActiveDocument.Product

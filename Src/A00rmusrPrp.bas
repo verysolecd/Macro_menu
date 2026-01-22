@@ -1,5 +1,5 @@
 Attribute VB_Name = "A00rmusrPrp"
-Sub CATMain()
+Sub remove_usrP()
 Set oPrd = CATIA.ActiveDocument.Product
 rm oPrd
 End Sub

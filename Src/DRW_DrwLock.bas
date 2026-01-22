@@ -2,13 +2,13 @@ Attribute VB_Name = "DRW_DrwLock"
 'Attribute VB_Name = "sample_Draft_View_Lock_UnLock"
 ' 图纸视图的锁定与解锁
 '{GP:5}
-'{EP:CATMain}
+'{EP:Drwlock}
 '{Caption:锁定_解锁}
 '{ControlTipText: 可以进行图纸视图的锁定与解锁}
 '{背景颜色: 12648447}
 
 Option Explicit
-Sub CATMain()
+Sub Drwlock()
 ' 检查是否可以执行
      If Not CanExecute("DrawingDocument") Then
           Exit Sub

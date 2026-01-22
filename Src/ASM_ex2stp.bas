@@ -1,18 +1,14 @@
 Attribute VB_Name = "ASM_ex2stp"
-
 '------宏信息-----------------------------------------------------
 '{GP:3}
 '{EP:ex2stp_zip}
 '{Caption:导出stp}
 '{ControlTipText: 一键导出stp并压缩到指定路径或本身目录}
 '{BackColor:}
-
 '------窗体标题-------------------------------------------------
 '标题格式为 %Title <Caption/Text>
-'%Title 现在要导出stp,那请问你?-+-+
-
+'%Title 现在要导出stp,那我问你?
 '------控件清单--------------------------------------------------
-
 '控件格式为 %UI <ControlType> <ControlName> <Caption/Text>
 ' %UI Label lbL_jpzcs  键盘造车手出品
 ' %UI CheckBox chk_path  是否导出到当前路径
@@ -22,7 +18,6 @@ Attribute VB_Name = "ASM_ex2stp"
 ' %UI Button btnOK  确定
 ' %UI Button btncancel  取消
 '------------------------------------------------
-
 Private ErrorMessage As String
 Private zippath
 

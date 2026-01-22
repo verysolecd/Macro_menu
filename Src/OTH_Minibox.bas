@@ -2,7 +2,7 @@ Attribute VB_Name = "OTH_Minibox"
 
 'Attribute VB_Name = "OTH_Minibox"
 '{GP:6}
-'{Ep:CATMain}
+'{Ep:mMinibox}
 '{Caption:最小包络体}
 '{ControlTipText:点击即创建最小包络体}
 '{BackColor:}
@@ -19,7 +19,7 @@ Private Enum MINMAX
     Maxz = 5
 End Enum
 
-Sub CATMain()
+Sub mMinibox()
     Dim workDoc, workPt
     Dim msg As String
     msg = "请选择产品"

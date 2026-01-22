@@ -2,14 +2,14 @@ Attribute VB_Name = "OTH_3Dmark"
 
 ' 为产品创建3D标识
 '{GP:6}
-'{EP:CATMain}
+'{EP:newlabel}
 '{Caption:创建零件label}
 '{ControlTipText: 点击后一次性创建零件3Dmakrtext}
 '{背景颜色: 12648447}
 ' Purpose: Create a label on a product.
 
 Private rPrd
-Sub CATMain()
+Sub newlabel()
     If Not CanExecute("ProductDocument") Then Exit Sub
     Set rPrd = CATIA.ActiveDocument.Product
     Set g_allPN = KCL.InitDic

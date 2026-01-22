@@ -601,7 +601,7 @@ Public Function gxBom(oPrd, lv)
 End Function
 ' 属性：当前产品
 Public Property Get CurrentProduct() As Object
-    Set CurrentProduct = mProduct
+     Set CurrentProduct = mProduct
 End Property
 Public Property Set CurrentProduct(ByVal newProduct As Object)
     ' 设置新产品并触发事件

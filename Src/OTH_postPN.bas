@@ -1,12 +1,12 @@
 Attribute VB_Name = "OTH_postPN"
 'Attribute VB_Name = "m30_postPN"
 '{GP:3}
-'{Ep:CATMain}
+'{Ep:new_pn_suffix}
 '{Caption:零件号后缀}
 '{ControlTipText:为所有零件号增加项目前缀}
 '{BackColor:}
 Private oSuffix
-Sub CATMain()
+Sub new_pn_suffix()
 If Not KCL.CanExecute("ProductDocument") Then Exit Sub
     Set oPrd = KCL.SelectItem("请选择产品", "Product")
     If oPrd Is Nothing Then

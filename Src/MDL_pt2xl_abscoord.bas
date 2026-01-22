@@ -2,7 +2,7 @@ Attribute VB_Name = "MDL_pt2xl_abscoord"
 'Attribute VB_Name = "m23_pt2xl"
 ' 点坐标的导出
 '{GP:4}
-'{EP:pt2xl}
+'{EP:Mpt2xl}
 '{Caption:批量点坐标}
 '{ControlTipText: 提示选择几何图形集后导出下面的点集}
 '{BackColor:}
@@ -15,7 +15,7 @@ Attribute VB_Name = "MDL_pt2xl_abscoord"
 Private mDoc, HSF, mHBS, msel
 Private needtrans As Boolean
 
-Sub main()
+Sub Mpt2xl()
  If Not CanExecute("PartDocument") Then
         Exit Sub
     End If
@@ -24,10 +24,8 @@ Set HSF = mDoc.part.HybridShapeFactory
 Set mHBS = mDoc.part.HybridBodies
 Set msel = mDoc.Selection
 needtrans = False
-
 Dim oFrm: Set oFrm = New Cls_DynaFrm
-    If oFrm.IsCancelled Then Exit Sub
- 
+If oFrm.IsCancelled Then Exit Sub
     Select Case oFrm.BtnClicked
         Case "btnOK":
             Call pt2xl(getHB())

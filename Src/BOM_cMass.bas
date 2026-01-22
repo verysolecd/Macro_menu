@@ -6,12 +6,22 @@ Attribute VB_Name = "BOM_cMass"
 '{BackColor:}
 
 Sub Cal_Mass_m()
-    If Not KCL.CanExecute("ProductDocument") Then Exit Sub
+    'If Not KCL.CanExecute("ProductDocument") Then Exit Sub
     If pdm Is Nothing Then Set pdm = New Cls_PDM
    On Error Resume Next
-        If pdm.CurrentProduct Is Nothing Then Call setgprd
+        If pdm.CurrentProduct Is Nothing Then
+        Call setgprd
                 Err.Clear
-        If Not pdm.CurrentProduct Is Nothing Then pdm.Assmass (pdm.CurrentProduct)
+        End If
+        If Not pdm.CurrentProduct Is Nothing Then
+        
+       Debug.Print pdm.CurrentProduct.partNumber
+        Set oPrd = pdm.CurrentProduct
+    pdm.Assmass oPrd
+        
+        End If
+        
+        
     If Err.Number > 0 Then
         MsgBox "程序错误,请确认零件模板是否应用：" & Err.Description, vbCritical
    Else

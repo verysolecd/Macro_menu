@@ -1,6 +1,5 @@
 Attribute VB_Name = "A0_pages"
 Sub main()
-
 CATIA.RefreshDisplay = False
     Set shts = CATIA.ActiveDocument.sheets
       Set osht = Nothing
@@ -22,12 +21,10 @@ j = 1
                     oo = straf1st(osht.Name, " ")
         If i > 9 Then
             osht.Name = "SH" & i & oo
-
-                        Else
-                        osht.Name = "SH0" & i & oo
-            End If
+        Else
+             osht.Name = "SH0" & i & oo
+        End If
             Set oView = osht.Views.item("Background View")
-'            oView.Activate
             Set ots = oView.Texts
             Set oDict = InitDic()
             For Each itm In ots

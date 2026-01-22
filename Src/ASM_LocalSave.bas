@@ -1,14 +1,14 @@
 Attribute VB_Name = "ASM_LocalSave"
 '------宏信息-----------------------------------------------------
 '{GP:3}
-'{EP:CATMain}
+'{EP:Localsave}
 '{Caption:保存本地}
 '{ControlTipText: 按零件号保存文件到指定目录}
 '{BackColor:}
 Option Explicit
 Private docs As Object
 
-Sub CATMain()
+Sub Localsave()
     Dim origAlert As Boolean: origAlert = CATIA.DisplayFileAlerts
     CATIA.DisplayFileAlerts = False
     If Not CanExecute("ProductDocument") Then GoTo Cleanup

@@ -1,5 +1,5 @@
 Attribute VB_Name = "DRW_newTol"
-Sub CATMain()
+Sub newTol()
 
 
 Set oDrw = CATIA.ActiveDocument

@@ -6,6 +6,7 @@ Attribute VB_Name = "RW_1setgprd"
 '{BackColor:16744703}
 
 Sub setgprd()
+
     If Not CanExecute("ProductDocument") Then Exit Sub
     If pdm Is Nothing Then Set pdm = New Cls_PDM
     Set pdm.CurrentProduct = pdm.getiPrd()

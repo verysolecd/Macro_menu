@@ -3,13 +3,13 @@ Attribute VB_Name = "MDL_Part2Product"
 '{控件提示文本: 可将零件转换为产品}
 ' 检查零件文档中是否存在左手坐标系
 '{Gp:4}
-'{Ep:CATMain}
+'{Ep:isLhcoord}
 '{Caption:零件转产品}
 '{ControlTipText:此按钮将多实体零件转化为产品}
 '{BackColor:}
 Option Explicit
 
-Sub CATMain()
+Sub isLhcoord()
     If Not CanExecute("PartDocument") Then Exit Sub
     Dim BaseDoc As PartDocument: Set BaseDoc = CATIA.ActiveDocument
     Dim BasePath As Variant: BasePath = Array(BaseDoc.FullName)

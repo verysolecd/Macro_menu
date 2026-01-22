@@ -27,19 +27,16 @@ Private Sub Execute()
     On Error Resume Next
     Set mdl = ExecPjt.VBProject.VBE.Activecodepane.codemodule
     On Error GoTo 0
-    
     If mdl Is Nothing Then Exit Sub
     DecCnt = mdl.CountOfDeclarationLines
     If DecCnt < 1 Then Exit Sub
     DecCode = mdl.Lines(1, DecCnt)
-    
     Dim clscfg: Set clscfg = ParseCts(DecCode)
     Dim ttl: ttl = ParseTitle(DecCode)
-    Dim WD As springWD
+    Dim WD
     Set WD = New springWD
     WD.Tag = ""
     Call WD.setFrm(ttl, clscfg)
-    
     ' --- 3. 绑定按钮事件 ---
     Dim eventCol As New collection
     Dim ctl As Control
@@ -53,20 +50,16 @@ Private Sub Execute()
             eventCol.Add evtHandler
         End If
     Next
-    
     ' --- 4. 显示 (模态) ---
     WD.Show vbModal
-    
     ' --- 5. 处理结果 ---
     Set mdict = CreateObject("Scripting.Dictionary")
-    
     ' 如果 WD.Tag 为空（即不是通过点击按钮关闭，也不是由 QueryClose 显式设置），
     ' 则可能是用户关闭了窗体。虽然 springWD 已经处理了 QueryClose，但这里做个保底。
     Dim clicked As String
     clicked = WD.Tag
     If clicked = "" Then clicked = "UserClosed"
     mdict.Add "btn_clicked", clicked
-    
     For Each ctl In WD.Controls
         On Error Resume Next
         If TypeName(ctl) = "CheckBox" Then
@@ -76,9 +69,14 @@ Private Sub Execute()
         End If
         On Error GoTo 0
     Next
-    
     ' --- 6. 卸载 ---
     Unload WD
+    
+    On Error Resume Next
+    Set WD = Nothing
+    Set WD.Tag = ""
+    Error.Clear
+    On Error GoTo 0
 End Sub
 
 Public Property Get Res() As Object
@@ -107,8 +105,6 @@ Public Property Get BtnClicked(Optional key = Null) As Variant
         Else  '若无按钮按下
                 BtnClicked = ""
         End If
-        
-        
 End Property
 
 Public Property Get IsCancelled() As Boolean
@@ -132,7 +128,6 @@ Private Sub ControlBtn_Click()
     ParentFrm.Tag = ControlID  ' 1. 将点击的按钮 ID 存入窗体的 Tag 属性，作为返回值标识
     ParentFrm.Hide   ' 2. 隐藏窗体（注意：不是 Unload），
 End Sub
-
 
 ' getiType 函数（字典驱动版）
 Function getiType(ctrltypename As String) As String
@@ -184,11 +179,9 @@ Private Function ContainsAny(ByVal mainString As String, ByVal substringsList As
     Next substring
 End Function
 
-
 Private Function ExistsKey(ByVal txt As String, ByVal key As String) As Boolean
     ExistsKey = IIf(VBA.InStr(VBA.LCase(txt), VBA.LCase(key)) > 0, True, False)
 End Function
-
 
 Private Function ParseCts(ByVal code As String) As Object
     Dim regEx As Object
@@ -217,7 +210,6 @@ Private Function ParseCts(ByVal code As String) As Object
     End If
     Set ParseCts = lst
 End Function
-
 Private Function ParseTitle(ByVal code As String) As String
         Dim regEx As Object
         Dim matches As Object
@@ -239,8 +231,3 @@ Private Function ParseTitle(ByVal code As String) As String
               End If
     ParseTitle = itl
 End Function
-
-
-
-
-

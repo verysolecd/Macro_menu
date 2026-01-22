@@ -1,7 +1,7 @@
 Attribute VB_Name = "ASM_NewBH"
 'Attribute VB_Name = "OTH_NewBH"
 '{GP:3}
-'{Ep:CATMain}
+'{Ep:NewBH}
 '{Caption:新电池箱体}
 '{ControlTipText:新建一个电池箱体的结构树}
 '{BackColor:}
@@ -33,7 +33,7 @@ Attribute VB_Name = "ASM_NewBH"
       ' %info c,_Abandon,Abandoned,废案,Abandoned
       ' %info c,_Patterns,Fasteners,紧固件阵列,Fasteners_Pattern
 Private prj
-Sub CATMain()
+Sub NewBH()
     prj = KCL.GetInput("请输入项目名称"): If prj = "" Then Exit Sub
     Dim Tree As Object: Set Tree = ParsePn(getDecCode())
     Dim PStack As Object: Set PStack = KCL.InitDic
