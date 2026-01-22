@@ -795,7 +795,6 @@ Public Function showdict(ByVal oDic, Optional ByVal boolShowKeyIndex As Boolean 
         stOutput = stOutput & "; " & "_" & vbNewLine
   Next i
   showdict = stOutput
-  
   Debug.Print showdict
 End Function
 
@@ -809,32 +808,24 @@ Public Function GetBrepName(MyBRepName As String) As String
     GetBrepName = MyBRepName
 End Function
 
-Function getFrmDic()
-   Dim oFrm: Set oFrm = New cls_dynaFrm
-   Dim frmDic: Set frmDic = oFrm.Res
-    Set getFrmDic = frmDic
-    Set frmDic = Nothing
-    Set oFrm = Nothing
-End Function
-
-Function BtnClicked(key)
-    BtnClicked = False
-    Dim btnDic: Set btnDic = Nothing
-   On Error Resume Next
-        Dim oFrm: Set oFrm = New cls_dynaFrm
-        Set btnDic = oFrm.Res
-   On Error GoTo 0
-   If btnDic Is Nothing Then BtnClicked = Null: Exit Function
-    
-    If btnDic.Exists("btn_clicked") = False Then
-        BtnClicked = Null
-    Else
-        Select Case btnDic("btn_clicked")
-            Case key: BtnClicked = True
-            Case Else:
-        End Select
-    End If
-End Function
+'Function BtnClicked(key)
+'    BtnClicked = False
+'    Dim btnDic: Set btnDic = Nothing
+'   On Error Resume Next
+'        Dim oFrm: Set oFrm = New cls_dynaFrm
+'        Set btnDic = oFrm.Res
+'   On Error GoTo 0
+'   If btnDic Is Nothing Then BtnClicked = Null: Exit Function
+'
+'    If btnDic.Exists("btn_clicked") = False Then
+'        BtnClicked = Null
+'    Else
+'        Select Case btnDic("btn_clicked")
+'            Case key: BtnClicked = True
+'            Case Else:
+'        End Select
+'    End If
+'End Function
 
 Public Function setASM(ByVal higheff As Boolean)
   Dim setcls:  Set setcls = CATIA.SettingControllers
@@ -859,21 +850,35 @@ Public Function setASM(ByVal higheff As Boolean)
     End If
     
 End Function
-Function getmdl()
-   getmdl = ""
+
+Function newFrm(ByVal mdlname As String)
+    Dim oFrm: Set oFrm = New cls_dynaFrm
+        Set oFrm.mdl = KCL.getmdl(mdlname)
+        Set newFrm = oFrm
+End Function
+
+
+
+Function getmdl(Optional ByVal mdlname As String = "")
+  Set getmdl = Nothing
     Dim Apc As Object: Set Apc = KCL.GetApc()
     Dim ExecPjt As Object: Set ExecPjt = Apc.ExecutingProject
     On Error Resume Next
-     Dim mdl: Set mdl = ExecPjt.VBProject.VBE.Activecodepane.codemodule
+     Dim mdl:
+     If mdlname = "" Then
+        Set mdl = ExecPjt.VBProject.VBE.Activecodepane.CodeModule
+     Else
+        Set mdl = ExecPjt.VBProject.VBComponents(mdlname).CodeModule
+    End If
         Error.Clear
     On Error GoTo 0
     If mdl Is Nothing Then Exit Function
    Set getmdl = mdl
 End Function
 
-Public Function getDecCode()
+Public Function getDecCode(mdlname)
  Dim DecCnt
-   Dim mdl:  Set mdl = KCL.getmdl
+   Dim mdl:  Set mdl = KCL.getmdl(mdlname)
     If mdl Is Nothing Then Exit Function
         DecCnt = mdl.CountOfDeclarationLines ' 获取声明行数
     If DecCnt < 1 Then Exit Function

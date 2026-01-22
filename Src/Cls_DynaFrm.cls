@@ -90,8 +90,7 @@ Private Function Execute()
 End Function
 
 Public Property Get Res() As Object
-   Call Execute
-   Set Res = mdict
+   Call Execute:   Set Res = mdict
 End Property
 Public Property Get BtnClicked(Optional key = Null) As Variant
    Call Execute
@@ -109,7 +108,7 @@ Public Property Get BtnClicked(Optional key = Null) As Variant
                                          BtnClicked = False
                                     End If
                           Exit Property
-                      Else
+                    Else
                         BtnClicked = btnDic("btn_clicked")
                     End If
         Else

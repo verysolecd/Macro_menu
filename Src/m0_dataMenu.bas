@@ -73,14 +73,13 @@ Private Function Get_ButtonInfo() As Object
     If AllComps Is Nothing Then Exit Function
     
     Dim comp, mdl, MdlInfo, BtnInfos As Object 'VBComponent
-    Dim  As Object 'CodeModule
     Dim DecCode, CanExecMethod As String
     Dim DecCnt As Long
     
     Set BtnInfos = KCL.InitLst()
     
     For Each comp In AllComps
-        Set mdl = comp.codemodule
+        Set mdl = comp.CodeModule
         DecCnt = mdl.CountOfDeclarationLines ' 获取声明行数
         If DecCnt < 1 Then GoTo Continue
         DecCode = mdl.Lines(1, DecCnt) ' 获取声明代码
@@ -115,6 +114,7 @@ Try_TAG_ENTRY_DEF:
         Set MdlInfo = Push_Dic(MdlInfo, TAG_ENTRYPNT, CanExecMethod)
         Set MdlInfo = Push_Dic(MdlInfo, TAG_PJTPATH, PjtPath) '字典存储项目路径
         Set MdlInfo = Push_Dic(MdlInfo, TAG_MDLNAME, mdl.Name) '字典存储模块名称
+        Set MdlInfo = Push_Dic(MdlInfo, mdl.Name, mdl)
         
         '一个具有可执行按钮的模块的例子
         ' MlInfo
@@ -129,7 +129,9 @@ Try_TAG_ENTRY_DEF:
         ' Item 7 "mdl_name”
         
         BtnInfos.Add MdlInfo
-    'Debug.Print showdict(MdlInfo)
+        
+        
+'   showdict (MdlInfo)
 Continue:
     Next
     If BtnInfos.count < 1 Then Exit Function

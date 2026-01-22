@@ -9,12 +9,13 @@ Attribute VB_Name = "ASM_ChildMng"
 ' %UI Label lbL_jpzcs  键盘造车手出品
 ' %UI Button btn_copy 复制后黏贴
 ' %UI Button btn_delete 删除子件
+' %UI Button btn_cancel 取消
 '------其他------------------------------
 
 Sub ChildMng()
     If Not CanExecute("ProductDocument") Then Exit Sub
-            Dim frmDic: Set frmDic = KCL.getFrmDic ' oFrm.Res
-              Select Case frmDic("btn_clicked")
+    Dim oFrm: Set oFrm = KCL.newFrm("ASM_ChildMng")
+              Select Case oFrm.BtnClicked
                 Case "btn_copy"
                     Call cpChildren
                 Case "btn_delete"

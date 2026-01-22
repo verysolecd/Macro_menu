@@ -7,7 +7,6 @@ Attribute VB_Name = "OTH_Color"
 '{BackColor: }
 ' 更新按钮文字的公共函数
 
-
 Sub swbcgColor()
     On Error GoTo ErrorHandler
     If CATIA.Windows.count < 1 Then

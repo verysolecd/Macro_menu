@@ -640,7 +640,7 @@ Private Function getDecCode()
     On Error Resume Next
         Set Apc = CreateObject(COMObjectName)
         Dim ExecPjt As Object: Set ExecPjt = Apc.ExecutingProject
-         Dim mdl: Set mdl = ExecPjt.VBProject.VBE.Activecodepane.codemodule
+         Dim mdl: Set mdl = ExecPjt.VBProject.VBE.Activecodepane.CodeModule
     On Error GoTo 0
     If mdl Is Nothing Then Exit Function
         Dim DecCnt

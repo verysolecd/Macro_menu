@@ -10,7 +10,7 @@ Attribute VB_Name = "OTH_closePartWindows"
 Sub CLSpart()
 Dim wds, WD
  On Error Resume Next
-   wds = CATIA.Windows
+   Set wds = CATIA.Windows
     If wds.count <= 1 Then
            MsgBox "没有打开的零件窗口"
            Exit Sub

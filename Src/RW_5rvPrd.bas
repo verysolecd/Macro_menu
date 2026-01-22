@@ -6,8 +6,10 @@ Attribute VB_Name = "RW_5rvPrd"
 '{BackColor: }
 
 Sub rvme()
+  If xlm Is Nothing Then Exit Sub
      If pdm.CurrentProduct Is Nothing Then: MsgBox "请先选择产品，程序将退出": Exit Sub
         Dim currRow: currRow = 2
+      
 '---------遍历修改产品及子产品------
         Dim Prd2rv
         Set Prd2rv = pdm.CurrentProduct

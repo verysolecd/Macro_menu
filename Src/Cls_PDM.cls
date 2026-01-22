@@ -186,56 +186,6 @@ Public Function recurInfoPrd(oPrd, lv)
     recurInfoPrd = finalbom
 End Function
 
-
-Public Function recurPrd(oPrd, lv)
-    Dim mapping As Variant
-    mapping = Array(0, 0, 0, 1, 2, 3, 4, 9, 7, 0, 5, 8, 0, 5, 6, 0, 0, 0)
-    Dim bomsize
-        bomsize = UBound(mapping)
-    Dim i, j
-        If g_counter = 1 Then
-        ReDim bigbom(1 To gfn, 1 To bomsize)
-            For i = 1 To gfn
-                For j = 1 To bomsize
-                    bigbom(i, j) = ""
-                Next j
-            Next i
-    End If   '初始化所有bigbom元素为""
-    Dim tempdata
-    tempdata = infoPrd(oPrd)
-   '=====生成行数据 === bom行数据直接按最大列处理得到一行数据
-        For i = 1 To UBound(bigbom, 2)  '从1到最大列
-            bigbom(g_counter, i) = ""  '默认赋值为空
-            Select Case i
-                Case 1: bigbom(g_counter, i) = g_counter  'g_counter是全局变量,遍历BOM时为1
-                Case 2: bigbom(g_counter, i) = lv
-                Case Else
-                    If mapping(i) <= UBound(tempdata) And mapping(i) >= LBound(tempdata) Then '当对应列map值在tempdata元素范围内，
-                        bigbom(g_counter, i) = tempdata(mapping(i))
-                    End If
-            End Select
-           Next
-            Dim children As Products
-            Set children = oPrd.Products
-            If children.count > 0 Then
-                    Dim bdict
-                    Set bdict = KCL.InitDic
-                For i = 1 To children.count
-                    If bdict.Exists(children.item(i).partNumber) = False Then
-                       bdict(children.item(i).partNumber) = 1
-                       g_counter = g_counter + 1
-                       recurPrd children.item(i), lv + 1
-                    End If
-                Next
-            End If
-  ReDim finalbom(1 To g_counter, 1 To 17)
-  For i = 1 To UBound(finalbom, 1)
-    For j = 1 To UBound(finalbom, 2)
-        finalbom(i, j) = bigbom(i, j)
-    Next
-  Next
-  recurPrd = finalbom
-End Function
 Public Function modatt(oPrd, odata)
     Dim refPrd: Set refPrd = oPrd.ReferenceProduct
     Dim colls, i

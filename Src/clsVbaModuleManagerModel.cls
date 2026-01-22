@@ -110,7 +110,7 @@ Private Function get_fanction_names( _
     Set lst = New collection
     Dim buf As String
     Dim i As Long
-    With comp.codemodule
+    With comp.CodeModule
         For i = 1 To .CountOfLines
             If buf <> .ProcOfLine(i, 0) Then
                 buf = .ProcOfLine(i, 0)
@@ -179,7 +179,7 @@ Private Function GetValidCharacterCount( _
     Dim i As Long
     Dim codeLine As String
     ' 获取CodeModule对象
-    Set CodeMod = VBComp.codemodule
+    Set CodeMod = VBComp.CodeModule
     totalChars = 0
     ' 检查每行并排除注释
     For i = 1 To CodeMod.CountOfLines

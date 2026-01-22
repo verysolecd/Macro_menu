@@ -29,13 +29,15 @@ Attribute VB_Name = "ASM_NewBH"
            ' %info t,_503,Adhesive,胶水,adhesive
            ' %info C,_G600,Grou_fasteners,紧固件组合,Group_Fastener
            ' %info C,_G700,others,其他组件,others
-           
       ' %info c,_Abandon,Abandoned,废案,Abandoned
       ' %info c,_Patterns,Fasteners,紧固件阵列,Fasteners_Pattern
 Private prj
 Sub NewBH()
+
     prj = KCL.GetInput("请输入项目名称"): If prj = "" Then Exit Sub
-    Dim Tree As Object: Set Tree = ParsePn(getDecCode())
+    
+    Dim Tree As Object: Set Tree = ParsePn(KCL.getDecCode("ASM_NewBH"))
+    
     Dim PStack As Object: Set PStack = KCL.InitDic
     Dim k, oPrd As Object, ref As Object, fast As Object
     
@@ -68,7 +70,6 @@ Function AddNode(PStack, D)
         If TP = "Component" Then Set oPrd = par.Products.AddNewProduct("") Else Set oPrd = par.Products.AddNewComponent(TP, "")
        Set PStack(L) = oPrd
     End If
-    
     On Error Resume Next
     oPrd.Name = D("Name")
     With oPrd.ReferenceProduct
@@ -76,11 +77,6 @@ Function AddNode(PStack, D)
     End With
     oPrd.Update
     Set AddNode = oPrd
-End Function
-Function getDecCode()
-    On Error Resume Next
-    Dim m As Object: Set m = KCL.GetApc().ExecutingProject.VBProject.VBE.Activecodepane.codemodule
-    If Not m Is Nothing Then If m.CountOfDeclarationLines > 0 Then getDecCode = m.Lines(1, m.CountOfDeclarationLines)
 End Function
 
 Private Function ParsePn(c$) As Object

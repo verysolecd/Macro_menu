@@ -8,7 +8,7 @@ Attribute VB_Name = "A0TEST"
 '    Set mdl = ExecPjt.VBProject.VBE.Activecodepane.codemodule
 '    On Error GoTo 0
     
-    Set mdl = KCL.GetApc().ExecutingProject.VBProject.VBE.Activecodepane.codemodule
+    Set mdl = KCL.GetApc().ExecutingProject.VBProject.VBE.Activecodepane.CodeModule
     
     
     
