@@ -118,40 +118,6 @@ Public Sub clear_table()
     ws.UsedRange.ClearContents
 End Sub
 
-Sub inject_ary(ByVal idata As Variant, Optional ByVal idcols As Variant, Optional ByVal idx As Variant)
-     startrow = 2 ' 起始行
-        If IsArray(idcols) And IsArray(idx) Then
-            For j = 1 To UBound(idcols)
-                ws.Cells(startrow, idcols(j)).Resize(UBound(idata, 1)).value = Application.index(idata, , idx(j))
-            Next j
-        Else
-            startrow = 2:  lastrow = UBound(idata, 1) + startrow - 1
-            cols = UBound(idata, 2)
-              With ws
-                .Range(.Cells(startrow, 1), .Cells(lastrow, cols)).value = idata
-              End With
-      End If
-Cleanup:     ' 恢复Excel设置
-    On Error GoTo 0
-End Sub
-Sub inject_bom(ByVal idata As Variant, Optional ByVal idcols As Variant, Optional ByVal idx As Variant)
-    xlhide
-     Call inject_ary(idata, idcols, idx)
-         Dim bomrowcnt: bomrowcnt = UBound(idata, 1)
-         startrow = 2
-         lastrow = bomrowcnt + startrow - 1
-          If lastrow >= 2 Then
-          With ws
-            With .Range(.Cells(startrow, 9), .Cells(lastrow, 9))
-                .Formula = "=G2*H2"  ' G列=第7列，H列=第8列
-                .NumberFormat = "0.00"  ' 设置数字格式
-            End With
-          End With
-        End If
-        Call setxlHead("bom")
-        Call LvMg
-End Sub
-
 Public Sub setxlHead(ByVal s$)
 Select Case s
     Case "bom": Call set_Header(header_bom, 1)
@@ -232,16 +198,15 @@ xlhide
 '   Range(Selection, Selection.End(xlToRight)).Select
 '   Selection.EntireColumn.Hidden = True
 End Sub
-Public Sub inject_gxbom(Data)
-xlhide
-     ws.Name = "BOM_xx" & format(Now, "yymmdd_hhmm")
-      startrow = 5
+Public Sub inject_gxbom(ByVal idata As Variant, Optional ByVal idcols As Variant, Optional ByVal idx As Variant)
+   xlhide
+   Dim bomrowcnt: bomrowcnt = UBound(idata, 1)
+    lastrow = bomrowcnt + startrow - 1
+    startrow = 5
      Call set_Header(hdgx, startrow - 1)
-     lastrow = g_counter + startrow - 1
-     Dim cols
-     cols = UBound(Data, 2)
+     Call inject_ary(idata, startrow, idcols, idx)
+     Dim cols: cols = UBound(idata, 2)
      With ws
-          ws.Range(.Cells(startrow, 1), .Cells(lastrow, cols)).value = Data
         If lastrow >= 5 Then
             With ws.Range(.Cells(startrow, 14), .Cells(lastrow, 14))
                 .Formula = "=k5*m5"  ' G列=第7列，H列=第8列
@@ -249,15 +214,55 @@ xlhide
             End With
         End If
          End With
-     g_counter = 0
+     ws.Name = "BOM_xx" & format(Now, "yymmdd_hhmm")
 End Sub
-Sub inject_pic(ipath, pncol, Piccol)
+Sub inject_ary(ByVal idata As Variant, startrow, Optional ByVal idcols As Variant, Optional ByVal idx As Variant)
+        If IsArray(idcols) And IsArray(idx) Then
+            For j = 1 To UBound(idcols)
+                ws.Cells(startrow, idcols(j)).Resize(UBound(idata, 1)).Value2 = xlAPP.index(idata, , idx(j))
+            Next j
+        Else
+            startrow = 2:  lastrow = UBound(idata, 1) + startrow - 1
+            cols = UBound(idata, 2)
+              With ws
+                .Range(.Cells(startrow, 1), .Cells(lastrow, cols)).value = idata
+              End With
+        End If
+Cleanup:     ' 恢复Excel设置
+    On Error GoTo 0
+End Sub
+Sub inject(idata)
+    startrow = 1:  lastrow = UBound(idata, 1) + startrow - 1
+    cols = UBound(idata, 2)
+      With ws
+        .Range(.Cells(startrow, 1), .Cells(lastrow, cols)).value = idata
+      End With
+End Sub
+Sub inject_bom(ByVal idata As Variant, Optional ByVal idcols As Variant, Optional ByVal idx As Variant)
+    xlhide
+    Dim bomrowcnt: bomrowcnt = UBound(idata, 1)
+    lastrow = bomrowcnt + startrow - 1
+    startrow = 2
+    Call inject_ary(idata, startrow, idcols, idx)
+    If lastrow >= 2 Then
+        With ws
+          With .Range(.Cells(startrow, 9), .Cells(lastrow, 9))
+              .Formula = "=G2*H2"  ' G列=第7列，H列=第8列
+              .NumberFormat = "0.000"  ' 设置数字格式
+          End With
+        End With
+    End If
+        Call setxlHead("bom")
+        Call LvMg
+    ws.Name = "BOM_xx" & format(Now, "yymmdd_hhmm")
+End Sub
+Sub inject_pic(irow, pncol, Piccol, ipath)
         Dim i&, rng As Range
         Dim iPic As Shape
         Dim cntrow
         ws.Rows.RowHeight = 25
         cntrow = ws.Cells(ws.Rows.count, 1).End(xlUp).Row
-                For i = 2 To cntrow
+                For i = irow To cntrow
                  pn = ws.Cells(i, pncol).value
                  picpath = ipath & "\" & pn & ".jpg"
                 If KCL.isExists(picpath) = False Then

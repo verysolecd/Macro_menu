@@ -37,8 +37,8 @@ Private Sub Class_Terminate()
 End Sub
 '***属性***
 '应用标题
-Property Get title() As String
-    title = APP_NAME & " Ver" & VERSION
+Property Get Title() As String
+    Title = APP_NAME & " Ver" & VERSION
 End Property
 '此项目名
 Property Get project_name() As String

@@ -1,13 +1,13 @@
-Attribute VB_Name = "OTH_Color"
-'Attribute VB_Name = "OTH_Color"
-'{GP:6}
+Attribute VB_Name = "CAT_Color"
+
+'{GP:7}
 '{Ep:swbcgColor}
 '{Caption:背景颜色}
 '{ControlTipText:白黑色背景切换}
 '{BackColor: }
 ' 更新按钮文字的公共函数
 
-Private Const mdlname As String = "OTH_Color"
+Private Const mdlname As String = "CAT_Color"
 Sub swbcgColor()
     On Error GoTo ErrorHandler
     If CATIA.Windows.count < 1 Then

@@ -7,6 +7,7 @@ Attribute VB_Name = "ASM_ChildMng"
 '{BackColor:}
 '------控件信息------------------------------
 ' %UI Label lbL_jpzcs  键盘造车手出品
+' %UI Label lbL_tip 点击功能后,依次选择源产品→目标产品
 ' %UI Button btn_copy 复制后黏贴
 ' %UI Button btn_delete 删除子件
 ' %UI Button btn_cancel 取消
@@ -22,7 +23,6 @@ Sub ChildMng()
                 Case "btn_delete"
                     Call DeleteChildren
                  Case Else
-                    MsgBox "未点击任何按钮，或按钮名称未匹配", vbExclamation
                     Exit Sub
             End Select
 End Sub

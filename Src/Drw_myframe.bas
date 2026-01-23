@@ -235,8 +235,8 @@ Function CATInit()
   Set GeomElems = View.GeometricElements
   If GetContext() = "Unexpected" Then
     msg = "The macro runs in an inappropriate environment." & Chr(13) & "The script will terminate wihtout finishing the current action."
-    title = "Unexpected environement error"
-    MsgBox msg, 16, title
+    Title = "Unexpected environement error"
+    MsgBox msg, 16, Title
     CATInit = False 'Exit with error
     Exit Function
   End If

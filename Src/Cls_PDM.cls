@@ -49,11 +49,11 @@ Private Sub Class_Initialize()
      Set mProduct = Nothing
       iniarr
         On Error GoTo ErrorHandler
-If CATIA.Documents.count = 0 Then
-    MsgBox "当前未打开CATIA文档"
-Else
-    Set rootDoc = CATIA.ActiveDocument
-    Set rootPrd = CATIA.ActiveDocument.Product
+    If CATIA.Documents.count = 0 Then
+        MsgBox "当前未打开CATIA文档"
+    Else
+        Set rootDoc = CATIA.ActiveDocument
+        Set rootPrd = CATIA.ActiveDocument.Product
         If Not rootDoc Is Nothing Then
         Set msel = CATIA.ActiveDocument.Selection: msel.Clear
         End If
@@ -147,9 +147,10 @@ Public Function attLv2Prd(oPrd)
         g_counter = 1
 End Function
 
-Public Function recurInfoPrd(oPrd, lv)
+Public Function recurInfoPrd(oPrd, Lv)
     Dim tempdata, i, j
     tempdata = infoPrd(oPrd) '此数组是1-9
+    
     If g_counter = 1 Then  '初始化所有bigbom元素为""
         ReDim bigbom(1 To gfn, 0 To UBound(tempdata))
             For i = 1 To gfn
@@ -161,7 +162,7 @@ Public Function recurInfoPrd(oPrd, lv)
     '===================
    For i = 0 To UBound(tempdata)   'tempdata 数组是1-9
         Select Case i
-             Case 0: bigbom(g_counter, i) = lv
+             Case 0: bigbom(g_counter, i) = Lv
              Case Else:
                  bigbom(g_counter, i) = tempdata(i)
              End Select
@@ -173,7 +174,7 @@ Public Function recurInfoPrd(oPrd, lv)
                     If bdict.Exists(children.item(i).partNumber) = False Then
                        bdict(children.item(i).partNumber) = 1
                        g_counter = g_counter + 1
-                       recurInfoPrd children.item(i), lv + 1
+                       recurInfoPrd children.item(i), Lv + 1
                     End If
                 Next
             End If
@@ -490,7 +491,7 @@ Public Function getiPrd()    '获取要读取或修改的产品
         Set oPrd = Nothing
 End Function
 
-Public Function gxBom(oPrd, lv)
+Public Function gxBom(oPrd, Lv)
     Dim mapping As Variant
     mapping = Array(0, 0, 0, 0, 0, 0, 1, 0, 3, 2, 0, 9, 0, 7, 0, 5, 0)
     Dim bomsize
@@ -512,14 +513,13 @@ Public Function gxBom(oPrd, lv)
             Select Case i
                 Case 1: bigbom(g_counter, i) = g_counter  'g_counter是全局变量,遍历BOM时为1
                 Case 2, 3, 4, 5:
-                    If lv <= 4 Then
-                        If lv = i - 1 Then
-                            bigbom(g_counter, i) = lv
+                    If Lv <= 4 Then
+                        If Lv = i - 1 Then
+                            bigbom(g_counter, i) = Lv
                         End If
                      Else
-                     bigbom(g_counter, i) = "error"
+                        bigbom(g_counter, i) = "error"
                     End If
-            
                 Case Else
                     If mapping(i) <= UBound(tempdata) And mapping(i) >= LBound(tempdata) Then '当对应列map值在tempdata元素范围内，
                         bigbom(g_counter, i) = tempdata(mapping(i))
@@ -535,7 +535,7 @@ Public Function gxBom(oPrd, lv)
                     If bdict.Exists(children.item(i).partNumber) = False Then
                        bdict(children.item(i).partNumber) = 1
                        g_counter = g_counter + 1
-                       gxBom children.item(i), lv + 1
+                       gxBom children.item(i), Lv + 1
                     End If
                 Next
             End If

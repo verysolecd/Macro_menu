@@ -48,22 +48,18 @@ Private Sub mBtn_click()
     Dim capUp, icap
     icap = Array(0, 0)
     Select Case VBA.UCase(mInfo(TAG_MDLNAME))
-    Case "OTH_COLOR"
+    Case VBA.UCase("CAT_COLOR")
             capUp = amWhite
             icap = Array("白色背景", "默认背景")
-    Case "OTH_SWSCR"
+    Case VBA.UCase("CAT_SWSCR")
              capUp = canrefresh
-           
             icap = Array("切换:禁止更新", "切换:正常模式")
     End Select
     If icap(0) <> 0 Then Call UpdateButtonText(capUp, icap)
-               
 End Sub
 
 Private Sub UpdateButtonText(ByVal up2New As Boolean, ary)
         mBtn.Caption = IIf(up2New, ary(0), ary(1))
-'        MsgBox "CATIA.RefreshDisplay=" & CATIA.RefreshDisplay & vbNewLine _
-'                                & "点击后" & mBtn.Caption
 End Sub
 Private Function amWhite()
           amWhite = False

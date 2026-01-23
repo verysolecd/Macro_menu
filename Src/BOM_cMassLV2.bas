@@ -14,12 +14,12 @@ Sub L2Mass()
    Call cal2mass(oPrd, 1)
     Set oPrd = Nothing
 End Sub
-Function cal2mass(oPrd, lv)
-        If lv <= 3 Then
+Function cal2mass(oPrd, Lv)
+        If Lv <= 3 Then
                 Set children = oPrd.Products
                 If children.count > 0 Then
                     For i = 1 To children.count
-                        Call cal2mass(children.item(i), lv + 1)
+                        Call cal2mass(children.item(i), Lv + 1)
                         total = total + children.item(i).ReferenceProduct.UserRefProperties.item("Mass").value
                     Next
                         oPrd.ReferenceProduct.UserRefProperties.item("Mass").value = total

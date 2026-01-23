@@ -1,12 +1,77 @@
-Attribute VB_Name = "RW_5rvPrd"
+Attribute VB_Name = "RW_Revise"
 
-'{GP:1}
-'{Ep:rvme}
-'{Caption:修改产品属性}
-'{ControlTipText:选择要被读取或修改的产品}
-'{BackColor: }
+'{GP:3}
+'{Ep:EditorToolbar}
+'{Caption:属性工具箱}
+'{ControlTipText:打开属性管理悬浮工具条}
 
-Private Const mdlname As String = "RW_5rvPrd"
+'  %UI Label  lblInfo  请选择操作：
+'  %UI Button btnRead  读取属性
+'  %UI Button btnWrite 写回属性
+
+
+Option Explicit
+Private m_frm As cls_dynaFrmMLess
+Private prd2rv
+
+Sub EditorToolbar()
+
+    If Not CanExecute("ProductDocument") Then Exit Sub
+    If pdm Is Nothing Then Set pdm = New Cls_PDM
+    
+    If m_frm Is Nothing Then Set m_frm = New cls_dynaFrmMLess
+    
+    ' 1. 定义UI配置 (模拟 cls_dynafrm 的注释风格)
+    Dim config As String
+    
+
+    config =
+             
+    ' 2. 定义映射关系
+    Dim mdlMap As Object: Set mdlMap = CreateObject("Scripting.Dictionary")
+    mdlMap.Add "btnRead", "RW_Revise"
+    mdlMap.Add "btnWrite", "RW_Revise"
+    
+    Dim funcMap As Object: Set funcMap = CreateObject("Scripting.Dictionary")
+    funcMap.Add "btnRead", "readPrd"
+    funcMap.Add "btnWrite", "rvme"
+    
+    ' 获取当前项目路径
+    Dim projPath As String
+    On Error Resume Next
+    projPath = KCL.GetApc().ExecutingProject.VBProject.fileName
+    If Err.Number <> 0 Or projPath = "" Then
+         projPath = "" ' Fallback to active context
+         Err.Clear
+    End If
+    On Error GoTo 0
+
+    m_frm.ShowToolbar "属性管理工具箱", config, projPath, mdlMap, funcMap
+    
+End Sub
+
+Sub readPrd()
+  
+ '---------获取待修改产品 '---------遍历修改产品及子产品
+    If pdm.CurrentProduct Is Nothing Then MsgBox "请先选择产品": Exit Sub
+    Dim Prd2Read: Set Prd2Read = pdm.CurrentProduct
+        If Not Prd2Read Is Nothing Then
+            If gws Is Nothing Then Set xlm = New Cls_XLM
+            Dim currRow: currRow = 2
+            g_counter = 1
+            Prd2Read.ApplyWorkMode (3)
+            Dim idcol, idrow
+            idcol = Array(0, 1, 3, 5, 7, 9, 11, 13, 14) '' 目标列号, 0号元素不占位置
+            idrow = Array(0, 1, 2, 3, 4, 5, 6, 7, 8) ' 对应的属性索引（0-based）
+            Dim tmpData(): tmpData = pdm.attLv2Prd(Prd2Read)
+            xlm.inject_ary tmpData, idcol, idrow
+            xlm.setxlHead ("rv")
+            xlm.xlshow
+                xlAPP.Visible = True
+        End If
+        Set Prd2Read = Nothing
+End Sub
+
 Sub rvme()
   If xlm Is Nothing Then
         Set xlm = New Cls_XLM
@@ -65,4 +130,7 @@ ErrorHandler:
         Exit Sub
 
 End Sub
+
+
+
 

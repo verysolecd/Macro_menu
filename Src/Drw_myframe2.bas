@@ -759,7 +759,7 @@ Function GetContext()
 End Function
 
 Function CATInit()
-Dim oSheet, GeomElems, msg, title
+Dim oSheet, GeomElems, msg, Title
   CATInit = False
   On Error Resume Next
     Set oSheet = Nothing
@@ -779,8 +779,8 @@ Dim oSheet, GeomElems, msg, title
   Set GeomElems = View.GeometricElements
   If GetContext() = "Unexpected" Then
     msg = "The macro runs in an inappropriate environment." & Chr(13) & "The script will terminate wihtout finishing the current action."
-    title = "Unexpected environement error"
-    MsgBox msg, 16, title
+    Title = "Unexpected environement error"
+    MsgBox msg, 16, Title
     Exit Function
   End If
   If Not IsEmpty(CATIA) Then

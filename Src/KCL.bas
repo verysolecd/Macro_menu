@@ -828,7 +828,7 @@ Public Function setASM(ByVal higheff As Boolean)
         .RefreshDisplay = True
         End With
        Asmg.AutoUpdateMode = 1 '1: catAutomaticUpdate
-        Vismg.Viz3DFixedAccuracy = 0.1
+        Vismg.Viz3DFixedAccuracy = 0.05
     End If
 End Function
 

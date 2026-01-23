@@ -7,6 +7,7 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
+Option Explicit
 Private mExecuted
 Private mdict
 Private pobj As Object
@@ -38,19 +39,20 @@ Public Property Set mdl(value)
 End Property
 
 Private Function Execute()
-'    If mExecuted = True Then Exit Function
+  If mExecuted = True Then Exit Function
     mExecuted = True
-    
     Dim DecCnt, DecCode, i, procname, startline
+    Dim prockind As Long
     If Me.mdl Is Nothing Then Exit Function
    Dim codeMod: Set codeMod = mdl.CodeModule
     For i = 1 To codeMod.CountOfLines
         procname = codeMod.ProcOfLine(i, prockind)
         If procname <> "" Then startline = codeMod.ProcBodyLine(procname, prockind)  ' procKindÊÇÃ¶¾Ù:sub/function/property
+            If startline > 1 Then Exit For
     Next
     If startline < 1 Then Exit Function
     
-    DecCode = mdl.Lines(1, startline)
+    DecCode = codeMod.Lines(1, startline)
     Dim clscfg: Set clscfg = ParseCts(DecCode)
     Dim ttl: ttl = ParseTitle(DecCode)
     
@@ -61,8 +63,6 @@ Private Function Execute()
     Dim ctl As Control
 'Dim evtHandler As Cls_DynaFrm_EventHandler
   Dim evtHandler As Cls_btEVT
-  
-  
     For Each ctl In WD.Controls
         If TypeName(ctl) = "CommandButton" Then
            ' Set evtHandler = New Cls_DynaFrm_EventHandler
@@ -75,7 +75,7 @@ Private Function Execute()
         End If
     Next
     ' --- 4. show form (modal) ---
-    WD.Show vbModal
+    WD.Show vbModal  'vbModal vbModeless
     ' --- 5. collect result ---
     If WD.Tag = "" Then
         WD.Tag = "UserClosed"

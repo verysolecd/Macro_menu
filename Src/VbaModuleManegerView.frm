@@ -23,7 +23,7 @@ Private Const mdlname As String = "VbaModuleManegerView"
 Private Sub UserForm_Initialize()
     Set mUtil = New clsVBAUtilityLib
     Set mModuleMgr = New clsVbaModuleManagerModel
-    Me.Caption = mModuleMgr.title
+    Me.Caption = mModuleMgr.Title
     Call update_comboBox
 End Sub
 '** 事件 **
@@ -156,7 +156,7 @@ Private Function export_project() As Boolean
     Dim msg As String
     msg = "在CATVBA文件的文件夹内创建吗？" & vbCrLf & _
         "(是-文件夹内创建 否-对话框指定)"
-    Select Case MsgBox(msg, vbYesNoCancel + vbQuestion, mModuleMgr.title)
+    Select Case MsgBox(msg, vbYesNoCancel + vbQuestion, mModuleMgr.Title)
         Case vbYes
             '项目文件夹内
             mModuleMgr.export_project_child_folder ( _

@@ -71,23 +71,27 @@ Sub ex2stp_zip()
                          "  " & oFrm.Res("txt_log")
                KCL.Appendtext KCL.getmd(logpath), loginfo
         End If
-        Case Else: Exit Sub
+        Case Else:
+            Exit Sub
     End Select
       If Err.Number <> 0 Then
         ErrorMessage = "导出失败：" & Err.Description
         GoTo ShowMessage
       End If
 ShowMessage:
-    If ErrorMessage <> "" Then
-        MsgBox ErrorMessage, vbCritical
-        Err.Clear
-        Exit Sub
-    Else
-        MsgBox "导出成功" & vbCrLf & _
-                stpfilepath & "文件已压缩" & vbCrLf & _
-                "原始文件已删除。", vbInformation
-        KCL.openpath (zippath)
-    End If
+        If ErrorMessage <> "" Then
+            MsgBox ErrorMessage, vbCritical
+            Err.Clear
+            Exit Sub
+        Else
+            MsgBox "导出成功" & vbCrLf & _
+                    stpfilepath & "文件已压缩" & vbCrLf & _
+                    "原始文件已删除。", vbInformation
+            KCL.openpath (zippath)
+        End If
+Wexit:
+    Set oFrm = Nothing
+
     Set oDoc = Nothing
     On Error GoTo 0 ' 关闭错误处理
     ErrorMessage = "" ' 重置错误信息

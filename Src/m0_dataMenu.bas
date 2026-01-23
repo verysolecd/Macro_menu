@@ -17,6 +17,7 @@ Private Const groupName = _
             "{3 : ASM }" & _
             "{4 : MDL }" & _
             "{5 : DRW }" & _
+            "{7: CATIA }" & _
             "{6 : OTRS}"
 '-----------------------------------------------------------------
 Option Explicit
