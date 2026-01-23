@@ -8,6 +8,7 @@ Attribute VB_Name = "ASM_LocalSave"
 Option Explicit
 Private docs As Object
 
+Private Const mdlname As String = "ASM_LocalSave"
 Sub Localsave()
     Dim origAlert As Boolean: origAlert = CATIA.DisplayFileAlerts
     CATIA.DisplayFileAlerts = False

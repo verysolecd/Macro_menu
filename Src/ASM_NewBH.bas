@@ -32,21 +32,17 @@ Attribute VB_Name = "ASM_NewBH"
       ' %info c,_Abandon,Abandoned,废案,Abandoned
       ' %info c,_Patterns,Fasteners,紧固件阵列,Fasteners_Pattern
 Private prj
+Private Const mdlname As String = "ASM_NewBH"
 Sub NewBH()
-
     prj = KCL.GetInput("请输入项目名称"): If prj = "" Then Exit Sub
-    
     Dim Tree As Object: Set Tree = ParsePn(KCL.getDecCode("ASM_NewBH"))
-    
     Dim PStack As Object: Set PStack = KCL.InitDic
     Dim k, oPrd As Object, ref As Object, fast As Object
-    
     For Each k In Tree.keys
         Set oPrd = AddNode(PStack, Tree(k))
         If InStr(1, k, "_ref", 1) > 0 Then Set ref = oPrd
         If InStr(1, k, "_Patterns", 1) > 0 Then Set fast = oPrd
     Next
-    
     If Not (ref Is Nothing Or fast Is Nothing) Then
         CATIA.ActiveDocument.Selection.Add ref: CATIA.ActiveDocument.Selection.Copy
         CATIA.ActiveDocument.Selection.Clear: CATIA.ActiveDocument.Selection.Add fast

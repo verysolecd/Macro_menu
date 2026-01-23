@@ -4,6 +4,7 @@ Attribute VB_Name = "A0_sections"
 
 ''==±éÀúµÝ¹é=============================
 
+Private Const mdlname As String = "A0_sections"
 Sub recurAyo(ayo)
     Dim colls: Set itm = ayo.Products
     For Each itm In colls

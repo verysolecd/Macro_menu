@@ -1,16 +1,38 @@
 Attribute VB_Name = "A0TEST"
+Private Const mdlname As String = "A0TEST"
  Sub TEST()
-' Dim DecCnt, DecCode, mdl
-'    Dim Apc As Object: Set Apc = KCL.GetApc()
-'    Dim ExecPjt As Object: Set ExecPjt = Apc.ExecutingProject
-'
-'    On Error Resume Next
-'    Set mdl = ExecPjt.VBProject.VBE.Activecodepane.codemodule
-'    On Error GoTo 0
-    
     Set mdl = KCL.GetApc().ExecutingProject.VBProject.VBE.Activecodepane.CodeModule
-    
-    
-    
  End Sub
+Option Explicit
+
+Sub AddModuleNameToAllComponents()
+    Dim vbComp, codeMod As Object   ' VBIDE.CodeModule
+    Dim i, startline, prockind As Long
+    Dim declText, constName, procname As String
+    constName = "mdlname"
+   
+    
+    Dim vbprj As Object: Set vbprj = KCL.GetApc().ExecutingProject
+     
+    Set vbProj = Application.VBE.ActiveVBProject
+    Dim colls: Set colls = vbprj.VBProject.VBComponents
+    For Each vbComp In colls
+        Set codeMod = vbComp.CodeModule
+        For i = 1 To codeMod.CountOfLines
+            procname = codeMod.ProcOfLine(i, prockind)
+            If procname <> "" Then
+                startline = codeMod.ProcBodyLine(procname, prockind)
+                If Not codeMod.Find("Const " & constName, 1, 1, startline, -1) Then
+                      declText = "Private Const " & constName & " As String = """ & vbComp.Name & """"
+                    codeMod.InsertLines startline, declText
+                    Debug.Print "Inserted " & constName & " in " & vbComp.Name
+                Else
+                    Debug.Print constName & " already exists in " & vbComp.Name
+                End If
+                Exit For
+            End If
+        Next i
+    Next vbComp
+    MsgBox "完成！模块名称已添加到所有组件。", vbInformation, "Done"
+End Sub
 

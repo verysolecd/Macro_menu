@@ -1,4 +1,5 @@
 Attribute VB_Name = "A00rmusrPrp"
+Private Const mdlname As String = "A00rmusrPrp"
 Sub remove_usrP()
 Set oPrd = CATIA.ActiveDocument.Product
 rm oPrd

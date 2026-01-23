@@ -15,6 +15,7 @@ Attribute VB_Name = "MDL_pt2xl_abscoord"
 Private mDoc, HSF, mHBS, msel
 Private needtrans As Boolean
 
+Private Const mdlname As String = "MDL_pt2xl_abscoord"
 Sub Mpt2xl()
  If Not CanExecute("PartDocument") Then
         Exit Sub

@@ -12,10 +12,11 @@ Attribute VB_Name = "BOM_Cbom"
 ' %UI Button btnOK  生成BOM
 ' %UI Button btncancel  取消
 
+Private Const mdlname As String = "BOM_Cbom"
 Sub cBom()
     If Not KCL.CanExecute("ProductDocument") Then Exit Sub
     CATIA.StartCommand ("* iso")
-    Set oFrm = KCL.newFrm("BOM_Cbom")
+    Set oFrm = KCL.newFrm(mdlname)
     Select Case oFrm.BtnClicked
         Case "btnOK":
                 If pdm Is Nothing Then Set pdm = New Cls_PDM

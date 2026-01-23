@@ -19,6 +19,7 @@ Option Explicit
 ' 1. 安全打开入口 (标准做法)
 ' 功能: 弹出对话框选择文件 -> 只读打开 -> 自动上锁
 ' ============================================
+Private Const mdlname As String = "OTH_OPenRR"
 Sub OpenProductReadOnly()
     
     ' 1. 弹出文件选择框

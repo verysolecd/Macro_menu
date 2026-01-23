@@ -6,6 +6,7 @@ Attribute VB_Name = "ASM_sendDir"
 '{ControlTipText:send当前根产品到路径}
 '{BackColor:}
 
+Private Const mdlname As String = "ASM_sendDir"
 Sub sendDir()
 
     If Not CanExecute("ProductDocument,DrawingDocument") Then Exit Sub

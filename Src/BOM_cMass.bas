@@ -5,6 +5,7 @@ Attribute VB_Name = "BOM_cMass"
 '{ControlTipText:选择要被读取或修改的产品}
 '{BackColor:}
 
+Private Const mdlname As String = "BOM_cMass"
 Sub Cal_Mass_m()
     If Not KCL.CanExecute("ProductDocument") Then Exit Sub
     If pdm Is Nothing Then Set pdm = New Cls_PDM

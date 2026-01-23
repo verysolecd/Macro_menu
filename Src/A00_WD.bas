@@ -20,6 +20,7 @@ Attribute VB_Name = "A00_WD"
 ' %UI CheckBox chk_3  本次导出是否更新日志？
 Option Explicit
 
+Private Const mdlname As String = "A00_WD"
 Sub WD2()
 
 

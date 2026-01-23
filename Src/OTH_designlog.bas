@@ -7,6 +7,7 @@ Attribute VB_Name = "OTH_designlog"
 '{BackColor:16744703}
 
 Option Explicit
+Private Const mdlname As String = "OTH_designlog"
 Sub designlog()
     If Not KCL.CanExecute("ProductDocument") Then Exit Sub
     If pdm Is Nothing Then Set pdm = New Cls_PDM

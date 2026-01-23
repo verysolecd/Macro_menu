@@ -8,6 +8,7 @@ Attribute VB_Name = "MDL_hasLeftAxis"
 '{ControlTipText:检查是否有左手坐标系}
 '{BackColor:33023}
 Option Explicit
+Private Const mdlname As String = "MDL_hasLeftAxis"
 Sub LeftHand()
     ' 检查是否可以执行
     If Not CanExecute("PartDocument") Then Exit Sub

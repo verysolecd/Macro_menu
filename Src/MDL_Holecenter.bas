@@ -7,6 +7,7 @@ Attribute VB_Name = "MDL_Holecenter"
 '{ControlTipText: 提示选择实体后导出所有孔中心，必须是识别孔特征后的实体}
 '{BackColor:12648447}
 
+Private Const mdlname As String = "MDL_Holecenter"
 Sub ctrhole()
     
   If Not CanExecute("PartDocument") Then Exit Sub

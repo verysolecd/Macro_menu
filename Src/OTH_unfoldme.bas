@@ -7,6 +7,7 @@ Attribute VB_Name = "OTH_unfoldme"
 '{BackColor:16744703}
 
 
+Private Const mdlname As String = "OTH_unfoldme"
 Sub unfold_children()
 If Not CanExecute("PartDocument") Then Exit Sub
 Dim osel: Set osel = CATIA.ActiveDocument.Selection

@@ -43,6 +43,7 @@ Private Const xy = "测试失败"
 Private Const eklname = "sumVol"
 Private Const ekldesc = "sum of vol of bodylist"
 Private Const eklstr = "let lst(list) set lst=Part_info\iBodys   let V (Volume) V=0 let i(integer) i=1 for i while i<=lst.Size() {V=V+smartVolume(lst.GetItem(i)) i=i+1} Part_info\sumVol =V"  '使用Const关键字定义常量
+Private Const mdlname As String = "Cls_PDM"
 Private Sub Class_Initialize()
      Set g_allPN = KCL.InitDic
      Set mProduct = Nothing
@@ -558,3 +559,25 @@ End Property
 Public Sub freePrd()
      Set pdm.CurrentProduct = Nothing
 End Sub
+
+Public Function getmeas(itm)
+    Set getmeas = Nothing
+   If Not itm Is Nothing Then
+       Dim oDoc: Set oDoc = CATIA.ActiveDocument
+      Dim spa:  Set spa = oDoc.GetWorkbench("SPAWorkbench")
+        Set getmeas = spa.GetMeasurable(itm)
+    End If
+End Function
+
+Public Function getlength(itm)
+ getlength = 0
+If Not itm Is Nothing Then
+       Dim oDoc: Set oDoc = CATIA.ActiveDocument
+      Dim spa:  Set spa = oDoc.GetWorkbench("SPAWorkbench")
+   If Not itm Is Nothing Then
+        Set meas = spa.GetMeasurable(itm)
+        getlength = meas.Length
+    End If
+End Function
+
+

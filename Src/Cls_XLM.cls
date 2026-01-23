@@ -18,10 +18,9 @@ Private WB As Object
 Private ws As Object
 Private bws As Object
 
-
 ' 在类初始化时检查实例
+Private Const mdlname As String = "Cls_XLM"
 Private Sub Class_Initialize()
-
 On Error Resume Next
     If gws Is Nothing Then
         Set xlAPP = CreateObject("Excel.Application")

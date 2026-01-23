@@ -26,6 +26,7 @@ Private Const Fdis = 0.9
 Private thisdir
 Private oDic
 
+Private Const mdlname As String = "OTH_capture"
 Sub Capturetopath()
 If Not KCL.CanExecute("ProductDocument") Then Exit Sub
     On Error Resume Next

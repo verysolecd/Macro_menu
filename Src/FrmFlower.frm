@@ -3,7 +3,7 @@ Begin {C62A69F0-16DC-11CE-9E98-00AA00574A4F} FrmFlower
    Caption         =   "Flower"
    ClientHeight    =   10260
    ClientLeft      =   10050
-   ClientTop       =   380
+   ClientTop       =   375
    ClientWidth     =   9540.001
    OleObjectBlob   =   "FrmFlower.frx":0000
    ShowModal       =   0   'False
@@ -14,6 +14,7 @@ Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
 
+Private Const mdlname As String = "FrmFlower"
 Private Sub CmbHide_Click()
     Me.Hide
 End Sub

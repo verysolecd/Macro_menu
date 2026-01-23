@@ -6,6 +6,7 @@ Attribute VB_Name = "ASM_weldSel"
 '{ControlTipText:选择被连接的产品}
 '{BackColor:}
 
+Private Const mdlname As String = "ASM_weldSel"
 Sub createWd()
 If Not KCL.CanExecute("ProductDocument") Then Exit Sub
 MsgBox "还没编呢"

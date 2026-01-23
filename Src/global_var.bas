@@ -12,6 +12,7 @@ Public g_counter As Integer
 Public Const gfn As Integer = 400
 Public gPic_Path
 
+Private Const mdlname As String = "global_var"
 Sub clearall()
 
 End Sub

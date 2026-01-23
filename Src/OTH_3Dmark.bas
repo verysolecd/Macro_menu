@@ -9,6 +9,7 @@ Attribute VB_Name = "OTH_3Dmark"
 ' Purpose: Create a label on a product.
 
 Private rPrd
+Private Const mdlname As String = "OTH_3Dmark"
 Sub newlabel()
     If Not CanExecute("ProductDocument") Then Exit Sub
     Set rPrd = CATIA.ActiveDocument.Product

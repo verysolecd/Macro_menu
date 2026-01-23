@@ -17,6 +17,16 @@ Private mCloseType As Boolean
 Private Const TAG_ENTRYPNT = "ep"           ' 入口点标签
 Private Const TAG_PJTPATH = "pjt_path"      ' 项目路径标签
 Private Const TAG_MDLNAME = "mdl_name"      ' 模块名称标签
+
+
+'=-=============以下是弹窗的参数
+Public WithEvents ControlBtn As MSForms.CommandButton
+Attribute ControlBtn.VB_VarHelpID = -1
+Private mParentFrm As Object ' To hold the reference to the UserForm
+Private mControlID As String ' ID of the button
+
+Private Const mdlname As String = "Cls_btEVT"
+
 Sub set_ButtonEvent(ByVal btn As MSForms.CommandButton, _
                     ByVal BtnInfo As Object, _
                     ByVal ParentForm As MSForms.UserForm, _
@@ -30,7 +40,6 @@ Private Sub mBtn_click()
     If Not mCloseType Then Unload mParentForm
     Dim ary: ary = Array()  '这里按照传入按钮信息执行按钮对应的module宏
     Dim ss: Set ss = CATIA.SystemService
-    
     Call ss.ExecuteScript(mInfo(TAG_PJTPATH), _
                           catScriptLibraryTypeVBAProject, _
                           mInfo(TAG_MDLNAME), _
@@ -65,22 +74,31 @@ Private Function amWhite()
             amWhite = (currentColor(0) <> 1 Or currentColor(1) <> 1 Or currentColor(2) <> 1) '只要一个不等于1就是true
         End If
 End Function
-
 Private Function canrefresh()
-
-Dim bol: bol = CATIA.RefreshDisplay
-If bol Then
-KCL.setASM (bol)
-Else
-KCL.setASM (bol)
-End If
-
-CATIA.ActiveWindow.ActiveViewer.Update
-canrefresh = CATIA.RefreshDisplay
+    Dim bol: bol = CATIA.RefreshDisplay
+    If bol Then
+    KCL.setASM (bol)
+    Else
+    KCL.setASM (bol)
+    End If
+    CATIA.ActiveWindow.ActiveViewer.Update
+    canrefresh = CATIA.RefreshDisplay
 End Function
 
+'=============以下是弹窗的函数============
+Public Property Set ParentFrm(ByVal frm As Object)
+    Set mParentFrm = frm
+End Property
 
-
+Public Property Let ControlID(ByVal value As String)
+    mControlID = value
+End Property
+Private Sub ControlBtn_Click()
+    If Not mParentFrm Is Nothing Then
+        mParentFrm.Tag = mControlID  ' Set the ID to the Tag property of the form
+        mParentFrm.Hide   ' Hide the form to return control to the calling code
+    End If
+End Sub
 
 
 

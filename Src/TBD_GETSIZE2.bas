@@ -12,6 +12,7 @@ Private Enum MINMAX 'úy∂®Çé≈‰¡–???????”√
     Maxz = 5
 End Enum
 
+Private Const mdlname As String = "TBD_GETSIZE2"
 Sub CATMain()
 
     If Not KCL.CanExecute("PartDocument") Then Exit Sub

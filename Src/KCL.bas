@@ -19,6 +19,7 @@ Private Declare PtrSafe Function SetClipboardData Lib "user32" (ByVal wFormat As
 
 '*****计时相关函数*****
 ' 启动秒表
+Private Const mdlname As String = "KCL"
 Sub SW_Start()
     mSW = timeGetTime
 End Sub
@@ -808,25 +809,6 @@ Public Function GetBrepName(MyBRepName As String) As String
     GetBrepName = MyBRepName
 End Function
 
-'Function BtnClicked(key)
-'    BtnClicked = False
-'    Dim btnDic: Set btnDic = Nothing
-'   On Error Resume Next
-'        Dim oFrm: Set oFrm = New cls_dynaFrm
-'        Set btnDic = oFrm.Res
-'   On Error GoTo 0
-'   If btnDic Is Nothing Then BtnClicked = Null: Exit Function
-'
-'    If btnDic.Exists("btn_clicked") = False Then
-'        BtnClicked = Null
-'    Else
-'        Select Case btnDic("btn_clicked")
-'            Case key: BtnClicked = True
-'            Case Else:
-'        End Select
-'    End If
-'End Function
-
 Public Function setASM(ByVal higheff As Boolean)
   Dim setcls:  Set setcls = CATIA.SettingControllers
    Dim Asmg: Set Asmg = setcls.item("CATAsmGeneralSettingCtrl")
@@ -848,27 +830,24 @@ Public Function setASM(ByVal higheff As Boolean)
        Asmg.AutoUpdateMode = 1 '1: catAutomaticUpdate
         Vismg.Viz3DFixedAccuracy = 0.1
     End If
-    
 End Function
 
-Function newFrm(ByVal mdlname As String)
+Function newFrm(ByVal modName As String)
     Dim oFrm: Set oFrm = New cls_dynaFrm
-        Set oFrm.mdl = KCL.getmdl(mdlname)
+        Set oFrm.mdl = KCL.getmdl(modName)
         Set newFrm = oFrm
 End Function
 
-
-
-Function getmdl(Optional ByVal mdlname As String = "")
+Function getmdl(Optional ByVal modName As String = "")
   Set getmdl = Nothing
     Dim Apc As Object: Set Apc = KCL.GetApc()
     Dim ExecPjt As Object: Set ExecPjt = Apc.ExecutingProject
     On Error Resume Next
      Dim mdl:
-     If mdlname = "" Then
+     If modName = "" Then
         Set mdl = ExecPjt.VBProject.VBE.Activecodepane.CodeModule
      Else
-        Set mdl = ExecPjt.VBProject.VBComponents(mdlname).CodeModule
+        Set mdl = ExecPjt.VBProject.VBComponents(modName)
     End If
         Error.Clear
     On Error GoTo 0
@@ -876,14 +855,28 @@ Function getmdl(Optional ByVal mdlname As String = "")
    Set getmdl = mdl
 End Function
 
-Public Function getDecCode(mdlname)
+Public Function getDecCode(modName)
  Dim DecCnt
-   Dim mdl:  Set mdl = KCL.getmdl(mdlname)
+   Dim mdl:  Set mdl = KCL.getmdl(modName)
     If mdl Is Nothing Then Exit Function
         DecCnt = mdl.CountOfDeclarationLines ' 获取声明行数
     If DecCnt < 1 Then Exit Function
         getDecCode = mdl.Lines(1, DecCnt) ' 获取声明代码
 End Function
+
+Public Function getbf1stproc(modName)
+    getbf1stproc = ""
+    Dim mdl:  Set mdl = KCL.getmdl(modName)
+    If mdl Is Nothing Then Exit Function
+    Set codeMod = mdl.CodeModule
+    For i = 1 To codeMod.CountOfLines
+        procname = codeMod.ProcOfLine(i, prockind)
+        If procname <> "" Then startline = codeMod.ProcBodyLine(procname, prockind)  ' procKind是枚举:sub/function/property
+    Next
+    If startline < 1 Then Exit Function
+        getbf1stproc = mdl.Lines(1, startline) ' 获取到第一个函数的所有代码行
+End Function
+
 Function getmeas(itm)
     Set getmeas = Nothing
    If Not itm Is Nothing Then

@@ -20,6 +20,7 @@ Public Text
 Public Fact
 Public Selection
 Public targetsheet
+Private Const mdlname As String = "Drw_myframe"
 Sub CATMain()
   If Not CATInit() Then Exit Sub
   On Error Resume Next

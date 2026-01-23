@@ -47,6 +47,7 @@ Private WithEvents MPgs As MSForms.MultiPage
 Attribute MPgs.VB_VarHelpID = -1
 Option Explicit
 ' 设置窗体信息
+Private Const mdlname As String = "Cat_Macro_Menu_View"
 Sub Set_FormInfo(ByVal InfoLst As Object, _
                  ByVal PageMap As Object, _
                  ByVal formTitle As String, _

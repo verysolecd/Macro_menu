@@ -6,6 +6,7 @@ Attribute VB_Name = "OTH_ivhideshow"
 '{ControlTipText:反选并隐藏结构树}
 '{BackColor:}
 
+Private Const mdlname As String = "OTH_ivhideshow"
 Sub RevertHide()
 
     If Not KCL.CanExecute("ProductDocument") Then Exit Sub

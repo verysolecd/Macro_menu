@@ -9,6 +9,7 @@ Attribute VB_Name = "OTH_Flower"
 Private X0 As Double
 Private Y0 As Double
 Private Z0 As Double
+Private Const mdlname As String = "OTH_Flower"
 Sub DF()
  If Not CanExecute("PartDocument") Then Exit Sub
     FrmFlower.Show

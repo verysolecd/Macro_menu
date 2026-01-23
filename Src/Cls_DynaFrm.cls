@@ -7,16 +7,17 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
-Option Explicit
 Private mExecuted
 Private mdict
 Private pobj As Object
 Private WD
 
+Private Const mdlname As String = "cls_dynaFrm"
 Private Sub Class_Initialize()
+        mExecuted = False
         Set mdict = CreateObject("Scripting.Dictionary")
         Set Me.mdl = Nothing
-        mExecuted = False
+         mExecuted = False
 End Sub
 Private Sub Class_Terminate()
 On Error Resume Next
@@ -37,25 +38,36 @@ Public Property Set mdl(value)
 End Property
 
 Private Function Execute()
-    If mExecuted = True Then Exit Function
+'    If mExecuted = True Then Exit Function
     mExecuted = True
-    Dim DecCnt, DecCode
+    
+    Dim DecCnt, DecCode, i, procname, startline
     If Me.mdl Is Nothing Then Exit Function
-        DecCnt = Me.mdl.CountOfDeclarationLines
-    If DecCnt < 1 Then Exit Function
-         DecCode = mdl.Lines(1, DecCnt)
+   Dim codeMod: Set codeMod = mdl.CodeModule
+    For i = 1 To codeMod.CountOfLines
+        procname = codeMod.ProcOfLine(i, prockind)
+        If procname <> "" Then startline = codeMod.ProcBodyLine(procname, prockind)  ' procKindÊÇÃ¶¾Ù:sub/function/property
+    Next
+    If startline < 1 Then Exit Function
+    
+    DecCode = mdl.Lines(1, startline)
     Dim clscfg: Set clscfg = ParseCts(DecCode)
     Dim ttl: ttl = ParseTitle(DecCode)
+    
    Set WD = New springWD: WD.Tag = ""
     Call WD.setFrm(ttl, clscfg)
     ' --- 3. bind event handler ---
     Dim eventCol As New collection
     Dim ctl As Control
-    Dim evtHandler As Cls_DynaFrm_EventHandler
-    
+'Dim evtHandler As Cls_DynaFrm_EventHandler
+  Dim evtHandler As Cls_btEVT
+  
+  
     For Each ctl In WD.Controls
         If TypeName(ctl) = "CommandButton" Then
-            Set evtHandler = New Cls_DynaFrm_EventHandler
+           ' Set evtHandler = New Cls_DynaFrm_EventHandler
+            
+          Set evtHandler = New Cls_btEVT
             Set evtHandler.ControlBtn = ctl
             evtHandler.ControlID = ctl.Name
             Set evtHandler.ParentFrm = WD

@@ -6,6 +6,7 @@ Attribute VB_Name = "ASM_reorderPrd"
 '{ControlTipText:²úÆ·ÅÅÐò}
 '{BackColor: }
 Option Explicit
+Private Const mdlname As String = "ASM_reorderPrd"
 Sub reorderPrds()
     If Not CanExecute("ProductDocument") Then Exit Sub
     Dim prodoc As ProductDocument:

@@ -6,6 +6,7 @@ Attribute VB_Name = "RW_4readPrd"
 '{ControlTipText:读取待操作产品}
 '{BackColor: }
 
+Private Const mdlname As String = "RW_4readPrd"
 Sub readPrd()
     If Not CanExecute("ProductDocument") Then Exit Sub
     If pdm Is Nothing Then Set pdm = New Cls_PDM

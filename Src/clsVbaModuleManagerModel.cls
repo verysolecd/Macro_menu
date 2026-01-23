@@ -20,6 +20,7 @@ Private mUtil As clsVBAUtilityLib                       '工具类
 Private mProjectLst As collection                       '项目列表
 Private mUserDict As Object                             '用户数据字典
 Private mJson As clsJsonConverter                       'Json解析器
+Private Const mdlname As String = "clsVbaModuleManagerModel"
 Private Sub Class_Initialize()
     Set mUtil = New clsVBAUtilityLib
     mUtil.DebugMode = DEBUG_MODE
@@ -173,17 +174,17 @@ End Function
 '获取组件除去注释部分的字符数
 'param: vbComp-目标组件
 Private Function GetValidCharacterCount( _
-        ByVal VBComp As Object) As Long
-    Dim CodeMod As Object ' CodeModule
+        ByVal vbComp As Object) As Long
+    Dim codeMod As Object ' CodeModule
     Dim totalChars As Long
     Dim i As Long
     Dim codeLine As String
     ' 获取CodeModule对象
-    Set CodeMod = VBComp.CodeModule
+    Set codeMod = vbComp.CodeModule
     totalChars = 0
     ' 检查每行并排除注释
-    For i = 1 To CodeMod.CountOfLines
-        codeLine = VBA.Trim(CodeMod.Lines(i, 1))
+    For i = 1 To codeMod.CountOfLines
+        codeLine = VBA.Trim(codeMod.Lines(i, 1))
         If Left(codeLine, 1) <> "'" Then
             totalChars = totalChars + Len(codeLine)
         End If

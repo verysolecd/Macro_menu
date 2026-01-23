@@ -1,5 +1,6 @@
 Attribute VB_Name = "MDL_Shapeinfo"
 Private mdict, HSF, osel, oParas, spa
+Private Const mdlname As String = "MDL_Shapeinfo"
 Sub tube()
 '--判断是否是part，当前代码只能运行在part中，修改后才能在总成中运行，例如增加遍历
 If TypeName(CATIA.ActiveDocument) <> "PartDocument" Then

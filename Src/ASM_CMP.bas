@@ -6,6 +6,7 @@ Attribute VB_Name = "ASM_CMP"
 '{ControlTipText:对比旧、新数据}
 '{BackColor:}
 
+Private Const mdlname As String = "ASM_CMP"
 Sub myCMP()
  If Not CanExecute("ProductDocument") Then Exit Sub
 Dim rPrd As Product

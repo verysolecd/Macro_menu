@@ -5,6 +5,7 @@ Attribute VB_Name = "RW_5rvPrd"
 '{ControlTipText:选择要被读取或修改的产品}
 '{BackColor: }
 
+Private Const mdlname As String = "RW_5rvPrd"
 Sub rvme()
   If xlm Is Nothing Then Exit Sub
      If pdm.CurrentProduct Is Nothing Then: MsgBox "请先选择产品，程序将退出": Exit Sub

@@ -7,6 +7,7 @@ Attribute VB_Name = "OTH_PrePn"
 '{BackColor:}
 
 Private prj
+Private Const mdlname As String = "OTH_PrePn"
 Sub prePn()
 
 If Not KCL.CanExecute("ProductDocument") Then Exit Sub

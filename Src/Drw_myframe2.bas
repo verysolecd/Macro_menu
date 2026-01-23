@@ -50,6 +50,7 @@ Private m_Width, m_Height As Double
 Private X0, Y0, m_Offset As Double
 Private Nb_check, Nb_rv, m_NbOfRevision As Integer
 Private m_Col, m_Row, m_ColRev As Variant
+Private Const mdlname As String = "Drw_myframe2"
 Sub drwFormat()
   If Not CATInit() Then Exit Sub
   On Error Resume Next

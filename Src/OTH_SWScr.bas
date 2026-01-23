@@ -6,6 +6,7 @@ Attribute VB_Name = "OTH_SWScr"
 '{ControlTipText:½ûÖ¹ÆÁÄ»¸üĞÂÒÔ·ÀÖ¹¿¨¶Ù}
 '{BackColor: }
 
+Private Const mdlname As String = "OTH_SWScr"
 Sub switchRefresh()
 
 On Error Resume Next

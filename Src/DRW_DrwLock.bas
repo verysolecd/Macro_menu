@@ -8,6 +8,7 @@ Attribute VB_Name = "DRW_DrwLock"
 '{背景颜色: 12648447}
 
 Option Explicit
+Private Const mdlname As String = "DRW_DrwLock"
 Sub Drwlock()
 ' 检查是否可以执行
      If Not CanExecute("DrawingDocument") Then

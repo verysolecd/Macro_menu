@@ -7,6 +7,7 @@ Attribute VB_Name = "OTH_closePartWindows"
 '{ControlTipText: 点击后一次性全关闭所有零件窗口}
 '{背景颜色: 12648447}
 
+Private Const mdlname As String = "OTH_closePartWindows"
 Sub CLSpart()
 Dim wds, WD
  On Error Resume Next

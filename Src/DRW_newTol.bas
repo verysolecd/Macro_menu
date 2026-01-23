@@ -1,4 +1,5 @@
 Attribute VB_Name = "DRW_newTol"
+Private Const mdlname As String = "DRW_newTol"
 Sub newTol()
 
 

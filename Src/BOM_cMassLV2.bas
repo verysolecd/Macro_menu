@@ -5,6 +5,7 @@ Attribute VB_Name = "BOM_cMassLV2"
 '{ControlTipText:只计算第二级产品重量}
 '{BackColor:}
 
+Private Const mdlname As String = "BOM_cMassLV2"
 Sub L2Mass()
     If Not KCL.CanExecute("ProductDocument") Then Exit Sub
     If pdm Is Nothing Then Set pdm = New Cls_PDM

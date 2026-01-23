@@ -6,6 +6,7 @@ Attribute VB_Name = "RW_3initme"
 '{ControlTipText:将选择的产品和子产品文档按模板格式化}
 '{BackColor:1229803}
 
+Private Const mdlname As String = "RW_3initme"
 Sub iniThis()
  If Not KCL.CanExecute("ProductDocument,PartDocument") Then Exit Sub
  If pdm Is Nothing Then Set pdm = New Cls_PDM

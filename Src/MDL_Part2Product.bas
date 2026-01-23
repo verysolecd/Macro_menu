@@ -9,6 +9,7 @@ Attribute VB_Name = "MDL_Part2Product"
 '{BackColor:}
 Option Explicit
 
+Private Const mdlname As String = "MDL_Part2Product"
 Sub isLhcoord()
     If Not CanExecute("PartDocument") Then Exit Sub
     Dim BaseDoc As PartDocument: Set BaseDoc = CATIA.ActiveDocument

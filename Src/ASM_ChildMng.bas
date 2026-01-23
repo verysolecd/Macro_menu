@@ -12,6 +12,7 @@ Attribute VB_Name = "ASM_ChildMng"
 ' %UI Button btn_cancel 取消
 '------其他------------------------------
 
+Private Const mdlname As String = "ASM_ChildMng"
 Sub ChildMng()
     If Not CanExecute("ProductDocument") Then Exit Sub
     Dim oFrm: Set oFrm = KCL.newFrm("ASM_ChildMng")

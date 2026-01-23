@@ -7,6 +7,7 @@ Attribute VB_Name = "MDL_LayersMng"
 '{ControlTipText: 设置只显示当前图层，然后创建YZ向图纸}
 '{BackColor:12648447}
 Private i
+Private Const mdlname As String = "MDL_LayersMng"
 Sub LayersMng()
 If Not CanExecute("partDocument,productdocument") Then Exit Sub
 Set rootDoc = CATIA.ActiveDocument

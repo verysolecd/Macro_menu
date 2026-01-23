@@ -7,6 +7,7 @@ Attribute VB_Name = "MDL_holecenter2"
 '{ControlTipText: 提示选择面后后导出面上所有孔中心}
 '{BackColor:12648447}
 
+Private Const mdlname As String = "MDL_holecenter2"
 Sub Faceholecenter()
 
   If Not CanExecute("PartDocument") Then Exit Sub

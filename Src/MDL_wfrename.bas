@@ -14,6 +14,7 @@ Attribute VB_Name = "MDL_wfrename"
 ' = 4 , Circle
 ' = 5 , Surface
 
+Private Const mdlname As String = "MDL_wfrename"
 Sub wfname()
 If CATIA.Windows.count < 1 Then
 MsgBox "没有打开的窗口"

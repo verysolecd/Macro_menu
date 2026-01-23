@@ -135,6 +135,7 @@ Private JsonOptions As json_Options
 ' @return {Object} (Dictionary or Collection)
 ' @throws 10001 - JSON parse error
 ''
+Private Const mdlname As String = "clsJsonConverter"
 Public Function ParseJson(ByVal JsonString As String) As Object
     Dim json_Index As Long
     json_Index = 1

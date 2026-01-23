@@ -19,6 +19,7 @@ Private Enum MINMAX
     Maxz = 5
 End Enum
 
+Private Const mdlname As String = "OTH_Minibox"
 Sub mMinibox()
     Dim workDoc, workPt
     Dim msg As String

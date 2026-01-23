@@ -13,6 +13,7 @@ Attribute ControlBtn.VB_VarHelpID = -1
 Private mParentFrm As Object ' To hold the reference to the UserForm
 Private mControlID As String ' ID of the button
 
+Private Const mdlname As String = "Cls_DynaFrm_EventHandler"
 Public Property Set ParentFrm(ByVal frm As Object)
     Set mParentFrm = frm
 End Property

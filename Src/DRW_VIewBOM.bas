@@ -8,6 +8,7 @@ Attribute VB_Name = "DRW_VIewBOM"
 Private targetsheet
 Private drwDoc, osht, shts, oViews, Fct2, iformat(0 To 7), bfile, bcgView, mainview
 Private osel
+Private Const mdlname As String = "DRW_VIewBOM"
 Sub DRW_create_BomTable()
  CATIA.RefreshDisplay = False
     Call m_init

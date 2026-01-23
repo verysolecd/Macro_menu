@@ -7,6 +7,7 @@ Attribute VB_Name = "DRW_Tb2xl"
 '{ControlTipText: 提示选择2图纸中表格后导出}
 '{BackColor:12648447}
 
+Private Const mdlname As String = "DRW_Tb2xl"
 Sub Tb2xl()
 
   If Not CanExecute("DrawingDocument") Then

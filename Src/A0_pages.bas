@@ -1,4 +1,5 @@
 Attribute VB_Name = "A0_pages"
+Private Const mdlname As String = "A0_pages"
 Sub main()
 CATIA.RefreshDisplay = False
     Set shts = CATIA.ActiveDocument.sheets

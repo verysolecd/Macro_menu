@@ -7,6 +7,7 @@ Attribute VB_Name = "RW_6nosamebdy"
 '{BackColor:1229803}
 Option Explicit
 
+Private Const mdlname As String = "RW_6nosamebdy"
 Sub nosamebdy()
  If Not KCL.CanExecute("ProductDocument,PartDocument") Then Exit Sub
 

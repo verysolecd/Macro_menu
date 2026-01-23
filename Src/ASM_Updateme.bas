@@ -6,6 +6,7 @@ Attribute VB_Name = "ASM_Updateme"
 '{ControlTipText:遍历结构树并更新}
 '{BackColor:}
 
+Private Const mdlname As String = "ASM_Updateme"
 Sub Upall()
    If Not CanExecute("ProductDocument") Then Exit Sub
     Dim part, doc

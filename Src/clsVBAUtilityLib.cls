@@ -19,6 +19,7 @@ Private Declare PtrSafe Sub Sleep Lib "kernel32" (ByVal ms As Long)
 Private Const VER = "0.0.16"
 'µ÷ÊÔÄ£Ê½
 Private m_DebugMode As Boolean
+Private Const mdlname As String = "clsVBAUtilityLib"
 Private Sub Class_Initialize()
     m_DebugMode = True
 End Sub

@@ -21,16 +21,14 @@ Attribute VB_Name = "ASM_ex2stp"
 Private ErrorMessage As String
 Private zippath
 
+Private Const mdlname As String = "ASM_ex2stp"
 Sub ex2stp_zip()
     If Not KCL.CanExecute("ProductDocument,partdocument") Then Exit Sub
-  On Error Resume Next ' 临时开启错误处理
- Err.Number = 0
- ErrorMessage = ""
+'  On Error Resume Next ' 临时开启错误处理
+ Err.Number = 0: ErrorMessage = ""
  Dim oDoc: Set oDoc = CATIA.ActiveDocument
  Dim outputpath As String: outputpath = ""
- Dim oFrm
- Set oFrm = KCL.newFrm("ASM_ex2stp")
-
+ Dim oFrm: Set oFrm = KCL.newFrm(mdlname)
  Select Case oFrm.BtnClicked
  Case "btnOK"
 '===========路径设置
@@ -56,17 +54,14 @@ Sub ex2stp_zip()
 '==========STP文件名处理
         stpname = KCL.strbf1st(pn, "_") & "_" & ttp
         Dim opath(2) '0=路径，1=name，2=extname
-        opath(0) = outputpath
-        opath(1) = stpname
-        opath(2) = "stp"
-       Dim stpfilepath As String: stpfilepath = KCL.JoinPathName(opath)
+        opath(0) = outputpath:        opath(1) = stpname:        opath(2) = "stp"
+        Dim stpfilepath As String: stpfilepath = KCL.JoinPathName(opath)
         oDoc.ExportData stpfilepath, "stp"     '=======导出stp
         
         If Not KCL.isExists(stpfilepath) Then '=======检查文件存在性
             ErrorMessage = "未找到STP文件：" & stpfilepath
             GoTo ShowMessage
         End If
-        
         If Not ex2zip(stpfilepath) Then GoTo ShowMessage
         KCL.DeleteMe stpfilepath ' 删除原始 STP 文件
 '============生成导出日志
@@ -78,7 +73,6 @@ Sub ex2stp_zip()
         End If
         Case Else: Exit Sub
     End Select
-
       If Err.Number <> 0 Then
         ErrorMessage = "导出失败：" & Err.Description
         GoTo ShowMessage
@@ -113,11 +107,8 @@ Function ex2zip(oFilepath) As Boolean
             cmd = "powershell -Command ""Compress-Archive -Path '""" & oFilepath & """' -DestinationPath '""" & zippath & """' -CompressionLevel Optimal -Force"""
         End If
     '=======================
-    Set shell = CreateObject("WScript.Shell")
-    Result = shell.Run(cmd, 0, True)
-    If Result <> 0 Then
-        Err.Clear
-    End If
+    Set shell = CreateObject("WScript.Shell"): Result = shell.Run(cmd, 0, True)
+    If Result <> 0 Then Err.Clear
     If KCL.isExists(zippath) Then
             ex2zip = True
             Exit Function

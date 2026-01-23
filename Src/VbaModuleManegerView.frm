@@ -2,8 +2,8 @@ VERSION 5.00
 Begin {C62A69F0-16DC-11CE-9E98-00AA00574A4F} VbaModuleManegerView 
    Caption         =   "UserForm2"
    ClientHeight    =   7635
-   ClientLeft      =   50
-   ClientTop       =   380
+   ClientLeft      =   45
+   ClientTop       =   375
    ClientWidth     =   8970.001
    OleObjectBlob   =   "VbaModuleManegerView.frx":0000
    StartUpPosition =   1  'CenterOwner
@@ -19,6 +19,7 @@ Option Explicit
 Private mUtil As clsVBAUtilityLib
 Private mModuleMgr As clsVbaModuleManagerModel
 
+Private Const mdlname As String = "VbaModuleManegerView"
 Private Sub UserForm_Initialize()
     Set mUtil = New clsVBAUtilityLib
     Set mModuleMgr = New clsVbaModuleManagerModel
@@ -184,8 +185,11 @@ End Function
 '文件夹路径获取对话框
 'return: 文件夹路径
 Private Function get_folder_path() As String
-    Dim dirPicker As New clsFolderPicker
-    get_folder_path = dirPicker.show_folder_picker()
+'    Dim dirPicker As New clsFolderPicker
+'    get_folder_path = dirPicker.show_folder_picker()
+    
+    get_folder_path = KCL.selFdl
+    
 End Function
 '项目的覆盖导出
 Private Sub overwriting_project()

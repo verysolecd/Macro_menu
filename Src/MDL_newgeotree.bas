@@ -8,6 +8,7 @@ Attribute VB_Name = "MDL_newgeotree"
 
 Private oPrt
 
+Private Const mdlname As String = "MDL_newgeotree"
 Sub newgeo()
  If Not CanExecute("PartDocument") Then Exit Sub
  

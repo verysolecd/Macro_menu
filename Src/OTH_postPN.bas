@@ -6,6 +6,7 @@ Attribute VB_Name = "OTH_postPN"
 '{ControlTipText:为所有零件号增加项目前缀}
 '{BackColor:}
 Private oSuffix
+Private Const mdlname As String = "OTH_postPN"
 Sub new_pn_suffix()
 If Not KCL.CanExecute("ProductDocument") Then Exit Sub
     Set oPrd = KCL.SelectItem("请选择产品", "Product")
