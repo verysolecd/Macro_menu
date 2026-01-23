@@ -44,15 +44,15 @@ Private Function Execute()
     Dim DecCnt, DecCode, i, procname, startline
     Dim prockind As Long
     If Me.mdl Is Nothing Then Exit Function
-   Dim codeMod: Set codeMod = mdl.CodeModule
-    For i = 1 To codeMod.CountOfLines
-        procname = codeMod.ProcOfLine(i, prockind)
-        If procname <> "" Then startline = codeMod.ProcBodyLine(procname, prockind)  ' procKind是枚举:sub/function/property
+   Dim codemod: Set codemod = mdl.CodeModule
+    For i = 1 To codemod.CountOfLines
+        procname = codemod.ProcOfLine(i, prockind)
+        If procname <> "" Then startline = codemod.ProcBodyLine(procname, prockind)  ' procKind是枚举:sub/function/property
             If startline > 1 Then Exit For
     Next
     If startline < 1 Then Exit Function
     
-    DecCode = codeMod.Lines(1, startline)
+    DecCode = codemod.Lines(1, startline)
     Dim clscfg: Set clscfg = ParseCts(DecCode)
     Dim ttl: ttl = ParseTitle(DecCode)
     

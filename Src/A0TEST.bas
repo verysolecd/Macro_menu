@@ -6,7 +6,7 @@ Private Const mdlname As String = "A0TEST"
 Option Explicit
 
 Sub AddModuleNameToAllComponents()
-    Dim vbComp, codeMod As Object   ' VBIDE.CodeModule
+    Dim vbComp, codemod As Object   ' VBIDE.CodeModule
     Dim i, startline, prockind As Long
     Dim declText, constName, procname As String
     constName = "mdlname"
@@ -17,14 +17,14 @@ Sub AddModuleNameToAllComponents()
     Set vbProj = Application.VBE.ActiveVBProject
     Dim colls: Set colls = vbprj.VBProject.VBComponents
     For Each vbComp In colls
-        Set codeMod = vbComp.CodeModule
-        For i = 1 To codeMod.CountOfLines
-            procname = codeMod.ProcOfLine(i, prockind)
+        Set codemod = vbComp.CodeModule
+        For i = 1 To codemod.CountOfLines
+            procname = codemod.ProcOfLine(i, prockind)
             If procname <> "" Then
-                startline = codeMod.ProcBodyLine(procname, prockind)
-                If Not codeMod.Find("Const " & constName, 1, 1, startline, -1) Then
+                startline = codemod.ProcBodyLine(procname, prockind)
+                If Not codemod.Find("Const " & constName, 1, 1, startline, -1) Then
                       declText = "Private Const " & constName & " As String = """ & vbComp.Name & """"
-                    codeMod.InsertLines startline, declText
+                    codemod.InsertLines startline, declText
                     Debug.Print "Inserted " & constName & " in " & vbComp.Name
                 Else
                     Debug.Print constName & " already exists in " & vbComp.Name

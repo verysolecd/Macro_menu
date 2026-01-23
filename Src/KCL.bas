@@ -867,14 +867,16 @@ End Function
 Public Function getbf1stproc(modName)
     getbf1stproc = ""
     Dim mdl:  Set mdl = KCL.getmdl(modName)
+    Dim codemod, i, procname, startline
+    Dim prockind As Long
     If mdl Is Nothing Then Exit Function
-    Set codeMod = mdl.CodeModule
-    For i = 1 To codeMod.CountOfLines
-        procname = codeMod.ProcOfLine(i, prockind)
-        If procname <> "" Then startline = codeMod.ProcBodyLine(procname, prockind)  ' procKind是枚举:sub/function/property
+    Set codemod = mdl.CodeModule
+    For i = 1 To codemod.CountOfLines
+        procname = codemod.ProcOfLine(i, prockind)
+        If procname <> "" Then startline = codemod.ProcBodyLine(procname, prockind)  ' procKind是枚举:sub/function/property
     Next
     If startline < 1 Then Exit Function
-        getbf1stproc = mdl.Lines(1, startline) ' 获取到第一个函数的所有代码行
+        getbf1stproc = codemod.Lines(1, startline) ' 获取到第一个函数的所有代码行
 End Function
 
 Function getmeas(itm)

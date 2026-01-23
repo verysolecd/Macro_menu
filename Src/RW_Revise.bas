@@ -1,6 +1,6 @@
 Attribute VB_Name = "RW_Revise"
 
-'{GP:3}
+'{GP:1}
 '{Ep:EditorToolbar}
 '{Caption:属性工具箱}
 '{ControlTipText:打开属性管理悬浮工具条}
@@ -11,21 +11,22 @@ Attribute VB_Name = "RW_Revise"
 
 
 Option Explicit
-Private m_frm As cls_dynaFrmMLess
+
 Private prd2rv
+Private Const mdlname As String = "RW_Revise"
 
 Sub EditorToolbar()
 
     If Not CanExecute("ProductDocument") Then Exit Sub
     If pdm Is Nothing Then Set pdm = New Cls_PDM
     
-    If m_frm Is Nothing Then Set m_frm = New cls_dynaFrmMLess
+    If sp_frm Is Nothing Then Set sp_frm = New cls_dynaFrmMLess
     
     ' 1. 定义UI配置 (模拟 cls_dynafrm 的注释风格)
     Dim config As String
     
 
-    config =
+    config = KCL.getbf1stproc(mdlname)
              
     ' 2. 定义映射关系
     Dim mdlMap As Object: Set mdlMap = CreateObject("Scripting.Dictionary")
@@ -46,14 +47,14 @@ Sub EditorToolbar()
     End If
     On Error GoTo 0
 
-    m_frm.ShowToolbar "属性管理工具箱", config, projPath, mdlMap, funcMap
+   sp_frm.ShowToolbar "属性管理工具箱", config, projPath, mdlMap, funcMap
     
 End Sub
 
 Sub readPrd()
   
  '---------获取待修改产品 '---------遍历修改产品及子产品
-    If pdm.CurrentProduct Is Nothing Then MsgBox "请先选择产品": Exit Sub
+    If pdm.CurrentProduct Is Nothing Then Set pdm.CurrentProduct = pdm.getiPrd()
     Dim Prd2Read: Set Prd2Read = pdm.CurrentProduct
         If Not Prd2Read Is Nothing Then
             If gws Is Nothing Then Set xlm = New Cls_XLM
@@ -73,21 +74,8 @@ Sub readPrd()
 End Sub
 
 Sub rvme()
-  If xlm Is Nothing Then
-        Set xlm = New Cls_XLM
-        On Error Resume Next
-        ' 尝试附加到现有 Excel 实例
-        Dim tmpApp As Object: Set tmpApp = GetObject(, "Excel.Application")
-         If Not tmpApp Is Nothing Then
-             Set xlm.xlAPP = tmpApp
-             Set xlm.ws = tmpApp.ActiveSheet ' 假设用户正在操作目标工作表
-         Else
-             MsgBox "未找到活动的 Excel 实例，无法更新属性。", vbCritical
-             Set xlm = Nothing
-             Exit Sub
-         End If
-         On Error GoTo 0
-  End If
+  If xlm Is Nothing Then Set xlm = New Cls_XLM
+
      If pdm Is Nothing Then Set pdm = New Cls_PDM
      If pdm.CurrentProduct Is Nothing Then Set pdm.CurrentProduct = pdm.getiPrd()
      If pdm.CurrentProduct Is Nothing Then: MsgBox "请先选择产品，程序将退出": Exit Sub
@@ -105,7 +93,7 @@ On Error GoTo ErrorHandler
     Dim outputArr As Variant, tempArr(1 To 6)
     ReDim outputArr(1 To UBound(odata, 1), 1 To UBound(iCols))
     
-    
+    Dim i, j
     
     For i = 1 To UBound(outputArr, 1) '-------遍历行
   '-------遍历获取X行要修改的数据

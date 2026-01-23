@@ -175,16 +175,16 @@ End Function
 'param: vbComp-目标组件
 Private Function GetValidCharacterCount( _
         ByVal vbComp As Object) As Long
-    Dim codeMod As Object ' CodeModule
+    Dim codemod As Object ' CodeModule
     Dim totalChars As Long
     Dim i As Long
     Dim codeLine As String
     ' 获取CodeModule对象
-    Set codeMod = vbComp.CodeModule
+    Set codemod = vbComp.CodeModule
     totalChars = 0
     ' 检查每行并排除注释
-    For i = 1 To codeMod.CountOfLines
-        codeLine = VBA.Trim(codeMod.Lines(i, 1))
+    For i = 1 To codemod.CountOfLines
+        codeLine = VBA.Trim(codemod.Lines(i, 1))
         If Left(codeLine, 1) <> "'" Then
             totalChars = totalChars + Len(codeLine)
         End If

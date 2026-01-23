@@ -54,15 +54,12 @@ Public Sub ShowToolbar(ByVal Title As String, _
                        
     ' 1. 解析配置字符串
     Set mConfigLst = ParseConfig(ConfigStr)
-    
     ' 2. 创建并渲染窗体
     If Not mForm Is Nothing Then Unload mForm
     Set mForm = New springWD
     mForm.setFrm Title, mConfigLst
-    
     ' 3. 绑定事件 (核心逻辑)
     BindEvents mForm, Project, ModuleMap, MacroMap
-    
     ' 4. 显示非模态
     mForm.Show vbModeless
     
@@ -107,7 +104,6 @@ Private Sub BindEvents(frm As Object, pjt As String, modMap As Object, macMap As
     Dim handler As Cls_btEVT
     Dim info As Object
     
-    ' 清空旧事件
     Set mEventCol = New collection
     
     For Each ctrl In frm.Controls
@@ -126,7 +122,7 @@ Private Sub BindEvents(frm As Object, pjt As String, modMap As Object, macMap As
                 ' 创建事件处理器并绑定
                 Set handler = New Cls_btEVT
                 ' set_ButtonEvent: btn, info, parent, closeAfterClick
-                handler.set_ButtonEvent ctrl, info, frm, False ' False表示点击后不关闭窗体
+                handler.set_ButtonEvent ctrl, info, frm, True ' False表示点击后不关闭窗体
                 
                 ' 加入集合保活
                 mEventCol.Add handler
