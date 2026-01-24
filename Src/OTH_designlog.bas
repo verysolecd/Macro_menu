@@ -18,9 +18,6 @@ Sub designlog()
      imsg = "请简短描述本次更新的设计内容"
         str1 = str1 & vbCrLf & KCL.GetInput(imsg)
         rootPrd.DescriptionRef = str1
-   ' Debug.Print rootPrd.DescriptionRef
-    askdir.Show
-    askdir.initFrmlog
 End Sub
 
 

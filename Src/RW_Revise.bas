@@ -65,7 +65,7 @@ Sub readPrd()
             idcol = Array(0, 1, 3, 5, 7, 9, 11, 13, 14) '' 目标列号, 0号元素不占位置
             idrow = Array(0, 1, 2, 3, 4, 5, 6, 7, 8) ' 对应的属性索引（0-based）
             Dim tmpData(): tmpData = pdm.attLv2Prd(Prd2Read)
-            xlm.inject_ary tmpData, idcol, idrow
+            xlm.inject_ary tmpData, currRow, idcol, idrow
             xlm.setxlHead ("rv")
             xlm.xlshow
                 xlAPP.Visible = True
@@ -75,18 +75,14 @@ End Sub
 
 Sub rvme()
   If xlm Is Nothing Then Set xlm = New Cls_XLM
-
-     If pdm Is Nothing Then Set pdm = New Cls_PDM
-     If pdm.CurrentProduct Is Nothing Then Set pdm.CurrentProduct = pdm.getiPrd()
-     If pdm.CurrentProduct Is Nothing Then: MsgBox "请先选择产品，程序将退出": Exit Sub
-        Dim currRow: currRow = 2
-      
+     If pdm.CurrentProduct Is Nothing Then Exit Sub
+         Dim currRow: currRow = 2
 '---------遍历修改产品及子产品------
         Dim prd2rv
         Set prd2rv = pdm.CurrentProduct
             prd2rv.ApplyWorkMode (3)
         Dim children: Set children = prd2rv.Products
-On Error GoTo ErrorHandler
+    On Error GoTo ErrorHandler
         Dim odata As Variant: odata = xlm.extract_ary
 '--------map 修改ary------
     Dim iCols: iCols = Array(0, 2, 4, 6, 8, 10, 12)

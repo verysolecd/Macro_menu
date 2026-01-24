@@ -138,9 +138,7 @@ Public Function attLv2Prd(oPrd)
   ReDim finalbom(1 To g_counter, 1 To UBound(tempdata))
       For i = 1 To UBound(finalbom, 1)
         For j = 1 To UBound(finalbom, 2)
-          
           finalbom(i, j) = bigbom(i, j)
-      
         Next
       Next
         attLv2Prd = finalbom

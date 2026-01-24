@@ -56,8 +56,8 @@ If Not oFrm.Res("chk_GXfmt") Then
                             End Select
                         Next j
                     Next i
-          idcol = Array(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15)
-          idrow = Array(0, 1, 2, 3, 4, 5, 6, 0, 8, 7, 0, 14, 0, 12, 0, 10)
+          idcol = Array(0, 1, 2, 3, 4, 5, 6, 8, 9, 11, 13, 15)
+          idrow = Array(0, 1, 2, 3, 4, 5, 6, 8, 7, 14, 12, 10)
           startrow = 5: Colpn = 6: colPic = 8
           xlm.inject_gxbom resultAry, idcol, idrow
             
