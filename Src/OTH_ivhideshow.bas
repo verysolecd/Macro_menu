@@ -14,7 +14,7 @@ Sub RevertHide()
         Set pdm = New Cls_PDM
     End If
     
-    Set osel = pdm.msel
+    Set oSel = pdm.msel
     Dim oDoc, cGroups, oGroup
     Set oDoc = CATIA.ActiveDocument
     Set cGroups = rootPrd.GetTechnologicalObject("Groups")

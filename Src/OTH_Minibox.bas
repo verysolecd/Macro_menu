@@ -63,11 +63,11 @@ Sub mMinibox()
     Dim bdy
         Set bdy = KCL.getItm("MinimumBox", workPt.bodies)
         If Not KCL.IsNothing(bdy) Then
-           Dim osel: Set osel = CATIA.ActiveDocument.Selection
-            osel.Clear
-            osel.Add bdy
-            osel.Delete
-             osel.Clear
+           Dim oSel: Set oSel = CATIA.ActiveDocument.Selection
+            oSel.Clear
+            oSel.Add bdy
+            oSel.Delete
+             oSel.Clear
         End If
     
     Set minBody = workPt.bodies.Add
@@ -263,12 +263,12 @@ Private Function createPlane( _
     ByVal pt As part, _
     ByVal axRef As Reference, _
     ByVal A As Double, _
-    ByVal b As Double, _
+    ByVal B As Double, _
     ByVal c As Double) _
     As HybridShapePlaneEquation
     Dim Fact As HybridShapeFactory
     Set Fact = pt.HybridShapeFactory
-    Set createPlane = Fact.AddNewPlaneEquation(A, b, c, DMYLNG)
+    Set createPlane = Fact.AddNewPlaneEquation(A, B, c, DMYLNG)
     If Not axRef Is Nothing Then
         createPlane.RefAxisSystem = axRef
     End If

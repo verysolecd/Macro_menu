@@ -35,18 +35,18 @@ Sub Faceholecenter()
         Set oBdry = HSF.AddNewBoundaryOfSurface(oFace)
         oHb.AppendHybridShape oBdry
         oPrt.Update
-        Dim osel
-        Set osel = CATIA.ActiveDocument.Selection
-        osel.Clear
-        osel.Add oBdry
+        Dim oSel
+        Set oSel = CATIA.ActiveDocument.Selection
+        oSel.Clear
+        oSel.Add oBdry
         CATIA.StartCommand ("Disassemble")
         CATIA.RefreshDisplay = True
         MsgBox "请拆解窗口选择only domain后点击ok，再点击本窗口的ok"
           CATIA.RefreshDisplay = True
-        osel.Clear
+        oSel.Clear
         i = 1
         For Each Hole In oHb.HybridShapes
-            osel.Add Hole
+            oSel.Add Hole
             If TypeOf Hole Is HybridShapeCircleTritangent Then
                 Set oref = oPrt.CreateReferenceFromObject(Hole)
                 Set oCtr = HSF.AddNewPointCenter(oref)
@@ -55,15 +55,15 @@ Sub Faceholecenter()
                 oPrt.Update
                 Set pt = HSF.AddNewPointDatum(oref): pt.Name = "pt_" & i
                 oHb.AppendHybridShape pt
-                osel.Add oCtr
+                oSel.Add oCtr
                 i = i + 1
               Else
-                osel.Add Hole
+                oSel.Add Hole
             End If
         Next
                 On Error Resume Next
-                    osel.Delete
-                     osel.Clear
+                    oSel.Delete
+                     oSel.Clear
                  On Error GoTo 0
      End If
 End Sub

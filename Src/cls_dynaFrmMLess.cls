@@ -8,13 +8,6 @@ Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
 
-' ==============================================================================
-' cls_dynaFrmMLess
-' ------------------------------------------------------------------------------
-' 功能：通用的非模态窗体管理器
-' 作用：动态解析配置，使用 springWD 渲染非模态工具条，并管理事件绑定。
-' 作者：Antigravity Agent
-' ==============================================================================
 Option Explicit
 Private mForm As springWD               ' 动态窗体实例
 Private mEventCol As collection         ' 事件处理器集合（防止对象销毁）

@@ -3,7 +3,7 @@ Begin {C62A69F0-16DC-11CE-9E98-00AA00574A4F} springWD
    Caption         =   "UserForm1"
    ClientHeight    =   915
    ClientLeft      =   120
-   ClientTop       =   470
+   ClientTop       =   465
    ClientWidth     =   1800
    OleObjectBlob   =   "springWD.frx":0000
    StartUpPosition =   1  'CenterOwner
@@ -34,7 +34,8 @@ Private reqHeight, reqWidth, curRH, curBtm
 Private BtnTop, BtnLeft, currTop
 Option Explicit
 Private Const mdlname As String = "springWD"
-Sub setFrm(ttl, inf)
+Sub setFrm(ttl, inf, Optional ByVal isvert = False)
+
     BtnTop = 0
     currTop = 0
     BtnLeft = Frm_LH_gap
@@ -45,6 +46,8 @@ Sub setFrm(ttl, inf)
      Dim Textlst
      Set Textlst = KCL.InitLst
 On Error Resume Next
+
+If isvert = False Then
     For Each cfg In lst
         Set ctr = Me.Controls.Add(cfg("Type"), cfg("Name"), True)
         With ctr
@@ -52,7 +55,6 @@ On Error Resume Next
             .Left = Frm_LH_gap: .Width = cls_W
             .Font.Name = FONT_NAME: .Font.Size = cls_frontsize
             .Height = cls_H
-            
             '以下设置ctr Top并重置必要的left
                 Select Case cfg("Type")
                     Case "Forms.CommandButton.1"
@@ -60,25 +62,47 @@ On Error Resume Next
                         .Top = BtnTop
                         .Left = BtnLeft: .Width = Btn_W
                         BtnLeft = .Left + .Width + 1.5 * ItmGap ' 计算下一个按钮的左边距
-                        .BackColor = BTN_color
+                        .BackColor = BTN_color: .Font.Size = 10
                          currTop = BtnTop
-                         .Font.Size = 10
-                         
                     Case "Forms.TextBox.1"
-                             .AutoSize = False
+                            .AutoSize = False
                             Textlst.Add ctr
-                            .Top = currTop
+                            .Top = currTop: .Height = 2 * cls_H
                             .Width = Text_W
-                            .Height = 2 * cls_H
                             .Text = cfg("Caption")
                     Case Else
-                        .AutoSize = True
-                        .Caption = cfg("Caption")
+                        .AutoSize = True: .Caption = cfg("Caption")
                         .Top = currTop
                 End Select
             currTop = .Top + .Height
         End With
     Next
+ Else  '==========================================================================
+    For Each cfg In lst
+        Set ctr = Me.Controls.Add(cfg("Type"), cfg("Name"), True)
+        With ctr
+            .Name = cfg("Name"): .Caption = cfg("Caption")
+            .Left = Frm_LH_gap: .Width = cls_W
+            .Font.Name = FONT_NAME: .Font.Size = cls_frontsize
+            .Height = cls_H
+            '以下设置ctr Top并重置必要的left
+                Select Case cfg("Type")
+                    Case "Forms.TextBox.1"
+                            .AutoSize = False
+                            Textlst.Add ctr
+                            .Top = currTop: .Height = 2 * cls_H
+                            .Width = Text_W
+                            .Text = cfg("Caption")
+                    Case Else
+                        .AutoSize = True: .Caption = cfg("Caption")
+                        .Top = currTop
+                End Select
+            currTop = .Top + .Height
+        End With
+    Next
+    
+End If
+     
 On Error GoTo 0
     For Each ctr In Me.Controls
       If ctr.Visible Then

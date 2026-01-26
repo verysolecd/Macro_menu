@@ -7,7 +7,7 @@ Attribute VB_Name = "DRW_VIewBOM"
 
 Private targetsheet
 Private drwDoc, osht, shts, oViews, Fct2, iformat(0 To 7), bfile, bcgView, mainview
-Private osel
+Private oSel
 Private Const mdlname As String = "DRW_VIewBOM"
 Sub DRW_create_BomTable()
  CATIA.RefreshDisplay = False
@@ -62,7 +62,7 @@ iformat(7) = "Material"
   On Error Resume Next
     Set osht = Nothing
     Set osht = CATIA.ActiveDocument.sheets.item(1)
-    Set osel = CATIA.ActiveDocument.Selection
+    Set oSel = CATIA.ActiveDocument.Selection
   On Error GoTo 0
   If osht Is Nothing Then Exit Sub
   Set shts = osht.Parent

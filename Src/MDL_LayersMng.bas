@@ -54,8 +54,8 @@ Set rPrd = rootDoc.Product
 'oDoc.CurrentFilter = "All visible"
 End Sub
 Sub appFilterLayer(oDoc)
-Dim osel
-Set osel = CATIA.ActiveDocument.Selection
+Dim oSel
+Set oSel = CATIA.ActiveDocument.Selection
  '---显示过滤器管理管理
  ily = ""
  ly = oDoc.CurrentLayer
