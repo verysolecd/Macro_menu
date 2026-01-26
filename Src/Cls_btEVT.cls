@@ -7,94 +7,100 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
+
 Option Explicit
-Private WithEvents mBtn As MSForms.CommandButton
+
+' --- Variables ---
+Private WithEvents mBtn As MSForms.CommandButton      ' For Script Mode
 Attribute mBtn.VB_VarHelpID = -1
-Private mParentForm As MSForms.UserForm
+Private WithEvents mControlBTN As MSForms.CommandButton ' For Result Mode
+Attribute mControlBTN.VB_VarHelpID = -1
+
 Private mInfo As Object
 Private mCloseType As Boolean
+Private mParentForm As Object   ' Used by Script Mode
+Private mParentFrm As Object    ' Used by Result Mode (Unified target)
+
+Private mControlID As String
+Private mResultDict As Object
+
+
+Private Const mdlname As String = "Cls_btEVT"
 
 Private Const TAG_ENTRYPNT = "ep"           ' 入口点标签
 Private Const TAG_PJTPATH = "pjt_path"      ' 项目路径标签
 Private Const TAG_MDLNAME = "mdl_name"      ' 模块名称标签
 
 
-'=-=============以下是弹窗的参数
-Public WithEvents ControlBtn As MSForms.CommandButton
-Attribute ControlBtn.VB_VarHelpID = -1
-Private mParentFrm As Object ' To hold the reference to the UserForm
-Private mControlID As String ' ID of the button
 
-Private Const mdlname As String = "Cls_btEVT"
+' --- Initialization ---
+Private Sub Class_Initialize()
 
+End Sub
+
+' --- Methods ---
+
+' For MLess / Script Mode
 Sub set_ButtonEvent(ByVal btn As MSForms.CommandButton, _
                     ByVal BtnInfo As Object, _
-                    ByVal ParentForm As MSForms.UserForm, _
+                    ByVal ParentForm As Object, _
                     ByVal CloseType As Boolean)
     Set mBtn = btn
     Set mInfo = BtnInfo
     Set mParentForm = ParentForm
     mCloseType = CloseType
 End Sub
+
+' For Result Mode / Frm
+Public Property Set ParentFrm(ByVal frm As Object)
+    Set mParentFrm = frm
+End Property
+Public Property Let ControlID(ByVal value As String)
+    mControlID = value
+End Property
+Public Property Set ControlBTN(ByVal btn As MSForms.CommandButton)
+    Set mControlBTN = btn
+End Property
+Public Property Set ResultDict(ByVal dict As Object)
+    Set mResultDict = dict
+End Property
+
+' Handler for Script Mode (mBtn) 非模态按钮的处理
 Private Sub mBtn_click()
-    If Not mCloseType Then Unload mParentForm
-    Dim ary: ary = Array()  '这里按照传入按钮信息执行按钮对应的module宏
-    Dim ss: Set ss = CATIA.SystemService
+    If Not mCloseType Then
+        If Not mParentForm Is Nothing Then Unload mParentForm
+    End If
+    Dim ss As Object: Set ss = CATIA.SystemService
+    On Error Resume Next
     Call ss.ExecuteScript(mInfo(TAG_PJTPATH), _
                           catScriptLibraryTypeVBAProject, _
                           mInfo(TAG_MDLNAME), _
                           mInfo(TAG_ENTRYPNT), _
                           Array())
-    Dim capUp, icap
-    icap = Array(0, 0)
-    Select Case VBA.UCase(mInfo(TAG_MDLNAME))
-    Case VBA.UCase("CAT_COLOR")
-            capUp = amWhite
-            icap = Array("白色背景", "默认背景")
-    Case VBA.UCase("CAT_SWSCR")
-             capUp = canrefresh
-            icap = Array("切换:禁止更新", "切换:正常模式")
-    End Select
-    If icap(0) <> 0 Then Call UpdateButtonText(capUp, icap)
-End Sub
-
-Private Sub UpdateButtonText(ByVal up2New As Boolean, ary)
-        mBtn.Caption = IIf(up2New, ary(0), ary(1))
-End Sub
-Private Function amWhite()
-          amWhite = False
-        If CATIA.Windows.count >= 1 Then
-            Dim currentColor(2)
-                Dim MyViewer:  Set MyViewer = CATIA.ActiveWindow.ActiveViewer
-                MyViewer.GetBackgroundColor currentColor
-            amWhite = (currentColor(0) <> 1 Or currentColor(1) <> 1 Or currentColor(2) <> 1) '只要一个不等于1就是true
-        End If
-End Function
-Private Function canrefresh()
-    Dim bol: bol = CATIA.RefreshDisplay
-    If bol Then
-    KCL.setASM (bol)
-    Else
-    KCL.setASM (bol)
+    If Err.Number <> 0 Then
+         MsgBox "Script Execution Failed: " & Err.Description
+         Err.Clear
     End If
-    CATIA.ActiveWindow.ActiveViewer.Update
-    canrefresh = CATIA.RefreshDisplay
-End Function
-
-'=============以下是弹窗的函数============
-Public Property Set ParentFrm(ByVal frm As Object)
-    Set mParentFrm = frm
-End Property
-
-Public Property Let ControlID(ByVal value As String)
-    mControlID = value
-End Property
-Private Sub ControlBtn_Click()
-    If Not mParentFrm Is Nothing Then
-        mParentFrm.Tag = mControlID  ' Set the ID to the Tag property of the form
-        mParentFrm.Hide   ' Hide the form to return control to the calling code
-    End If
+    On Error GoTo 0
 End Sub
 
+' Handler for Result Mode (mControlBTN) 模态按钮的处理
+Private Sub mControlBTN_Click()
+    If mParentFrm Is Nothing Then Exit Sub
+    mParentFrm.Tag = mControlID
+    If Not mResultDict Is Nothing Then
+        Dim ctl As Control
+        For Each ctl In mParentFrm.Controls
+            On Error Resume Next
+            If TypeName(ctl) = "CheckBox" Then
+                 mResultDict(ctl.Name) = ctl.value
+            ElseIf TypeName(ctl) = "TextBox" Then
+                 mResultDict(ctl.Name) = ctl.Text
+            End If
+            On Error GoTo 0
+        Next
+    End If
+    mParentFrm.Hide
+End Sub
 
 

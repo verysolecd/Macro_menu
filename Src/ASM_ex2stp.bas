@@ -28,7 +28,8 @@ Sub ex2stp_zip()
  Err.Number = 0: ErrorMessage = ""
  Dim oDoc: Set oDoc = CATIA.ActiveDocument
  Dim outputpath As String: outputpath = ""
- Dim oFrm: Set oFrm = KCL.newFrm(mdlname)
+ Dim oFrm: Set oFrm = KCL.newFrm(mdlname): oFrm.Show
+ 
  Select Case oFrm.BtnClicked
  Case "btnOK"
 '===========¬∑æ∂…Ë÷√

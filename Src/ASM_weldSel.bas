@@ -1,6 +1,6 @@
 Attribute VB_Name = "ASM_weldSel"
 'Attribute VB_Name = "weldSel"
-'{GP:13}
+'{GP:3}
 '{Ep:createWd}
 '{Caption:产品焊缝}
 '{ControlTipText:选择被连接的产品}

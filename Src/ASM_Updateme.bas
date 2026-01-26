@@ -1,11 +1,8 @@
 Attribute VB_Name = "ASM_Updateme"
-'Attribute VB_Name = "m33_Updateme"
 '{GP:3}
 '{Ep:Upall}
 '{Caption:更新零件}
 '{ControlTipText:遍历结构树并更新}
-'{BackColor:}
-
 Private Const mdlname As String = "ASM_Updateme"
 Sub Upall()
    If Not CanExecute("ProductDocument") Then Exit Sub
@@ -26,14 +23,12 @@ Sub Upall()
           isupdated = part.IsUpToDate(doc.Product)
       End If
 
-    If Not isupdated Then
-        On Error Resume Next
-        doc.part.Update
-        doc.Product.Update
-        doc.Product.referenceprodcut.Parent.Update
-    End If
-    
+        If isupdated = False Then
+            On Error Resume Next
+            doc.part.Update
+            doc.Product.Update
+            doc.Product.referenceprodcut.Parent.Update
+        End If
     Next
-
 End Sub
 

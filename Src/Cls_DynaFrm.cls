@@ -8,238 +8,124 @@ Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
 Option Explicit
-Private mExecuted
-Private mdict
-Private pobj As Object
-Private WD
+' --- State ---
+Private mForm, mdict, WD As Object
+Private mExecuted As Boolean
+Private mConfigStr As String
+Private mEventCol As collection
+' --- Constants ---
+Private Const TAG_ENTRYPNT = "ep"           ' 入口点标签
+Private Const TAG_PJTPATH = "pjt_path"      ' 项目路径标签
+Private Const TAG_MDLNAME = "mdl_name"      ' 模块名称标签
 
-Private Const mdlname As String = "cls_dynaFrm"
+' --- Lifecycle ---
 Private Sub Class_Initialize()
-        mExecuted = False
-        Set mdict = CreateObject("Scripting.Dictionary")
-        Set Me.mdl = Nothing
-         mExecuted = False
+    mExecuted = False
+    Set mdict = CreateObject("Scripting.Dictionary")
+    Set mEventCol = New collection
 End Sub
+
 Private Sub Class_Terminate()
-On Error Resume Next
- Set mdict = Nothing
- Set Me.mdl = Nothing
- Set WD = Nothing
- Set Me.Res = Nothing
-  mExecuted = False
-        Error.Clear
-        On Error GoTo 0
+    On Error Resume Next
+    If Not WD Is Nothing Then Unload WD
+    Set mdict = Nothing
+    Set WD = Nothing
+    Set mForm = Nothing
+    Set mEventCol = Nothing
+    mExecuted = False
+    Set g_Frm = Nothing
+    Error.Clear
 End Sub
-Public Property Get mdl()
-   Set mdl = pobj
-End Property
 
-Public Property Set mdl(value)
-   Set pobj = value
-End Property
+' --- Public API ---
+Public Sub Init(ByVal ConfigStr As String)
+    mConfigStr = ConfigStr
+End Sub
 
-Private Function Execute()
-  If mExecuted = True Then Exit Function
-    mExecuted = True
-    Dim DecCnt, DecCode, i, procname, startline
-    Dim prockind As Long
-    If Me.mdl Is Nothing Then Exit Function
-   Dim codemod: Set codemod = mdl.CodeModule
-    For i = 1 To codemod.CountOfLines
-        procname = codemod.ProcOfLine(i, prockind)
-        If procname <> "" Then startline = codemod.ProcBodyLine(procname, prockind)  ' procKind是枚举:sub/function/property
-            If startline > 1 Then Exit For
-    Next
-    If startline < 1 Then Exit Function
+Public Sub Show(Optional ByVal Mode As FormShowConstants = vbModal, _
+                Optional ByVal Project As String = "", _
+                Optional ByVal ModuleMap As Object = Nothing, _
+                Optional ByVal MacroMap As Object = Nothing)
+    If mExecuted And Mode = vbModal Then Exit Sub
+    If Mode = vbModal Then mExecuted = True
+    If mConfigStr = "" Then Exit Sub
+    Dim cfg As Object: Set cfg = KCL.ParseUIConfig(mConfigStr)
+    Dim ttl As String: ttl = KCL.ParseUITitle(mConfigStr)
+    If Not WD Is Nothing Then Unload WD
     
-    DecCode = codemod.Lines(1, startline)
-    Dim clscfg: Set clscfg = ParseCts(DecCode)
-    Dim ttl: ttl = ParseTitle(DecCode)
-    
-   Set WD = New springWD: WD.Tag = ""
-    Call WD.setFrm(ttl, clscfg)
-    ' --- 3. bind event handler ---
-    Dim eventCol As New collection
-    Dim ctl As Control
-'Dim evtHandler As Cls_DynaFrm_EventHandler
-  Dim evtHandler As Cls_btEVT
-    For Each ctl In WD.Controls
+    Set WD = New springWD: WD.Tag = ""
+    WD.setFrm ttl, cfg
+    Set mForm = WD
+    BindEvents WD, Project, ModuleMap, MacroMap
+    WD.Show Mode
+If Mode = vbModal Then
+       If WD.Tag = "" Then
+            WD.Tag = "UserClosed": Unload WD: Set WD = Nothing
+            Exit Sub
+        End If
+        If mdict Is Nothing Then Set mdict = KCL.InitDic
+            mdict.Add "btn_clicked", WD.Tag
+           WD.Hide: Unload WD: Set WD = Nothing
+        End If
+End Sub
+
+Public Sub ShowToolbar(ByVal modName As String, _
+                       ByVal Project As String, _
+                       ByVal modMap As Object, _
+                       ByVal macMap As Object)
+    mConfigStr = KCL.getbf1stproc(modName)
+    Show vbModeless, Project, modMap, macMap
+End Sub
+
+' --- Internal Logic ---
+Private Sub BindEvents(frm As Object, pjt As String, modMap As Object, macMap As Object)
+    Dim ctl As Control, btnName As String
+    Dim handler As Cls_btEVT, mBTNinfo As Object
+    Dim isScript As Boolean
+    isScript = (Not modMap Is Nothing) And (Not macMap Is Nothing)
+    Set mEventCol = New collection
+    For Each ctl In frm.Controls
         If TypeName(ctl) = "CommandButton" Then
-           ' Set evtHandler = New Cls_DynaFrm_EventHandler
-            
-          Set evtHandler = New Cls_btEVT
-            Set evtHandler.ControlBtn = ctl
-            evtHandler.ControlID = ctl.Name
-            Set evtHandler.ParentFrm = WD
-            eventCol.Add evtHandler
+            Set handler = New Cls_btEVT
+            btnName = ctl.Name
+            If isScript And Not modMap Is Nothing Then  '非模态按钮
+                If modMap.Exists(btnName) And macMap.Exists(btnName) Then
+                    Set mBTNinfo = KCL.InitDic
+                    mBTNinfo.Add TAG_PJTPATH, pjt
+                    mBTNinfo.Add TAG_MDLNAME, modMap(btnName)
+                    mBTNinfo.Add TAG_ENTRYPNT, macMap(btnName)
+                    handler.set_ButtonEvent ctl, mBTNinfo, frm, True
+                End If
+            Else
+                Set handler.ControlBTN = ctl
+                handler.ControlID = btnName
+                Set handler.ParentFrm = frm
+                Set handler.ResultDict = mdict
+            End If
+            mEventCol.Add handler
         End If
     Next
-    ' --- 4. show form (modal) ---
-    WD.Show vbModal  'vbModal vbModeless
-    ' --- 5. collect result ---
-    If WD.Tag = "" Then
-        WD.Tag = "UserClosed"
-        Set WD = Nothing
-        Exit Function
-    End If
-    
-    mdict.Add "btn_clicked", WD.Tag
-    
-    For Each ctl In WD.Controls
-        On Error Resume Next
-        If TypeName(ctl) = "CheckBox" Then
-             mdict.Add ctl.Name, ctl.value
-        ElseIf TypeName(ctl) = "TextBox" Then
-             mdict.Add ctl.Name, ctl.Text
-        End If
-        On Error GoTo 0
-    Next
-    Unload WD
-        On Error Resume Next
-        Set WD = Nothing
-        Error.Clear
-        On Error GoTo 0
-End Function
+End Sub
+' --- Properties ---
+Public Property Get Values() As Object
+EnsureExecuted: Set Values = mdict
+End Property
 
 Public Property Get Res() As Object
-   Call Execute:   Set Res = mdict
+EnsureExecuted: Set Res = mdict
 End Property
-Public Property Get BtnClicked(Optional key = Null) As Variant
-   Call Execute
-        On Error Resume Next
-            Dim btnDic: Set btnDic = Nothing
-            Set btnDic = mdict
-        On Error GoTo 0
-        If btnDic Is Nothing Then Exit Property ' Return Null if not executed/failed
-       
-        If btnDic.Exists("btn_clicked") = True Then
-                    If key <> Null Then
-                                    If btnDic("btn_clicked") = LCase(key) Then
-                                         BtnClicked = True
-                                    Else
-                                         BtnClicked = False
-                                    End If
-                          Exit Property
-                    Else
-                        BtnClicked = btnDic("btn_clicked")
-                    End If
-        Else
-                BtnClicked = ""
-        End If
+
+Public Property Get BtnClicked() As Variant
+EnsureExecuted: BtnClicked = IIf(mdict.Exists("btn_clicked"), mdict("btn_clicked"), "")
 End Property
+
 Public Property Get IsCancelled() As Boolean
-   Call Execute
-    If mdict Is Nothing Then
-        IsCancelled = True
-        Exit Property
-    End If
-    If mdict.Exists("btn_clicked") Then
-        If mdict("btn_clicked") = "UserClosed" Then
-            IsCancelled = True
-        Else
-            IsCancelled = False
-        End If
-    Else
-        IsCancelled = True
-    End If
+    EnsureExecuted
+    IsCancelled = IIf(mdict.Exists("btn_clicked") And mdict("btn_clicked") <> "UserClosed", False, True)
 End Property
 
-' getiType Helper
-Function getiType(ctrltypename As String) As String
-    ' Static because it's constant map
-    Static mapping As Object
-    If mapping Is Nothing Then
-        Set mapping = CreateObject("Scripting.Dictionary")
-        ' Key = alias
-        ' Value = Control ID
-        mapping.Add "commandbutton,button,cmd,cbt,btn", "Forms.CommandButton.1"
-        mapping.Add "textbox,text,txt", "Forms.TextBox.1"
-        mapping.Add "label,lbl", "Forms.Label.1"
-        mapping.Add "checkbox,check,chk", "Forms.CheckBox.1"
-        mapping.Add "optionbutton,option,opt", "Forms.OptionButton.1"
-        mapping.Add "listbox,list,lst", "Forms.ListBox.1"
-        mapping.Add "combobox,combo,cmb", "Forms.ComboBox.1"
-        mapping.Add "multipage,multipages,mpg", "Forms.MultiPage.1"
-    End If
-    Dim key As Variant
-    For Each key In mapping.keys
-        If ContainsAny(ctrltypename, CStr(key)) Then
-            getiType = mapping(key)
-            Exit Function
-        End If
-    Next key
-    getiType = "Forms.Label.1"
-End Function
-
-' Helper
-Private Function ContainsAny(ByVal mainString As String, ByVal substringsList As String) As Boolean
-    Dim substrings() As String
-    Dim substring As Variant
-    If substringsList = "" Then
-        ContainsAny = False
-        Exit Function
-    End If
-    substrings = Split(substringsList, ",")
-    ContainsAny = False
-    For Each substring In substrings
-        If InStr(1, mainString, VBA.Trim(substring), vbTextCompare) > 0 Then
-            ContainsAny = True
-            Exit Function
-        End If
-    Next substring
-End Function
-
-Private Function ExistsKey(ByVal txt As String, ByVal key As String) As Boolean
-    ExistsKey = IIf(VBA.InStr(VBA.LCase(txt), VBA.LCase(key)) > 0, True, False)
-End Function
-
-Private Function ParseCts(ByVal code As String) As Object
-    Dim regEx As Object
-    Dim matches As Object
-    Dim match As Object
-    Dim Cls_property As Object ' Scripting.Dictionary
-    Set regEx = CreateObject("VBScript.RegExp")
-    With regEx
-        .Global = True
-        .MultiLine = True
-        ' Pattern: ' %UI <ControlType> <ControlName> <Caption/Text>
-       .Pattern = "^\s*'\s*%UI\s+(\w+)\s+(\w+)\s+(.*)$"
-    End With
-    Dim lst: Set lst = KCL.InitLst
-    If regEx.TEST(code) Then
-        Set matches = regEx.Execute(code)
-        For Each match In matches
-            Set Cls_property = KCL.InitDic
-            Cls_property.Add "Type", getiType(match.SubMatches(0))
-            Cls_property.Add "Name", match.SubMatches(1)
-            Cls_property.Add "Caption", VBA.Trim(match.SubMatches(2))
-'            If Not ctrlcoll.Contains(Cls_property("Name")) Then
-               lst.Add Cls_property
-'            End If
-        Next
-    End If
-    Set ParseCts = lst
-End Function
-Private Function ParseTitle(ByVal code As String) As String
-        Dim regEx As Object
-        Dim matches As Object
-        Dim match As Object
-        Dim itl
-        Set regEx = KCL.getRegexp
-    With regEx
-        .Global = True
-        .MultiLine = True
-        ' 格式: ' %UI <Title> <Caption/Text>
-           .Pattern = "^\s*'\s*%Title\s+(.*)$"
-    End With
-    itl = "请配置你要如何执行"
-              If regEx.TEST(code) Then
-                Set matches = regEx.Execute(code)
-                For Each match In matches
-                 itl = match.SubMatches(0)
-                Next
-              End If
-    ParseTitle = itl
-End Function
+Private Sub EnsureExecuted()
+    If Not mExecuted And mConfigStr <> "" Then Show vbModal
+End Sub
 
 

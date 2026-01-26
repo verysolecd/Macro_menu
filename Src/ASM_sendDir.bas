@@ -17,7 +17,7 @@ Sub sendDir()
         opath = KCL.ofParentPath(oDoc.path)
     Dim pn
         If KCL.IsObj_T(oDoc, "DrawingDocument") Then
-            pn = strbflast(oDoc.Name, ".")
+            pn = KCL.strbflast(oDoc.Name, ".")
         Else
             pn = oDoc.Product.partNumber
         End If

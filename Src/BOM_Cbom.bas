@@ -16,7 +16,7 @@ Private Const mdlname As String = "BOM_Cbom"
 Sub cBom()
     If Not KCL.CanExecute("ProductDocument") Then Exit Sub
     CATIA.StartCommand ("* iso")
-    Dim oFrm: Set oFrm = KCL.newFrm(mdlname)
+    Dim oFrm: Set oFrm = KCL.newFrm(mdlname): oFrm.Show
     If oFrm.BtnClicked <> "btnOK" Then Exit Sub
     If pdm Is Nothing Then Set pdm = New Cls_PDM
     If pdm.CurrentProduct Is Nothing Then Set pdm.CurrentProduct = pdm.getiPrd()

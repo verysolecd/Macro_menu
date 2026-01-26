@@ -25,7 +25,7 @@ Set HSF = mDoc.part.HybridShapeFactory
 Set mHBS = mDoc.part.HybridBodies
 Set msel = mDoc.Selection
 needtrans = False
-Dim oFrm: Set oFrm = KCL.newFrm("MDL_pt2xl_abscoord")
+Dim oFrm: Set oFrm = KCL.newFrm("MDL_pt2xl_abscoord"): oFrm.Show
     Select Case oFrm.BtnClicked
         Case "btnOK":
             Call pt2xl(getHB())

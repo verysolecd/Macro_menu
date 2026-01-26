@@ -832,10 +832,12 @@ Public Function setASM(ByVal higheff As Boolean)
     End If
 End Function
 
-Function newFrm(ByVal modName As String)
+Function newFrm(Optional ByVal modName As String = "")
     Dim oFrm: Set oFrm = New cls_dynaFrm
-        Set oFrm.mdl = KCL.getmdl(modName)
+    If modName <> "" Then
+        oFrm.Init getbf1stproc(modName)
         Set newFrm = oFrm
+   End If
 End Function
 
 Function getmdl(Optional ByVal modName As String = "")
@@ -897,25 +899,11 @@ Public Sub AddmdlName()
     MsgBox "Done", vbInformation, "已增加模组名变量 mdlname"
 End Sub
  
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-
 
 Public Function getbf1stproc(modName)
     getbf1stproc = ""
     Dim mdl:  Set mdl = KCL.getmdl(modName)
-    Dim codemod, i, procname, startline
+    Dim codemod, i As Long, procname, startline As Long
     Dim prockind As Long
     If mdl Is Nothing Then Exit Function
     Set codemod = mdl.CodeModule
@@ -935,4 +923,59 @@ Function getmeas(itm)
         Set getmeas = spa.GetMeasurable(itm)
     End If
 End Function
+
+
+' --- UI Parsing Helpers ---
+Function ParseUIConfig(ByVal code As String) As Object
+    Dim regEx As Object, matches As Object, match As Object
+    Dim item As Object, lst As Object
+    Set lst = KCL.InitLst
+    Set regEx = KCL.getRegexp
+    With regEx
+        .Global = True
+        .MultiLine = True
+        .Pattern = "^\s*'\s*%UI\s+(\w+)\s+(\w+)\s+(.*)$"
+    End With
+    If regEx.TEST(code) Then
+        Set matches = regEx.Execute(code)
+        For Each match In matches
+            Set item = KCL.InitDic
+            item.Add "Type", GetControlType(match.SubMatches(0))
+            item.Add "Name", match.SubMatches(1)
+            item.Add "Caption", VBA.Trim(match.SubMatches(2))
+            lst.Add item
+        Next
+    End If
+    Set ParseUIConfig = lst
+End Function
+
+Function ParseUITitle(ByVal code As String) As String
+    Dim regEx As Object, matches As Object, match As Object, itl
+    Set regEx = KCL.getRegexp
+    With regEx
+        .Global = True
+        .MultiLine = True
+        .Pattern = "^\s*'\s*%Title\s+(.*)$"
+    End With
+    itl = "请问如何执行"
+    If regEx.TEST(code) Then
+        Set matches = regEx.Execute(code)
+        For Each match In matches
+            itl = match.SubMatches(0)
+        Next
+    End If
+    ParseUITitle = itl
+End Function
+
+Function GetControlType(ByVal alias As String) As String
+    alias = LCase(alias)
+    Select Case alias
+        Case "button", "btn", "cmd": GetControlType = "Forms.CommandButton.1"
+        Case "label", "lbl": GetControlType = "Forms.Label.1"
+        Case "text", "txt", "textbox": GetControlType = "Forms.TextBox.1"
+        Case "checkbox", "chk": GetControlType = "Forms.CheckBox.1"
+        Case Else: GetControlType = "Forms.Label.1"
+    End Select
+End Function
+
 

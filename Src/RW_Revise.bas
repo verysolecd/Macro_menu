@@ -16,28 +16,17 @@ Private prd2rv
 Private Const mdlname As String = "RW_Revise"
 
 Sub EditorToolbar()
-
     If Not CanExecute("ProductDocument") Then Exit Sub
     If pdm Is Nothing Then Set pdm = New Cls_PDM
-    
-    If sp_frm Is Nothing Then Set sp_frm = New cls_dynaFrmMLess
-    
-    ' 1. 定义UI配置 (模拟 cls_dynafrm 的注释风格)
-    Dim config As String
-    
 
-    config = KCL.getbf1stproc(mdlname)
-             
-    ' 2. 定义映射关系
-    Dim mdlMap As Object: Set mdlMap = CreateObject("Scripting.Dictionary")
-    mdlMap.Add "btnRead", "RW_Revise"
-    mdlMap.Add "btnWrite", "RW_Revise"
+    Dim mdlMap As Object: Set mdlMap = KCL.InitDic
+    mdlMap.Add "btnRead", mdlname
+    mdlMap.Add "btnWrite", mdlname
     
-    Dim funcMap As Object: Set funcMap = CreateObject("Scripting.Dictionary")
+    Dim funcMap As Object: Set funcMap = KCL.InitDic
     funcMap.Add "btnRead", "readPrd"
     funcMap.Add "btnWrite", "rvme"
     
-    ' 获取当前项目路径
     Dim projPath As String
     On Error Resume Next
     projPath = KCL.GetApc().ExecutingProject.VBProject.fileName
@@ -46,13 +35,13 @@ Sub EditorToolbar()
          Err.Clear
     End If
     On Error GoTo 0
+        If g_Frm Is Nothing Then Set g_Frm = KCL.newFrm(mdlname)
 
-   sp_frm.ShowToolbar "属性管理工具箱", config, projPath, mdlMap, funcMap
+        g_Frm.ShowToolbar mdlname, projPath, mdlMap, funcMap
     
 End Sub
 
 Sub readPrd()
-  
  '---------获取待修改产品 '---------遍历修改产品及子产品
     If pdm.CurrentProduct Is Nothing Then Set pdm.CurrentProduct = pdm.getiPrd()
     Dim Prd2Read: Set Prd2Read = pdm.CurrentProduct
@@ -74,7 +63,8 @@ Sub readPrd()
 End Sub
 
 Sub rvme()
-  If xlm Is Nothing Then Set xlm = New Cls_XLM
+On Error GoTo ErrorHandler
+    If gws Is Nothing Or gws Is Empty Then Err.Description = "excel错误，请检查": Exit Sub
      If pdm.CurrentProduct Is Nothing Then Exit Sub
          Dim currRow: currRow = 2
 '---------遍历修改产品及子产品------
@@ -82,7 +72,7 @@ Sub rvme()
         Set prd2rv = pdm.CurrentProduct
             prd2rv.ApplyWorkMode (3)
         Dim children: Set children = prd2rv.Products
-    On Error GoTo ErrorHandler
+ 
         Dim odata As Variant: odata = xlm.extract_ary
 '--------map 修改ary------
     Dim iCols: iCols = Array(0, 2, 4, 6, 8, 10, 12)

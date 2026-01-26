@@ -13,11 +13,15 @@ Sub DRW_create_BomTable()
  CATIA.RefreshDisplay = False
     Call m_init
 On Error Resume Next
+
+If drwDoc Is Nothing Then Exit Sub
     Set bomview = KCL.SelectItem("«Î—°‘Òbom ”Õº", "DrawingView")
         If bomview Is Nothing Then Exit Sub
+        
+        
     Set dprd = bomview.GenerativeBehavior.Document 'DrawingViewGenerativeBehavior/DrawingViewGenerativeBehavior
         If Not IsObj_T(dprd, "Product") Then Exit Sub
-    
+
 tempAry = getPrd_BomAry(dprd, iformat)
  tolrow = UBound(tempAry, 1)
  tolcol = UBound(tempAry, 2)
@@ -64,6 +68,7 @@ iformat(7) = "Material"
     Set osht = CATIA.ActiveDocument.sheets.item(1)
     Set oSel = CATIA.ActiveDocument.Selection
   On Error GoTo 0
+  
   If osht Is Nothing Then Exit Sub
   Set shts = osht.Parent
   Set drwDoc = shts.Parent

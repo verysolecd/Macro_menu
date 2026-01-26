@@ -1,4 +1,5 @@
 Attribute VB_Name = "ASM_ChildMng"
+
 '------宏信息---------------------------------
 '{GP:3}
 '{EP:ChildMng}
@@ -15,8 +16,8 @@ Attribute VB_Name = "ASM_ChildMng"
 
 Private Const mdlname As String = "ASM_ChildMng"
 Sub ChildMng()
-    If Not CanExecute("ProductDocument") Then Exit Sub
-    Dim oFrm: Set oFrm = KCL.newFrm("ASM_ChildMng")
+   If Not KCL.CanExecute("ProductDocument") Then Exit Sub
+    Dim oFrm: Set oFrm = KCL.newFrm(mdlname): oFrm.Show
               Select Case oFrm.BtnClicked
                 Case "btn_copy"
                     Call cpChildren
@@ -26,8 +27,6 @@ Sub ChildMng()
                     Exit Sub
             End Select
 End Sub
-
-
 Sub cpChildren()
     Dim imsg, filter(0), oSel
     Set oDoc = CATIA.ActiveDocument
@@ -38,7 +37,9 @@ Sub cpChildren()
         imsg = "请先点击选择源父产品，再点击选择目标父产品": MsgBox imsg
         filter(0) = "Product"
         Dim sourcePrd, targetPrd As Product
-        Set sourcePrd = KCL.SelectItem(imsg, filter)
+        Set sourcePrd = Nothing
+        Set targetPrd = Nothing
+            Set sourcePrd = KCL.SelectItem(imsg, filter)
         If sourcePrd Is Nothing Then GoTo ErrorHandler
             For Each prd In sourcePrd.Products
                oSel.Add prd
@@ -61,14 +62,9 @@ Sub cpChildren()
 ErrorHandler:
         If Err.Number <> 0 Then
             Call KCL.setASM(True)
-              oSel.Clear
-            MsgBox "CATIA 程序错误：" & Err.Description, vbCritical
-                 Err.Clear
+                MsgBox "CATIA 程序错误：" & Err.Description, vbCritical
             Exit Sub
-        Else
-         Call KCL.setASM(True)
         End If
-         Call KCL.setASM(True)
 End Sub
 Sub DeleteChildren()
     Dim oSel: Set oSel = CATIA.ActiveDocument.Selection: oSel.Clear
@@ -93,3 +89,5 @@ Sub DeleteChildren()
                   On Error GoTo 0
           End Select
 End Sub
+
+
