@@ -21,6 +21,7 @@ Private mEventCol As collection         ' 事件处理器集合（防止对象销毁）
 Private mConfigLst As Object            ' 控件配置列表 (KCL.InitLst)
 
 ' --- 初始化 ---
+Private Const mdlname As String = "cls_dynaFrmMLess"
 Private Sub Class_Initialize()
     Set mEventCol = New collection
 End Sub

@@ -18,19 +18,21 @@ On Error Resume Next
     Set dprd = bomview.GenerativeBehavior.Document 'DrawingViewGenerativeBehavior/DrawingViewGenerativeBehavior
         If Not IsObj_T(dprd, "Product") Then Exit Sub
     
-  tempAry = getPrd_BomAry(dprd, iformat)
+tempAry = getPrd_BomAry(dprd, iformat)
  tolrow = UBound(tempAry, 1)
  tolcol = UBound(tempAry, 2)
  pos_x = 50: pos_y = 50
-Set otable = bomview.Tables.GetItem("bbom")
-    If Not otable Is Nothing Then
-        pos_x = otable.X - 20
-        pos_y = otable.Y - 20
-            osel.Clear
-            osel.Add bomview.Tables.item("bbom")
-            osel.Delete
-            osel.Clear
+ Set otable = Nothing
+ 
+ For i = 1 To bomview.Tables.count
+    Set otable = bomview.Tables.item(i)
+    If otbale.Name = "bbom" Then
+            pos_x = otable.X - 20
+            pos_y = otable.Y - 60
+            bomview.Tables.Remove (i)
     End If
+Next i
+
 Err.Clear
 On Error GoTo 0
     Set otable = bomview.Tables.Add(pos_x, pos_y, tolrow, tolcol, 10, 20)

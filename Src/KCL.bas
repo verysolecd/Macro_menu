@@ -863,6 +863,54 @@ Public Function getDecCode(modName)
     If DecCnt < 1 Then Exit Function
         getDecCode = mdl.Lines(1, DecCnt) ' 获取声明代码
 End Function
+Public Sub AddmdlName()
+    Dim vbComp As Object
+    Dim codemod As Object
+    Dim i As Long, startline As Long, prockind As Long
+    Dim searchStartLine As Long, searchStartCol As Long
+    Dim searchEndLine As Long, searchEndCol As Long
+    Dim declText As String, constName As String, procname As String
+    constName = "mdlname"
+    Dim vbprj As Object: Set vbprj = KCL.GetApc().ExecutingProject.VBProject
+    Dim colls: Set colls = vbprj.VBComponents
+    For Each vbComp In colls
+        Set codemod = vbComp.CodeModule
+        For i = 1 To codemod.CountOfLines
+            procname = codemod.ProcOfLine(i, prockind)
+            If procname <> "" Then
+                startline = codemod.ProcBodyLine(procname, prockind)
+                searchStartLine = 1
+                searchStartCol = 1
+                searchEndLine = startline
+                searchEndCol = -1
+                declText = "Private Const " & constName & " As String = """ & vbComp.Name & """"
+                ' Use variables for Find arguments
+                If Not codemod.Find("Const " & constName, searchStartLine, searchStartCol, searchEndLine, searchEndCol) Then
+                    codemod.InsertLines startline, declText
+                Else
+                    codemod.ReplaceLine searchStartLine, declText
+                End If
+                Exit For
+            End If
+        Next i
+    Next vbComp
+    MsgBox "Done", vbInformation, "已增加模组名变量 mdlname"
+End Sub
+ 
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+
 
 Public Function getbf1stproc(modName)
     getbf1stproc = ""
@@ -887,3 +935,4 @@ Function getmeas(itm)
         Set getmeas = spa.GetMeasurable(itm)
     End If
 End Function
+
