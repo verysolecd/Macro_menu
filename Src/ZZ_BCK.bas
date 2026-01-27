@@ -1,4 +1,8 @@
-Attribute VB_Name = "A00rmusrPrp"
+Attribute VB_Name = "ZZ_BCK"
+Private Declare PtrSafe Function OpenClipboard Lib "user32" (ByVal hwnd As LongPtr) As Long
+Private Declare PtrSafe Function EmptyClipboard Lib "user32" () As Long
+Private Declare PtrSafe Function CloseClipboard Lib "user32" () As Long
+Private Declare PtrSafe Function SetClipboardData Lib "user32" (ByVal wFormat As Long, ByVal hMem As LongPtr) As LongPtr
 Private Const mdlname As String = "A00rmusrPrp"
 Sub remove_usrP()
 Set oprd = CATIA.ActiveDocument.Product
@@ -33,3 +37,4 @@ Sub rm(oprd)
     End If
 On Error GoTo 0
 End Sub
+

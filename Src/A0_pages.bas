@@ -42,13 +42,13 @@ j = 1
      Set oView = osht.Views.item(1)
       osht.Activate
 End Sub
-Function straf1st(iStr, iext)
+Function straf1st(istr, iext)
 Dim idx
-idx = InStr(iStr, iext)
+idx = InStr(istr, iext)
 If idx > 0 Then
-        straf1st = Mid(iStr, idx)
+        straf1st = Mid(istr, idx)
     Else
-        straf1st = iStr
+        straf1st = istr
     End If
 End Function
 

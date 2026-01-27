@@ -1,6 +1,6 @@
 Attribute VB_Name = "ASM_weldSel"
 'Attribute VB_Name = "weldSel"
-'{GP:3}
+'{GP:44}
 '{Ep:createWd}
 '{Caption:产品焊缝}
 '{ControlTipText:选择被连接的产品}
@@ -12,7 +12,7 @@ If Not KCL.CanExecute("ProductDocument") Then Exit Sub
 MsgBox "还没编呢"
 '
 'Set Doc = CATIA.ActiveDocument
-'Set rootPrd = Doc.Product
+'Set rPrd = Doc.Product
 'Set sPrd = rootPrd.Products
 'Set iprd = sPrd.item("点焊信息")
 'Set osel = Doc.Selection

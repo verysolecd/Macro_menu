@@ -13,13 +13,13 @@ Sub main()
     ' 2. 获取视图与产品
     Dim oSheet: Set oSheet = CATIA.ActiveDocument.sheets.ActiveSheet
     Dim oView: Set oView = oSheet.Views.ActiveView
-    Dim oPrd: Set oPrd = oView.GenerativeBehavior.Document
+    Dim oprd: Set oprd = oView.GenerativeBehavior.Document
     
-    If oPrd Is Nothing Then MsgBox "没有关联的 Product": Exit Sub
+    If oprd Is Nothing Then MsgBox "没有关联的 Product": Exit Sub
     
     ' 3. 导出并处理数据
-    oPrd.GetItem("BillOfMaterial").SetSecondaryFormat fmt
-    oPrd.GetItem("BillOfMaterial").Print "TXT", tmpPath, oPrd
+    oprd.GetItem("BillOfMaterial").SetSecondaryFormat fmt
+    oprd.GetItem("BillOfMaterial").Print "TXT", tmpPath, oprd
     
     Dim flatData: flatData = GetSortedBOM(tmpPath) ' 获取处理好并排序的数据
     If IsEmpty(flatData) Then Exit Sub

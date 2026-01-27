@@ -587,26 +587,26 @@ End Function
 
 '@iStr string
 '获得字符串第一个"iext"之前的字符或返回原字符
-Function strbf1st(iStr, iext)
+Function strbf1st(istr, iext)
     Dim oPrefix
         Dim underscorePos As Long
-        underscorePos = InStr(iStr, iext)
+        underscorePos = InStr(istr, iext)
         If underscorePos > 0 Then
-            oPrefix = Left(iStr, underscorePos - 1)
+            oPrefix = Left(istr, underscorePos - 1)
         Else
-           oPrefix = iStr
+           oPrefix = istr
         End If
         strbf1st = oPrefix
 End Function
  '@iStr string
 '获得字符串第一个"iext"之后的字符或返回原字符
-Function straf1st(iStr, iext)
+Function straf1st(istr, iext)
 Dim idx
-idx = InStr(iStr, iext)
+idx = InStr(istr, iext)
 If idx > 0 Then
-        straf1st = Mid(iStr, idx)
+        straf1st = Mid(istr, idx)
     Else
-        straf1st = iStr
+        straf1st = istr
     End If
 End Function
 '创建md文件
@@ -686,7 +686,11 @@ Public Function GetApc() As Object
     End If
     Set GetApc = Apc
 End Function
-
+Function GetVBAprj() As String
+    Dim oApc As Object
+    Set oApc = GetApc()
+    GetVBAprj = oApc.ExecutingProject.VBProject.fileName
+End Function
 ' 智能打开路径（优先激活已存在窗口）
 Sub openpath(ByVal strPath As String)
     Dim fso As Object: Set fso = GetFso
@@ -923,7 +927,19 @@ Function getmeas(itm)
         Set getmeas = spa.GetMeasurable(itm)
     End If
 End Function
-
+Function setBTNmdl(ByVal modName As String)
+      Set setBTNmdl = Nothing
+    Dim ctrllst:    Set ctrllst = KCL.ParseUIConfig(KCL.getbf1stproc(modName))
+    Dim mapmdl: Set mapmdl = KCL.InitDic
+    Dim ctrl
+    For Each ctrl In ctrllst    '映射BTN名字和对应模块
+        Select Case ctrl("Type")
+            Case "Forms.CommandButton.1"
+                mapmdl(ctrl("Name")) = modName
+        End Select
+    Next
+   Set setBTNmdl = mapmdl
+End Function
 
 ' --- UI Parsing Helpers ---
 Function ParseUIConfig(ByVal code As String) As Object

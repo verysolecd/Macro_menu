@@ -25,30 +25,24 @@ Private mControlID As String
 Private mResultDict As Object
 
 
-Private Const mdlname As String = "Cls_btEVT"
 
 Private Const TAG_ENTRYPNT = "ep"           ' 入口点标签
 Private Const TAG_PJTPATH = "pjt_path"      ' 项目路径标签
 Private Const TAG_MDLNAME = "mdl_name"      ' 模块名称标签
-
-
-
-' --- Initialization ---
+Private Const mdlname As String = "Cls_btEVT"
 Private Sub Class_Initialize()
 
 End Sub
-
-' --- Methods ---
 
 ' For MLess / Script Mode
 Sub set_ButtonEvent(ByVal btn As MSForms.CommandButton, _
                     ByVal BtnInfo As Object, _
                     ByVal ParentForm As Object, _
                     ByVal CloseType As Boolean)
-    Set mBtn = btn
-    Set mInfo = BtnInfo
-    Set mParentForm = ParentForm
-    mCloseType = CloseType
+        Set mBtn = btn
+        Set mInfo = BtnInfo
+        Set mParentForm = ParentForm
+        mCloseType = CloseType
 End Sub
 
 ' For Result Mode / Frm
@@ -64,30 +58,10 @@ End Property
 Public Property Set ResultDict(ByVal dict As Object)
     Set mResultDict = dict
 End Property
-
-' Handler for Script Mode (mBtn) 非模态按钮的处理
-Private Sub mBtn_click()
-    If Not mCloseType Then
-        If Not mParentForm Is Nothing Then Unload mParentForm
-    End If
-    Dim ss As Object: Set ss = CATIA.SystemService
-    On Error Resume Next
-    Call ss.ExecuteScript(mInfo(TAG_PJTPATH), _
-                          catScriptLibraryTypeVBAProject, _
-                          mInfo(TAG_MDLNAME), _
-                          mInfo(TAG_ENTRYPNT), _
-                          Array())
-    If Err.Number <> 0 Then
-         MsgBox "Script Execution Failed: " & Err.Description
-         Err.Clear
-    End If
-    On Error GoTo 0
-End Sub
-
 ' Handler for Result Mode (mControlBTN) 模态按钮的处理
 Private Sub mControlBTN_Click()
     If mParentFrm Is Nothing Then Exit Sub
-    mParentFrm.Tag = mControlID
+        mParentFrm.Tag = mControlID
     If Not mResultDict Is Nothing Then
         Dim ctl As Control
         For Each ctl In mParentFrm.Controls
@@ -102,5 +76,28 @@ Private Sub mControlBTN_Click()
     End If
     mParentFrm.Hide
 End Sub
+' Handler for Script Mode (mBtn) 非模态按钮的处理
+Private Sub mBtn_click()
+    If Not mCloseType Then
+        If Not mParentForm Is Nothing Then Unload mParentForm
+    End If
+'Func ExecuteScript( iLibraryName,iLibraryType,iProgramName,iFunctionName,iParameters)
+'    iLibraryName: The library in which the script is contained
+'    iLibraryType: The type of the library
+'    iProgramName: The name of the program in the library
+'    iFunctionName:The name of the function to invoke
+'    IParameters: An array of parameters for the function
+    Dim ss As Object: Set ss = CATIA.SystemService
+    On Error Resume Next
+        Call ss.ExecuteScript(mInfo(TAG_PJTPATH), _
+                              catScriptLibraryTypeVBAProject, _
+                              mInfo(TAG_MDLNAME), _
+                              mInfo(TAG_ENTRYPNT), _
+                              Array())
+         Err.Clear
+    On Error GoTo 0
+End Sub
+
+
 
 

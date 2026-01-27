@@ -313,11 +313,11 @@ Sub export_project( _
     For Each Name In get_module_name_list(projectIdx)
         Set comp = proj.VBComponents(Name)
         On Error Resume Next
-        comp.Export dirPath & "\" & comp.Name & "." & get_extension(comp)
-        If Not Err.Number = 0 Then
-            MsgBox "导出失败，请删除.git以外的文件后重试"
-            Exit Sub
-        End If
+            comp.Export dirPath & "\" & comp.Name & "." & get_extension(comp)
+            If Not Err.Number = 0 Then
+                MsgBox "导出失败，请删除.git以外的文件后重试"
+                Exit Sub
+            End If
         On Error GoTo 0
     Next
     update_userdata proj, dirPath

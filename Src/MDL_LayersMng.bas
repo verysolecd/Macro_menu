@@ -10,9 +10,9 @@ Private i
 Private Const mdlname As String = "MDL_LayersMng"
 Sub LayersMng()
 If Not CanExecute("partDocument,productdocument") Then Exit Sub
-Set rootDoc = CATIA.ActiveDocument
-Set rPrd = rootDoc.Product
-    Call appFilterLayer(rootDoc)
+Set rDoc = CATIA.ActiveDocument
+Set rPrd = rDoc.Product
+    Call appFilterLayer(rDoc)
     Call addDrw(rPrd)
  '---显示管理
 '    '---图层管理

@@ -86,10 +86,10 @@ On Error Resume Next
     
     oDic = KCL.InitDic
     
-     Dim oPrd: Set oPrd = rootPrd
-     If oPrd Is Nothing Then Exit Sub
+     Dim oprd: Set oprd = rootPrd
+     If oprd Is Nothing Then Exit Sub
      
-     oPrd.ApplyWorkMode (3)  '3  DESIGN_MODE
+     oprd.ApplyWorkMode (3)  '3  DESIGN_MODE
      Dim opath: opath = KCL.GetPath(KCL.getVbaDir & "\" & "oTemp")
      KCL.ClearDir (opath) '截图前先清空文件夹
      If gPic_Path = "" Then
@@ -97,9 +97,9 @@ On Error Resume Next
      End If
      
      oDic.Remove all
-     CaptureMe oPrd, opath
+     CaptureMe oprd, opath
      oDic.Remove all
-     Set oPrd = Nothing
+     Set oprd = Nothing
 '-----------恢复显示样式模式-------------
      CATIA.DisplayFileAlerts = True
      owd.WindowState = 0

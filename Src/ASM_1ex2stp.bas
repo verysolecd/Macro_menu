@@ -1,4 +1,4 @@
-Attribute VB_Name = "ASM_ex2stp"
+Attribute VB_Name = "ASM_1ex2stp"
 '------宏信息-----------------------------------------------------
 '{GP:3}
 '{EP:ex2stp_zip}
@@ -20,7 +20,6 @@ Attribute VB_Name = "ASM_ex2stp"
 '------------------------------------------------
 Private ErrorMessage As String
 Private zippath
-
 Private Const mdlname As String = "ASM_ex2stp"
 Sub ex2stp_zip()
     If Not KCL.CanExecute("ProductDocument,partdocument") Then Exit Sub
@@ -29,7 +28,6 @@ Sub ex2stp_zip()
  Dim oDoc: Set oDoc = CATIA.ActiveDocument
  Dim outputpath As String: outputpath = ""
  Dim oFrm: Set oFrm = KCL.newFrm(mdlname): oFrm.Show
- 
  Select Case oFrm.BtnClicked
  Case "btnOK"
 '===========路径设置
@@ -58,11 +56,7 @@ Sub ex2stp_zip()
         opath(0) = outputpath:        opath(1) = stpname:        opath(2) = "stp"
         Dim stpfilepath As String: stpfilepath = KCL.JoinPathName(opath)
         oDoc.ExportData stpfilepath, "stp"     '=======导出stp
-        
-        If Not KCL.isExists(stpfilepath) Then '=======检查文件存在性
-            ErrorMessage = "未找到STP文件：" & stpfilepath
-            GoTo ShowMessage
-        End If
+        If Not KCL.isExists(stpfilepath) Then ErrorMessage = "未找到:" & stpfilepath: GoTo ShowMessage '=======检查文件存在性
         If Not ex2zip(stpfilepath) Then GoTo ShowMessage
         KCL.DeleteMe stpfilepath ' 删除原始 STP 文件
 '============生成导出日志

@@ -1,45 +1,28 @@
 Attribute VB_Name = "RW_Revise"
-
 '{GP:1}
 '{Ep:EditorToolbar}
 '{Caption:属性工具箱}
 '{ControlTipText:打开属性管理悬浮工具条}
-
 '  %UI Label  lblInfo  请选择操作：
 '  %UI Button btnRead  读取属性
 '  %UI Button btnWrite 写回属性
-
-
 Option Explicit
-
 Private prd2rv
 Private Const mdlname As String = "RW_Revise"
 
 Sub EditorToolbar()
     If Not CanExecute("ProductDocument") Then Exit Sub
     If pdm Is Nothing Then Set pdm = New Cls_PDM
-
     Dim mdlMap As Object: Set mdlMap = KCL.InitDic
     mdlMap.Add "btnRead", mdlname
     mdlMap.Add "btnWrite", mdlname
-    
     Dim funcMap As Object: Set funcMap = KCL.InitDic
     funcMap.Add "btnRead", "readPrd"
     funcMap.Add "btnWrite", "rvme"
-    
-    Dim projPath As String
-    On Error Resume Next
-    projPath = KCL.GetApc().ExecutingProject.VBProject.fileName
-    If Err.Number <> 0 Or projPath = "" Then
-         projPath = "" ' Fallback to active context
-         Err.Clear
-    End If
-    On Error GoTo 0
-        If g_Frm Is Nothing Then Set g_Frm = KCL.newFrm(mdlname)
-
-        g_Frm.ShowToolbar mdlname, projPath, mdlMap, funcMap
-    
+    If g_Frm Is Nothing Then Set g_Frm = KCL.newFrm(mdlname)
+    g_Frm.ShowToolbar mdlname, mdlMap, funcMap
 End Sub
+
 
 Sub readPrd()
  '---------获取待修改产品 '---------遍历修改产品及子产品
@@ -61,7 +44,6 @@ Sub readPrd()
         End If
         Set Prd2Read = Nothing
 End Sub
-
 Sub rvme()
 On Error GoTo ErrorHandler
     If gws Is Nothing Or gws Is Empty Then Err.Description = "excel错误，请检查": Exit Sub
@@ -78,9 +60,7 @@ On Error GoTo ErrorHandler
     Dim iCols: iCols = Array(0, 2, 4, 6, 8, 10, 12)
     Dim outputArr As Variant, tempArr(1 To 6)
     ReDim outputArr(1 To UBound(odata, 1), 1 To UBound(iCols))
-    
     Dim i, j
-    
     For i = 1 To UBound(outputArr, 1) '-------遍历行
   '-------遍历获取X行要修改的数据
         For j = 1 To UBound(outputArr, 2) '-------遍历该行数组后输出一个一维数组作为要的修改参数
@@ -100,9 +80,8 @@ On Error GoTo ErrorHandler
           Set prd2rv = Nothing
     MsgBox "已经修改产品"
 ErrorHandler:
-    If Err.Number <> 0 Then: Err.Clear: MsgBox "程序错误：" & Err.Description, vbCritical
+    If Err.Number <> 0 Then:  MsgBox Err.Description, vbCritical: Err.Clear
         Exit Sub
-
 End Sub
 
 

@@ -28,7 +28,7 @@ needtrans = False
 Dim oFrm: Set oFrm = KCL.newFrm("MDL_pt2xl_abscoord"): oFrm.Show
     Select Case oFrm.BtnClicked
         Case "btnOK":
-            Call pt2xl(getHB())
+                Call pt2xl(getHB())
          Case "btnWcoord":
                 needtrans = True
             Call pt2xl(getHB())

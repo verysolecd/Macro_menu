@@ -54,13 +54,9 @@ Private Sub Class_Initialize()
     Else
         Set rootDoc = CATIA.ActiveDocument
         Set rootPrd = CATIA.ActiveDocument.Product
-        If Not rootDoc Is Nothing Then
-        Set msel = CATIA.ActiveDocument.Selection: msel.Clear
-        End If
-        If Not rootPrd Is Nothing Then
-        rootPrd.ApplyWorkMode (3)
-        End If
-End If
+        If Not rootDoc Is Nothing Then Set msel = CATIA.ActiveDocument.Selection: msel.Clear
+        If Not rootPrd Is Nothing Then rootPrd.ApplyWorkMode (3)
+    End If
 On Error GoTo 0
 ErrorHandler:
     If Err.Number <> 0 Then
@@ -76,43 +72,43 @@ Sub iniarr()
     Att(4) = "Density"
 End Sub
 ' Calculate the total mass of a product and its sub-products
-Public Function Assmass(oPrd)
+Public Function Assmass(oprd)
         Dim i, total, children
             total = 0
-        Set children = oPrd.Products
-        If oPrd.Products.count > 0 Then
+        Set children = oprd.Products
+        If oprd.Products.count > 0 Then
             For i = 1 To children.count
                 Assmass (children.item(i)) 'Assmass = Assmass +
                 total = total + children.item(i).ReferenceProduct.UserRefProperties.item("Mass").value
             Next
-                oPrd.ReferenceProduct.UserRefProperties.item("Mass").value = total
+                oprd.ReferenceProduct.UserRefProperties.item("Mass").value = total
         Else
-                total = oPrd.ReferenceProduct.UserRefProperties.item("Mass").value
+                total = oprd.ReferenceProduct.UserRefProperties.item("Mass").value
         End If
         Assmass = total
  End Function
 ' Generate product information
-    Public Function infoPrd(oPrd)
+    Public Function infoPrd(oprd)
         Dim arr(1 To 9)
-            With oPrd.ReferenceProduct
+            With oprd.ReferenceProduct
                 arr(1) = .partNumber
                 arr(2) = .Nomenclature
                 arr(3) = .Definition
-                arr(4) = oPrd.Name
+                arr(4) = oprd.Name
             End With
         Dim colls
-           Set colls = oPrd.ReferenceProduct.UserRefProperties
+           Set colls = oprd.ReferenceProduct.UserRefProperties
                 arr(5) = getAtt("Material", colls)(1)
                 arr(6) = getAtt("Density", colls)(1)
                 arr(7) = getAtt("Mass", colls)(1)
                 arr(8) = getAtt("Thickness", colls)(1)
         On Error GoTo 0
-                arr(9) = count_me(oPrd)
+                arr(9) = count_me(oprd)
         infoPrd = arr
     End Function
-Public Function attLv2Prd(oPrd)
+Public Function attLv2Prd(oprd)
     Dim tempdata, i, j
-    tempdata = infoPrd(oPrd)
+    tempdata = infoPrd(oprd)
     If g_counter = 1 Then
         ReDim bigbom(1 To gfn, 0 To UBound(tempdata)) '初始化所有bigbom元素为""
             For i = 1 To gfn
@@ -125,7 +121,7 @@ Public Function attLv2Prd(oPrd)
        bigbom(g_counter, i) = tempdata(i)
    Next
   
-   Dim children As Products: Set children = oPrd.Products
+   Dim children As Products: Set children = oprd.Products
             If children.count > 0 Then
                 For j = 1 To children.count
                     g_counter = g_counter + 1
@@ -145,9 +141,9 @@ Public Function attLv2Prd(oPrd)
         g_counter = 1
 End Function
 
-Public Function recurInfoPrd(oPrd, Lv)
+Public Function recurInfoPrd(oprd, Lv)
     Dim tempdata, i, j
-    tempdata = infoPrd(oPrd) '此数组是1-9
+    tempdata = infoPrd(oprd) '此数组是1-9
     
     If g_counter = 1 Then  '初始化所有bigbom元素为""
         ReDim bigbom(1 To gfn, 0 To UBound(tempdata))
@@ -165,7 +161,7 @@ Public Function recurInfoPrd(oPrd, Lv)
                  bigbom(g_counter, i) = tempdata(i)
              End Select
    Next
-       Dim children: Set children = oPrd.Products
+       Dim children: Set children = oprd.Products
             If children.count > 0 Then
                     Dim bdict: Set bdict = KCL.InitDic
                 For i = 1 To children.count
@@ -186,11 +182,11 @@ Public Function recurInfoPrd(oPrd, Lv)
     recurInfoPrd = finalbom
 End Function
 
-Public Function modatt(oPrd, odata)
-    Dim refPrd: Set refPrd = oPrd.ReferenceProduct
+Public Function modatt(oprd, odata)
+    Dim refPrd: Set refPrd = oprd.ReferenceProduct
     Dim colls, i
     Dim currAtt As Variant
-     currAtt = infoPrd(oPrd)
+     currAtt = infoPrd(oprd)
     For i = 1 To 6
         If odata(i) <> "" And odata(i) <> currAtt(i) Then
             On Error Resume Next
@@ -198,7 +194,7 @@ Public Function modatt(oPrd, odata)
                     Case 1: refPrd.partNumber = odata(i)
                     Case 2: refPrd.Nomenclature = odata(i)
                     Case 3: refPrd.Definition = odata(i)
-                    Case 4: oPrd.Name = odata(i)
+                    Case 4: oprd.Name = odata(i)
                     Case 5:
                         Set colls = refPrd.UserRefProperties
                         colls.item("Material").value = odata(i)
@@ -214,9 +210,9 @@ Public Function modatt(oPrd, odata)
     Next
  End Function
  
-Public Sub initPrd(oPrd)
+Public Sub initPrd(oprd)
     Dim refPrd, colls
-    Set refPrd = oPrd.ReferenceProduct
+    Set refPrd = oprd.ReferenceProduct
     Dim NT As Variant
         NT = Array( _
             Array("Mass", "Mass"), _
@@ -244,7 +240,7 @@ Public Sub initPrd(oPrd)
     
     If Not oPrt Is Nothing Then
         On Error Resume Next
-                Call iniPrt(oPrd)
+                Call iniPrt(oprd)
         On Error GoTo 0
     Else
             Dim k
@@ -262,10 +258,10 @@ Public Sub initPrd(oPrd)
     End If
 End Sub
 
-Private Sub iniPrt(oPrd)
+Private Sub iniPrt(oprd)
     Dim refPrd, colls
     Dim i
-    Set refPrd = oPrd.ReferenceProduct
+    Set refPrd = oprd.ReferenceProduct
     Dim oPrt: Set oPrt = refPrd.Parent.part
 
 '============创建usrp属性=================
@@ -435,12 +431,12 @@ Private Function getAtt(iName, collection)
         End If
     On Error GoTo 0
 End Function
-Private Function count_me(oPrd)  '获取兄弟字典
+Private Function count_me(oprd)  '获取兄弟字典
      Dim i, oDict, qty, pn
          qty = 1
      On Error Resume Next
-          If TypeOf oPrd.Parent Is Products Then    '若有父级产品'获取兄弟字典
-                   Dim oParent: Set oParent = oPrd.Parent.Parent
+          If TypeOf oprd.Parent Is Products Then    '若有父级产品'获取兄弟字典
+                   Dim oParent: Set oParent = oprd.Parent.Parent
                    Set oDict = KCL.InitDic
                    For i = 1 To oParent.Products.count
                           pn = oParent.Products.item(i).partNumber
@@ -450,7 +446,7 @@ Private Function count_me(oPrd)  '获取兄弟字典
                                 oDict(pn) = 1
                             End If
                       Next
-            qty = oDict(oPrd.partNumber)
+            qty = oDict(oprd.partNumber)
           End If
     count_me = qty
 End Function
@@ -468,7 +464,7 @@ Public Function catSelx(prompt As String) As collection
     msel.Clear
 End Function
 Public Function getiPrd()    '获取要读取或修改的产品
-  Dim oPrd: Set oPrd = Nothing
+  Dim oprd: Set oprd = Nothing
     Dim btn, bTitle, bResult
         bTitle = "请选择产品"
       imsg = "“是”选择产品，“否”读取根产品，“取消退出”"
@@ -476,20 +472,20 @@ Public Function getiPrd()    '获取要读取或修改的产品
       bResult = MsgBox(imsg, btn, "bTitle")  ' Yes(6),No(7),cancel(2)
            Select Case bResult
               Case 7 '===选择“否”====
-                Set oPrd = CATIA.ActiveDocument.Product
+                Set oprd = CATIA.ActiveDocument.Product
               Case 6  '===选择“是”,进行产品选择====
                  On Error Resume Next
-                   Set oPrd = KCL.SelectItem("请选择产品", "Product")
+                   Set oprd = KCL.SelectItem("请选择产品", "Product")
                 If Err.Number <> 0 Then
                     Err.Clear
                     Exit Function
                 End If
           End Select
-        Set getiPrd = oPrd
-        Set oPrd = Nothing
+        Set getiPrd = oprd
+        Set oprd = Nothing
 End Function
 
-Public Function gxBom(oPrd, Lv)
+Public Function gxBom(oprd, Lv)
     Dim mapping As Variant
     mapping = Array(0, 0, 0, 0, 0, 0, 1, 0, 3, 2, 0, 9, 0, 7, 0, 5, 0)
     Dim bomsize
@@ -504,7 +500,7 @@ Public Function gxBom(oPrd, Lv)
             Next i
     End If   '初始化所有bigbom元素为""
     Dim tempdata
-    tempdata = infoPrd(oPrd)
+    tempdata = infoPrd(oprd)
    '=====生成行数据 === bom行数据直接按最大列处理得到一行数据
         For i = 1 To UBound(bigbom, 2)  '从1到最大列
             bigbom(g_counter, i) = ""  '默认赋值为空
@@ -525,7 +521,7 @@ Public Function gxBom(oPrd, Lv)
             End Select
            Next
             Dim children As Products
-            Set children = oPrd.Products
+            Set children = oprd.Products
             If children.count > 0 Then
                     Dim bdict
                     Set bdict = KCL.InitDic

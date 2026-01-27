@@ -59,7 +59,7 @@ Sub drwFormat()
       Err.Clear: Name = "none"
     End If
   On Error GoTo 0
-    Dim oFrm: Set oFrm = New cls_dynaFrm
+    Dim oFrm: Set oFrm = New cls_dynaFrm: oFrm.Show
     If oFrm.IsCancelled Then Exit Sub
     Select Case oFrm.BtnClicked
         Case "btn_create": If (Name = "none") Then CATDrw_Creation targetsheet
@@ -69,10 +69,11 @@ Sub drwFormat()
              CATDrw_Resizing targetsheet
               CATDrw_Update targetsheet
             End If
+            
+         Case Else: Exit Sub
     End Select
       
-'         Case Else
-'            MsgBox "未点击任何按钮，或按钮名称未匹配", vbExclamation
+'
 '    End Select
     CATExit targetsheet
 End Sub

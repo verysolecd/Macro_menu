@@ -8,16 +8,13 @@ Attribute VB_Name = "OTH_ivhideshow"
 
 Private Const mdlname As String = "OTH_ivhideshow"
 Sub RevertHide()
-
     If Not KCL.CanExecute("ProductDocument") Then Exit Sub
-    If pdm Is Nothing Then
-        Set pdm = New Cls_PDM
-    End If
-    
+    If pdm Is Nothing Then Set pdm = New Cls_PDM
     Set oSel = pdm.msel
     Dim oDoc, cGroups, oGroup
     Set oDoc = CATIA.ActiveDocument
-    Set cGroups = rootPrd.GetTechnologicalObject("Groups")
+    Set rPrd = oDoc.Product
+    Set cGroups = rPrd.GetTechnologicalObject("Groups")
     Set oGroup = cGroups.AddFromSel    ' 当前选择产品添加到组
     
     oGroup.ExtractMode = 1

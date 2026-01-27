@@ -239,6 +239,8 @@ Function GetThisDir() As String
     projFilePath = oApc.ExecutingProject.VBProject.fileName
     GetThisDir = GetFso.GetParentFolderName(projFilePath)
 End Function
+
+
 'Scripting.Dictionary
 'param:compareMode-Long
 'return:Object(Of Dictionary)

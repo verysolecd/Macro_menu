@@ -10,13 +10,13 @@ Private Const mdlname As String = "RW_3initme"
 Sub iniThis()
  If Not KCL.CanExecute("ProductDocument,PartDocument") Then Exit Sub
  If pdm Is Nothing Then Set pdm = New Cls_PDM
-   Set g_allPN = KCL.InitDic(vbTextCompare): g_allPN.RemoveAll  'g_allPN 是全局变量，不需要传递
+ Set g_allPN = KCL.InitDic(vbTextCompare): g_allPN.RemoveAll  'g_allPN 是全局变量，不需要传递
     If KCL.checkDocType("PartDocument") Then
         Call initPrtdoc(CATIA.ActiveDocument)
         Set pdm = Nothing
         Exit Sub
     End If
-     Dim iprd: Set iprd = pdm.getiPrd()
+Dim iprd: Set iprd = pdm.getiPrd()
      If Not iprd Is Nothing Then
         On Error Resume Next
                Call recurInitPrd(iprd)
@@ -25,7 +25,7 @@ Sub iniThis()
                    MsgBox "零件模板已经应用"
              Else
                    MsgBox "至少一个参数创建错误，请检查lisence"
-                    End If
+          End If
          On Error GoTo 0
       Else
            MsgBox "没有要初始化的产品或零件，将退出"
@@ -33,25 +33,18 @@ Sub iniThis()
 End Sub
 Sub initPrtdoc(doc)
     If pdm Is Nothing Then Set pdm = New Cls_PDM
-    Dim iprd
-    Set iprd = doc.Product
-    Call pdm.initPrd(rootPrd)
+    Dim iprd: Set iprd = doc.Product
+    Call pdm.initPrd(iprd)
 End Sub
-Sub initPrdDoc(doc)
+Sub recurInitPrd(oprd)
     If pdm Is Nothing Then Set pdm = New Cls_PDM
-    Dim iprd
-    Set iprd = doc.Product
-    Call recurInitPrd(rootPrd)
-End Sub
-Sub recurInitPrd(oPrd)
-    If pdm Is Nothing Then Set pdm = New Cls_PDM
-        If g_allPN.Exists(oPrd.partNumber) = False Then
-            g_allPN(oPrd.partNumber) = 1
-            Call pdm.initPrd(oPrd)
+        If g_allPN.Exists(oprd.partNumber) = False Then
+            g_allPN(oprd.partNumber) = 1
+            Call pdm.initPrd(oprd)
         End If
-    If oPrd.Products.count > 0 Then
-            For Each Product In oPrd.Products
-                Call recurInitPrd(Product)
-             Next
+    If oprd.Products.count > 0 Then
+        For Each Product In oprd.Products
+            Call recurInitPrd(Product)
+        Next
     End If
 End Sub

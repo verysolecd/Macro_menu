@@ -92,8 +92,8 @@ End Function
 Sub AsmConv2xl()
      Dim opath: opath = KCL.GetPath(KCL.getVbaDir & "\" & "oTemp")
     Dim bfile:    bfile = opath & "\bom_recap.txt"
-    Dim rootPrd: Set rootPrd = CATIA.ActiveDocument.Product
-    Dim ASMConv: Set ASMConv = rootPrd.GetItem("BillOfMaterial")
+    Dim rPrd: Set rPrd = CATIA.ActiveDocument.Product
+    Dim ASMConv: Set ASMConv = rPrd.GetItem("BillOfMaterial")
     Dim ary(7) 'change number if you have more custom columns/array...
     ary(0) = "Number"
     ary(1) = "Part Number"
@@ -105,7 +105,7 @@ Sub AsmConv2xl()
     ary(7) = "Material"
 '   ASMConv.SetCurrentFormat Ary
    ASMConv.SetSecondaryFormat ary
-    CallByName ASMConv, "Print", VbMethod, "TXT", bfile, rootPrd
+    CallByName ASMConv, "Print", VbMethod, "TXT", bfile, rPrd
    Set olns = getBomlns(bfile)
     bomary = Parse2ary(olns)
 If xlm Is Nothing Then Set xlm = New Cls_XLM

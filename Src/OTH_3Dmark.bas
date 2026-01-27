@@ -18,28 +18,28 @@ Sub newlabel()
     recurthisPrd rPrd
 End Sub
 
-Sub recurthisPrd(oPrd)
-        If g_allPN.Exists(oPrd.partNumber) = False Then
-            g_allPN(oPrd.partNumber) = 1
-            Call recurexcute(oPrd)
+Sub recurthisPrd(oprd)
+        If g_allPN.Exists(oprd.partNumber) = False Then
+            g_allPN(oprd.partNumber) = 1
+            Call recurexcute(oprd)
             End If
-        If oPrd.Products.count > 0 Then
-                For Each Product In oPrd.Products
+        If oprd.Products.count > 0 Then
+                For Each Product In oprd.Products
                     Call recurthisPrd(Product)
                  Next
         End If
 End Sub
-Sub recurexcute(oPrd)
-    Call c3Dmark(oPrd)
+Sub recurexcute(oprd)
+    Call c3Dmark(oprd)
 End Sub
-Sub c3Dmark(oPrd)
+Sub c3Dmark(oprd)
 
-If oPrd.Products.count < 1 Then
+If oprd.Products.count < 1 Then
     If pdm Is Nothing Then Set pdm = New Cls_PDM
-     info = pdm.infoPrd(oPrd)
+     info = pdm.infoPrd(oprd)
         On Error GoTo 0
         Dim pos(11), sTextString, cMarker3Ds, oMarker3D
-        oPrd.Position.GetComponents pos
+        oprd.Position.GetComponents pos
         sTextString = info(3) & vbNewLine & _
                         info(5) & vbNewLine & _
                         info(7)
@@ -53,7 +53,7 @@ If oPrd.Products.count < 1 Then
         pos2(0) = pos(0) - 500
         pos2(1) = pos(1) + 200
         pos2(2) = pos(2) + 500
-        Set oMarker3D = cMarker3Ds.Add3DText(pos2, sTextString, pos1, oPrd)
+        Set oMarker3D = cMarker3Ds.Add3DText(pos2, sTextString, pos1, oprd)
         oMarker3D.TextSize = 6#
         oMarker3D.Update
     End If
@@ -62,7 +62,7 @@ End Sub
 Sub Pt_annotation()
 
 Set oDoc = CATIA.ActiveDocument
- Set oPrd = CATIA.ActiveDocument.Product
+ Set oprd = CATIA.ActiveDocument.Product
     Set oPrt = oDoc.part
  Set oHb = KCL.SelectItem("ÇëÑ¡Ôñgeoset", "HybridBody")
   Set opt = oHb.HybridShapes.item(1)

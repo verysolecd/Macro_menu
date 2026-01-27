@@ -1,6 +1,6 @@
-Attribute VB_Name = "BOM_Cbom"
+Attribute VB_Name = "RW_Cbom"
 '------宏信息-----------------------------------------------------
-'{GP:2}
+'{GP:1}
 '{Ep:cBom}
 '{Caption:生成BOM}
 '{ControlTipText:一键生成带有截图的BOM}
@@ -12,7 +12,6 @@ Attribute VB_Name = "BOM_Cbom"
 ' %UI Button btnOK  生成BOM
 ' %UI Button btncancel  取消
 Option Explicit
-Private Const mdlname As String = "BOM_Cbom"
 Sub cBom()
     If Not KCL.CanExecute("ProductDocument") Then Exit Sub
     CATIA.StartCommand ("* iso")

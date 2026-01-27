@@ -55,22 +55,18 @@ Sub Set_FormInfo(ByVal InfoLst As Object, _
     Set prdObserver = pdm  ' 连接到全局产品观察器
     FrmMargin = Array(2, 2, 2, 2) ' 上, 右, 下, 左 窗体边距调整值
     Set MPgs = Me.Controls.Add("Forms.MultiPage.1", "MPgs", True) ' 创建多页控件
-    Dim Pgs As Pages
-     Set Pgs = MPgs.Pages: Pgs.Clear
+    Dim Pgs As Pages: Set Pgs = MPgs.Pages: Pgs.Clear
     Dim key As Long, KeyStr As Variant, Pg As Page, pName As String
     Dim BtnInfos As Object, info As Variant
     Dim btns As Object: Set btns = KCL.InitLst()
-    
     Dim btn As MSForms.CommandButton
-    
     Dim BtnEvt As Cls_btEVT
-    
     For Each KeyStr In InfoLst
-        key = CLng(KeyStr)
-        If Not PageMap.Exists(key) Then GoTo Continue
-        pName = PageMap(key)
-        Set Pg = Get_Page(Pgs, pName)
-        Set BtnInfos = InfoLst(KeyStr)
+            key = CLng(KeyStr)
+            If Not PageMap.Exists(key) Then GoTo Continue
+            pName = PageMap(key)
+            Set Pg = Get_Page(Pgs, pName)
+            Set BtnInfos = InfoLst(KeyStr)
         For Each info In BtnInfos
             Set btn = Init_Button(Pg.Controls, key, info)
             Set BtnEvt = New Cls_btEVT
@@ -81,14 +77,14 @@ Continue:
     Next
     Set mBtns = btns
     Call Set_MPage(MPgs)
-    Call Set_Form(MPgs, formTitle)
+    Call Set_FormHeight(MPgs, formTitle)
    
     Set lblProductInfo = getNewLbl(Me)
     Set lblAuthor = getMeinfo(Me) ' 创建底部的作者信息栏
     UpdateProductInfo    ' 初始更新产品信息
 End Sub
 ' 设置窗体属性
-Private Sub Set_Form(ByVal MPgs As MultiPage, ByVal cap As String)
+Private Sub Set_FormHeight(ByVal MPgs As MultiPage, ByVal cap As String)
     With Me
         Dim requiredInsideHeight
         requiredInsideHeight = MPgs.Top + MPgs.Height + ADJUST_F_H + lb_H  '+ FrmMargin(2)
@@ -103,42 +99,35 @@ Private Sub Set_MPage(ByVal MPgs As MultiPage)
     With MPgs
         .Top = lb_H + FrmMargin(1) + 1
         .Left = FrmMargin(0)
-        .TabFixedHeight = Tab_H  ' 标签高度（单位：磅）
-        .TabFixedWidth = Tab_W ' 标签宽度
-        .Font.Name = "Arial"
-        .Font.Size = Tab_frontsize
+        .TabFixedHeight = Tab_H: .TabFixedWidth = Tab_W  ' 标签高度\宽度
+        .Font.Name = "Arial": .Font.Size = Tab_frontsize
         .MultiRow = True
-        .TabOrientation = fmTabOrientationLeft
         .Style = fmTabStyleButtons  ' 切换为按钮样式
+        .TabOrientation = fmTabOrientationLeft
      End With
-    Dim Pg As Page
+    
     Dim MaxBtnCnt As Long: MaxBtnCnt = 0
     Dim BtnCnt As Long
+    Dim Pg As Page
     For Each Pg In MPgs.Pages
         BtnCnt = Pg.Controls.count
         MaxBtnCnt = IIf(BtnCnt > MaxBtnCnt, BtnCnt, MaxBtnCnt)
     Next
     MPgs.Height = FrmMargin(0) + (BTN_H * MaxBtnCnt * 1) + FrmMargin(2) + ADJUST_M_H
-    ' 设置多页控件背景颜色
 End Sub
 ' 初始化按钮
 Private Function Init_Button(ByVal Ctls As Controls, _
                              ByVal idx As Long, _
                              ByVal BtnInfo As Variant) As MSForms.CommandButton
-    Dim btn As MSForms.CommandButton
-    Set btn = Ctls.Add("Forms.CommandButton.1", idx, True)
-    
+    Dim btn As MSForms.CommandButton:  Set btn = Ctls.Add("Forms.CommandButton.1", idx, True)
     Dim Pty As Variant
     For Each Pty In BtnInfo.keys
         Call Try_SetProperty(btn, Pty, BtnInfo.item(Pty))
     Next
     With btn
-        .Top = (Ctls.count - 1) * BTN_H - 1 '+ (Ctls.Count - 1)+ FrmMargin(0) +
-        .Left = FrmMargin(2)
-        .Height = BTN_H
-        .Width = Btn_W
-        .Font.Name = "Arial"   ' 设置按钮字体
-        .Font.Size = BTN_frontsize
+        .Top = (Ctls.count - 1) * BTN_H - 1: .Height = BTN_H
+        .Left = FrmMargin(2): .Width = Btn_W
+        .Font.Name = "Arial": .Font.Size = BTN_frontsize
        ' .BackColor = RGB(220, 220, 220)  ' 设置按钮背景颜色
     End With
     Set Init_Button = btn
@@ -149,21 +138,16 @@ Private Sub Try_SetProperty(ByVal ctrl As Object, _
                             ByVal value As Variant)
     On Error Resume Next
         Err.Number = 0
-        Dim tmp As Variant
-        tmp = CallByName(ctrl, PptyName, VbGet)
+        Dim tmp As Variant: tmp = CallByName(ctrl, PptyName, VbGet)
         If Not Err.Number = 0 Then
            ' Debug.Print PptyName & ": 获取属性失败(" & Err.Number & ")"
             Exit Sub
         End If
         Select Case TypeName(tmp)
-            Case "Empty"
-                Exit Sub
-            Case "Long"
-                value = CLng(value)
-            Case "Boolean"
-                value = CBool(value)
-            Case "Currency"
-                value = CCur(value)
+            Case "Empty": Exit Sub
+            Case "Long": value = CLng(value)
+            Case "Boolean": value = CBool(value)
+            Case "Currency": value = CCur(value)
         End Select
         If Not Err.Number = 0 Then
           '  Debug.Print value & ": 类型转换失败(" & Err.Number & ")"
