@@ -20,8 +20,8 @@ Sub rm(oprd)
     colls.Remove ("iMaterial")
      Set colls = refPrd.Parent.part.Parameters.RootParameterSet.ParameterSets
         Set cm = colls.GetItem("cm")
-        Set oSel = CATIA.ActiveDocument.Selection
-        oSel.Clear: oSel.Add cm: oSel.Delete
+        Set osel = CATIA.ActiveDocument.Selection
+        osel.Clear: osel.Add cm: osel.Delete
      Set colls = refPrd.Parent.part.relations
      colls.Remove ("CalM")
      colls.Remove ("CMAS")
@@ -36,5 +36,20 @@ Sub rm(oprd)
         Next
     End If
 On Error GoTo 0
+End Sub
+
+
+''==±éÀúµÝ¹é=============================
+Sub recurAyo(ayo)
+    Dim colls: Set itm = ayo.Products
+    For Each itm In colls
+        Call recurFunc(itm)
+    Next
+
+    If ayo.Products.count > 0 Then
+            For Each ctm In ayo.Products
+                Call recurAyo(ctm)
+             Next
+    End If
 End Sub
 

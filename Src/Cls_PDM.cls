@@ -20,14 +20,8 @@ Attribute VB_Exposed = False
 
 
 'hybridshape的类型识别
-' = 0 , Unknown
-' = 1 , Point
-' = 2 , Curve
-' = 3 , Line
-' = 4 , Circle
-' = 5 , Surface
-' = 6 , Plane
-' = 7 , Solid, Volume
+' = 0 , Unknown' = 1 , Point' = 2 , Curve' = 3 , Line
+' = 4 , Circle' = 5 , Surface' = 6 , Plane' = 7 , Solid, Volume
 
 Option Explicit
 
@@ -574,4 +568,15 @@ If Not itm Is Nothing Then
     End If
 End Function
 
+Public Sub SelectAll(iQuery As String)
+  Selection.Clear
+  Selection.Add (mProduct)
+  Selection.Search iQuery & ",sel"
+End Sub
+Public Sub DeleteAll(iQuery As String)
+  Selection.Clear
+  Selection.Add (View)
+  Selection.Search iQuery & ",sel"
+  If Selection.Count2 <> 0 Then Selection.Delete
+End Sub
 

@@ -2,30 +2,146 @@ Attribute VB_Name = "OTH_ivhideshow"
 'Attribute VB_Name = "m64_hide&show"
 '{GP:6}
 '{Ep:RevertHide}
-'{Caption:·´Ñ¡Òþ²Ø}
-'{ControlTipText:·´Ñ¡²¢Òþ²Ø½á¹¹Ê÷}
+'{Caption:ï¿½ï¿½Ñ¡ï¿½ï¿½ï¿½ï¿½}
+'{ControlTipText:ï¿½ï¿½Ñ¡ï¿½ï¿½ï¿½ï¿½ï¿½Ø½á¹¹ï¿½ï¿½}
 '{BackColor:}
-
+Private osel
+Private rdoc
+Private rPrd
 Private Const mdlname As String = "OTH_ivhideshow"
 Sub RevertHide()
     If Not KCL.CanExecute("ProductDocument") Then Exit Sub
     If pdm Is Nothing Then Set pdm = New Cls_PDM
-    Set oSel = pdm.msel
+    Set osel = pdm.msel
     Dim oDoc, cGroups, oGroup
     Set oDoc = CATIA.ActiveDocument
     Set rPrd = oDoc.Product
     Set cGroups = rPrd.GetTechnologicalObject("Groups")
-    Set oGroup = cGroups.AddFromSel    ' µ±Ç°Ñ¡Ôñ²úÆ·Ìí¼Óµ½×é
-    
+    Set oGroup = cGroups.AddFromSel    ' ï¿½ï¿½Ç°Ñ¡ï¿½ï¿½ï¿½Æ·ï¿½ï¿½ï¿½Óµï¿½ï¿½ï¿½
     oGroup.ExtractMode = 1
-    oGroup.FillSelWithInvert   '  ·´Ñ¡
-    
+    oGroup.FillSelWithInvert   '  ï¿½ï¿½Ñ¡
     'oGroup.FillSelWithExtract
       cGroups.Remove 1
       Set cGroups = Nothing
-      Dim sel
+    Dim sel
     Set sel = oDoc.Selection
     Set VisPropertySet = sel.VisProperties
-    sel.VisProperties.SetShow 1  '' ½«ËùÓÐÑ¡ÖÐÔªËØÉèÖÃÎª²»¿É¼û
+    sel.VisProperties.SetShow 1  '' ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ñ¡ï¿½ï¿½Ôªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Îªï¿½ï¿½ï¿½É¼ï¿½
     'VisPropertySet.SetShow 0
 End Sub
+
+Sub main()
+    Set rdoc = CATIA.ActiveDocument
+    Set rPrd = rdoc.Product
+    Set osel = rdoc.Selection
+    Set rPrd = CATIA.ActiveDocument.Product
+
+Set wantlst = getwantlst
+If wantlst Is Nothing Then Exit Sub
+Set showlst = getshowlst(rPrd)
+Set hidelst = gethidelst(rPrd)
+'====ï¿½ï¿½Ê¼ï¿½ï¿½ï¿½ï¿½
+hide_in_lst showlst
+show_in_lst wantlst
+showParent wantlst
+' show_in_lst showlst
+'show_in_lst hidelst
+'====ï¿½ï¿½Ê¼ï¿½Ö¸ï¿½ï¿½ï¿½Ê¾
+
+End Sub
+
+Public Function SelectAll(iQuery As String, ByVal iRange)
+  osel.Clear
+  osel.Add (iRange)
+  osel.Search iQuery & ",sel"
+End Function
+Function getshowlst(oprd)
+ Dim istr As String: istr = "Assembly Design.Product.Visibility=Visible"
+ Call SelectAll(istr, oprd)
+  Dim lst: Set lst = KCL.InitLst
+   For i = 1 To osel.count
+      lst.Add osel.item(i).LeafProduct
+    Next
+   Set getshowlst = lst
+End Function
+
+Function gethidelst(oprd)
+ Dim istr As String: istr = "Assembly Design.Product.Visibility=Hidden"
+ Call SelectAll(istr, oprd)
+  Dim lst: Set lst = KCL.InitLst
+   For i = 1 To osel.count
+      lst.Add osel.item(i).LeafProduct
+    Next
+   Set gethidelst = lst
+End Function
+Function getwantlst()
+    Set getwantlst = Nothing
+If osel.Count2 > 0 Then
+  Dim lst: Set lst = KCL.InitLst
+   For i = 1 To osel.count
+      lst.Add osel.item(i).LeafProduct
+    Next
+        Set getwantlst = lst
+End If
+End Function
+Sub hide_in_lst(lst)
+osel.Clear
+    For Each itm In lst
+            osel.Add itm
+    Next
+osel.VisProperties.SetShow 1: osel.Clear
+
+End Sub
+
+Sub show_in_lst(lst)
+osel.Clear
+    For Each itm In lst
+            osel.Add itm
+    Next
+osel.VisProperties.SetShow 0: osel.Clear
+End Sub
+
+Sub showParent(lst)  ' ï¿½Þ¸ï¿½Îª Subï¿½ï¿½ï¿½ï¿½Êµï¿½ï¿½Êµï¿½ï¿½ï¿½ß¼ï¿½
+
+    Dim parentLst: Set parentLst = KCL.InitLst()
+    Dim prd, parentPrd
+    
+    For Each prd In lst
+        Set parentPrd = prd
+        ' Ñ­ï¿½ï¿½ï¿½ï¿½ï¿½Ï²ï¿½ï¿½ï¿½Ö±ï¿½ï¿½ï¿½ï¿½ï¿½Úµï¿½
+        Do
+            ' ï¿½ï¿½ï¿½Ô»ï¿½È¡ï¿½ï¿½ï¿½Úµï¿½
+            On Error Resume Next
+            Set parentPrd = parentPrd.Parent
+            If Err.Number <> 0 Then
+               Err.Clear
+               Exit Do
+            End If
+            
+            ' If parentPrd Is Nothing Then Exit Do ' Reached top level
+            
+            ' ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Úµï¿½ï¿½ï¿½ Product ï¿½ï¿½ï¿½Í£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ReferenceProduct ï¿½ï¿½ Documentï¿½ï¿½
+            ' ×¢ï¿½â£ºï¿½ï¿½ï¿½Ý¾ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä£ï¿½Í¿ï¿½ï¿½ï¿½ï¿½ï¿½Òªï¿½ï¿½ï¿½ï¿½ï¿½Ð¶Ï£ï¿½ï¿½ï¿½Í¨ï¿½ï¿½ Product ï¿½ï¿½ Parent ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Product ï¿½á¹¹ï¿½Ú£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+            ' ï¿½ï¿½ CATIA ï¿½Ð£ï¿½LeafProduct ï¿½ï¿½ Parent ï¿½ï¿½ï¿½Ü»ï¿½ï¿½ï¿½ Product
+            If TypeName(parentPrd) = "Product" Then
+                 parentLst.Add parentPrd
+            ElseIf TypeName(parentPrd) = "Products" Then
+                 ' ï¿½ï¿½ï¿½ï¿½Ç¼ï¿½ï¿½Ï£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½Í¨ï¿½ï¿½ï¿½ï¿½ Product
+                 Set parentPrd = parentPrd.Parent
+                 If TypeName(parentPrd) = "Product" Then parentLst.Add parentPrd
+            Else
+                 Exit Do ' ï¿½ï¿½ï¿½ï¶¥ï¿½ï¿½ï¿½ï¿½ Product ï¿½á¹¹
+            End If
+            On Error GoTo 0
+        Loop
+    Next
+    
+    ' Í³Ò»ï¿½ï¿½Ê¾ï¿½ï¿½ï¿½Ð¸ï¿½ï¿½Úµï¿½
+    If parentLst.count > 0 Then
+        show_in_lst parentLst
+    End If
+End Sub
+
+
+git config --global user.name "verysolecd"
+git config --global user.email "verysolecd@hotmail.com"

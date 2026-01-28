@@ -234,18 +234,18 @@ End Function
 Public Function getSearch(ByRef iDoc, ByRef ifilter As Variant)
     Set getSearch = Nothing
       On Error Resume Next
-             Dim oSel As Selection, i
-             Set oSel = iDoc.Selection
-              oSel.Clear
+             Dim osel As Selection, i
+             Set osel = iDoc.Selection
+              osel.Clear
     Select Case TypeName(ifilter)
         Case "string"
-        With oSel
+        With osel
             .Clear
             .Search (ifilter)
             .VisProperties.SetShow 1
         End With
     End Select
-        Set getSearch = oSel
+        Set getSearch = osel
 End Function
 
 '*****数组相关函数*****

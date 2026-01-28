@@ -61,14 +61,14 @@ End Sub
 
 Private Sub ApplyColor(R As Long, G As Long, B As Long, Desc As String)
     On Error Resume Next
-        Dim oSel As Selection
-        Set oSel = CATIA.ActiveDocument.Selection
-        If oSel.count = 0 Then
+        Dim osel As Selection
+        Set osel = CATIA.ActiveDocument.Selection
+        If osel.count = 0 Then
             MsgBox "Please select a body or part first.", vbExclamation
             Exit Sub
         End If
         ' Set Real Color (R, G, B, Inheritance=1)
-        oSel.VisProperties.SetRealColor R, G, B, 1
+        osel.VisProperties.SetRealColor R, G, B, 1
         CATIA.StatusBar = "Applied color: " & Desc
     On Error GoTo 0
 End Sub

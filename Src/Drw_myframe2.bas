@@ -72,9 +72,6 @@ Sub drwFormat()
             
          Case Else: Exit Sub
     End Select
-      
-'
-'    End Select
     CATExit targetsheet
 End Sub
 Sub CATCreateTitleBlockFrame()
@@ -85,26 +82,22 @@ m_RevRowHeight = 5
 m_checkRowHeight = 6
 m_RulerLength = 200
 
-
 Nb_check = 6
 Nb_rv = 5
 '此处分为2个大区域，TitleBlock和RevisionBlock
 Dim vleft, vtop
 vleft = -180
 vtop = 61
-
- '上下
+'上下
     newLineH vleft + X0, X0, Y0, "TitleBlock_Frame_line_Bottom"
     newLineH vleft + X0, X0, vtop + Y0, "TitleBlock_Frame_line_Top"
- '左右
+'左右
     newLineV vleft + X0, Y0, vtop + Y0, "TitleBlock_Frame_line_Left"
     newLineV X0, Y0, vtop + Y0, "TitleBlock_Frame_line_Right"
 
     tb_X = Array(0, -120, -60, -50, -40, -30, -20)
     tb_Y = Array(0, 6, 15, 20, 36, 46, 61)
-    
-    '大section 行  titleblock_frame_line_
-    
+'大section 行  titleblock_frame_line_
     For i = 1 To UBound(tb_Y)
         Select Case i
             Case 1, 4
@@ -113,17 +106,14 @@ vtop = 61
             newLineH tb_X(2) + X0, X0, tb_Y(i) + Y0, "TitleBlock_Frame_line_Row_" & i
         End Select
     Next
-  
-    '大section 列
-    
+'大section 列
     newLineV tb_X(1) + X0, Y0, tb_Y(6) + Y0, "TitleBlock_Frame_line_Col_1"
     newLineV tb_X(2) + X0, Y0, tb_Y(6) + Y0, "TitleBlock_Frame_line_Col_2"
     newLineV tb_X(3) + X0, tb_Y(3) + Y0, tb_Y(5) + Y0, "TitleBlock_Frame_line_Col_3"
     newLineV tb_X(4) + X0, tb_Y(1) + Y0, tb_Y(3) + Y0, "TitleBlock_Frame_line_Col_4"
     newLineV tb_X(5) + X0, tb_Y(0) + Y0, tb_Y(1) + Y0, "TitleBlock_Frame_line_Col_5"
     newLineV tb_X(6) + X0, tb_Y(1) + Y0, tb_Y(3) + Y0, "TitleBlock_Frame_line_Col_6"
-    
-     'REV区域 行
+'REV区域 行
     Rev_x = Array(-180, -164, -148, -134)
         For i = 2 To Nb_check 'REV区域 行
             newLineH vleft + X0, tb_X(1) + X0, Y0 + m_checkRowHeight * i, "RevisionBlock_Line_row" & i
@@ -131,13 +121,12 @@ vtop = 61
         For i = 1 To UBound(Rev_x) 'REV区域 列
             newLineV Rev_x(i) + X0, Y0, tb_Y(6) + Y0, "RevisionBlock_Line_Col_1"
         Next
-    'Rev区域 行
+'Rev区域 行
         For i = 1 To Nb_rv - 1
            newLineH vleft + X0, tb_X(1) + X0, Y0 + tb_Y(4) + m_RevRowHeight * i, "RevisionBlock_Line_Row" & i
         Next
-     'Rev区域 列
+'Rev区域 列
         newLineV -172 + X0, 36 + Y0, tb_Y(6) + Y0, "RevisionBlock_Line_Col_1"
-
 End Sub
 Sub CATDrw_Creation(targetsheet)
   If Not CATInit() Then Exit Sub
@@ -212,8 +201,6 @@ Sub CATFrameBorder()
     If Err.Number <> 0 Then Err.Clear
   On Error GoTo 0
 End Sub
-
-
 Sub CATFrameText(Nb_CM_H, Nb_CM_V, Ruler, Cst_1, Cst_2)
 Dim i, t
   On Error Resume Next
@@ -331,7 +318,6 @@ Sub CATTitleBlockText()
  Dim dec, lst
    dec = getDecCode()
    Set lst = ParseDec(dec)
-     
      For Each ttx In lst
             oTxtName = "TitleBlock_Text_" & ttx("name")
             CreateTextAF ttx("val"), X0 - ttx("X"), ttx("Y") + Y0, oTxtName, catBottomCenter, 2.5  'catMiddleCenter
@@ -381,8 +367,6 @@ Sub CATDeleteTitleBlockStandard()
   DeleteAll "CATDrwSearch.2DGeometry.Name=TitleBlock_std_Line_*"
 End Sub
 Sub CATMoveTitleBlockText(Translation)
-
-
   SelectAll "CATDrwSearch.DrwText.Name=TitleBlock_Text_*"
   count = Selection.Count2
   For ii = 1 To count
@@ -392,7 +376,6 @@ Sub CATMoveTitleBlockText(Translation)
   Next
 End Sub
 Sub CATMoveViews(Translation)
-
   For i = 3 To Views.count
     Views.item(i).UnAlignedWithReferenceView
   Next
@@ -415,8 +398,6 @@ Sub CATMoveRevisionBlockText(Translation)
     Text.Y = Text.Y + Translation(1)
   Next
 End Sub
-
-
 Sub CATLinks()
   On Error Resume Next
   Dim ViewDocument
@@ -466,10 +447,7 @@ Sub CATLinks()
   Else
     textFormat.SetFontSize 0, 0, 5
   End If
-  
-  
-  
-  Dim nbSheet, curSheet
+   Dim nbSheet, curSheet
   If Not DrwSheet.IsDetail Then
     For Each itSheet In sheets
       If Not itSheet.IsDetail Then nbSheet = nbSheet + 1
@@ -477,9 +455,7 @@ Sub CATLinks()
     For Each itSheet In sheets
       If Not itSheet.IsDetail Then
         curSheet = curSheet + 1
-        
         oPagetext = "TitleBlock_Text_" & "gongxxzhang"
-        
         itSheet.Views.item(2).Texts.GetItem(oPagetext).Text = "共" & CStr(nbSheet) & "页"
          oPagetext = "TitleBlock_Text_" & "dixxzhang"
         itSheet.Views.item(2).Texts.GetItem(oPagetext).Text = "第" & CStr(curSheet) & "页"
@@ -500,7 +476,6 @@ Sub CATFillField(string1 As String, string2 As String, string3 As String)
   TextToFill_1.Text = Person
   TextToFill_2.Text = "" & Date
 End Sub
-
 Function CreateLine(iX1, iY1, iX2, iY2, iName) As Curve2D
 Dim Point
   Set CreateLine = Fact.CreateLine(iX1, iY1, iX2, iY2)
@@ -529,12 +504,10 @@ Sub CATColorGeometry()
       '    SelectAll "CATDrwSearch.2DGeometry"
       '    Selection.VisProperties.SetRealColor 0,0,0,0
       '    Selection.Clear
-      
         Case "DRW":
           SelectAll "CATDrwSearch.2DGeometry.Name=Frame_centerMark_*"
           Selection.VisProperties.SetRealWidth 1, 1
         Selection.Clear
-      
       Case "LAY":
           SelectAll "CATDrwSearch.2DGeometry"
           Selection.VisProperties.SetRealColor 255, 255, 255, 0
@@ -555,9 +528,6 @@ Sub initVar()
   m_Row = Array(0, 4, 17, 30, 45, 60)
   m_ColRev = Array(0, -190, -175, -140, -20)
 End Sub
-
-
-
 Private Function ParseDec(ByVal code As String) As Object
     Dim regEx As Object
     Dim matches As Object
@@ -572,7 +542,6 @@ Private Function ParseDec(ByVal code As String) As Object
     End With
     Dim lst, mdic
     Set lst = InitLst
-
     If regEx.TEST(code) Then
         Set matches = regEx.Execute(code)
         For Each match In matches
@@ -605,10 +574,6 @@ End Sub
 Sub CATDeleteRevisionBlockFrame()
     DeleteAll "CATDrwSearch.2DGeometry.Name=RevisionBlock_Line_*"
 End Sub
-
-
-
-
 Sub revertCST()
  With Sheet
   Sz = .PaperSize
@@ -620,14 +585,11 @@ Sub revertCST()
         Cst_2 = 74.2
       End If
   End With
-
 End Sub
 Sub CATCreateReference()
   Set Text = Texts.Add("", X0, Y0)
   Text.Name = "Reference_" + m_MacroID
 End Sub
-
-
 Private Function getDecCode()
     Dim COMObjectName$     ' 获取VBA版本对应的COM对象名称
     #If VBA7 Then
@@ -650,28 +612,19 @@ Private Function getDecCode()
         If DecCnt < 1 Then Exit Function
         getDecCode = mdl.Lines(1, DecCnt) ' 获取声明代码
 End Function
-
-
 Private Function InitLst() As Object
     Set InitLst = CreateObject("System.Collections.ArrayList")
 End Function
-
-
 Private Function InitDic(Optional compareMode As Long = vbBinaryCompare) As Object
     Dim Dic As Object
     Set Dic = CreateObject("Scripting.Dictionary")
     Dic.compareMode = compareMode
     Set InitDic = Dic
 End Function
-
-
-
 Sub CATFrameCentringMark(Nb_CM_H, Nb_CM_V, Ruler, Cst_1, Cst_2)
    On Error Resume Next
         newLineV 0.5 * m_Width, m_Height - m_Offset, m_Height, "Frame_centerMark_Top"
         newLineV 0.5 * m_Width, Y0, 0, "Frame_centerMark_Bottom"
-        
-        
         newLineH 0, m_Offset, 0.5 * m_Height, "Frame_centerMark_Left"
         newLineH m_Width - m_Offset, m_Width, 0.5 * m_Height, "Frame_centerMark_Right"
     Dim i, X, Y
@@ -683,8 +636,6 @@ Sub CATFrameCentringMark(Nb_CM_H, Nb_CM_V, Ruler, Cst_1, Cst_2)
             CreateLine X, Y0, X, 0.25 * m_Offset, "Frame_centerMark_Bottom_" & Int(X)
           End If
         Next
-    
-        
         For i = 1 To Nb_CM_H
           If (i * Cst_1 < 0.5 * m_Width - 1) Then
             X = 0.5 * m_Width + i * Cst_1
@@ -693,7 +644,6 @@ Sub CATFrameCentringMark(Nb_CM_H, Nb_CM_V, Ruler, Cst_1, Cst_2)
             CreateLine X, m_Height - m_Offset, X, m_Height - 0.25 * m_Offset, "Frame_centerMark_Top_" & Int(X)
           End If
         Next
-    
     For i = 1 To Nb_CM_V
       If (i * Cst_2 < 0.5 * m_Height - 1) Then
         Y = 0.5 * m_Height + i * Cst_2
@@ -707,9 +657,6 @@ Sub CATFrameCentringMark(Nb_CM_H, Nb_CM_V, Ruler, Cst_1, Cst_2)
     If Err.Number <> 0 Then Err.Clear
   On Error GoTo 0
 End Sub
-
-
-
 Sub CATDrw_Resizing(targetsheet)
    If Not CATInit() Then Exit Sub
   If CATCheckRef(0) Then Exit Sub
@@ -718,23 +665,20 @@ Sub CATDrw_Resizing(targetsheet)
   Dim RbTranslation(2)
   ComputeRevisionBlockTranslation RbTranslation
   If TbTranslation(0) <> 0 Or TbTranslation(1) <> 0 Then
-    ' Redraw Sheet Frame
+' Redraw Sheet Frame
     DeleteAll "CATDrwSearch.DrwText.Name=Frame_Text_*"
     DeleteAll "CATDrwSearch.2DGeometry.Name=Frame_*"
     CATFrame
-    ' Redraw Standard Pictorgram
+' Redraw Standard Pictorgram
     CATDeleteTitleBlockStandard
     CATCreateTitleBlockStandard
-    
-    ' Redraw Title Block Frame
+' Redraw Title Block Frame
     CATDeleteTitleBlockFrame
     CATDeleteRevisionBlockFrame
-    
     CATCreateTitleBlockFrame
     CATMoveTitleBlockText TbTranslation
-    
-    ' Redraw revision block
-   ' CATDeleteRevisionBlockFrame
+' Redraw revision block
+' CATDeleteRevisionBlockFrame
 '    CATCreateRevisionBlockFrame
     CATMoveRevisionBlockText RbTranslation
     ' Move the views
@@ -744,8 +688,6 @@ Sub CATDrw_Resizing(targetsheet)
   End If
   CATExit targetsheet
 End Sub
-
-
 Function GetContext()
   Select Case TypeName(Sheet)
     Case "DrawingSheet"
@@ -758,7 +700,6 @@ Function GetContext()
         Case Else: GetContext = "Unexpected"
   End Select
 End Function
-
 Function CATInit()
 Dim oSheet, GeomElems, msg, Title
   CATInit = False

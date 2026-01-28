@@ -2,23 +2,4 @@ Attribute VB_Name = "A0_sections"
 '函数库
 
 
-''==遍历递归=============================
-
-Private Const mdlname As String = "A0_sections"
-Sub recurAyo(ayo)
-
-
-
-    Dim colls: Set itm = ayo.Products
-    For Each itm In colls
-        Call recurFunc(itm)
-    Next
-
-    If ayo.Products.count > 0 Then
-            For Each ctm In ayo.Products
-                Call recurAyo(ctm)
-             Next
-    End If
-End Sub
-
 ''==获取父级=============================

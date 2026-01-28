@@ -102,8 +102,8 @@ Private Sub set_Header(header, idxrow)
     Dim lastCol
     lastCol = UBound(header) - LBound(header) + 1
     With ws
-    .Range(.Cells(idxrow, 1), .Cells(idxrow, lastCol)).value = header
-    .Range(.Cells(idxrow, 1), .Cells(idxrow, lastCol)).Interior.color = RGB(190, 190, 190)
+    .range(.Cells(idxrow, 1), .Cells(idxrow, lastCol)).value = header
+    .range(.Cells(idxrow, 1), .Cells(idxrow, lastCol)).Interior.color = RGB(190, 190, 190)
     End With
      Dim mapcells: mapcells = Array(0, 1, 3, 5, 7, 9, 11, 13, 14)
      Dim lastrow: lastrow = ws.Cells(ws.Rows.count, 2).End(xlUp).Row
@@ -184,7 +184,7 @@ xlhide
         End If
     Next
     ' 设置对齐方式和缩进级别
-    For Each cell In ws.Range("B2:B" & ws.Cells(ws.Rows.count, 2).End(xlUp).Row) ' 使用 xlApp.xlUp
+    For Each cell In ws.range("B2:B" & ws.Cells(ws.Rows.count, 2).End(xlUp).Row) ' 使用 xlApp.xlUp
         If Not IsEmpty(cell) Then
             cell.HorizontalAlignment = xlLeft ' 使用 xlApp.xlLeft
             If IsNumeric(cell.value) Then
@@ -208,7 +208,7 @@ Public Sub inject_gxbom(ByVal idata As Variant, Optional ByVal idcols As Variant
      Dim cols: cols = UBound(idata, 2)
      With ws
         If lastrow >= 5 Then
-            With ws.Range(.Cells(startrow, 14), .Cells(lastrow, 14))
+            With ws.range(.Cells(startrow, 14), .Cells(lastrow, 14))
                 .Formula = "=k5*m5"  ' G列=第7列，H列=第8列
                 .NumberFormat = "0.00"  ' 设置数字格式
             End With
@@ -225,7 +225,7 @@ Sub inject_ary(ByVal idata As Variant, startrow, Optional ByVal idcols As Varian
             startrow = 2:  lastrow = UBound(idata, 1) + startrow - 1
             cols = UBound(idata, 2)
               With ws
-                .Range(.Cells(startrow, 1), .Cells(lastrow, cols)).value = idata
+                .range(.Cells(startrow, 1), .Cells(lastrow, cols)).value = idata
               End With
         End If
 Cleanup:     ' 恢复Excel设置
@@ -235,7 +235,7 @@ Sub inject(idata)
     startrow = 1:  lastrow = UBound(idata, 1) + startrow - 1
     cols = UBound(idata, 2)
       With ws
-        .Range(.Cells(startrow, 1), .Cells(lastrow, cols)).value = idata
+        .range(.Cells(startrow, 1), .Cells(lastrow, cols)).value = idata
       End With
 End Sub
 Sub inject_bom(ByVal idata As Variant, Optional ByVal idcols As Variant, Optional ByVal idx As Variant)
@@ -246,7 +246,7 @@ Sub inject_bom(ByVal idata As Variant, Optional ByVal idcols As Variant, Optiona
     Call inject_ary(idata, startrow, idcols, idx)
     If lastrow >= 2 Then
         With ws
-          With .Range(.Cells(startrow, 9), .Cells(lastrow, 9))
+          With .range(.Cells(startrow, 9), .Cells(lastrow, 9))
               .Formula = "=G2*H2"  ' G列=第7列，H列=第8列
               .NumberFormat = "0.000"  ' 设置数字格式
           End With
@@ -257,7 +257,7 @@ Sub inject_bom(ByVal idata As Variant, Optional ByVal idcols As Variant, Optiona
     ws.Name = "BOM_xx" & format(Now, "yymmdd_hhmm")
 End Sub
 Sub inject_pic(irow, pncol, Piccol, ipath)
-        Dim i&, rng As Range
+        Dim i&, rng As range
         Dim iPic As Shape
         Dim cntrow
         ws.Rows.RowHeight = 25

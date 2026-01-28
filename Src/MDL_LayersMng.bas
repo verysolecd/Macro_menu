@@ -10,9 +10,9 @@ Private i
 Private Const mdlname As String = "MDL_LayersMng"
 Sub LayersMng()
 If Not CanExecute("partDocument,productdocument") Then Exit Sub
-Set rDoc = CATIA.ActiveDocument
-Set rPrd = rDoc.Product
-    Call appFilterLayer(rDoc)
+Set rdoc = CATIA.ActiveDocument
+Set rPrd = rdoc.Product
+    Call appFilterLayer(rdoc)
     Call addDrw(rPrd)
  '---显示管理
 '    '---图层管理
@@ -54,8 +54,8 @@ Set rPrd = rDoc.Product
 'oDoc.CurrentFilter = "All visible"
 End Sub
 Sub appFilterLayer(oDoc)
-Dim oSel
-Set oSel = CATIA.ActiveDocument.Selection
+Dim osel
+Set osel = CATIA.ActiveDocument.Selection
  '---显示过滤器管理管理
  ily = ""
  ly = oDoc.CurrentLayer

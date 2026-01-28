@@ -65,7 +65,7 @@ Sub ArrayToxl(arr2D() As Variant)
     Dim wbook As Object
     Set wbook = xlAPP.Workbooks.Add
     Dim rng As Object
-    Set rng = wbook.sheets(1).Range("B2")
+    Set rng = wbook.sheets(1).range("B2")
     With rng.Resize(UBound(arr2D, 1) + 1, UBound(arr2D, 2) + 1)
         .value = arr2D
         .Borders.LineStyle = xlContinuous
