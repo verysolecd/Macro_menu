@@ -3,7 +3,7 @@ Private Declare PtrSafe Function OpenClipboard Lib "user32" (ByVal hwnd As LongP
 Private Declare PtrSafe Function EmptyClipboard Lib "user32" () As Long
 Private Declare PtrSafe Function CloseClipboard Lib "user32" () As Long
 Private Declare PtrSafe Function SetClipboardData Lib "user32" (ByVal wFormat As Long, ByVal hMem As LongPtr) As LongPtr
-Private Const mdlname As String = "A00rmusrPrp"
+Private Const mdlname As String = "ZZ_BCK"
 Sub remove_usrP()
 Set oprd = CATIA.ActiveDocument.Product
 rm oprd
@@ -20,8 +20,8 @@ Sub rm(oprd)
     colls.Remove ("iMaterial")
      Set colls = refPrd.Parent.part.Parameters.RootParameterSet.ParameterSets
         Set cm = colls.GetItem("cm")
-        Set osel = CATIA.ActiveDocument.Selection
-        osel.Clear: osel.Add cm: osel.Delete
+        Set oSel = CATIA.ActiveDocument.Selection
+        oSel.Clear: oSel.Add cm: oSel.Delete
      Set colls = refPrd.Parent.part.relations
      colls.Remove ("CalM")
      colls.Remove ("CMAS")

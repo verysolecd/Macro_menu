@@ -78,14 +78,14 @@ End Function
 Sub shot()
 MsgBox "没编呢"
 Exit Sub
- Dim iprd, rPrd, oprd, children
+ Dim iprd, rprd, oprd, children
  Dim xlsht, rng, RC(0 To 1), oArry()
  Dim i, oRowNb
   RC(0) = 3: RC(1) = 3
     On Error Resume Next
     Set CATIA = GetObject(, "CATIA.Application") '获取catia程序
-    Dim oDoc: Set oDoc = CATIA.ActiveDocument
-    Set rPrd = CATIA.ActiveDocument.Product
+    Dim odoc: Set odoc = CATIA.ActiveDocument
+    Set rprd = CATIA.ActiveDocument.Product
          If Err.Number <> 0 Then
             MsgBox "请打开CATIA并打开你的产品，再运行本程序": Err.Clear
             Exit Sub
@@ -116,14 +116,14 @@ MsgBox ("已经保存图片")
 oWindow.Layout = catWindowSpecsAndGeom 'catWindowSpecsOnly ' catWindowGeomOnly
 End Sub
 Function shotme()
-    Dim iprd, rPrd, oprd, children
+    Dim iprd, rprd, oprd, children
     Dim xlsht, rng, RC(0 To 1), oArry()
     Dim i, oRowNb
      RC(0) = 3: RC(1) = 3
        On Error Resume Next
        Set CATIA = GetObject(, "CATIA.Application") '获取catia程序
-       Dim oDoc: Set oDoc = CATIA.ActiveDocument
-       Set rPrd = CATIA.ActiveDocument.Product
+       Dim odoc: Set odoc = CATIA.ActiveDocument
+       Set rprd = CATIA.ActiveDocument.Product
             If Err.Number <> 0 Then
                MsgBox "请打开CATIA并打开你的产品，再运行本程序": Err.Clear
                Exit Sub

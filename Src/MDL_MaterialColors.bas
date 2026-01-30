@@ -28,8 +28,8 @@ Sub ShowMaterialPainter()
     Dim mapFunc As Object: Set mapFunc = KCL.InitDic
         mapFunc.Add "btn_mild", "btn_mild_click"  '这里可以改为mapfunc(BtnName)=BtnName & "_click"
         mapFunc.Add "btnWrite", "rvme"
-
-        Set g_Frm = KCL.newFrm(mdlname)
+    
+     Set g_Frm = Nothing:  Set g_Frm = KCL.newFrm(mdlname)
         g_Frm.ShowToolbar mdlname, mapmdl, mapFunc
     
 '    Select Case ii
@@ -61,14 +61,14 @@ End Sub
 
 Private Sub ApplyColor(R As Long, G As Long, B As Long, Desc As String)
     On Error Resume Next
-        Dim osel As Selection
-        Set osel = CATIA.ActiveDocument.Selection
-        If osel.count = 0 Then
+        Dim oSel As Selection
+        Set oSel = CATIA.ActiveDocument.Selection
+        If oSel.count = 0 Then
             MsgBox "Please select a body or part first.", vbExclamation
             Exit Sub
         End If
         ' Set Real Color (R, G, B, Inheritance=1)
-        osel.VisProperties.SetRealColor R, G, B, 1
+        oSel.VisProperties.SetRealColor R, G, B, 1
         CATIA.StatusBar = "Applied color: " & Desc
     On Error GoTo 0
 End Sub

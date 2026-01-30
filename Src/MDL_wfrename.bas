@@ -20,20 +20,20 @@ If CATIA.Windows.count < 1 Then
 MsgBox "没有打开的窗口"
 Exit Sub
 End If
-Dim oDoc
+Dim odoc
 On Error Resume Next
-Set oDoc = CATIA.ActiveDocument
+Set odoc = CATIA.ActiveDocument
 On Error GoTo 0
 Dim str
-str = TypeName(oDoc)
+str = TypeName(odoc)
 If Not str = "PartDocument" Then
 MsgBox "没有打开的part"
 Exit Sub
 End If
-Dim HSF:  Set HSF = oDoc.part.HybridShapeFactory
-Dim HBS: Set HBS = oDoc.part.HybridBodies
-Dim osel: Set osel = oDoc.Selection
-osel.Clear
+Dim HSF:  Set HSF = odoc.part.HybridShapeFactory
+Dim HBS: Set HBS = odoc.part.HybridBodies
+Dim oSel: Set oSel = odoc.Selection
+oSel.Clear
 '=======要求选择几何图形集和坐标
 Dim imsg
 imsg = "请选择元素所在的几何图形集"

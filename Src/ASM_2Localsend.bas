@@ -5,26 +5,26 @@ Attribute VB_Name = "ASM_2Localsend"
 '{ControlTipText:send当前根产品到路径}
 '{BackColor:}
 
-Private Const mdlname As String = "ASM_localsend"
+Private Const mdlname As String = "ASM_2Localsend"
 Sub sendDir()
     If Not CanExecute("ProductDocument,DrawingDocument") Then Exit Sub
     CATIA.DisplayFileAlerts = True
-    Dim oDoc: Set oDoc = CATIA.ActiveDocument
-    ipath_name = oDoc.path & "\" & oDoc.Name
+    Dim odoc: Set odoc = CATIA.ActiveDocument
+    ipath_name = odoc.path & "\" & odoc.Name
     Dim opath
-        opath = KCL.ofParentPath(oDoc.path)
+        opath = KCL.ofParentPath(odoc.path)
     Dim pn
-        If KCL.IsObj_T(oDoc, "DrawingDocument") Then
-            pn = KCL.strbflast(oDoc.Name, ".")
+        If KCL.IsObj_T(odoc, "DrawingDocument") Then
+            pn = KCL.strbflast(odoc.Name, ".")
         Else
-            pn = oDoc.Product.partNumber
+            pn = odoc.Product.partNumber
         End If
     Dim bckFolderName As String
     fname = KCL.rmchn(pn)    '将零件号所有中文字符替换为" "
     bckFolderName = KCL.strbflast(fname, "_") & "_" & KCL.timestamp("min")
     bckpath = opath & bckFolderName
     
-    If KCL.isExists(oDoc.path) Then
+    If KCL.isExists(odoc.path) Then
         Dim btn, bTitle, bResult
             imsg = "将备份到" & bckpath & "您确认吗？"
             btn = vbYesNo + vbExclamation

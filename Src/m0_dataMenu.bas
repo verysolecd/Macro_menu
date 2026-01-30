@@ -74,7 +74,7 @@ Private Function Get_ButtonInfo() As Object
     Dim DecCode, CanExecMethod As String
     Dim DecCnt As Long
     
-    Set BtnInfos = KCL.InitLst()
+    Set BtnInfos = KCL.Initlst()
     
 For Each comp In AllComps
     Set mdl = comp.CodeModule
@@ -173,7 +173,7 @@ Private Function To_SortedList(ByVal Infos As Object) As Object
         If SoLst.ContainsKey(info(TAG_GROUP)) = True Then
             SoLst(info(TAG_GROUP)).Add info
         Else
-            Set lst = KCL.InitLst()
+            Set lst = KCL.Initlst()
             lst.Add info
             SoLst.Add info(TAG_GROUP), lst
         End If
@@ -224,7 +224,7 @@ End Function
 ' 1-vbext_ct_StdModule 2-vbext_ct_ClassModule 3-vbext_ct_MSForm
 Private Function GetModuleLst(ByVal Itms As Object) As Object
     Set GetModuleLst = Nothing
-    Dim lst As Object: Set lst = KCL.InitLst()
+    Dim lst As Object: Set lst = KCL.Initlst()
     Dim itm As Object
     For Each itm In Itms
         If Not itm.Type = 1 Then GoTo Continue 'vbext_ComponentType

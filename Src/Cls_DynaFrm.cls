@@ -19,6 +19,7 @@ Private Const TAG_PJTPATH = "pjt_path"      ' 项目路径标签
 Private Const TAG_MDLNAME = "mdl_name"      ' 模块名称标签
 Private pjt As String
 ' --- Lifecycle ---
+Private Const mdlname As String = "cls_dynaFrm"
 Private Sub Class_Initialize()
     mExecuted = False
     Set mdict = CreateObject("Scripting.Dictionary")

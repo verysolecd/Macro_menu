@@ -12,6 +12,7 @@ Attribute VB_Name = "RW_Cbom"
 ' %UI Button btnOK  生成BOM
 ' %UI Button btncancel  取消
 Option Explicit
+Private Const mdlname As String = "RW_Cbom"
 Sub cBom()
     If Not KCL.CanExecute("ProductDocument") Then Exit Sub
     CATIA.StartCommand ("* iso")
@@ -21,7 +22,7 @@ Sub cBom()
     If pdm.CurrentProduct Is Nothing Then Set pdm.CurrentProduct = pdm.getiPrd()
     Dim iprd: Set iprd = pdm.CurrentProduct: If iprd Is Nothing Then Exit Sub
     If gws Is Nothing Then Set xlm = New Cls_XLM
-    Call Cal_Mass2
+    Call Cal_Mass
     Dim Lv, i, j, Colpn, colPic, idcol, idrow
     g_counter = 1: Lv = 1
     Dim tmpData(): tmpData() = pdm.recurInfoPrd(iprd, Lv)

@@ -111,7 +111,6 @@ Function SelectElement(ByVal msg$, _
     Set SelectElement = sel.item(1)
     sel.Clear
 End Function
-
 ' 获取内部名称
 ''' @param:AOj-AnyObject
 ''' @return:String
@@ -151,6 +150,38 @@ Private Function asDisp(o As INFITF.CATBaseDispatch) As INFITF.CATBaseDispatch
     Set asDisp = o
 End Function
 
+Function get_inwork_part()  'in Assembly
+Set get_inwork_part = Nothing
+   Dim odoc: Set odoc = CATIA.ActiveDocument
+   Dim msel: Set msel = odoc.Selection: msel.Clear
+     Dim itemp
+    Select Case LCase(TypeName(odoc))
+        Case LCase("PartDocument"): Set itemp = odoc.part
+        Case LCase("productDocument")
+            msel.Search "CATprtSearch.PartFeature,in"
+            On Error Resume Next
+                Set itemp = msel.item(1).LeafProduct.ReferenceProduct.Parent.part
+             Err.Clear
+             On Error GoTo 0
+        Case Else: Set itemp = Nothing
+    End Select
+        Set get_inwork_part = itemp
+    Debug.Print get_inwork_part.Name
+End Function
+
+
+
+Public Sub toMP()
+    On Error Resume Next
+    Dim shell As Object
+    Set shell = CreateObject("WScript.Shell")
+    shell.Run "https://mp.weixin.qq.com/s?__biz=MzU5MTk1MDUwNg==&mid=2247484525&idx=1&sn=554a37aff4bc876424043a9aa5968d6d&scene=21&poc_token=HCUyg2ijuHYXMx810A5yID4tAYIemJFdJ7FpVvew"
+    Set shell = Nothing
+    If Err.Number <> 0 Then
+        MsgBox "无法公众号链接" & vbCrLf & "错误: " & Err.Description, vbExclamation, "链接错误"
+    End If
+    On Error GoTo 0
+End Sub
 '========================数组处理==========================================================================
 ' 获取数组指定范围的元素
 ''' @param:Ary-Variant(Of Array)
@@ -234,18 +265,18 @@ End Function
 Public Function getSearch(ByRef iDoc, ByRef ifilter As Variant)
     Set getSearch = Nothing
       On Error Resume Next
-             Dim osel As Selection, i
-             Set osel = iDoc.Selection
-              osel.Clear
+             Dim oSel As Selection, i
+             Set oSel = iDoc.Selection
+              oSel.Clear
     Select Case TypeName(ifilter)
         Case "string"
-        With osel
+        With oSel
             .Clear
             .Search (ifilter)
             .VisProperties.SetShow 1
         End With
     End Select
-        Set getSearch = osel
+        Set getSearch = oSel
 End Function
 
 '*****数组相关函数*****
@@ -340,8 +371,8 @@ Function InitDic(Optional compareMode As Long = vbBinaryCompare) As Object
 End Function
 ' 创建ArrayList对象
 ''' @return:Object(Of ArrayList)Public
-Function InitLst() As Object
-    Set InitLst = CreateObject("System.Collections.ArrayList")
+Function Initlst() As Object
+    Set Initlst = CreateObject("System.Collections.ArrayList")
 End Function
 ' 分割路径名
 ''' @param:FullPath-完整路径
@@ -865,9 +896,9 @@ Public Function getDecCode(modName)
  Dim DecCnt
    Dim mdl:  Set mdl = KCL.getmdl(modName)
     If mdl Is Nothing Then Exit Function
-        DecCnt = mdl.CountOfDeclarationLines ' 获取声明行数
+        DecCnt = mdl.CodeModule.CountOfDeclarationLines ' 获取声明行数
     If DecCnt < 1 Then Exit Function
-        getDecCode = mdl.Lines(1, DecCnt) ' 获取声明代码
+        getDecCode = mdl.CodeModule.Lines(1, DecCnt) ' 获取声明代码
 End Function
 Public Sub AddmdlName()
     Dim vbComp As Object
@@ -900,10 +931,8 @@ Public Sub AddmdlName()
             End If
         Next i
     Next vbComp
-    MsgBox "Done", vbInformation, "已增加模组名变量 mdlname"
+        MsgBox "已增加模组名变量 mdlname", vbInformation, "已增加模组名变量 mdlname"
 End Sub
- 
-
 Public Function getbf1stproc(modName)
     getbf1stproc = ""
     Dim mdl:  Set mdl = KCL.getmdl(modName)
@@ -922,30 +951,50 @@ End Function
 Function getmeas(itm)
     Set getmeas = Nothing
    If Not itm Is Nothing Then
-       Dim oDoc: Set oDoc = CATIA.ActiveDocument
-      Dim spa:  Set spa = oDoc.GetWorkbench("SPAWorkbench")
+       Dim odoc: Set odoc = CATIA.ActiveDocument
+      Dim spa:  Set spa = odoc.GetWorkbench("SPAWorkbench")
         Set getmeas = spa.GetMeasurable(itm)
     End If
 End Function
 Function setBTNmdl(ByVal modName As String)
       Set setBTNmdl = Nothing
     Dim ctrllst:    Set ctrllst = KCL.ParseUIConfig(KCL.getbf1stproc(modName))
-    Dim mapmdl: Set mapmdl = KCL.InitDic
+    Dim map: Set map = KCL.InitDic
     Dim ctrl
     For Each ctrl In ctrllst    '映射BTN名字和对应模块
         Select Case ctrl("Type")
             Case "Forms.CommandButton.1"
-                mapmdl(ctrl("Name")) = modName
+                map(ctrl("Name")) = modName
         End Select
     Next
-   Set setBTNmdl = mapmdl
+   Set setBTNmdl = map
 End Function
+Function setBTNFunc(ByVal modName As String)
+    Set setBTNFunc = Nothing
+    Dim ctrllst:    Set ctrllst = KCL.ParseUIConfig(KCL.getbf1stproc(modName))
+    Dim map: Set map = KCL.InitDic
+    Dim ctrl
+    For Each ctrl In ctrllst    '映射BTN名字和对应函数
+        Select Case ctrl("Type")
+            Case "Forms.CommandButton.1"
+                map(ctrl("Name")) = ctrl("Name") & "_Click"
+        End Select
+    Next
+   Set setBTNFunc = map
+End Function
+
+
+
+
+
+
+
 
 ' --- UI Parsing Helpers ---
 Function ParseUIConfig(ByVal code As String) As Object
     Dim regEx As Object, matches As Object, match As Object
     Dim item As Object, lst As Object
-    Set lst = KCL.InitLst
+    Set lst = KCL.Initlst
     Set regEx = KCL.getRegexp
     With regEx
         .Global = True

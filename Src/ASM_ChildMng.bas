@@ -24,9 +24,9 @@ Sub ChildMng()
             End Select
 End Sub
 Sub cpChildren()
-    Dim imsg, filter(0), osel
-    Set oDoc = CATIA.ActiveDocument
-    Set osel = CATIA.ActiveDocument.Selection: osel.Clear
+    Dim imsg, filter(0), oSel
+    Set odoc = CATIA.ActiveDocument
+    Set oSel = CATIA.ActiveDocument.Selection: oSel.Clear
     On Error GoTo ErrorHandler
         Call KCL.setASM(False)
         imsg = "请先点击选择源父产品，再点击选择目标父产品": MsgBox imsg
@@ -37,18 +37,18 @@ Sub cpChildren()
             Set sourcePrd = KCL.SelectItem(imsg, filter)
         If sourcePrd Is Nothing Then GoTo ErrorHandler
             For Each prd In sourcePrd.Products
-               osel.Add prd
+               oSel.Add prd
             Next
-        osel.Copy: osel.Clear
+        oSel.Copy: oSel.Clear
         imsg = "请点击选择目标父产品"
         Set targetPrd = KCL.SelectItem(imsg, filter)
         If targetPrd Is Nothing Then
           GoTo ErrorHandler
         Else
-            osel.Add targetPrd
-            osel.Paste
+            oSel.Add targetPrd
+            oSel.Paste
         End If
-            osel.Clear
+            oSel.Clear
             Set targetPrd = Nothing
             Set sourcePrd = Nothing
             Call KCL.setASM(True)
@@ -61,14 +61,14 @@ ErrorHandler:
         End If
 End Sub
 Sub DeleteChildren()
-    Dim osel: Set osel = CATIA.ActiveDocument.Selection: osel.Clear
+    Dim oSel: Set oSel = CATIA.ActiveDocument.Selection: oSel.Clear
     Dim imsg, filter(0), iSel
     imsg = "请选择父集": filter(0) = "Product"
     Set iSel = KCL.SelectItem(imsg, filter)
     If iSel Is Nothing Then Exit Sub
     Dim prd
     For Each prd In iSel.Products
-      osel.Add prd
+      oSel.Add prd
     Next
       Dim btn, bTitle, bResult
       imsg = "将删除" & iSel.partNumber & iSel.Name & "下的所有子产品，您确认吗"
@@ -78,8 +78,8 @@ Sub DeleteChildren()
               Case 7: Exit Sub '===选择“否”====
               Case 6  '===选择“是”,进行产品选择====
                   On Error Resume Next
-                       osel.Delete
-                       osel.Clear
+                       oSel.Delete
+                       oSel.Clear
                   On Error GoTo 0
           End Select
 End Sub

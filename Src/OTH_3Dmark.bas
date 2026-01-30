@@ -8,14 +8,14 @@ Attribute VB_Name = "OTH_3Dmark"
 '{±³¾°ÑÕÉ«: 12648447}
 ' Purpose: Create a label on a product.
 
-Private rPrd
+Private rprd
 Private Const mdlname As String = "OTH_3Dmark"
 Sub newlabel()
     If Not CanExecute("ProductDocument") Then Exit Sub
-    Set rPrd = CATIA.ActiveDocument.Product
+    Set rprd = CATIA.ActiveDocument.Product
     Set g_allPN = KCL.InitDic
     g_allPN.RemoveAll
-    recurthisPrd rPrd
+    recurthisPrd rprd
 End Sub
 
 Sub recurthisPrd(oprd)
@@ -43,7 +43,7 @@ If oprd.Products.count < 1 Then
         sTextString = info(3) & vbNewLine & _
                         info(5) & vbNewLine & _
                         info(7)
-        Set cMarker3Ds = rPrd.GetTechnologicalObject("Marker3Ds")
+        Set cMarker3Ds = rprd.GetTechnologicalObject("Marker3Ds")
 
         Dim pos1(2), pos2(2)
         pos1(0) = pos(9)
@@ -61,9 +61,9 @@ End Sub
 
 Sub Pt_annotation()
 
-Set oDoc = CATIA.ActiveDocument
+Set odoc = CATIA.ActiveDocument
  Set oprd = CATIA.ActiveDocument.Product
-    Set oPrt = oDoc.part
+    Set oPrt = odoc.part
  Set oHb = KCL.SelectItem("ÇëÑ¡Ôñgeoset", "HybridBody")
   Set opt = oHb.HybridShapes.item(1)
 Set anSets = oPrt.AnnotationSets

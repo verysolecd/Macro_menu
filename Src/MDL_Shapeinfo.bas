@@ -1,5 +1,5 @@
 Attribute VB_Name = "MDL_Shapeinfo"
-Private mdict, HSF, osel, oParas, spa
+Private mdict, HSF, oSel, oParas, spa
 Private Const mdlname As String = "MDL_Shapeinfo"
 Sub tube()
 '--判断是否是part，当前代码只能运行在part中，修改后才能在总成中运行，例如增加遍历
@@ -8,19 +8,19 @@ If TypeName(CATIA.ActiveDocument) <> "PartDocument" Then
 End If
 '初始化各类参数
     Set mdict = InitDic
-        Set oDoc = CATIA.ActiveDocument
-        Set spa = oDoc.GetWorkbench("SPAWorkbench")
-        Set oPrt = oDoc.part
-        Set osel = oDoc.Selection
+        Set odoc = CATIA.ActiveDocument
+        Set spa = odoc.GetWorkbench("SPAWorkbench")
+        Set oPrt = odoc.part
+        Set oSel = odoc.Selection
         Set oParas = oPrt.Parameters
-        Set HSF = oDoc.part.HybridShapeFactory
-        Set HBS = oDoc.part.HybridBodies
+        Set HSF = odoc.part.HybridShapeFactory
+        Set HBS = odoc.part.HybridBodies
 '获取所有的shapes
 Set oHb = oPrt ' HBS.item(1)
 Call GetShapesByRecursion(oPrt)
 'Call GetShapesByParameters(oprt)
 '将获取的shape增加到list
-    Set lst = InitLst
+    Set lst = Initlst
     For Each key In mdict.keys
         Set itube = mdict(key)
         lst.Add itube
@@ -121,8 +121,8 @@ CATIA.RefreshDisplay = False
                 If iType = 7 Then
                     internalName = GetInternalName(shp)
                     If Not mdict.Exists(internalName) Then
-                        osel.Clear: osel.Add shp
-                        Set realShp = osel.item(1).value: osel.Clear
+                        oSel.Clear: oSel.Add shp
+                        Set realShp = oSel.item(1).value: oSel.Clear
                         mdict.Add internalName, realShp
                     End If
                 End If
@@ -203,8 +203,8 @@ Function InitDic(Optional compareMode As Long = vbBinaryCompare) As Object
     Dic.compareMode = compareMode
     Set InitDic = Dic
 End Function
-Function InitLst() As Object
-    Set InitLst = CreateObject("System.Collections.ArrayList")
+Function Initlst() As Object
+    Set Initlst = CreateObject("System.Collections.ArrayList")
 End Function
 Function GetInternalName$(aoj)
     If IsNothing(aoj) Then

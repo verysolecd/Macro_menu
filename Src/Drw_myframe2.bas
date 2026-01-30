@@ -541,7 +541,7 @@ Private Function ParseDec(ByVal code As String) As Object
         .Pattern = "^\s*'\s*%lb\s+\s*(\w+)\s*,\s*(.*)\s*,\s*(\d+(?:\.\d+)?)\s*,\s*(\d+(?:\.\d+)?)$"
     End With
     Dim lst, mdic
-    Set lst = InitLst
+    Set lst = Initlst
     If regEx.TEST(code) Then
         Set matches = regEx.Execute(code)
         For Each match In matches
@@ -612,8 +612,8 @@ Private Function getDecCode()
         If DecCnt < 1 Then Exit Function
         getDecCode = mdl.Lines(1, DecCnt) ' 获取声明代码
 End Function
-Private Function InitLst() As Object
-    Set InitLst = CreateObject("System.Collections.ArrayList")
+Private Function Initlst() As Object
+    Set Initlst = CreateObject("System.Collections.ArrayList")
 End Function
 Private Function InitDic(Optional compareMode As Long = vbBinaryCompare) As Object
     Dim Dic As Object

@@ -6,7 +6,6 @@ Attribute VB_Name = "RW_6nosamebdy"
 '{ControlTipText:将零件计算重量的实体清单中重复的实体删除}
 '{BackColor:1229803}
 Option Explicit
-
 Private Const mdlname As String = "RW_6nosamebdy"
 Sub nosamebdy()
  If Not KCL.CanExecute("ProductDocument,PartDocument") Then Exit Sub

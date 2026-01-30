@@ -7,7 +7,7 @@ Attribute VB_Name = "DRW_VIewBOM"
 
 Private targetsheet
 Private drwDoc, osht, shts, oViews, Fct2, iformat(0 To 7), bfile, bcgView, mainview
-Private osel
+Private oSel
 Private Const mdlname As String = "DRW_VIewBOM"
 Sub DRW_create_BomTable()
  CATIA.RefreshDisplay = False
@@ -66,7 +66,7 @@ iformat(7) = "Material"
   On Error Resume Next
     Set osht = Nothing
     Set osht = CATIA.ActiveDocument.sheets.item(1)
-    Set osel = CATIA.ActiveDocument.Selection
+    Set oSel = CATIA.ActiveDocument.Selection
   On Error GoTo 0
   
   If osht Is Nothing Then Exit Sub
@@ -92,8 +92,8 @@ End Function
 Sub AsmConv2xl()
      Dim opath: opath = KCL.GetPath(KCL.getVbaDir & "\" & "oTemp")
     Dim bfile:    bfile = opath & "\bom_recap.txt"
-    Dim rPrd: Set rPrd = CATIA.ActiveDocument.Product
-    Dim ASMConv: Set ASMConv = rPrd.GetItem("BillOfMaterial")
+    Dim rprd: Set rprd = CATIA.ActiveDocument.Product
+    Dim ASMConv: Set ASMConv = rprd.GetItem("BillOfMaterial")
     Dim ary(7) 'change number if you have more custom columns/array...
     ary(0) = "Number"
     ary(1) = "Part Number"
@@ -105,7 +105,7 @@ Sub AsmConv2xl()
     ary(7) = "Material"
 '   ASMConv.SetCurrentFormat Ary
    ASMConv.SetSecondaryFormat ary
-    CallByName ASMConv, "Print", VbMethod, "TXT", bfile, rPrd
+    CallByName ASMConv, "Print", VbMethod, "TXT", bfile, rprd
    Set olns = getBomlns(bfile)
     bomary = Parse2ary(olns)
 If xlm Is Nothing Then Set xlm = New Cls_XLM

@@ -13,18 +13,14 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
-
-' 模块：modStyle（简化版）
-' 布局常量（核心简化点）
-
 Private Const Frm_LH_gap As Integer = 6 ' 所有控件左对齐的左边距
 Private Const ItmGap As Integer = 0.8
 ' 控件默认尺寸
-Private Const cls_H As Integer = 19.5 ' 高度
+Private Const cls_H As Integer = 15 ' 高度
 Private Const cls_W As Integer = 220 ' 宽度
-Private Const Btn_W As Integer = 60 ' 按钮宽度
+Private Const Btn_W As Integer = 90 ' 按钮宽度
 Private Const Text_W As Integer = 280
-Private Const cls_frontsize = 11
+Private Const cls_frontsize = 10
 ' 样式常量（保持美观）
 Private Const FONT_NAME As String = "Thoma"
 Private Const Frm_color As Long = &H8000000F ' 浅灰背景
@@ -35,19 +31,13 @@ Private BtnTop, BtnLeft, currTop
 Option Explicit
 Private Const mdlname As String = "springWD"
 Sub setFrm(ttl, inf, Optional ByVal isvert = False)
-
-    BtnTop = 0
-    currTop = 0
-    BtnLeft = Frm_LH_gap
-    reqWidth = 0
+    BtnTop = 0: currTop = 0
     reqHeight = 0
+    BtnLeft = Frm_LH_gap: reqWidth = 0
     Set lst = inf
-                        
-     Dim Textlst
-     Set Textlst = KCL.InitLst
+    Dim Textlst:  Set Textlst = KCL.Initlst
 On Error Resume Next
-
-If isvert = False Then
+If isvert = False Then '=============非纯按钮=================
     For Each cfg In lst
         Set ctr = Me.Controls.Add(cfg("Type"), cfg("Name"), True)
         With ctr
@@ -77,12 +67,12 @@ If isvert = False Then
             currTop = .Top + .Height
         End With
     Next
- Else  '==========================================================================
+ Else  '================纯按钮竖排==================================================
     For Each cfg In lst
         Set ctr = Me.Controls.Add(cfg("Type"), cfg("Name"), True)
         With ctr
             .Name = cfg("Name"): .Caption = cfg("Caption")
-            .Left = Frm_LH_gap: .Width = cls_W
+            .Left = Frm_LH_gap: .Width = Btn_W  '如果是竖排，控件只有按钮宽度
             .Font.Name = FONT_NAME: .Font.Size = cls_frontsize
             .Height = cls_H
             '以下设置ctr Top并重置必要的left
@@ -97,10 +87,10 @@ If isvert = False Then
                         .AutoSize = True: .Caption = cfg("Caption")
                         .Top = currTop
                 End Select
+                If LCase(cfg("Type")) = "forms.label.1" Then BackColor = &H8000000D
             currTop = .Top + .Height
         End With
     Next
-    
 End If
      
 On Error GoTo 0
@@ -137,3 +127,9 @@ Private Sub UserForm_QueryClose(Cancel As Integer, CloseMode As Integer)
     End If
 End Sub
 
+Private Sub UserForm_Click()
+      toMP
+End Sub
+Private Sub lbL_jpzcs_Click()
+     toMP
+End Sub

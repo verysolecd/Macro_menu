@@ -12,8 +12,8 @@ Private Const mdlname As String = "MDL_newgeotree"
 Sub newgeo()
  If Not CanExecute("PartDocument") Then Exit Sub
  
-    Set oDoc = CATIA.ActiveDocument.Product
-    Set oPrt = oDoc.ReferenceProduct.Parent.part
+    Set odoc = CATIA.ActiveDocument.Product
+    Set oPrt = odoc.ReferenceProduct.Parent.part
     Set colls = oPrt.HybridBodies
     On Error Resume Next
     Set og = colls.item("Geo_sheet")

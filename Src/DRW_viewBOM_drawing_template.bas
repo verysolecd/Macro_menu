@@ -13,6 +13,19 @@ Sub main()
     ' 2. 获取视图与产品
     Dim oSheet: Set oSheet = CATIA.ActiveDocument.sheets.ActiveSheet
     Dim oView: Set oView = oSheet.Views.ActiveView
+    
+    Dim iScene: Set iScene = oView.GenerativeBehavior.Document
+    
+    If iScene Is Nothing Then MsgBox "没有关联的Product": Exit Sub
+    
+    If TypeName(iScene) = "ProductScene" Then
+        iScene.Parent.Parent
+    
+    ElseIf TypeName(iScene) = "Product" Then
+    
+    
+    End If
+    
     Dim oprd: Set oprd = oView.GenerativeBehavior.Document
     
     If oprd Is Nothing Then MsgBox "没有关联的 Product": Exit Sub

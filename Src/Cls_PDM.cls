@@ -551,8 +551,8 @@ End Sub
 Public Function getmeas(itm)
     Set getmeas = Nothing
    If Not itm Is Nothing Then
-       Dim oDoc: Set oDoc = CATIA.ActiveDocument
-      Dim spa:  Set spa = oDoc.GetWorkbench("SPAWorkbench")
+       Dim odoc: Set odoc = CATIA.ActiveDocument
+      Dim spa:  Set spa = odoc.GetWorkbench("SPAWorkbench")
         Set getmeas = spa.GetMeasurable(itm)
     End If
 End Function
@@ -560,8 +560,8 @@ End Function
 Public Function getlength(itm)
  getlength = 0
 If Not itm Is Nothing Then
-       Dim oDoc: Set oDoc = CATIA.ActiveDocument
-      Dim spa:  Set spa = oDoc.GetWorkbench("SPAWorkbench")
+       Dim odoc: Set odoc = CATIA.ActiveDocument
+      Dim spa:  Set spa = odoc.GetWorkbench("SPAWorkbench")
    If Not itm Is Nothing Then
         Set meas = spa.GetMeasurable(itm)
         getlength = meas.Length

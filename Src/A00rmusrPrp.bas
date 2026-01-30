@@ -16,8 +16,8 @@ Sub rm(oprd)
     colls.Remove ("iMaterial")
      Set colls = refPrd.Parent.part.Parameters.RootParameterSet.ParameterSets
         Set cm = colls.GetItem("cm")
-        Set osel = CATIA.ActiveDocument.Selection
-        osel.Clear: osel.Add cm: osel.Delete
+        Set oSel = CATIA.ActiveDocument.Selection
+        oSel.Clear: oSel.Add cm: oSel.Delete
      Set colls = refPrd.Parent.part.relations
      colls.Remove ("CalM")
      colls.Remove ("CMAS")

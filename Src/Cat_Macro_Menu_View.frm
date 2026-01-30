@@ -58,7 +58,7 @@ Sub Set_FormInfo(ByVal InfoLst As Object, _
     Dim Pgs As Pages: Set Pgs = MPgs.Pages: Pgs.Clear
     Dim key As Long, KeyStr As Variant, Pg As Page, pName As String
     Dim BtnInfos As Object, info As Variant
-    Dim btns As Object: Set btns = KCL.InitLst()
+    Dim btns As Object: Set btns = KCL.Initlst()
     Dim btn As MSForms.CommandButton
     Dim BtnEvt As Cls_btEVT
     For Each KeyStr In InfoLst
@@ -189,19 +189,6 @@ Private Sub UpdateProductInfo()
         lblProductInfo.Caption = msg
         lblProductInfo.BackColor = mcolor
 End Sub
-Private Sub toMP()
-    On Error Resume Next
-    Dim shell As Object
-    Set shell = CreateObject("WScript.Shell")
-    shell.Run "https://mp.weixin.qq.com/s?__biz=MzU5MTk1MDUwNg==&mid=2247484525&idx=1&sn=554a37aff4bc876424043a9aa5968d6d&scene=21&poc_token=HCUyg2ijuHYXMx810A5yID4tAYIemJFdJ7FpVvew"
-    Set shell = Nothing
-    If Err.Number <> 0 Then
-        MsgBox "无法公众号链接" & vbCrLf & "错误: " & Err.Description, vbExclamation, "链接错误"
-    End If
-    On Error GoTo 0
-End Sub
-
-
 Private Sub UserForm_Click()
       toMP
 End Sub

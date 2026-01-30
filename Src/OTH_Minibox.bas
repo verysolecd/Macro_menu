@@ -63,11 +63,11 @@ Sub mMinibox()
     Dim bdy
         Set bdy = KCL.getItm("MinimumBox", workPt.bodies)
         If Not KCL.IsNothing(bdy) Then
-           Dim osel: Set osel = CATIA.ActiveDocument.Selection
-            osel.Clear
-            osel.Add bdy
-            osel.Delete
-             osel.Clear
+           Dim oSel: Set oSel = CATIA.ActiveDocument.Selection
+            oSel.Clear
+            oSel.Add bdy
+            oSel.Delete
+             oSel.Clear
         End If
     
     Set minBody = workPt.bodies.Add
