@@ -7,10 +7,11 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
+
 Option Explicit
 ' --- Variables ---
-Private WithEvents mBtnMenu As MSForms.CommandButton      ' For Script Mode
-Attribute mBtnMenu.VB_VarHelpID = -1
+Private WithEvents mBTN As MSForms.CommandButton      ' For Script Mode
+Attribute mBTN.VB_VarHelpID = -1
 Private WithEvents mBTNwd As MSForms.CommandButton ' For Result Mode
 Attribute mBTNwd.VB_VarHelpID = -1
 
@@ -25,7 +26,9 @@ Private mResultDict As Object
 Private Const TAG_ENTRYPNT = "ep"           ' 入口点标签
 Private Const TAG_PJTPATH = "pjt_path"      ' 项目路径标签
 Private Const TAG_MDLNAME = "mdl_name"      ' 模块名称标签
+Private Const TAG_PASS_BTN = "springwdBTN"  ' 传递按钮名称开关
 Private Const mdlName As String = "Cls_btEVT"
+
 Private Sub Class_Initialize()
 
 End Sub
@@ -35,7 +38,7 @@ Sub set_ButtonEvent(ByVal btn As MSForms.CommandButton, _
                     ByVal BtnInfo As Object, _
                     ByVal ParentForm As Object, _
                     ByVal CloseType As Boolean)
-        Set mBtnMenu = btn
+        Set mBTN = btn
         Set mInfo = BtnInfo
         Set mParentForm = ParentForm
         mCloseType = CloseType
@@ -72,8 +75,8 @@ Private Sub mBTNwd_Click()
     End If
     mParentFrm.Hide
 End Sub
-' Handler for Script Mode (mBtnMenu) 非模态按钮的处理
-Private Sub mBtnMenu_click()
+' Handler for Script Mode (mBTN) 非模态按钮的处理
+Private Sub mBTN_click()
     If Not mCloseType Then
         If Not mParentForm Is Nothing Then Unload mParentForm
     End If
@@ -84,15 +87,25 @@ Private Sub mBtnMenu_click()
 '    iFunctionName:The name of the function to invoke
 '    IParameters: An array of parameters for the function
     Dim ss As Object: Set ss = CATIA.SystemService
+    
+    Dim params As Variant
+    If mInfo.Exists(TAG_PASS_BTN) And mInfo(TAG_PASS_BTN) = True Then
+        params = Array(mBTN.Name)
+    Else
+        params = Array()
+    End If
+    
     On Error Resume Next
         Call ss.ExecuteScript(mInfo(TAG_PJTPATH), _
                               catScriptLibraryTypeVBAProject, _
                               mInfo(TAG_MDLNAME), _
                               mInfo(TAG_ENTRYPNT), _
-                              Array())
+                              params)
          Err.Clear
     On Error GoTo 0
 End Sub
+
+
 
 
 

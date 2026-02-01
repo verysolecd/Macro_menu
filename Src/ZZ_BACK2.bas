@@ -1,4 +1,4 @@
-Attribute VB_Name = "Module6"
+Attribute VB_Name = "ZZ_BACK2"
 Private Declare PtrSafe Function OpenClipboard Lib "user32" (ByVal hwnd As LongPtr) As Long
 Private Declare PtrSafe Function EmptyClipboard Lib "user32" () As Long
 Private Declare PtrSafe Function CloseClipboard Lib "user32" () As Long

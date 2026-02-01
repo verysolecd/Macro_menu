@@ -32,10 +32,10 @@ Sub setHideshow()
     If pdm Is Nothing Then Set pdm = New Cls_PDM
    initori
 '==生成UItoolbar-===================
-    Dim mapmdl: Set mapmdl = KCL.setBTNmdl(mdlName)
+    Dim mapMdl: Set mapMdl = KCL.setBTNmdl(mdlName)
     Dim mapFunc As Object: Set mapFunc = KCL.setBTNFunc(mdlName)
     Set g_Frm = Nothing:  Set g_Frm = KCL.newFrm(mdlName)
-    g_Frm.ShowToolbar mdlName, mapmdl, mapFunc
+    g_Frm.ShowToolbar mdlName, mapMdl, mapFunc
 End Sub
 Private Sub initsel()
     Set rdoc = CATIA.ActiveDocument

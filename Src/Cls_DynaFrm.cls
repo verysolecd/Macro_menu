@@ -14,11 +14,13 @@ Private mExecuted As Boolean
 Private mConfigStr As String
 Private mEventCol As collection
 Private mIsVertical As Variant ' Empty=Auto, True=Vert, False=Horiz
+Private mPassBtn As Boolean
 
 ' --- Constants ---
 Private Const TAG_ENTRYPNT = "ep"           ' 入口点标签
 Private Const TAG_PJTPATH = "pjt_path"      ' 项目路径标签
 Private Const TAG_MDLNAME = "mdl_name"      ' 模块名称标签
+Private Const TAG_PASS_BTN = "springwdBTN"
 Private pjt As String
 ' --- Lifecycle ---
 Private Const mdlName As String = "cls_dynaFrm"
@@ -62,6 +64,10 @@ Public Property Let isVertical(ByVal VAL As Boolean)
     mIsVertical = VAL
 End Property
 
+Public Property Let PassButtonName(ByVal VAL As Boolean)
+    mPassBtn = VAL
+End Property
+
 Public Sub Show(Optional ByVal iShowMode As FormShowConstants = vbModal, _
                 Optional ByVal ModuleMap As Object = Nothing, _
                 Optional ByVal MacroMap As Object = Nothing)
@@ -72,7 +78,6 @@ Public Sub Show(Optional ByVal iShowMode As FormShowConstants = vbModal, _
     Dim ttl As String: ttl = KCL.ParseUITitle(mConfigStr)
     If Not WD Is Nothing Then Unload WD
     Set WD = New CAT_springWD: WD.Tag = ""
-    
     Dim btnvert As Boolean
     If IsEmpty(mIsVertical) Then
         btnvert = (iShowMode = vbModeless) ' 自动挡：非模态则竖排
@@ -116,7 +121,9 @@ Private Sub BindEvents(frm As Object, modMap As Object, macMap As Object)
                         mBTNinfo.Add TAG_PJTPATH, pjt
                         mBTNinfo.Add TAG_MDLNAME, modMap(btnName)
                         mBTNinfo.Add TAG_ENTRYPNT, macMap(btnName)
-                        handler.set_ButtonEvent ctl, mBTNinfo, frm, False 'True
+                        ' Add PassButtonName flag if enabled
+                        If mPassBtn Then mBTNinfo.Add TAG_PASS_BTN, True
+                        handler.set_ButtonEvent ctl, mBTNinfo, frm, True ' False
                     End If
                 Else          '模态按钮 对应 button Clicked和Res对应结果
                     Set handler.ControlBTN = ctl
@@ -133,6 +140,8 @@ End Sub
 Private Sub EnsureExecuted()
     If Not mExecuted And mConfigStr <> "" Then Show vbModal
 End Sub
+
+
 
 
 

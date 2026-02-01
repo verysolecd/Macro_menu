@@ -17,10 +17,10 @@ Sub Cal_Mass_m()
     If Not KCL.CanExecute("ProductDocument") Then Exit Sub
     If pdm Is Nothing Then Set pdm = New Cls_PDM
     '==生成UItoolbar-===================
-    Dim mapmdl: Set mapmdl = KCL.setBTNmdl(mdlName)
+    Dim mapMdl: Set mapMdl = KCL.setBTNmdl(mdlName)
     Dim mapFunc As Object: Set mapFunc = KCL.setBTNFunc(mdlName)  'btnname_click
     Set g_Frm = Nothing:  Set g_Frm = KCL.newFrm(mdlName)
-    g_Frm.ShowToolbar mdlName, mapmdl, mapFunc
+    g_Frm.ShowToolbar mdlName, mapMdl, mapFunc
 
 End Sub
 Sub btna_click()

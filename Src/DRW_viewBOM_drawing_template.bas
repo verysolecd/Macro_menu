@@ -38,16 +38,16 @@ Sub main()
     If IsEmpty(flatData) Then Exit Sub
     
     ' 4. 更新表格
-    Dim tbl, R, c
+    Dim tbl, r, c
     Err.Clear: Set tbl = oView.Tables.item("GenBOM")
     If Err.Number = 0 Then oView.Selection.Clear: oView.Selection.Add tbl: oView.Selection.Delete
     
     Set tbl = oView.Tables.Add(50, 50, UBound(flatData, 1), UBound(flatData, 2), 10, 20)
     tbl.Name = "GenBOM"
     
-    For R = 1 To UBound(flatData, 1)
+    For r = 1 To UBound(flatData, 1)
         For c = 1 To UBound(flatData, 2)
-            tbl.SetCellString R, c, CStr(flatData(R, c))
+            tbl.SetCellString r, c, CStr(flatData(r, c))
         Next
     Next
     CATIA.RefreshDisplay = True
@@ -78,24 +78,24 @@ Function GetSortedBOM(fPath)
     If vCount = 0 Then Exit Function
     
     ' 转为 2D 矩阵 (1-based fit for CATIA Table)
-    Dim R, c, colCount, mat
+    Dim r, c, colCount, mat
     colCount = UBound(validRows(0)) + 1
     ReDim mat(vCount, colCount)
     
-    For R = 0 To vCount - 1
+    For r = 0 To vCount - 1
         For c = 0 To colCount - 1
-            mat(R + 1, c + 1) = validRows(R)(c)
+            mat(r + 1, c + 1) = validRows(r)(c)
         Next
     Next
     
     ' 冒泡排序 (从第2行开始，跳过标题)
     Dim j, k, tmp
-    For R = 2 To vCount
-        For j = R + 1 To vCount
+    For r = 2 To vCount
+        For j = r + 1 To vCount
             ' 比较第1列 (Number)
-            If ShouldSwap(mat(R, 1), mat(j, 1)) Then
+            If ShouldSwap(mat(r, 1), mat(j, 1)) Then
                 For k = 1 To colCount ' 交换整行
-                    tmp = mat(R, k): mat(R, k) = mat(j, k): mat(j, k) = tmp
+                    tmp = mat(r, k): mat(r, k) = mat(j, k): mat(j, k) = tmp
                 Next
             End If
         Next

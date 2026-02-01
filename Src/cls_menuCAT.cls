@@ -65,10 +65,10 @@ Public Property Let EntryPoint(ByVal value As String)
     mEntryPoint = value
 End Property
 
-Public Property Get Params() As Variant
-    Params = mParams
+Public Property Get params() As Variant
+    params = mParams
 End Property
-Public Property Let Params(ByVal value As Variant)
+Public Property Let params(ByVal value As Variant)
     mParams = value
 End Property
 

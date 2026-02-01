@@ -207,15 +207,15 @@ End Sub
 
 ' 更新产品信息的方法
 Private Sub UpdateProductInfo()
-    Dim msg, mcolor
-    mcolor = vbRed
+    Dim msg, mColor
+    mColor = vbRed
     msg = "操作产品待选择"
     If Not prdObserver.CurrentProduct Is Nothing Then
           msg = prdObserver.CurrentProduct.partNumber & "待修改"
-          mcolor = vbGreen
+          mColor = vbGreen
     End If
         lblProductInfo.Caption = msg
-        lblProductInfo.BackColor = mcolor
+        lblProductInfo.BackColor = mColor
 End Sub
 Private Sub UserForm_Click()
       toMP
