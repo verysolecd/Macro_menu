@@ -2,61 +2,117 @@ Attribute VB_Name = "OTH_ivhideshow"
 'Attribute VB_Name = "m64_hide&show"
 '{GP:6}
 '{Ep:setHideshow}
-'{Caption:∑¥—°“˛≤ÿ}
-'{ControlTipText:∑¥—°≤¢“˛≤ÿΩ·ππ ˜}
+'{Caption:ÂèçÈÄâÈöêËóè}
+'{ControlTipText:ÂèçÈÄâÂπ∂ÈöêËóèÁªìÊûÑÊ†ë}
 '{BackColor:}
 
-'±ÍÃ‚∏Ò ΩŒ™ %Title <Caption/Text>
-'%Title »Á∫Œ≈‰÷√?
-'------øÿº˛«Âµ•--------------------------------------------------
-'øÿº˛∏Ò ΩŒ™ %UI <ControlType> <ControlName> <Caption/Text>
-' %UI Label lbL_jpzcs  º¸≈Ã‘Ï≥µ ÷≥ˆ∆∑
-' %UI Button back2ori ª÷∏¥œ‘ æ
-' %UI Button allshow œ‘ æÀ˘”–≤˙∆∑
-' %UI Button sel_child_show œ‘ æ—°∂®≤˙∆∑
+'Ê†áÈ¢òÊ†ºÂºè‰∏∫ %Title <Caption/Text>
+'%Title Â¶Ç‰ΩïÈÖçÁΩÆ?
+'------Êéß‰ª∂Ê∏ÖÂçï--------------------------------------------------
+'Êéß‰ª∂Ê†ºÂºè‰∏∫ %UI <ControlType> <ControlName> <Caption/Text>
+' %UI Label lbL_jpzcs  ÈîÆÁõòÈÄ†ËΩ¶ÊâãÂá∫ÂìÅ
+' %UI Button back2ori ÊÅ¢Â§çÊòæÁ§∫
+' %UI Button allshow ÊòæÁ§∫ÊâÄÊúâ‰∫ßÂìÅ
+' %UI Button sel_child_show ÊòæÁ§∫ÈÄâÂÆö‰∫ßÂìÅ
+' %UI Button AsmHide_Plns ÈöêËóèÊâÄÊúâÂπ≥Èù¢
 ' %UI Label lbL_4 ------
-' %UI Button revertselShow  “˛≤ÿ—°∂®≤˙∆∑only
-' %UI Button allhide “˛≤ÿÀ˘”–
-' %UI Label lbL_5  '--’Î∂‘¡„º˛--'
-' %UI Button PrtHide_GS “˛≤ÿ∏˘GSS
-' %UI Button PrtHide_Skt “˛≤ÿÀ˘”–≤›Õº
+' %UI Button onlysel_hide  ÈöêËóèÈÄâÂÆö‰∫ßÂìÅonly
+' %UI Button allhide ÈöêËóèÊâÄÊúâ
+' %UI Label lbL_5  '--ÈíàÂØπÈõ∂‰ª∂--'
+' %UI Button PrtHide_GS ÈöêËóèÊ†πGSS
+' %UI Button PrtHide_Skt ÈöêËóèÊâÄÊúâËçâÂõæ
+
+
 Private msel, rdoc, rprd
 Private showlst, hidelst, wantlst
 Private orishowlst, orihidelst
-Private Const mdlname As String = "OTH_ivhideshow"
+Private Const mdlName As String = "OTH_ivhideshow"
 
 Sub setHideshow()
-If Not CanExecute("ProductDocument") Then Exit Sub
     If pdm Is Nothing Then Set pdm = New Cls_PDM
    initori
-'==…˙≥…UItoolbar-===================
-    Dim mapmdl: Set mapmdl = KCL.setBTNmdl(mdlname)
-    Dim mapFunc As Object: Set mapFunc = KCL.setBTNFunc(mdlname)
-    Set g_Frm = Nothing:  Set g_Frm = KCL.newFrm(mdlname)
-    g_Frm.ShowToolbar mdlname, mapmdl, mapFunc
+'==ÁîüÊàêUItoolbar-===================
+    Dim mapmdl: Set mapmdl = KCL.setBTNmdl(mdlName)
+    Dim mapFunc As Object: Set mapFunc = KCL.setBTNFunc(mdlName)
+    Set g_Frm = Nothing:  Set g_Frm = KCL.newFrm(mdlName)
+    g_Frm.ShowToolbar mdlName, mapmdl, mapFunc
 End Sub
-Sub initsel()
-
-
+Private Sub initsel()
+    Set rdoc = CATIA.ActiveDocument
+    Set rprd = rdoc.Product
+    Set msel = rdoc.Selection
 End Sub
+Private Sub Initlst()
+    initsel
+    Set wantlst = getwantlst
+    Set showlst = getshowlst(rprd)
+    Set hidelst = gethidelst(rprd)
+End Sub
+Private Sub initori()
+    initsel
+    Set orishowlst = getshowlst(rprd)
+    Set orihidelst = gethidelst(rprd)
+End Sub
+Sub back2ori_click()
+    On Error Resume Next
+        hide_in_lst orihidelst
+        show_in_lst orishowlst
+    On Error GoTo 0
+End Sub
+Function getSubAsm()
+    Set rdoc = CATIA.ActiveDocument
+    Set rprd = rdoc.Product
+    Set msel = rdoc.Selection
+    Set oprd = CATIA.ActiveDocument.Product
+    Dim istr As String
+    istr = "CATProductSearch.Product.Visibility=Hidden"
+    SelQuery istr, oprd
+End Function
+
 Sub PrtHide_GS_click()
-    Set oPrt = KCL.get_inwork_part
-    Set HSF = oPrt.HybridBodies
+    Set oprt = KCL.get_inwork_part
+    If oprt Is Nothing Then Exit Sub
+    Set HSF = oprt.HybridBodies
     Dim lst: Set lst = KCL.Initlst
-    For Each itm In oPrt.HybridBodies
+    For Each itm In oprt.HybridBodies
         lst.Add itm
     Next
     hide_in_lst lst
 End Sub
 
 Sub PrtHide_Skt_click()
-    Set oPrt = KCL.get_inwork_part
+    initsel
+    Set oprt = KCL.get_inwork_part
+    If oprt Is Nothing Then Exit Sub
+    msel.Clear
+    Dim ss As String: ss = "Type=Sketch"
+    SelQuery ss, oprt
+    Dim lst: Set lst = KCL.Initlst
+    For i = 1 To msel.count
+       lst.Add msel.item(i).value
+'      lst.Add msel.item(i).LeafProduct
+    Next
     
- Dim istr As String: istr =
- 
-'Part Design'.Sketch&
-'Generative Shape Design'.Sketch&
-'Functional Molded Part'.Sketch
+    hide_in_lst lst
+    msel.Clear
+End Sub
+Sub AsmHide_Plns_click()
+    Dim sel As Selection
+    Set sel = CATIA.ActiveDocument.Selection
+    sel.Clear
+    sel.Search "Type=Plane,all"
+    If sel.count > 0 Then
+        sel.VisProperties.SetShow catVisPropertyNoShowAttr
+    End If
+    sel.Clear
+End Sub
+
+Sub PrtHide()
+    Set oprt = KCL.get_inwork_part
+' Dim istr As String: istr =
+''Part Design'.Sketch&
+''Generative Shape Design'.Sketch&
+''Functional Molded Part'.Sketch
  
   filter = "(CATPrtSearch.BodyFeature.Visibility=Shown " & _
             "+ CATPrtSearch.OpenBodyFeature.Visibility=Shown" & _
@@ -71,44 +127,26 @@ Sub PrtHide_Skt_click()
          filter(6) = "(((((((CATProductSearch.MfConstraint + CATStFreeStyleSearch.MfConstraint) + CATAsmSearch.MfConstraint) + CAT2DLSearch.MfConstraint) + CATSketchSearch.MfConstraint) + CATDrwSearch.MfConstraint) + CATPrtSearch.MfConstraint) + CATSpdSearch.MfConstraint),all"
  
  
- Call SelectAll(istr, oprd)
-    
-    Set HSF = oPrt.HybridBodies
+    SelQuery istr, oprd
+    Set HSF = oprt.HybridBodies
     Dim lst: Set lst = KCL.Initlst
-    For Each itm In oPrt.HybridBodies
+    For Each itm In oprt.HybridBodies
         lst.Add itm
     Next
-    
-    
     hide_in_lst lst
 End Sub
 
-
-Function getSubAsm()
- Set rdoc = CATIA.ActiveDocument
-    Set rprd = rdoc.Product
-    Set msel = rdoc.Selection
-Set oprd = CATIA.ActiveDocument.Product
-Dim istr As String
-istr = "CATProductSearch.Product.Visibility=Hidden"
-
-SelectAll istr, oprd
-
-
-
-
-End Function
-
-
-
 Sub onlyselshow_click()
+    initsel
     Initlst
     hide_in_lst showlst
     hide_in_lst hidelst
     show_in_lst wantlst
     showParent wantlst
 End Sub
+
 Sub sel_child_show_click()
+    initsel
     Initlst
     hide_in_lst showlst
     hide_in_lst hidelst
@@ -117,17 +155,19 @@ Sub sel_child_show_click()
     showParent wantlst
 End Sub
 
-Sub revertselshow_click()
+Sub onlysel_hide_click()
+    initsel
     Initlst
-    '====ø™ º“˛≤ÿ
+    If msel Is Nothing Then Exit Sub
+    On Error Resume Next
     show_in_lst showlst
     show_in_lst hidelst
     hide_in_lst wantlst
-    ' show_in_lst showlst
-    'show_in_lst hidelst
-    '====ø™ ºª÷∏¥œ‘ æ
+    On Error Resume Next
 End Sub
 Sub allshow_click()
+     initsel
+        Initlst
     On Error Resume Next
         show_in_lst orishowlst
         show_in_lst wantlst
@@ -142,37 +182,19 @@ Sub allhide_click()
     On Error GoTo 0
 End Sub
 
-Sub back2ori_click()
-On Error Resume Next
-    hide_in_lst orihidelst
-    show_in_lst orishowlst
-On Error GoTo 0
-End Sub
-
-Private Sub Initlst()
-    Set rdoc = CATIA.ActiveDocument
-    Set rprd = rdoc.Product
-    Set msel = rdoc.Selection
-    Set wantlst = getwantlst
-    Set showlst = getshowlst(rprd)
-    Set hidelst = gethidelst(rprd)
-End Sub
-
-Sub initori()
-    Set rdoc = CATIA.ActiveDocument
-    Set rprd = rdoc.Product
-    Set msel = rdoc.Selection
-    Set orishowlst = getshowlst(rprd)
-    Set orihidelst = gethidelst(rprd)
-End Sub
-Private Function SelectAll(iQuery As String, ByVal iRange)
+Private Function SelQuery(iQuery As String, Optional ByVal iRange = Nothing)
   msel.Clear
-  msel.Add iRange
-  msel.Search iQuery & ",sel"
+  If iRange Is Nothing Then
+    msel.Search iQuery & ",all"
+  Else
+     msel.Add iRange
+     msel.Search iQuery & ",sel"
+  End If
 End Function
+
 Function getshowlst(oprd)
- Dim istr As String: istr = "Assembly Design.Product.Visibility=Visible"
- Call SelectAll(istr, oprd)
+ Dim istr$: istr = "Assembly Design.Product.Visibility=Visible"
+ Call SelQuery(istr, oprd)
   Dim lst: Set lst = KCL.Initlst
    For i = 1 To msel.count
       lst.Add msel.item(i).LeafProduct
@@ -180,16 +202,18 @@ Function getshowlst(oprd)
    Set getshowlst = lst
    msel.Clear
 End Function
+
 Function gethidelst(oprd)
- Dim istr As String: istr = "Assembly Design.Product.Visibility=Hidden"
- Call SelectAll(istr, oprd)
-  Dim lst: Set lst = KCL.Initlst
-   For i = 1 To msel.count
-      lst.Add msel.item(i).LeafProduct
+    Dim istr$: istr = "Assembly Design.Product.Visibility=Hidden"
+    SelQuery istr, oprd
+    Dim lst: Set lst = KCL.Initlst
+        For i = 1 To msel.count
+        lst.Add msel.item(i).LeafProduct
     Next
-   Set gethidelst = lst
-   msel.Clear
+        Set gethidelst = lst
+    msel.Clear
 End Function
+
 Function getwantlst()
     Dim lst: Set lst = KCL.Initlst
     Set getwantlst = lst
@@ -203,16 +227,16 @@ End If
 End Function
 Sub hide_in_lst(lst)
     msel.Clear
-        For Each itm In lst
-                msel.Add itm
-        Next
+    For Each itm In lst
+            msel.Add itm
+    Next
     msel.VisProperties.SetShow 1: msel.Clear
 End Sub
 Sub show_in_lst(lst)
     msel.Clear
-        For Each itm In lst
-                msel.Add itm
-        Next
+    For Each itm In lst
+            msel.Add itm
+    Next
     msel.VisProperties.SetShow 0: msel.Clear
 End Sub
 Private Sub showParent(lst)
@@ -230,7 +254,7 @@ Private Sub showParent(lst)
                  Set parentPrd = parentPrd.Parent
                  If TypeName(parentPrd) = "Product" Then parentLst.Add parentPrd
             Else
-                 Exit Do ' µΩ¥Ô∂•≤„ªÚ∑« Product Ω·ππ
+                 Exit Do ' Âà∞ËææÈ°∂Â±ÇÊàñÈùû Product ÁªìÊûÑ
             End If
             On Error GoTo 0
         Loop
@@ -240,10 +264,10 @@ End Sub
 
 Sub showChild(lst)
     On Error Resume Next
-        For Each itm In lst
-           Set ilst = KCL.Initlst
-         show_in_lst getchildlst(itm, ilst)
-        Next
+    For Each itm In lst
+       Set ilst = KCL.Initlst
+     show_in_lst getchildlst(itm, ilst)
+    Next
     On Error GoTo 0
 End Sub
 

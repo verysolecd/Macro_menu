@@ -1,5 +1,5 @@
 Attribute VB_Name = "A00rmusrPrp"
-Private Const mdlname As String = "A00rmusrPrp"
+Private Const mdlName As String = "A00rmusrPrp"
 Sub remove_usrP()
 Set oprd = CATIA.ActiveDocument.Product
 rm oprd
@@ -7,7 +7,7 @@ End Sub
 Sub rm(oprd)
     On Error Resume Next
      Set refPrd = oprd.ReferenceProduct
-     Set oPrt = refPrd.Parent.part
+     Set oprt = refPrd.Parent.part
     Set colls = refPrd.Publications
     colls.Remove ("Location")
     colls.Remove ("iMass")

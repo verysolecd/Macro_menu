@@ -9,12 +9,12 @@ Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
 Private WithEvents pWb As Workbook
 Attribute pWb.VB_VarHelpID = -1
-Private Const mdlname As String = "Cls_WsEvt"
+Private Const mdlName As String = "Cls_WsEvt"
 Public Sub Init(wbInstance)
     Set pWb = wbInstance
 End Sub
 Private Sub pWb_BeforeClose(Cancel As Boolean)
-    ' Çå³ýÊµÀý²¢ÊÍ·Å¶ÔÏó
+    ' æ¸…é™¤å®žä¾‹å¹¶é‡Šæ”¾å¯¹è±¡
     Set gws = Nothing
     Set gwb = Nothing
      DoEvents

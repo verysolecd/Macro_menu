@@ -3,7 +3,7 @@ Private Declare PtrSafe Function OpenClipboard Lib "user32" (ByVal hwnd As LongP
 Private Declare PtrSafe Function EmptyClipboard Lib "user32" () As Long
 Private Declare PtrSafe Function CloseClipboard Lib "user32" () As Long
 Private Declare PtrSafe Function SetClipboardData Lib "user32" (ByVal wFormat As Long, ByVal hMem As LongPtr) As LongPtr
-Private Const mdlname As String = "ZZ_BCK"
+Private Const mdlName As String = "ZZ_BCK"
 Sub remove_usrP()
 Set oprd = CATIA.ActiveDocument.Product
 rm oprd
@@ -11,7 +11,7 @@ End Sub
 Sub rm(oprd)
     On Error Resume Next
      Set refPrd = oprd.ReferenceProduct
-     Set oPrt = refPrd.Parent.part
+     Set oprt = refPrd.Parent.part
     Set colls = refPrd.Publications
     colls.Remove ("Location")
     colls.Remove ("iMass")
@@ -39,7 +39,7 @@ On Error GoTo 0
 End Sub
 
 
-''==±È¿˙µ›πÈ=============================
+''==ÈÅçÂéÜÈÄíÂΩí=============================
 Sub recurAyo(ayo)
     Dim colls: Set itm = ayo.Products
     For Each itm In colls

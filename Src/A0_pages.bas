@@ -1,5 +1,5 @@
 Attribute VB_Name = "A0_pages"
-Private Const mdlname As String = "A0_pages"
+Private Const mdlName As String = "A0_pages"
 Sub main()
 CATIA.RefreshDisplay = False
     Set shts = CATIA.ActiveDocument.sheets
@@ -32,9 +32,9 @@ j = 1
                Set oDict(itm.Name) = itm
             Next
            Set Pg1 = oDict("gongxxzhang")
-            Pg1.Text = "¹²" & shts.count - 1 & "Ò³"
+            Pg1.text = "å…±" & shts.count - 1 & "é¡µ"
             Set Pg2 = oDict("dixxzhang")
-            Pg2.Text = "µÚ" & i & "Ò³"
+            Pg2.text = "ç¬¬" & i & "é¡µ"
             oView.SaveEdition
         End If
     Next
@@ -53,9 +53,9 @@ If idx > 0 Then
 End Function
 
 Function InitDic()
-    Dim Dic As Object
-    Set Dic = CreateObject("Scripting.Dictionary")
-    Dic.compareMode = compareMode
-    Set InitDic = Dic
+    Dim dic As Object
+    Set dic = CreateObject("Scripting.Dictionary")
+    dic.compareMode = compareMode
+    Set InitDic = dic
 End Function
 

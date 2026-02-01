@@ -3,7 +3,7 @@ Begin {C62A69F0-16DC-11CE-9E98-00AA00574A4F} FrmFlower
    Caption         =   "Flower"
    ClientHeight    =   10260
    ClientLeft      =   10050
-   ClientTop       =   375
+   ClientTop       =   380
    ClientWidth     =   9540.001
    OleObjectBlob   =   "FrmFlower.frx":0000
    ShowModal       =   0   'False
@@ -14,7 +14,7 @@ Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
 
-Private Const mdlname As String = "FrmFlower"
+Private Const mdlName As String = "FrmFlower"
 Private Sub CmbHide_Click()
     Me.Hide
 End Sub
@@ -26,7 +26,7 @@ End Sub
 
 Private Sub CMDdraw2_Click()
 pp = 0
-pp = Val(FrmFlower.qtydrw2.Text)
+pp = VAL(FrmFlower.qtydrw2.text)
 If pp > 5 Then
 pp = 5
 End If

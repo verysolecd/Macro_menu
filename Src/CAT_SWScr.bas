@@ -1,10 +1,10 @@
 Attribute VB_Name = "CAT_SWScr"
 '{GP:7}
 '{Ep:switchRefresh}
-'{Caption: ÆÁÄ»¸üĞÂ}
-'{ControlTipText:½ûÖ¹ÆÁÄ»¸üĞÂÒÔ·ÀÖ¹¿¨¶Ù}
+'{Caption: å±å¹•æ›´æ–°}
+'{ControlTipText:ç¦æ­¢å±å¹•æ›´æ–°ä»¥é˜²æ­¢å¡é¡¿}
 '{BackColor: }
-Private Const mdlname As String = "CAT_SWScr"
+Private Const mdlName As String = "CAT_SWScr"
 Sub switchRefresh()
 On Error Resume Next
     CATIA.ActiveWindow.ActiveViewer.Update

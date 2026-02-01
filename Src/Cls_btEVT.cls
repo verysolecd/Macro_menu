@@ -7,14 +7,12 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
-
 Option Explicit
-
 ' --- Variables ---
-Private WithEvents mBtn As MSForms.CommandButton      ' For Script Mode
-Attribute mBtn.VB_VarHelpID = -1
-Private WithEvents mControlBTN As MSForms.CommandButton ' For Result Mode
-Attribute mControlBTN.VB_VarHelpID = -1
+Private WithEvents mBtnMenu As MSForms.CommandButton      ' For Script Mode
+Attribute mBtnMenu.VB_VarHelpID = -1
+Private WithEvents mBTNwd As MSForms.CommandButton ' For Result Mode
+Attribute mBTNwd.VB_VarHelpID = -1
 
 Private mInfo As Object
 Private mCloseType As Boolean
@@ -24,12 +22,10 @@ Private mParentFrm As Object    ' Used by Result Mode (Unified target)
 Private mControlID As String
 Private mResultDict As Object
 
-
-
-Private Const TAG_ENTRYPNT = "ep"           ' Èë¿Úµã±êÇ©
-Private Const TAG_PJTPATH = "pjt_path"      ' ÏîÄ¿Â·¾¶±êÇ©
-Private Const TAG_MDLNAME = "mdl_name"      ' Ä£¿éÃû³Æ±êÇ©
-Private Const mdlname As String = "Cls_btEVT"
+Private Const TAG_ENTRYPNT = "ep"           ' å…¥å£ç‚¹æ ‡ç­¾
+Private Const TAG_PJTPATH = "pjt_path"      ' é¡¹ç›®è·¯å¾„æ ‡ç­¾
+Private Const TAG_MDLNAME = "mdl_name"      ' æ¨¡å—åç§°æ ‡ç­¾
+Private Const mdlName As String = "Cls_btEVT"
 Private Sub Class_Initialize()
 
 End Sub
@@ -39,7 +35,7 @@ Sub set_ButtonEvent(ByVal btn As MSForms.CommandButton, _
                     ByVal BtnInfo As Object, _
                     ByVal ParentForm As Object, _
                     ByVal CloseType As Boolean)
-        Set mBtn = btn
+        Set mBtnMenu = btn
         Set mInfo = BtnInfo
         Set mParentForm = ParentForm
         mCloseType = CloseType
@@ -53,13 +49,13 @@ Public Property Let ControlID(ByVal value As String)
     mControlID = value
 End Property
 Public Property Set ControlBTN(ByVal btn As MSForms.CommandButton)
-    Set mControlBTN = btn
+    Set mBTNwd = btn
 End Property
 Public Property Set ResultDict(ByVal dict As Object)
     Set mResultDict = dict
 End Property
-' Handler for Result Mode (mControlBTN) Ä£Ì¬°´Å¥µÄ´¦Àí
-Private Sub mControlBTN_Click()
+' Handler for Result Mode (mBTNwd) æ¨¡æ€æŒ‰é’®çš„å¤„ç†
+Private Sub mBTNwd_Click()
     If mParentFrm Is Nothing Then Exit Sub
         mParentFrm.Tag = mControlID
     If Not mResultDict Is Nothing Then
@@ -69,15 +65,15 @@ Private Sub mControlBTN_Click()
             If TypeName(ctl) = "CheckBox" Then
                  mResultDict(ctl.Name) = ctl.value
             ElseIf TypeName(ctl) = "TextBox" Then
-                 mResultDict(ctl.Name) = ctl.Text
+                 mResultDict(ctl.Name) = ctl.text
             End If
             On Error GoTo 0
         Next
     End If
     mParentFrm.Hide
 End Sub
-' Handler for Script Mode (mBtn) ·ÇÄ£Ì¬°´Å¥µÄ´¦Àí
-Private Sub mBtn_click()
+' Handler for Script Mode (mBtnMenu) éæ¨¡æ€æŒ‰é’®çš„å¤„ç†
+Private Sub mBtnMenu_click()
     If Not mCloseType Then
         If Not mParentForm Is Nothing Then Unload mParentForm
     End If

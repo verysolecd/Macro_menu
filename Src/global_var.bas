@@ -12,7 +12,7 @@ Public g_counter As Integer
 Public Const gfn As Integer = 400
 Public gPic_Path
 Public g_Frm As cls_dynaFrm
-Private Const mdlname As String = "global_var"
+Private Const mdlName As String = "global_var"
 Sub clearall()
 End Sub
 

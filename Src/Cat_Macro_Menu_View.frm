@@ -1,7 +1,7 @@
 VERSION 5.00
 Begin {C62A69F0-16DC-11CE-9E98-00AA00574A4F} Cat_Macro_Menu_View 
    Caption         =   "UserForm1"
-   ClientHeight    =   2655
+   ClientHeight    =   2660
    ClientLeft      =   120
    ClientTop       =   450
    ClientWidth     =   3810
@@ -14,28 +14,28 @@ Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
 ' VERSION 5.00
-' ´°Ìå±ß¾à
-Private FrmMargin As Variant ' ÉÏ, ÓÒ, ÏÂ, ×ó ´°Ìå±ß¾àµ÷ÕûÖµ
-' ´°Ìå¿í¶Èµ÷ÕûÖµ
+' çª—ä½“è¾¹è·
+Private FrmMargin As Variant ' ä¸Š, å³, ä¸‹, å·¦ çª—ä½“è¾¹è·è°ƒæ•´å€¼
+' çª—ä½“å®½åº¦è°ƒæ•´å€¼
 Private Const ADJUST_F_W = 4
-' ´°Ìå¸ß¶Èµ÷ÕûÖµ
+' çª—ä½“é«˜åº¦è°ƒæ•´å€¼
 Private Const ADJUST_F_H = 5
-' ¶àÒ³¿Ø¼şµ÷Õû
-Private Const ADJUST_M_W = 10 ' ¶àÒ³¿Ø¼ş¿í¶Èµ÷ÕûÖµ
-Private Const ADJUST_M_H = 5 ' ¶àÒ³¿Ø¼ş¸ß¶Èµ÷ÕûÖµ
-Private Const Tab_W = 30 ' Tab¹Ì¶¨¿í¶È
-Private Const Tab_H = 20 ' TAB¸ß¶È
+' å¤šé¡µæ§ä»¶è°ƒæ•´
+Private Const ADJUST_M_W = 10 ' å¤šé¡µæ§ä»¶å®½åº¦è°ƒæ•´å€¼
+Private Const ADJUST_M_H = 5 ' å¤šé¡µæ§ä»¶é«˜åº¦è°ƒæ•´å€¼
+Private Const Tab_W = 34 ' Tabå›ºå®šå®½åº¦
+Private Const Tab_H = 20 ' TABé«˜åº¦
 Private Const Tab_frontsize = 10
-' °´Å¥³ß´ç
-Private Const Btn_W = 70 ' °´Å¥µÄ¹Ì¶¨¿í¶È
-Private Const BTN_H = 20 ' µ¥¸ö°´Å¥µÄ¸ß¶È
-Private Const BTN_frontsize = 8 ' °´Å¥×ÖÌå´óĞ¡
-'±êÇ©³ß´ç
-Private Const lb_W = 62 ' ¿í¶È
-Private Const lb_H = 26 ' ¸ß¶È
-Private Const lb_frontsize = 10 ' ×ÖÌå´óĞ¡
-Private Const itl = "¹«ÖÚºÅ:¼üÅÌÔì³µÊÖ"
-' °´Å¥ÊÂ¼ş¼¯ºÏ
+' æŒ‰é’®å°ºå¯¸
+Private Const Btn_W = 70 ' æŒ‰é’®çš„å›ºå®šå®½åº¦
+Private Const BTN_H = 20 ' å•ä¸ªæŒ‰é’®çš„é«˜åº¦
+Private Const BTN_frontsize = 10 ' æŒ‰é’®å­—ä½“å¤§å°
+'æ ‡ç­¾å°ºå¯¸
+Private Const lb_W = 62 ' å®½åº¦
+Private Const lb_H = 13 ' é«˜åº¦
+Private Const lb_frontsize = 10 ' å­—ä½“å¤§å°
+Private Const itl = "å…¬ä¼—å·:é”®ç›˜é€ è½¦æ‰‹"
+' æŒ‰é’®äº‹ä»¶é›†åˆ
 Private mBtns As Object
 Private WithEvents prdObserver As Cls_PDM
 Attribute prdObserver.VB_VarHelpID = -1
@@ -46,29 +46,29 @@ Attribute lblAuthor.VB_VarHelpID = -1
 Private WithEvents MPgs As MSForms.MultiPage
 Attribute MPgs.VB_VarHelpID = -1
 Option Explicit
-' ÉèÖÃ´°ÌåĞÅÏ¢
-Private Const mdlname As String = "Cat_Macro_Menu_View"
+' è®¾ç½®çª—ä½“ä¿¡æ¯
+Private Const mdlName As String = "Cat_Macro_Menu_View"
 Sub Set_FormInfo(ByVal InfoLst As Object, _
                  ByVal PageMap As Object, _
                  ByVal formTitle As String, _
                  ByVal CloseType As Boolean)
-    Set prdObserver = pdm  ' Á¬½Óµ½È«¾Ö²úÆ·¹Û²ìÆ÷
-    FrmMargin = Array(2, 2, 2, 2) ' ÉÏ, ÓÒ, ÏÂ, ×ó ´°Ìå±ß¾àµ÷ÕûÖµ
-    Set MPgs = Me.Controls.Add("Forms.MultiPage.1", "MPgs", True) ' ´´½¨¶àÒ³¿Ø¼ş
+    Set prdObserver = pdm  ' è¿æ¥åˆ°å…¨å±€äº§å“è§‚å¯Ÿå™¨
+    FrmMargin = Array(2, 2, 2, 2) ' ä¸Š, å³, ä¸‹, å·¦ çª—ä½“è¾¹è·è°ƒæ•´å€¼
+    Set MPgs = Me.Controls.Add("Forms.MultiPage.1", "MPgs", True) ' åˆ›å»ºå¤šé¡µæ§ä»¶
     Dim Pgs As Pages: Set Pgs = MPgs.Pages: Pgs.Clear
-    Dim key As Long, KeyStr As Variant, Pg As Page, pName As String
+    Dim KEY As Long, KeyStr As Variant, Pg As Page, pName As String
     Dim BtnInfos As Object, info As Variant
     Dim btns As Object: Set btns = KCL.Initlst()
     Dim btn As MSForms.CommandButton
     Dim BtnEvt As Cls_btEVT
     For Each KeyStr In InfoLst
-            key = CLng(KeyStr)
-            If Not PageMap.Exists(key) Then GoTo Continue
-            pName = PageMap(key)
+            KEY = CLng(KeyStr)
+            If Not PageMap.Exists(KEY) Then GoTo Continue
+            pName = PageMap(KEY)
             Set Pg = Get_Page(Pgs, pName)
             Set BtnInfos = InfoLst(KeyStr)
         For Each info In BtnInfos
-            Set btn = Init_Button(Pg.Controls, key, info)
+            Set btn = Init_Button(Pg.Controls, KEY, info)
             Set BtnEvt = New Cls_btEVT
             Call BtnEvt.set_ButtonEvent(btn, info, Me, CloseType)
             btns.Add BtnEvt
@@ -78,34 +78,62 @@ Continue:
     Set mBtns = btns
     Call Set_MPage(MPgs)
     Call Set_FormHeight(MPgs, formTitle)
-   
     Set lblProductInfo = getNewLbl(Me)
-    Set lblAuthor = getMeinfo(Me) ' ´´½¨µ×²¿µÄ×÷ÕßĞÅÏ¢À¸
-    UpdateProductInfo    ' ³õÊ¼¸üĞÂ²úÆ·ĞÅÏ¢
+    Set lblAuthor = getMeinfo(Me) ' åˆ›å»ºåº•éƒ¨çš„ä½œè€…ä¿¡æ¯æ 
+    UpdateProductInfo    ' åˆå§‹æ›´æ–°äº§å“ä¿¡æ¯
 End Sub
-' ÉèÖÃ´°ÌåÊôĞÔ
+' è®¾ç½®çª—ä½“å±æ€§
 Private Sub Set_FormHeight(ByVal MPgs As MultiPage, ByVal cap As String)
     With Me
         Dim requiredInsideHeight
-        requiredInsideHeight = MPgs.Top + MPgs.Height + ADJUST_F_H + lb_H  '+ FrmMargin(2)
+        requiredInsideHeight = MPgs.Top + MPgs.Height + lb_H + FrmMargin(2) + ADJUST_F_H
         .Height = requiredInsideHeight + (Me.Height - Me.InsideHeight)
-        .Width = MPgs.Width + 2 * ADJUST_F_W + 2 * FrmMargin(2)
+        .Width = MPgs.Width + ADJUST_F_W + FrmMargin(2)
         .Caption = cap
     End With
 End Sub
-' ÉèÖÃ¶àÒ³¿Ø¼şÊôĞÔ
+Private Function getNewLbl(mFrm)
+    Dim mLbl
+    Set mLbl = mFrm.Controls.Add("Forms.Label.1", "lblProductInfo", True)
+        With mLbl
+'             .Caption = "æ“ä½œäº§å“å¾…é€‰æ‹©"
+             .Top = FrmMargin(0): .Height = lb_H * 2
+             .Left = FrmMargin(0): .Width = mFrm.Width - 16
+             .BackColor = vbGreen: .Font.Size = lb_frontsize
+             .TextAlign = fmTextAlignCenter
+             .BorderStyle = fmBorderStyleSingle
+             .WordWrap = True: .AutoSize = False
+         End With
+   Set getNewLbl = mLbl
+End Function
+
+Private Function getMeinfo(mFrm)
+    Dim mLbl
+    Set mLbl = mFrm.Controls.Add("Forms.Label.1", "lblAuthor", True)
+        With mLbl
+            .Caption = itl ' ä½¿ç”¨å¸¸é‡æ˜¾ç¤ºä½œè€…ä¿¡æ¯
+            .Top = MPgs.Top + MPgs.Height + FrmMargin(1): .Height = lb_H
+            .Left = lblProductInfo.Left: .Width = lblProductInfo.Width
+            .Font.Size = lb_frontsize ' å­—ä½“å¯ä»¥ç¨å°ä¸€äº›
+            .TextAlign = fmTextAlignCenter
+            .WordWrap = False: .AutoSize = False
+            .BorderStyle = fmBorderStyleSingle
+        End With
+   Set getMeinfo = mLbl
+End Function
+
+' è®¾ç½®å¤šé¡µæ§ä»¶å±æ€§
 Private Sub Set_MPage(ByVal MPgs As MultiPage)
     MPgs.Width = Tab_W + Btn_W + FrmMargin(3) + ADJUST_M_W
     With MPgs
-        .Top = lb_H + FrmMargin(1) + 1
+        .Top = lb_H * 2 + 2 * FrmMargin(1)
         .Left = FrmMargin(0)
-        .TabFixedHeight = Tab_H: .TabFixedWidth = Tab_W  ' ±êÇ©¸ß¶È\¿í¶È
+        .TabFixedHeight = Tab_H: .TabFixedWidth = Tab_W  ' æ ‡ç­¾é«˜åº¦\å®½åº¦
         .Font.Name = "Arial": .Font.Size = Tab_frontsize
         .MultiRow = True
-        .Style = fmTabStyleButtons  ' ÇĞ»»Îª°´Å¥ÑùÊ½
+        .Style = fmTabStyleButtons  ' åˆ‡æ¢ä¸ºæŒ‰é’®æ ·å¼
         .TabOrientation = fmTabOrientationLeft
      End With
-    
     Dim MaxBtnCnt As Long: MaxBtnCnt = 0
     Dim BtnCnt As Long
     Dim Pg As Page
@@ -115,7 +143,7 @@ Private Sub Set_MPage(ByVal MPgs As MultiPage)
     Next
     MPgs.Height = FrmMargin(0) + (BTN_H * MaxBtnCnt * 1) + FrmMargin(2) + ADJUST_M_H
 End Sub
-' ³õÊ¼»¯°´Å¥
+' åˆå§‹åŒ–æŒ‰é’®
 Private Function Init_Button(ByVal Ctls As Controls, _
                              ByVal idx As Long, _
                              ByVal BtnInfo As Variant) As MSForms.CommandButton
@@ -128,11 +156,11 @@ Private Function Init_Button(ByVal Ctls As Controls, _
         .Top = (Ctls.count - 1) * BTN_H - 1: .Height = BTN_H
         .Left = FrmMargin(2): .Width = Btn_W
         .Font.Name = "Arial": .Font.Size = BTN_frontsize
-       ' .BackColor = RGB(220, 220, 220)  ' ÉèÖÃ°´Å¥±³¾°ÑÕÉ«
+       ' .BackColor = RGB(220, 220, 220)  ' è®¾ç½®æŒ‰é’®èƒŒæ™¯é¢œè‰²
     End With
     Set Init_Button = btn
 End Function
-' ³¢ÊÔÉèÖÃ¿Ø¼şÊôĞÔ
+' å°è¯•è®¾ç½®æ§ä»¶å±æ€§
 Private Sub Try_SetProperty(ByVal ctrl As Object, _
                             ByVal PptyName As String, _
                             ByVal value As Variant)
@@ -140,7 +168,7 @@ Private Sub Try_SetProperty(ByVal ctrl As Object, _
         Err.Number = 0
         Dim tmp As Variant: tmp = CallByName(ctrl, PptyName, VbGet)
         If Not Err.Number = 0 Then
-           ' Debug.Print PptyName & ": »ñÈ¡ÊôĞÔÊ§°Ü(" & Err.Number & ")"
+           ' Debug.Print PptyName & ": è·å–å±æ€§å¤±è´¥(" & Err.Number & ")"
             Exit Sub
         End If
         Select Case TypeName(tmp)
@@ -150,17 +178,17 @@ Private Sub Try_SetProperty(ByVal ctrl As Object, _
             Case "Currency": value = CCur(value)
         End Select
         If Not Err.Number = 0 Then
-          '  Debug.Print value & ": ÀàĞÍ×ª»»Ê§°Ü(" & Err.Number & ")"
+          '  Debug.Print value & ": ç±»å‹è½¬æ¢å¤±è´¥(" & Err.Number & ")"
             Exit Sub
         End If
         Call CallByName(ctrl, PptyName, VbLet, value)
         If Not Err.Number = 0 Then
-           ' Debug.Print value & ": ÉèÖÃÊôĞÔÊ§°Ü(" & Err.Number & ")"
+           ' Debug.Print value & ": è®¾ç½®å±æ€§å¤±è´¥(" & Err.Number & ")"
             Exit Sub
         End If
     On Error GoTo 0
 End Sub
-' »ñÈ¡Ò³Ãæ - Èô²»´æÔÚÔò´´½¨
+' è·å–é¡µé¢ - è‹¥ä¸å­˜åœ¨åˆ™åˆ›å»º
 Private Function Get_Page(ByVal Pgs As Pages, ByVal Name As String) As Page
     Dim Pg As Page
     On Error Resume Next
@@ -171,19 +199,19 @@ Private Function Get_Page(ByVal Pgs As Pages, ByVal Name As String) As Page
     End If
     Set Get_Page = Pg
 End Function
-' ²úÆ·±ä»¯ÊÂ¼ş´¦Àí³ÌĞò
+' äº§å“å˜åŒ–äº‹ä»¶å¤„ç†ç¨‹åº
 Private Sub prdObserver_ProductChanged()
- 'Debug.Print "ÊÂ¼ş´¥·¢"
+ 'Debug.Print "äº‹ä»¶è§¦å‘"
     UpdateProductInfo
 End Sub
 
-' ¸üĞÂ²úÆ·ĞÅÏ¢µÄ·½·¨
+' æ›´æ–°äº§å“ä¿¡æ¯çš„æ–¹æ³•
 Private Sub UpdateProductInfo()
     Dim msg, mcolor
     mcolor = vbRed
-    msg = "´ıÑ¡Ôñ"
+    msg = "æ“ä½œäº§å“å¾…é€‰æ‹©"
     If Not prdObserver.CurrentProduct Is Nothing Then
-          msg = prdObserver.CurrentProduct.partNumber & "´ıĞŞ¸Ä"
+          msg = prdObserver.CurrentProduct.partNumber & "å¾…ä¿®æ”¹"
           mcolor = vbGreen
     End If
         lblProductInfo.Caption = msg
@@ -205,40 +233,7 @@ Private Sub MPgs_MouseDown(ByVal index As Long, ByVal Button As Integer, ByVal S
     End If
 End Sub
 
-Private Function getNewLbl(mFrm)
-    Dim mLbl
-    Set mLbl = mFrm.Controls.Add("Forms.Label.1", "lblProductInfo", True)
-        With mLbl
-             .Caption = "²Ù×÷²úÆ·´ıÑ¡Ôñ"
-             .Top = FrmMargin(0): .Height = lb_H
-             .Left = 2: .Width = mFrm.Width - 16
-             .Font.Size = lb_frontsize
-             .BackColor = vbGreen
-             .TextAlign = fmTextAlignCenter
-             .BorderStyle = fmBorderStyleSingle
-             .WordWrap = True         ' ²»»»ĞĞ
-             .AutoSize = False
-         End With
-   Set getNewLbl = mLbl
-End Function
 
-Private Function getMeinfo(mFrm)
-    Dim mLbl
-    Set mLbl = mFrm.Controls.Add("Forms.Label.1", "lblAuthor", True)
-        With mLbl
-            .Caption = itl ' Ê¹ÓÃ³£Á¿ÏÔÊ¾×÷ÕßĞÅÏ¢
-            .Top = MPgs.Top + MPgs.Height + FrmMargin(1) ' ·ÅÖÃÔÚ¶àÒ³¿Ø¼şÏÂ·½
-            .Left = lblProductInfo.Left + 5 ' Óë¶¥²¿ĞÅÏ¢À¸×ó¶ÔÆë
-            .Width = lblProductInfo.Width ' Óë¶¥²¿ĞÅÏ¢À¸Í¬¿í
-            .Height = lb_H
-            .Font.Size = lb_frontsize - 1 ' ×ÖÌå¿ÉÒÔÉÔĞ¡Ò»Ğ©
-            .TextAlign = fmTextAlignCenter
-             .WordWrap = False              ' ²»»»ĞĞ
-             .AutoSize = True
-              .BorderStyle = fmBorderStyleSingle
-        End With
-   Set getMeinfo = mLbl
-End Function
 
 
 

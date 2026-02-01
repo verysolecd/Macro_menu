@@ -2,14 +2,14 @@ Attribute VB_Name = "OTH_Flower"
 'Attribute VB_Name = "OTH_flower"
 '{GP:4446}
 '{Ep:DF}
-'{Caption:天杀的小花}
-'{ControlTipText: 可以画一些花出来}
+'{Caption:澶╂潃鐨勫皬鑺眪
+'{ControlTipText: 鍙互鐢讳竴浜涜姳鍑烘潵}
 '{BackColor:16744703}
 
 Private X0 As Double
 Private Y0 As Double
 Private Z0 As Double
-Private Const mdlname As String = "OTH_Flower"
+Private Const mdlName As String = "OTH_Flower"
 Sub DF()
  If Not CanExecute("PartDocument") Then Exit Sub
     FrmFlower.Show
@@ -18,10 +18,10 @@ Sub iPos(Optional ByVal pp As Double)
 
     Z0 = 0
     Dim idst
-    idstx = Val(FrmFlower.TxtDeltaX.Text) * 2.3
-   idsty = Val(FrmFlower.TxtDeltaX.Text) * 2.6
+    idstx = VAL(FrmFlower.TxtDeltaX.text) * 2.3
+   idsty = VAL(FrmFlower.TxtDeltaX.text) * 2.6
     
-     If pp > 1 Then '循环画图
+     If pp > 1 Then '寰幆鐢诲浘
     
        For i = 1 To pp
           For j = 1 To pp
@@ -40,9 +40,9 @@ Sub iPos(Optional ByVal pp As Double)
     Else
        
         X0 = 100
-        X0 = Val(FrmFlower.TxtX0.Text)
+        X0 = VAL(FrmFlower.TxtX0.text)
         Y0 = 100
-        Y0 = Val(FrmFlower.TxtY0.Text)
+        Y0 = VAL(FrmFlower.TxtY0.text)
         Z0 = 0
         
         Call Flower
@@ -143,13 +143,13 @@ Sub Flower(Optional ByVal pp As Double)
     
     Dim QtyPetal As Integer
     QtyPetal = 7
-    QtyPetal = Val(FrmFlower.TxtQtyPetal.Text)
+    QtyPetal = VAL(FrmFlower.TxtQtyPetal.text)
     Dim AlfaPetal2 As Double
     AlfaPetal2 = 25
-    AlfaPetal2 = Val(FrmFlower.TxtAlfaPetal2.Text)
+    AlfaPetal2 = VAL(FrmFlower.TxtAlfaPetal2.text)
     Dim ScaleFactor As Double
     ScaleFactor = 0.75
-    ScaleFactor = Val(FrmFlower.TxtScaleFactor.Text)
+    ScaleFactor = VAL(FrmFlower.TxtScaleFactor.text)
 
     
     Dim R_Stem As Byte
@@ -193,41 +193,41 @@ Sub Flower(Optional ByVal pp As Double)
     B_Petal2 = FrmFlower.ScrB4.value
     
     R1 = 150    'Arc1 in Sketch.1
-    R1 = Val(FrmFlower.TxtR1.Text)
+    R1 = VAL(FrmFlower.TxtR1.text)
 
     R12 = 150   'Arc2 in Sketch.1
     R12 = R1
     
     H1 = 100
     H2 = 100
-    H = Val(FrmFlower.TxtH.Text)
+    H = VAL(FrmFlower.TxtH.text)
     H1 = H / 2
     H2 = H1
     
     SweepR = 10
-    SweepR = Val(FrmFlower.TxtSweepR.Text) / 2
+    SweepR = VAL(FrmFlower.TxtSweepR.text) / 2
     
     OffsetPlane = 20
-    OffsetPlane = Val(FrmFlower.TxtOffsetPlane.Text)
+    OffsetPlane = VAL(FrmFlower.TxtOffsetPlane.text)
 
     R2 = 20     'Full Circle in Sketch.2
-    R2 = Val(FrmFlower.TxtR2.Text)
+    R2 = VAL(FrmFlower.TxtR2.text)
 
     RHole = 2
-    RHole = Val(FrmFlower.TxtRHole.Text)
+    RHole = VAL(FrmFlower.TxtRHole.text)
 
     DistHole = 12
-    DistHole = Val(FrmFlower.TxtDistHole.Text) / 2
+    DistHole = VAL(FrmFlower.TxtDistHole.text) / 2
 
     QtyHole = 10
-    QtyHole = Val(FrmFlower.TxtQtyHole.Text)
+    QtyHole = VAL(FrmFlower.TxtQtyHole.text)
 
     RFillet = 1
     DeltaX = -143
-    DeltaX = -Val(FrmFlower.TxtDeltaX.Text)
+    DeltaX = -VAL(FrmFlower.TxtDeltaX.text)
 
     DeltaY = 30
-    DeltaY = Val(FrmFlower.TxtDeltaY.Text)
+    DeltaY = VAL(FrmFlower.TxtDeltaY.text)
 
     
     RS1 = 0.6

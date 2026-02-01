@@ -1,5 +1,5 @@
 Attribute VB_Name = "DRW_ShtPage"
-Private Const mdlname As String = "DRW_ShtPage"
+Private Const mdlName As String = "DRW_ShtPage"
 Sub main()
     CATIA.RefreshDisplay = False
     Set shts = CATIA.ActiveDocument.sheets
@@ -32,9 +32,9 @@ Sub main()
             Next
             
             Set Pg1 = oDict("gongxxzhang")
-            Pg1.Text = "¹²" & shts.count - 1 & "Ò³"
+            Pg1.text = "å…±" & shts.count - 1 & "é¡µ"
             Set Pg2 = oDict("dixxzhang")
-            Pg2.Text = "µÚ" & i & "Ò³"
+            Pg2.text = "ç¬¬" & i & "é¡µ"
             oView.SaveEdition
         End If
     Next
@@ -52,8 +52,8 @@ If idx > 0 Then
     End If
 End Function
 Function InitDic()
-    Dim Dic As Object
-    Set Dic = CreateObject("Scripting.Dictionary")
-    Dic.compareMode = compareMode
-    Set InitDic = Dic
+    Dim dic As Object
+    Set dic = CreateObject("Scripting.Dictionary")
+    dic.compareMode = compareMode
+    Set InitDic = dic
 End Function

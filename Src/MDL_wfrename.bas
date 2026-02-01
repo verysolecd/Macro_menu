@@ -1,10 +1,10 @@
 Attribute VB_Name = "MDL_wfrename"
 'Attribute VB_Name = "m24_wfRename"
-' Ïß¿òÔªËØµÄÖØÃüÃû
+' çº¿æ¡†å…ƒç´ çš„é‡å‘½å
 '{GP:4}
 '{EP:wfname}
-'{Caption:Ïß¿òÖØÃüÃû}
-'{ControlTipText: ÌáÊ¾Ñ¡Ôñ¼¸ºÎÍ¼ĞÎ¼¯ºó½«ÏÂÃæÔªËØÖØÃüÃû}
+'{Caption:çº¿æ¡†é‡å‘½å}
+'{ControlTipText: æç¤ºé€‰æ‹©å‡ ä½•å›¾å½¢é›†åå°†ä¸‹é¢å…ƒç´ é‡å‘½å}
 '{BackColor:12648447}
 'type definition
 ' = 0 , Unknown
@@ -14,10 +14,10 @@ Attribute VB_Name = "MDL_wfrename"
 ' = 4 , Circle
 ' = 5 , Surface
 
-Private Const mdlname As String = "MDL_wfrename"
+Private Const mdlName As String = "MDL_wfrename"
 Sub wfname()
 If CATIA.Windows.count < 1 Then
-MsgBox "Ã»ÓĞ´ò¿ªµÄ´°¿Ú"
+MsgBox "æ²¡æœ‰æ‰“å¼€çš„çª—å£"
 Exit Sub
 End If
 Dim odoc
@@ -27,16 +27,16 @@ On Error GoTo 0
 Dim str
 str = TypeName(odoc)
 If Not str = "PartDocument" Then
-MsgBox "Ã»ÓĞ´ò¿ªµÄpart"
+MsgBox "æ²¡æœ‰æ‰“å¼€çš„part"
 Exit Sub
 End If
 Dim HSF:  Set HSF = odoc.part.HybridShapeFactory
 Dim HBS: Set HBS = odoc.part.HybridBodies
 Dim oSel: Set oSel = odoc.Selection
 oSel.Clear
-'=======ÒªÇóÑ¡Ôñ¼¸ºÎÍ¼ĞÎ¼¯ºÍ×ø±ê
+'=======è¦æ±‚é€‰æ‹©å‡ ä½•å›¾å½¢é›†å’Œåæ ‡
 Dim imsg
-imsg = "ÇëÑ¡ÔñÔªËØËùÔÚµÄ¼¸ºÎÍ¼ĞÎ¼¯"
+imsg = "è¯·é€‰æ‹©å…ƒç´ æ‰€åœ¨çš„å‡ ä½•å›¾å½¢é›†"
 Dim oHb
 Dim filter(0)
 filter(0) = "HybridBody"
