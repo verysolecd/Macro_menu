@@ -31,10 +31,10 @@ Sub Capturetopath()
 If Not KCL.CanExecute("ProductDocument") Then Exit Sub
     On Error Resume Next
      CATIA.StartCommand ("* iso")
-      Dim btn, bTitle, bResult
+      Dim BTN, bTitle, bResult
       imsg = "如要截图，请等待ISO视角调整完毕后点击确认"
-        btn = vbYesNo + vbExclamation
-        bResult = MsgBox(imsg, btn, "bTitle")  ' Yes(6),No(7),cancel(2)
+        BTN = vbYesNo + vbExclamation
+        bResult = MsgBox(imsg, BTN, "bTitle")  ' Yes(6),No(7),cancel(2)
         Select Case bResult
             Case 7: Exit Sub '===选择“否”====
             Case 2: Exit Sub '===选择“取消”====

@@ -21,7 +21,7 @@ Private Sub Class_Initialize()
 End Sub
 Public Sub Reset()
     Me.Name = ""
-    Me.iType = ""
+    Me.itype = ""
     Me.str = ""
     Me.Desc = ""
     Set Me.obj = Nothing
@@ -33,10 +33,10 @@ End Property
 Public Property Let Name(ByVal value As String)
     pName = value
 End Property
-Public Property Get iType() As String
-    iType = pType
+Public Property Get itype() As String
+    itype = pType
 End Property
-Public Property Let iType(ByVal value As String)
+Public Property Let itype(ByVal value As String)
     pType = value
 End Property
 Public Property Get Desc() As Variant
@@ -65,5 +65,5 @@ Public Property Set obj(value)
 End Property
 Public Sub SetNT(ByVal newName As String, ByVal newType As String)
     Me.Name = newName
-    Me.iType = newType
+    Me.itype = newType
 End Sub

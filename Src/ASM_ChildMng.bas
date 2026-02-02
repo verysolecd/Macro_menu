@@ -69,10 +69,10 @@ Sub DeleteChildren()
     For Each prd In iSel.Products
       oSel.Add prd
     Next
-      Dim btn, bTitle, bResult
+      Dim BTN, bTitle, bResult
       imsg = "将删除" & iSel.partNumber & iSel.Name & "下的所有子产品，您确认吗"
-      btn = vbYesNo + vbExclamation
-      bResult = MsgBox(imsg, btn, "bTitle")  ' Yes(6),No(7),cancel(2)
+      BTN = vbYesNo + vbExclamation
+      bResult = MsgBox(imsg, BTN, "bTitle")  ' Yes(6),No(7),cancel(2)
            Select Case bResult
               Case 7: Exit Sub '===选择“否”====
               Case 6  '===选择“是”,进行产品选择====

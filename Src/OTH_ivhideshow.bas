@@ -18,7 +18,7 @@ Attribute VB_Name = "OTH_ivhideshow"
 ' %UI Label lbL_4 ------
 ' %UI Button onlysel_hide  隐藏选定产品only
 ' %UI Button allhide 隐藏所有
-' %UI Label lbL_5  '--针对零件--'
+' %UI Label lbL_5  '--以下针对零件--'
 ' %UI Button PrtHide_GS 隐藏根GSS
 ' %UI Button PrtHide_Skt 隐藏所有草图
 
@@ -29,6 +29,7 @@ Private orishowlst, orihidelst
 Private Const mdlName As String = "OTH_ivhideshow"
 
 Sub setHideshow()
+   If Not KCL.CanExecute("ProductDocument,partdocument") Then Exit Sub
     If pdm Is Nothing Then Set pdm = New Cls_PDM
    initori
 '==生成UItoolbar-===================

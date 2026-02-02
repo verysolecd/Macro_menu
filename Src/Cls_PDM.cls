@@ -366,7 +366,7 @@ Private Function checkPara(thispara, colls)
     Else
 '        Debug.Print "不需要创建" & thispara.obj.Name
         Set thispara.obj = getPara(thispara, colls)(0) '已有参数和公式，校验默认值'
-        Select Case thispara.iType  '只有formula和rule才需要校核其内容
+        Select Case thispara.itype  '只有formula和rule才需要校核其内容
             Case "Program", "Formula"
                 If thispara.obj.value <> thispara.str Then
                  thispara.obj.Modify thispara.str
@@ -377,13 +377,13 @@ Private Function checkPara(thispara, colls)
     End If
 End Function
 Private Function paraCreatobj(thispara, colls)
-        Select Case thispara.iType
+        Select Case thispara.itype
             Case "ParameterSet"
                 Set thispara.obj = colls.CreateSet(thispara.Name)
             Case "list"
                 Set thispara.obj = colls.CreateList(thispara.Name)
             Case "Mass", "Density", "Length", "Volume" '所有dimension参数
-                Set thispara.obj = colls.CreateDimension(thispara.Name, thispara.iType, thispara.str)
+                Set thispara.obj = colls.CreateDimension(thispara.Name, thispara.itype, thispara.str)
             Case "String"
                 Set thispara.obj = colls.CreateString(thispara.Name, thispara.str)
             Case "Formula"
@@ -447,9 +447,9 @@ End Function
 Public Function catSelx(prompt As String) As collection
     Set catSelx = New collection
     msel.Clear
-    Dim iType(0)
-    iType(0) = "Product"
-    If msel.SelectElement3(iType, prompt, True, 2, True) = "Normal" Then
+    Dim itype(0)
+    itype(0) = "Product"
+    If msel.SelectElement3(itype, prompt, True, 2, True) = "Normal" Then
         Dim i As Integer
         For i = 1 To msel.count
             catSelx.Add msel.item(i).LeafProduct
@@ -459,11 +459,11 @@ Public Function catSelx(prompt As String) As collection
 End Function
 Public Function getiPrd()    '获取要读取或修改的产品
   Dim oprd: Set oprd = Nothing
-    Dim btn, bTitle, bResult
+    Dim BTN, bTitle, bResult
         bTitle = "请选择产品"
       imsg = "“是”选择产品，“否”读取根产品，“取消退出”"
-      btn = vbYesNoCancel + vbDefaultButton2 'vbExclamation
-      bResult = MsgBox(imsg, btn, "bTitle")  ' Yes(6),No(7),cancel(2)
+      BTN = vbYesNoCancel + vbDefaultButton2 'vbExclamation
+      bResult = MsgBox(imsg, BTN, "bTitle")  ' Yes(6),No(7),cancel(2)
            Select Case bResult
               Case 7 '===选择“否”====
                 Set oprd = CATIA.ActiveDocument.Product

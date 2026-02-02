@@ -25,10 +25,10 @@ Sub sendDir()
     bckpath = opath & bckFolderName
     
     If KCL.isExists(odoc.path) Then
-        Dim btn, bTitle, bResult
+        Dim BTN, bTitle, bResult
             imsg = "将备份到" & bckpath & "您确认吗？"
-            btn = vbYesNo + vbExclamation
-            bResult = MsgBox(imsg, btn, "bTitle")  ' Yes(6),No(7),cancel(2)
+            BTN = vbYesNo + vbExclamation
+            bResult = MsgBox(imsg, BTN, "bTitle")  ' Yes(6),No(7),cancel(2)
             Select Case bResult
                 Case 7: Exit Sub '===选择“否”====
                 Case 2: Exit Sub '===选择“取消”====

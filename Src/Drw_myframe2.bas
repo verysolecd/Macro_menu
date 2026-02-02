@@ -542,7 +542,7 @@ Private Function ParseDec(ByVal code As String) As Object
     End With
     Dim lst, mdic
     Set lst = Initlst
-    If regEx.TEST(code) Then
+    If regEx.test(code) Then
         Set matches = regEx.Execute(code)
         For Each match In matches
                 Set mdic = InitDic

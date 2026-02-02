@@ -34,11 +34,11 @@ Private Sub Class_Initialize()
 End Sub
 
 ' For MLess / Script Mode
-Sub set_ButtonEvent(ByVal btn As MSForms.CommandButton, _
+Sub set_ButtonEvent(ByVal BTN As MSForms.CommandButton, _
                     ByVal BtnInfo As Object, _
                     ByVal ParentForm As Object, _
                     ByVal CloseType As Boolean)
-        Set mBTN = btn
+        Set mBTN = BTN
         Set mInfo = BtnInfo
         Set mParentForm = ParentForm
         mCloseType = CloseType
@@ -51,8 +51,8 @@ End Property
 Public Property Let ControlID(ByVal value As String)
     mControlID = value
 End Property
-Public Property Set ControlBTN(ByVal btn As MSForms.CommandButton)
-    Set mBTNwd = btn
+Public Property Set ControlBTN(ByVal BTN As MSForms.CommandButton)
+    Set mBTNwd = BTN
 End Property
 Public Property Set ResultDict(ByVal dict As Object)
     Set mResultDict = dict

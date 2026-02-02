@@ -80,7 +80,6 @@ Private Sub Class_Initialize()
 End Sub
 
 ' --- Methods ---
-
 Public Sub Run()
     Dim ss As Object
     Set ss = CATIA.SystemService
@@ -114,21 +113,16 @@ Public Function InitFromCode(ByVal DecCode As String, ByVal mdlName As String, B
     mModuleName = mdlName
     mModulePath = currentPjtPath
     mExtras.RemoveAll
-    
     ' Quick check for Group tag to avoid heavy regex
     If InStr(1, DecCode, TAG_GROUP, vbTextCompare) = 0 Then Exit Function
-
     Dim Reg As Object: Set Reg = CreateObject("VBScript.RegExp")
     With Reg
         .Pattern = TAG_S & "(.*?)" & TAG_D & "(.*?)" & TAG_E
         .Global = True
     End With
-    
     Dim matches As Object: Set matches = Reg.Execute(DecCode)
     Set Reg = Nothing
-    
     If matches.count < 1 Then Exit Function
-    
     Dim match As Object, SubMatchs As Object
     Dim KEY As String, VAL As Variant ' Variant to allow Long conversion
     Dim hasGroup As Boolean
@@ -138,10 +132,8 @@ Public Function InitFromCode(ByVal DecCode As String, ByVal mdlName As String, B
         If SubMatchs.count >= 2 Then
             KEY = Trim(Replace(SubMatchs(0), """", ""))
             VAL = Trim(Replace(SubMatchs(1), """", ""))
-            
             ' Try Convert to Long if it looks numeric (Strictly mimic m0_dataMenu line 87)
             If IsNumeric(VAL) Then VAL = CLng(VAL)
-            
             ' 1. Store in Extras (using updated VAL type)
             If mExtras.Exists(KEY) Then mExtras(KEY) = VAL Else mExtras.Add KEY, VAL
             
@@ -168,14 +160,10 @@ Public Function ToDictionary() As Object
         dic.Add k, mExtras(k)
     Next
     
-    ' Overwrite core keys with strict types from properties if needed
-    ' Note: mExtras already has mGroupName with correct type (Long/String) because we put it there in Init
-    
     If dic.Exists(TAG_MDLNAME) Then dic(TAG_MDLNAME) = mModuleName Else dic.Add TAG_MDLNAME, mModuleName
     If dic.Exists(TAG_PJTPATH) Then dic(TAG_PJTPATH) = mModulePath Else dic.Add TAG_PJTPATH, mModulePath
     ' EP might default to CATMain if empty, update it
     If dic.Exists(TAG_ENTRYPNT) Then dic(TAG_ENTRYPNT) = Me.EntryPoint Else dic.Add TAG_ENTRYPNT, Me.EntryPoint
-    
     Set ToDictionary = dic
 End Function
 

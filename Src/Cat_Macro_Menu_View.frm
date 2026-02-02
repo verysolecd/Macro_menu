@@ -1,10 +1,10 @@
 VERSION 5.00
 Begin {C62A69F0-16DC-11CE-9E98-00AA00574A4F} Cat_Macro_Menu_View 
    Caption         =   "UserForm1"
-   ClientHeight    =   2660
+   ClientHeight    =   6855
    ClientLeft      =   120
    ClientTop       =   450
-   ClientWidth     =   3810
+   ClientWidth     =   4485
    OleObjectBlob   =   "Cat_Macro_Menu_View.frx":0000
    StartUpPosition =   1  'CenterOwner
 End
@@ -27,7 +27,7 @@ Private Const Tab_W = 34 ' Tab固定宽度
 Private Const Tab_H = 20 ' TAB高度
 Private Const Tab_frontsize = 10
 ' 按钮尺寸
-Private Const Btn_W = 70 ' 按钮的固定宽度
+Private Const Btn_W = 75 ' 按钮的固定宽度
 Private Const BTN_H = 20 ' 单个按钮的高度
 Private Const BTN_frontsize = 10 ' 按钮字体大小
 '标签尺寸
@@ -58,8 +58,8 @@ Sub Set_FormInfo(ByVal InfoLst As Object, _
     Dim Pgs As Pages: Set Pgs = MPgs.Pages: Pgs.Clear
     Dim KEY As Long, KeyStr As Variant, Pg As Page, pName As String
     Dim BtnInfos As Object, info As Variant
-    Dim btns As Object: Set btns = KCL.Initlst()
-    Dim btn As MSForms.CommandButton
+    Dim Btns As Object: Set Btns = KCL.Initlst()
+    Dim BTN As MSForms.CommandButton
     Dim BtnEvt As Cls_btEVT
     For Each KeyStr In InfoLst
             KEY = CLng(KeyStr)
@@ -68,14 +68,14 @@ Sub Set_FormInfo(ByVal InfoLst As Object, _
             Set Pg = Get_Page(Pgs, pName)
             Set BtnInfos = InfoLst(KeyStr)
         For Each info In BtnInfos
-            Set btn = Init_Button(Pg.Controls, KEY, info)
+            Set BTN = Init_Button(Pg.Controls, KEY, info)
             Set BtnEvt = New Cls_btEVT
-            Call BtnEvt.set_ButtonEvent(btn, info, Me, CloseType)
-            btns.Add BtnEvt
+            Call BtnEvt.set_ButtonEvent(BTN, info, Me, CloseType)
+            Btns.Add BtnEvt
         Next
 Continue:
     Next
-    Set mBtns = btns
+    Set mBtns = Btns
     Call Set_MPage(MPgs)
     Call Set_FormHeight(MPgs, formTitle)
     Set lblProductInfo = getNewLbl(Me)
@@ -88,7 +88,7 @@ Private Sub Set_FormHeight(ByVal MPgs As MultiPage, ByVal cap As String)
         Dim requiredInsideHeight
         requiredInsideHeight = MPgs.Top + MPgs.Height + lb_H + FrmMargin(2) + ADJUST_F_H
         .Height = requiredInsideHeight + (Me.Height - Me.InsideHeight)
-        .Width = MPgs.Width + ADJUST_F_W + FrmMargin(2)
+        .Width = MPgs.Width + ADJUST_F_W + 2 * FrmMargin(2)
         .Caption = cap
     End With
 End Sub
@@ -147,18 +147,18 @@ End Sub
 Private Function Init_Button(ByVal Ctls As Controls, _
                              ByVal idx As Long, _
                              ByVal BtnInfo As Variant) As MSForms.CommandButton
-    Dim btn As MSForms.CommandButton:  Set btn = Ctls.Add("Forms.CommandButton.1", idx, True)
+    Dim BTN As MSForms.CommandButton:  Set BTN = Ctls.Add("Forms.CommandButton.1", idx, True)
     Dim Pty As Variant
     For Each Pty In BtnInfo.keys
-        Call Try_SetProperty(btn, Pty, BtnInfo.item(Pty))
+        Call Try_SetProperty(BTN, Pty, BtnInfo.item(Pty))
     Next
-    With btn
+    With BTN
         .Top = (Ctls.count - 1) * BTN_H - 1: .Height = BTN_H
         .Left = FrmMargin(2): .Width = Btn_W
         .Font.Name = "Arial": .Font.Size = BTN_frontsize
-       ' .BackColor = RGB(220, 220, 220)  ' 设置按钮背景颜色
+'        .BackColor = RGB(89, 220, 220)  ' 设置按钮背景颜色
     End With
-    Set Init_Button = btn
+    Set Init_Button = BTN
 End Function
 ' 尝试设置控件属性
 Private Sub Try_SetProperty(ByVal ctrl As Object, _

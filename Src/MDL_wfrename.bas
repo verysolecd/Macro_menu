@@ -31,6 +31,7 @@ MsgBox "没有打开的part"
 Exit Sub
 End If
 Dim HSF:  Set HSF = odoc.part.HybridShapeFactory
+
 Dim HBS: Set HBS = odoc.part.HybridBodies
 Dim oSel: Set oSel = odoc.Selection
 oSel.Clear

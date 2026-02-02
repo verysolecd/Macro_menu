@@ -10,10 +10,10 @@ Attribute VB_Name = "ASM_1ex2stp"
 '%Title 现在要导出stp,那我问你?
 '------控件清单--------------------------------------------------
 '控件格式为 %UI <ControlType> <ControlName> <Caption/Text>
-' %UI Label lbL_jpzcs  键盘造车手出品
-' %UI CheckBox chk_path  是否导出到当前路径
-' %UI CheckBox  chk_tm  是否更新时间戳到CATIA零件号？
-' %UI CheckBox chk_log  是否更新本次导出日志？
+' %UI Label lbL_jpzcs  键盘造车手出品 #00BFFF
+' %UI CheckBox chk_path  是否导出到当前路径 #00BFFF
+' %UI CheckBox  chk_tm  是否更新时间戳到CATIA零件号？ #00BFFF
+' %UI CheckBox chk_log  是否更新本次导出日志？ #00BFFF
 ' %UI TextBox   txt_log  请输入更新内容信息,不必输入日期
 ' %UI Button btnOK  确定
 ' %UI Button btncancel  取消

@@ -60,13 +60,13 @@ Set oSel = CATIA.ActiveDocument.Selection
  ily = ""
  ly = odoc.CurrentLayer
 If ly <> "None" Then
-     Dim btn, bTitle, bResult
+     Dim BTN, bTitle, bResult
       imsg = "只显示当前图层还是您输入一个图层？" & vbCrLf & vbCrLf
       imsg = imsg & "选择 “是”: 只显示当前图层 " & vbCrLf
       imsg = imsg & "选择 “否”: 输入一个显示图层" & vbCrLf
       imsg = imsg & "选择 “取消”: 退出" & vbCrLf & vbCrLf
-       btn = vbYesNo + vbExclamation
-       bResult = MsgBox(imsg, btn, "bTitle")  ' Yes(6),No(7),cancel(2)
+       BTN = vbYesNo + vbExclamation
+       bResult = MsgBox(imsg, BTN, "bTitle")  ' Yes(6),No(7),cancel(2)
        Select Case bResult
            Case 2: Exit Sub '===选择“取消”====
            Case 7:  '===选择“否”====

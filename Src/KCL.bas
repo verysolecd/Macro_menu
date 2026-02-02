@@ -109,6 +109,23 @@ Function SelectElement(ByVal msg$, _
     Set SelectElement = sel.item(1)
     sel.Clear
 End Function
+
+Function Selectmulti(ByVal msg$, _
+                           Optional ByVal filter As Variant = Empty) ' _
+                           As SelectedElement
+    If IsEmpty(filter) Then filter = Array("AnyObject")
+    If VarType(filter) = vbString Then filter = strToAry(filter)
+    If Not checkFilterType(filter) Then Exit Function
+    Dim sel: Set sel = CATIA.ActiveDocument.Selection: sel.Clear
+    Select Case sel.SelectElement3(filter, msg, True, 2, True)
+        Case "Cancel", "Undo", "Redo"
+             Set Selectmulti = Nothing
+            Exit Function
+    End Select
+    Set Selectmulti = sel
+End Function
+
+
 ' 获取内部名称
 ''' @param:AOj-AnyObject
 ''' @return:String
@@ -638,7 +655,7 @@ Function isPathchn(pathToCheck) As Boolean
     regEx.Pattern = "[\u4e00-\u9fa5]"   ' 设置正则表达式模式，匹配中文字符
     regEx.IgnoreCase = True
     regEx.Global = True
-    isPathchn = regEx.TEST(pathToCheck)   ' 执行匹配并返回结果
+    isPathchn = regEx.test(pathToCheck)   ' 执行匹配并返回结果
     Set regEx = Nothing
 End Function
 
@@ -906,14 +923,7 @@ Public Function setASM(ByVal higheff As Boolean)
     End If
 End Function
 
-Function newFrm(Optional ByVal modName As String = "", Optional ByVal isVertical = False)
-    Dim oFrm: Set oFrm = New cls_dynaFrm
-    If modName <> "" Then
-        oFrm.Init modName
-   End If
-   If isVertical Then oFrm.isVertical = True
-   Set newFrm = oFrm
-End Function
+
 
 Function getmdl(Optional ByVal modName As String = "")
   Set getmdl = Nothing
@@ -1022,30 +1032,70 @@ Function setBTNFunc(ByVal modName As String)
     Next
    Set setBTNFunc = map
 End Function
+Function newFrm(Optional ByVal modName As String = "", Optional ByVal isVertical = False)
+    Dim oFrm: Set oFrm = New cls_dynaFrm
+    If modName <> "" Then
+        oFrm.Init modName
+   End If
+   If isVertical Then oFrm.isVertical = True
+   Set newFrm = oFrm
+End Function
+Public Function ParseHex(ByVal hexStr)
+Dim r, g, b
+    hexStr = Replace(hexStr, "#", "")
+    If Len(hexStr) <> 6 Then
+        ParseHex = ""
+        Exit Function
+    End If
+    On Error Resume Next ' 防止非法字符报错
+    r = VAL("&H" & Mid(hexStr, 1, 2))
+    g = VAL("&H" & Mid(hexStr, 3, 2))
+    b = VAL("&H" & Mid(hexStr, 5, 2))
+   
+    On Error GoTo 0
+   ParseHex = RGB(r, g, b)
+End Function
 
+Public Function ParseBDcolor(ByVal hexStr)
+Dim r, g, b
+    hexStr = Replace(hexStr, "#", "")
+    If Len(hexStr) <> 6 Then
+        ParseBDcolor = ""
+        Exit Function
+    End If
+    On Error Resume Next ' 防止非法字符报错
+    r = VAL("&H" & Mid(hexStr, 1, 2))
+    g = VAL("&H" & Mid(hexStr, 3, 2))
+    b = VAL("&H" & Mid(hexStr, 5, 2))
+    On Error GoTo 0
+   ParseBDcolor = Array(r, g, b)
+End Function
 
 ' --- UI Parsing Helpers ---
 Function ParseUIConfig(ByVal code As String) As Object
     Dim regEx As Object, matches As Object, match As Object
-    Dim item As Object, lst As Object
-    Set lst = KCL.Initlst
+    Dim CtrCfg As Object, cfglst As Object
+    Set cfglst = KCL.Initlst
     Set regEx = KCL.getRegexp
     With regEx
         .Global = True
         .MultiLine = True
-        .Pattern = "^\s*'\s*%UI\s+(\w+)\s+(\w+)\s+(.*)$"
+        .Pattern = "^\s*'\s*%UI\s+(\w+)\s+(\w+)\s+(.+?)(?:\s+(#[0-9a-fA-F]{6}))?\s*$"
+        '      "^\s*'\s*%UI\s+(\w+)\s+(\w+)\s+(.*)$"
     End With
-    If regEx.TEST(code) Then
+    If regEx.test(code) Then
         Set matches = regEx.Execute(code)
         For Each match In matches
-            Set item = KCL.InitDic
-            item.Add "Type", GetControlType(match.SubMatches(0))
-            item.Add "Name", match.SubMatches(1)
-            item.Add "Caption", VBA.Trim(match.SubMatches(2))
-            lst.Add item
+            Set CtrCfg = KCL.InitDic
+            CtrCfg.Add "Type", GetControlType(match.SubMatches(0))
+            CtrCfg.Add "Name", match.SubMatches(1)
+            CtrCfg.Add "Caption", VBA.Trim(match.SubMatches(2))
+            CtrCfg.Add "Color", VBA.Trim(match.SubMatches(3))
+            Debug.Print CtrCfg("Color")
+            cfglst.Add CtrCfg
         Next
     End If
-    Set ParseUIConfig = lst
+    Set ParseUIConfig = cfglst
 End Function
 
 Function ParseUITitle(ByVal code As String) As String
@@ -1057,7 +1107,7 @@ Function ParseUITitle(ByVal code As String) As String
         .Pattern = "^\s*'\s*%Title\s+(.*)$"
     End With
     itl = "请问如何执行"
-    If regEx.TEST(code) Then
+    If regEx.test(code) Then
         Set matches = regEx.Execute(code)
         For Each match In matches
             itl = match.SubMatches(0)

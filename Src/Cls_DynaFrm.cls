@@ -11,7 +11,7 @@ Attribute VB_Exposed = False
 ' --- State ---
 Private mForm, mdict, WD As Object
 Private mExecuted As Boolean
-Private mConfigStr As String
+Private mCfgStr As String
 Private mEventCol As collection
 Private mIsVertical As Variant ' Empty=Auto, True=Vert, False=Horiz
 Private mPassBtn As Boolean
@@ -41,13 +41,13 @@ Private Sub Class_Terminate()
     mExecuted = False
     Set g_Frm = Nothing
     pjt = ""
-    mConfigStr = ""
+    mCfgStr = ""
     Error.Clear
 End Sub
 
 ' --- Public API ---
 Public Sub Init(ByVal mdlName As String)
-    mConfigStr = getbf1stproc(mdlName)
+    mCfgStr = getbf1stproc(mdlName)
 End Sub
 Public Property Get Res() As Object
 EnsureExecuted: Set Res = mdict
@@ -73,9 +73,9 @@ Public Sub Show(Optional ByVal iShowMode As FormShowConstants = vbModal, _
                 Optional ByVal MacroMap As Object = Nothing)
     If mExecuted And iShowMode = vbModal Then Exit Sub
     If iShowMode = vbModal Then mExecuted = True
-    If mConfigStr = "" Then Exit Sub
-    Dim ctrlCfg As Object: Set ctrlCfg = KCL.ParseUIConfig(mConfigStr)
-    Dim ttl As String: ttl = KCL.ParseUITitle(mConfigStr)
+    If mCfgStr = "" Then Exit Sub
+    Dim ctrlCfg As Object: Set ctrlCfg = KCL.ParseUIConfig(mCfgStr)
+    Dim ttl As String: ttl = KCL.ParseUITitle(mCfgStr)
     If Not WD Is Nothing Then Unload WD
     Set WD = New CAT_springWD: WD.Tag = ""
     Dim btnvert As Boolean
@@ -100,7 +100,7 @@ End Sub
 Public Sub ShowToolbar(ByVal modName As String, _
                        ByVal modMap As Object, _
                        ByVal macMap As Object)
-    mConfigStr = KCL.getbf1stproc(modName)
+    mCfgStr = KCL.getbf1stproc(modName)
     Me.isVertical = True
     Show vbModeless, modMap, macMap
 End Sub
@@ -110,6 +110,7 @@ Private Sub BindEvents(frm As Object, modMap As Object, macMap As Object)
     Dim handler As Cls_btEVT, mBTNinfo As Object
     Dim isScript As Boolean
     isScript = (Not modMap Is Nothing) And (Not macMap Is Nothing)
+    
     Set mEventCol = New collection
     For Each ctl In frm.Controls
         If TypeName(ctl) = "CommandButton" Then
@@ -138,7 +139,7 @@ End Sub
 
 
 Private Sub EnsureExecuted()
-    If Not mExecuted And mConfigStr <> "" Then Show vbModal
+    If Not mExecuted And mCfgStr <> "" Then Show vbModal
 End Sub
 
 
