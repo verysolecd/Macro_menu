@@ -165,26 +165,73 @@ Private Function asDisp(o As INFITF.CATBaseDispatch) As INFITF.CATBaseDispatch
     Set asDisp = o
 End Function
 
+'Public Function get_inwork_part()  'in Assembly
+'Set get_inwork_part = Nothing
+'   Dim odoc: Set odoc = CATIA.ActiveDocument
+'   Dim msel: Set msel = odoc.Selection: msel.Clear
+'     Dim itemp
+'    Select Case LCase(TypeName(odoc))
+'        Case LCase("PartDocument"): Set itemp = odoc.part
+'        Case LCase("productDocument")
+'            msel.Search "CATprtSearch.PartFeature,in"
+'            On Error Resume Next
+'            Set itemp = Nothing
+'                Set itemp = msel.item(1).LeafProduct.ReferenceProduct.Parent.part
+'             Err.Clear
+'             On Error GoTo 0
+'        Case Else: Set itemp = Nothing
+'    End Select
+'        Set get_inwork_part = itemp
+'
+'End Function
 Public Function get_inwork_part()  'in Assembly
-Set get_inwork_part = Nothing
-   Dim odoc: Set odoc = CATIA.ActiveDocument
-   Dim msel: Set msel = odoc.Selection: msel.Clear
-     Dim itemp
-    Select Case LCase(TypeName(odoc))
-        Case LCase("PartDocument"): Set itemp = odoc.part
-        Case LCase("productDocument")
-            msel.Search "CATprtSearch.PartFeature,in"
-            On Error Resume Next
-            Set itemp = Nothing
-                Set itemp = msel.item(1).LeafProduct.ReferenceProduct.Parent.part
-             Err.Clear
-             On Error GoTo 0
-        Case Else: Set itemp = Nothing
-    End Select
-        Set get_inwork_part = itemp
+    Set get_inwork_part = Nothing
+    Dim odoc: Set odoc = CATIA.ActiveDocument
+    Dim sDocType As String: sDocType = LCase(TypeName(odoc))
+    If sDocType = "partdocument" Then
+        Set get_inwork_part = odoc.part
+        Exit Function
+    ElseIf sDocType <> "productdocument" Then
+        Exit Function
+    End If
 
+    Dim msel: Set msel = odoc.Selection
+    ' 1. Cache Existing Selection
+    Dim bRestore As Boolean: bRestore = False
+    Dim cachedSel() As Variant
+    Dim i As Integer
+    If msel.count > 0 Then
+        bRestore = True
+        ReDim cachedSel(msel.count - 1)
+        For i = 1 To msel.count
+           Set cachedSel(i - 1) = msel.item(i).value
+        Next
+    End If
+    
+    ' 2. Perform Search for Active Context
+    msel.Clear
+    msel.Search "CATprtSearch.PartFeature,in"
+    
+    Dim itemp
+    Set itemp = Nothing
+    On Error Resume Next
+        If msel.count > 0 Then Set itemp = msel.item(1).LeafProduct.ReferenceProduct.Parent.part
+    Err.Clear
+    On Error GoTo 0
+    
+    ' 3. Restore Selection
+    msel.Clear
+    If bRestore Then
+        On Error Resume Next
+        For i = 0 To UBound(cachedSel)
+            If Not cachedSel(i) Is Nothing Then
+                msel.Add cachedSel(i)
+            End If
+        Next
+        On Error GoTo 0
+    End If
+    Set get_inwork_part = itemp
 End Function
-
 
 
 Public Sub toMP()
@@ -281,18 +328,18 @@ End Function
 Public Function getSearch(ByRef iDoc, ByRef ifilter As Variant)
     Set getSearch = Nothing
       On Error Resume Next
-             Dim oSel As Selection, i
-             Set oSel = iDoc.Selection
-              oSel.Clear
+             Dim osel As Selection, i
+             Set osel = iDoc.Selection
+              osel.Clear
     Select Case TypeName(ifilter)
         Case "string"
-        With oSel
+        With osel
             .Clear
             .Search (ifilter)
             .VisProperties.SetShow 1
         End With
     End Select
-        Set getSearch = oSel
+        Set getSearch = osel
 End Function
 
 '*****数组相关函数*****

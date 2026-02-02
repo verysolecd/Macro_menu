@@ -28,8 +28,8 @@ Option Explicit
 Public Event ProductChanged()  ' 事件声明
 Private mProduct As Object  ' 私有变量存储当前产品
 
-Public bigbom As Variant
-Public msel
+Private bigbom As Variant
+Private msel
 Private imsg
 Private Att(1 To 10)
 Private Const xx = "测试成功"

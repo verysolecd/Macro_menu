@@ -33,8 +33,8 @@ End If
 Dim HSF:  Set HSF = odoc.part.HybridShapeFactory
 
 Dim HBS: Set HBS = odoc.part.HybridBodies
-Dim oSel: Set oSel = odoc.Selection
-oSel.Clear
+Dim osel: Set osel = odoc.Selection
+osel.Clear
 '=======要求选择几何图形集和坐标
 Dim imsg
 imsg = "请选择元素所在的几何图形集"

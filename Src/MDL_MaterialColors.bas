@@ -20,8 +20,6 @@ Attribute VB_Name = "MDL_MaterialColors"
 ' %UI Button btn_glue 胶水 #C8A2C8
 ' %UI Button btn_cancel Close
 
-'#FF1493
-
 '≤210MPa       浅蓝色    MS=Array(173,216,230)  #ADD8E6
 '210-340MPa    深天蓝     HSS=Array(0,191,255)      #00BFFF
 '340-590MPa    黄色      AHSS=Array(255,255,0)    #FFFF00
@@ -36,12 +34,9 @@ Attribute VB_Name = "MDL_MaterialColors"
 ' 紧固件       棕色      Fas=Array(165, 42, 42)     #A52A2A
 'Glue          淡紫色    Glue=Arrary(200,160,200)  #C8A2C8
 
-
-
-
 '------------------------------------------
 
-Option Explicit
+
 Private mprt
 Private mHSF
 Private Const mdlName As String = "MDL_MaterialColors"
@@ -81,35 +76,38 @@ Sub Action_ClickHandler(ByVal btnName As String)
 End Sub
 
 Private Sub ApplyColor(ary As Variant)
-   
-    
-    Dim oSel As Selection
-    Set oSel = CATIA.ActiveDocument.Selection
-    
+    Set mprt = KCL.get_inwork_part
+    Set mHSF = mprt.HybridShapeFactory
+    Set osel = CATIA.ActiveDocument.Selection
     Dim r, g, b, i
     r = ary(0): g = ary(1): b = ary(2)
-    
-    If oSel.Count2 = 0 Then
-        Set oSel = KCL.Selectmulti("请选择BODY")
+    If osel.count = 0 Then
+        Set osel = KCL.Selectmulti("请选择BODY")
     End If
-
   Dim lst: Set lst = KCL.Initlst
-  Dim itm
-   For i = 1 To oSel.Count2
-         Set itm = oSel.item(i).value
-'        Dim itype: Set itype = mHSF.GetGeometricalFeatureType(itm)
-        If LCase(TypeName(itm)) = "body" Or LCase(TypeName(itm)) = "volume" Then lst.Add itm
+  Dim itm, itp
+   For i = 1 To osel.count
+         Set itm = osel.item(i).value
+         Set itp = Nothing
+         Set itp = KCL.GetParent_Of_T(itm, "Body")
+         If Not itp Is Nothing Then
+            lst.Add itp
+         Else
+            On Error Resume Next
+                Dim itype:  itype = mHSF.GetGeometricalFeatureType(itm)
+                Error.Clear
+            On Error GoTo 0
+         End If
+        If itype = 7 Then lst.Add itm
     Next i
-oSel.Clear
+osel.Clear
 Set itm = Nothing
 
 For Each itm In lst
-    oSel.Add itm
+    osel.Add itm
 Next
-    oSel.VisProperties.SetRealColor r, g, b, 1 '(R, G, B, Inheritance=1)
-    
-    
-    oSel.Clear
+    osel.VisProperties.SetRealColor r, g, b, 0 '(R, G, B, Inheritance=1)
+    osel.Clear
     On Error GoTo 0
 End Sub
 Function setMasterFunc(ByVal modName As String)
