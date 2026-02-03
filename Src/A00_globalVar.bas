@@ -1,4 +1,4 @@
-Attribute VB_Name = "global_var"
+Attribute VB_Name = "A00_globalVar"
 Public rootDoc
 Public rootPrd  As Object
 Public startrow, lastrow

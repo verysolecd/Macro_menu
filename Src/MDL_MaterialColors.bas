@@ -35,7 +35,7 @@ Attribute VB_Name = "MDL_MaterialColors"
 'Glue          淡紫色    Glue=Arrary(200,160,200)  #C8A2C8
 
 '------------------------------------------
-
+Option Explicit
 
 Private mprt
 Private mHSF
@@ -44,6 +44,19 @@ Private Const mdlName As String = "MDL_MaterialColors"
 ' Main Entry Point
 Sub MaterialPainter()
 
+  Set mprt = KCL.get_inwork_part
+  If mprt Is Nothing Then
+        Dim doc
+        For Each doc In CATIA.Documents
+            If TypeName(doc) = "PartDocument" Then
+                Set mprt = doc.part
+                Exit For
+            End If
+        Next
+    End If
+    
+    If mprt Is Nothing Then Exit Sub
+    Set mHSF = mprt.HybridShapeFactory
     Dim mapFunc: Set mapFunc = setMasterFunc(mdlName)
     Dim mapMdl: Set mapMdl = KCL.setBTNmdl(mdlName)
 
@@ -62,22 +75,14 @@ Sub Action_ClickHandler(ByVal btnName As String)
         Unload g_Frm
         Exit Sub
     End If
-    Set mprt = KCL.get_inwork_part
-    Set mHSF = mprt.HybridShapeFactory
-
+    Dim map: Set map = btn2case(mdlName)
     Dim mColor As Variant
-    Dim map
-    
-    Set map = btn2case(mdlName)
-    
     If map(btnName) <> "" Then mColor = KCL.ParseBDcolor(map(btnName))
     If IsArray(mColor) Then ApplyColor mColor
-    
 End Sub
 
 Private Sub ApplyColor(ary As Variant)
-    Set mprt = KCL.get_inwork_part
-    Set mHSF = mprt.HybridShapeFactory
+    Dim osel
     Set osel = CATIA.ActiveDocument.Selection
     Dim r, g, b, i
     r = ary(0): g = ary(1): b = ary(2)
@@ -94,6 +99,7 @@ Private Sub ApplyColor(ary As Variant)
             lst.Add itp
          Else
             On Error Resume Next
+              
                 Dim itype:  itype = mHSF.GetGeometricalFeatureType(itm)
                 Error.Clear
             On Error GoTo 0
@@ -135,8 +141,7 @@ Dim r, g, b
  Dim ary
  ary = Array(r, g, b)
  Debug.Print r & "," & g & "," & b
- 
-End Sub
+ End Sub
 Function btn2case(ByVal modName As String)
     Set btn2case = Nothing
     Dim ctrllst:    Set ctrllst = KCL.ParseUIConfig(KCL.getbf1stproc(modName))

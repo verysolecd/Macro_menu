@@ -3,7 +3,7 @@ Begin {C62A69F0-16DC-11CE-9E98-00AA00574A4F} CAT_springWD
    Caption         =   "UserForm1"
    ClientHeight    =   915
    ClientLeft      =   120
-   ClientTop       =   470
+   ClientTop       =   465
    ClientWidth     =   1800
    OleObjectBlob   =   "CAT_springWD.frx":0000
    StartUpPosition =   1  'CenterOwner
@@ -13,29 +13,29 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
+     Option Explicit
     Private Const Frm_LH_gap As Integer = 4 ' 所有控件左对齐的左边距
-    Private Const ItmGap As Integer = 0.8
+    Private Const ItmGap As Integer = 2
     ' 控件默认尺寸
-    Private Const cls_H As Integer = 16 ' 高度
-    Private Const cls_W As Integer = 220 ' 宽度
+    Private Const cls_H As Integer = 14 ' 高度
+    Private Const cls_W As Integer = 160 ' 宽度
+    
     Private Const Btn_W As Integer = 60 ' 按钮宽度
+    Private Const Btn_H As Integer = 1.4 * cls_H ' 高度
+    
     Private Const Text_W As Integer = 220
-    Private Const cls_frontsize = 11
+    Private Const cls_frontsize = 10
     Private lst, cfg, ctr
     Private reqHeight, reqWidth, curRH, curBtm, curTop
     Private BtnTop, BtnLeft
-    
     ' 样式常量（保持美观）
     Private Const FONT_NAME As String = "Thoma"
     Private Const Frm_color As Long = &H8000000F ' 浅灰背景
     Private Const BTN_color As Long = &H8000000F ' 按钮灰蓝
-
-    Option Explicit
     Private Const mdlName As String = "CAT_springWD"
 
 ' --- 主构建函数 ---
 Sub setFrm(ttl, cfgs, Optional ByVal isVert As Boolean = False)
-
     Dim Btnlst As Object: Set Btnlst = KCL.Initlst
     Dim txt_label_lst As Object: Set txt_label_lst = KCL.Initlst
     Dim cfg, ctr As Control
@@ -51,14 +51,15 @@ Sub setFrm(ttl, cfgs, Optional ByVal isVert As Boolean = False)
             .Height = cls_H: .Width = cls_W:
             On Error Resume Next
                 If cfg("Color") <> "" Then .BackColor = KCL.ParseHex(cfg("Color"))
-            Error.Clear
+                Error.Clear
             On Error GoTo 0
             ' --- 布局逻辑开始 ---
             If isVert Then  ' === 竖排模式 ===
                 .Left = Frm_LH_gap: .Width = Btn_W: .Top = curTop
+                .Height = Btn_H:
                 Select Case cfg("Type")
                     Case "Forms.TextBox.1"
-                        .Height = 2 * cls_H: .AutoSize = False: .text = cfg("Caption")
+                         .AutoSize = False: .text = cfg("Caption")
                         txt_label_lst.Add ctr
                     Case "Forms.Label.1"
                         txt_label_lst.Add ctr
@@ -66,7 +67,7 @@ Sub setFrm(ttl, cfgs, Optional ByVal isVert As Boolean = False)
                     Case Else
                         .AutoSize = True
                 End Select
-                curTop = curTop + .Height
+                curTop = curTop + .Height + ItmGap
             Else  ' === 横排模式 ===
                 If cfg("Type") = "Forms.CommandButton.1" Then
                     Btnlst.Add ctr    ' 按钮行暂存
@@ -74,12 +75,14 @@ Sub setFrm(ttl, cfgs, Optional ByVal isVert As Boolean = False)
                     .Left = Frm_LH_gap:  .Top = curTop  ' 非按钮直接放置
                     Select Case cfg("Type")
                         Case "Forms.TextBox.1"
-                            .Height = 2 * cls_H: .text = cfg("Caption")
+                            .Height = 2 * cls_H
+                            .Width = 1.2 * cls_W
+                            .text = cfg("Caption")
                             txt_label_lst.Add ctr
                         Case "Forms.Label.1", "Forms.Labels.1"
                             .AutoSize = True: txt_label_lst.Add ctr
-                        Case Else
-                            .AutoSize = True
+'                        Case Else
+'                            .AutoSize = True
                     End Select
                     curTop = curTop + .Height + ItmGap
                 End If
@@ -90,14 +93,14 @@ Sub setFrm(ttl, cfgs, Optional ByVal isVert As Boolean = False)
     
     ' 3. 后处理：横排按钮行
     If Not isVert And Btnlst.count > 0 Then
-        curTop = curTop + 3 * ItmGap
+        curTop = curTop + ItmGap
         Dim BTN
         For Each BTN In Btnlst
-            BTN.Top = curTop: BTN.Height = cls_H
+            BTN.Top = curTop: BTN.Height = Btn_H
             BTN.Left = BtnLeft: BTN.Width = Btn_W
             BtnLeft = BtnLeft + BTN.Width + 1.5 * ItmGap
         Next
-        curTop = curTop + cls_H
+        curTop = curTop + cls_H + ItmGap
     End If
     
     ' 4. 窗体最终定型 (Call Helper)
@@ -123,7 +126,7 @@ Private Sub FinalizeForm(ttl, txt_label_lst)
         .Font.Name = FONT_NAME: .Font.Size = cls_frontsize
         .StartUpPosition = 2
         .Width = maxW + (.Width - .InsideWidth) + Frm_LH_gap
-        .Height = maxH + (.Height - .InsideHeight) + 6 * ItmGap
+        .Height = maxH + (.Height - .InsideHeight) + 1.5 * Frm_LH_gap
     End With
     Dim t
     For Each t In txt_label_lst ' 自适应拉伸文本框

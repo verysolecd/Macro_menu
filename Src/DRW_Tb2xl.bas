@@ -9,26 +9,18 @@ Attribute VB_Name = "DRW_Tb2xl"
 
 Private Const mdlName As String = "DRW_Tb2xl"
 Sub Tb2xl()
-
   If Not CanExecute("DrawingDocument") Then
           Exit Sub
      End If
-
     Dim odoc As DrawingDocument
     Set odoc = CATIA.ActiveDocument
-    
-
     Dim osht As DrawingSheet
     Set osht = odoc.sheets.ActiveSheet
-    
     ' set drawing drwView
     Dim oView As DrawingView
     Set oView = osht.Views.ActiveView
-    
-
     Dim imsg
     imsg = "请选择table"
-    
     Dim drwTable
     Set drwTable = KCL.SelectItem(imsg, DrawingTable)
   
@@ -39,7 +31,6 @@ Sub Tb2xl()
         Dim colsNo As Long
         colsNo = drwTable.NumberOfColumns
         
-        
         Dim i As Long, j As Long
         ReDim arr(rowsNo - 1, colsNo - 1) As Variant
       
@@ -49,15 +40,11 @@ Sub Tb2xl()
                 arr(i - 1, j - 1) = drwTable.GetCellString(i, j)
             Next
         Next
-        
         ArrayToxl arr
     Else
-    
     MsgBox "无可操作表格，请检查"
     Exit Sub
     End If
-
-
 End Sub
 Sub ArrayToxl(arr2D() As Variant)
     Dim xlAPP As Object

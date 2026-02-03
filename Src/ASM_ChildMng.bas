@@ -16,7 +16,9 @@ Attribute VB_Name = "ASM_ChildMng"
 Private Const mdlName As String = "ASM_ChildMng"
 Sub ChildMng()
    If Not KCL.CanExecute("ProductDocument") Then Exit Sub
-    Dim oFrm: Set oFrm = KCL.newFrm(mdlName): oFrm.Show
+    Dim oFrm: Set oFrm = KCL.newFrm(mdlName):
+     oFrm.isVertical = True
+     oFrm.Show
               Select Case oFrm.BtnClicked
                 Case "btn_copy":    Call cpChildren
                 Case "btn_delete":  Call DeleteChildren

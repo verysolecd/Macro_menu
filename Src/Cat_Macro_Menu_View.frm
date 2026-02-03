@@ -4,7 +4,7 @@ Begin {C62A69F0-16DC-11CE-9E98-00AA00574A4F} Cat_Macro_Menu_View
    ClientHeight    =   6855
    ClientLeft      =   120
    ClientTop       =   450
-   ClientWidth     =   4490
+   ClientWidth     =   4485
    OleObjectBlob   =   "Cat_Macro_Menu_View.frx":0000
    StartUpPosition =   1  'CenterOwner
 End
@@ -28,7 +28,7 @@ Private Const Tab_H = 20 ' TAB高度
 Private Const Tab_frontsize = 10
 ' 按钮尺寸
 Private Const Btn_W = 75 ' 按钮的固定宽度
-Private Const BTN_H = 20 ' 单个按钮的高度
+Private Const Btn_H = 20 ' 单个按钮的高度
 Private Const BTN_frontsize = 10 ' 按钮字体大小
 '标签尺寸
 Private Const lb_W = 62 ' 宽度
@@ -141,7 +141,7 @@ Private Sub Set_MPage(ByVal MPgs As MultiPage)
         BtnCnt = Pg.Controls.count
         MaxBtnCnt = IIf(BtnCnt > MaxBtnCnt, BtnCnt, MaxBtnCnt)
     Next
-    MPgs.Height = FrmMargin(0) + (BTN_H * MaxBtnCnt * 1) + FrmMargin(2) + ADJUST_M_H
+    MPgs.Height = FrmMargin(0) + (Btn_H * MaxBtnCnt * 1) + FrmMargin(2) + ADJUST_M_H
 End Sub
 ' 初始化按钮
 Private Function Init_Button(ByVal Ctls As Controls, _
@@ -153,7 +153,7 @@ Private Function Init_Button(ByVal Ctls As Controls, _
         Call Try_SetProperty(BTN, Pty, BtnInfo.item(Pty))
     Next
     With BTN
-        .Top = (Ctls.count - 1) * BTN_H - 1: .Height = BTN_H
+        .Top = (Ctls.count - 1) * Btn_H - 1: .Height = Btn_H
         .Left = FrmMargin(2): .Width = Btn_W
         .Font.Name = "Arial": .Font.Size = BTN_frontsize
 '        .BackColor = RGB(89, 220, 220)  ' 设置按钮背景颜色
