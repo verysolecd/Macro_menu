@@ -29,7 +29,7 @@ End Function
 
 '*****CATIA相关函数*****=================================================
 ' 循环选择项目
-Sub CATMain()
+Sub LoopSel()
     Dim msg$: msg = "请选择项目 : 按ESC键退出"
     Dim SI As AnyObject
     Dim doc As Document: Set doc = CATIA.ActiveDocument
@@ -124,8 +124,6 @@ Function Selectmulti(ByVal msg$, _
     End Select
     Set Selectmulti = sel
 End Function
-
-
 ' 获取内部名称
 ''' @param:AOj-AnyObject
 ''' @return:String
@@ -947,28 +945,7 @@ Public Function GetBrepName(MyBRepName As String) As String
     GetBrepName = MyBRepName
 End Function
 
-Public Function setASM(ByVal higheff As Boolean)
-  Dim setcls:  Set setcls = CATIA.SettingControllers
-   Dim Asmg: Set Asmg = setcls.item("CATAsmGeneralSettingCtrl")
-   Dim Vismg: Set Vismg = setcls.item("CATVizVisualizationSettingCtrl")
-    If higheff Then
-       With CATIA
-        '.DisableNewUndoRedoTransaction
-        '.EnableNewUndoRedoTransaction
-         .RefreshDisplay = False
-        End With
-      Asmg.AutoUpdateMode = 0 '0: catManualUpdate
-      Vismg.Viz3DFixedAccuracy = 1
-    Else
-        With CATIA
-        '.DisableNewUndoRedoTransaction
-        '.EnableNewUndoRedoTransaction
-        .RefreshDisplay = True
-        End With
-       Asmg.AutoUpdateMode = 1 '1: catAutomaticUpdate
-        Vismg.Viz3DFixedAccuracy = 0.05
-    End If
-End Function
+
 
 
 

@@ -1,4 +1,5 @@
 Attribute VB_Name = "CAT_Color"
+
 '{GP:7}
 '{Ep:swbcgColor}
 '{Caption:背景颜色}
@@ -7,6 +8,7 @@ Attribute VB_Name = "CAT_Color"
 
 Private Const mdlName As String = "CAT_Color"
 Sub swbcgColor()
+    
     On Error GoTo ErrorHandler
     If CATIA.Windows.count < 1 Then
         MsgBox "没有打开的窗口"
@@ -22,19 +24,26 @@ Sub swbcgColor()
     Dim MyViewer: Set MyViewer = CATIA.ActiveWindow.ActiveViewer
     Dim currentColor(2)
     MyViewer.GetBackgroundColor currentColor
+    Dim btnCaption As String
     ' 根据当前背景色直接切换
     If currentColor(0) = 1 And currentColor(1) = 1 And currentColor(2) = 1 Then
         ' 当前是白色背景，切换到默认背景
         MyViewer.PutBackgroundColor Array(0.2, 0.2, 0.4)
         oWindow.Layout = catWindowSpecsAndGeom
+        btnCaption = "背景颜色(默认)"
     Else
         ' 当前是默认背景，切换到白色背景
         MyViewer.PutBackgroundColor Array(1, 1, 1)
         oWindow.Layout = catWindowGeomOnly
+        btnCaption = "背景颜色(白)"
+    End If
+    
+    If Not A00_globalVar.g_Btn Is Nothing Then
+        A00_globalVar.g_Btn.Caption = btnCaption
     End If
     
     On Error GoTo 0
-    
+ Set A00_globalVar.g_Btn = Nothing
 ErrorHandler:
     If Err.Number <> 0 Then
         Select Case Err.Number
@@ -46,3 +55,4 @@ ErrorHandler:
         End Select
     End If
 End Sub
+

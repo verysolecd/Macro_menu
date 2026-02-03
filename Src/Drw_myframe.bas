@@ -21,7 +21,7 @@ Public Fact
 Public Selection
 Public targetsheet
 Private Const mdlName As String = "Drw_myframe"
-Sub CATMain()
+Sub CATDrawMain()
   If Not CATInit() Then Exit Sub
   On Error Resume Next
     Name = Texts.GetItem("Reference_" + GetMacroID()).Name

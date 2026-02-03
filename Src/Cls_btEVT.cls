@@ -8,12 +8,14 @@ Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
 
+
 Option Explicit
 ' --- Variables ---
 Private WithEvents mBTN As MSForms.CommandButton      ' For Script Mode
 Attribute mBTN.VB_VarHelpID = -1
 Private WithEvents mBTNwd As MSForms.CommandButton ' For Result Mode
 Attribute mBTNwd.VB_VarHelpID = -1
+
 
 Private mInfo As Object
 Private mCloseType As Boolean
@@ -96,6 +98,7 @@ Private Sub mBTN_click()
     End If
     
     On Error Resume Next
+        Set A00_globalVar.g_Btn = mBTN
         Call ss.ExecuteScript(mInfo(TAG_PJTPATH), _
                               catScriptLibraryTypeVBAProject, _
                               mInfo(TAG_MDLNAME), _
@@ -104,6 +107,8 @@ Private Sub mBTN_click()
          Err.Clear
     On Error GoTo 0
 End Sub
+
+
 
 
 
