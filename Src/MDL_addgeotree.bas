@@ -1,5 +1,5 @@
-Attribute VB_Name = "MDL_newgeotree"
-'Attribute VB_Name = "m20_newgeotree"
+Attribute VB_Name = "MDL_addgeotree"
+
 '{GP:4}
 '{Ep:newgeo}
 '{Caption:创建几何集}
