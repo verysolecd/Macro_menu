@@ -26,17 +26,17 @@ Attribute VB_Name = "OTH_ivhideshow"
 Private msel, rdoc, rprd
 Private showlst, hidelst, wantlst
 Private orishowlst, orihidelst
-Private Const mdlName As String = "OTH_ivhideshow"
+Private Const mdlname As String = "OTH_ivhideshow"
 
 Sub setHideshow()
    If Not KCL.CanExecute("ProductDocument,partdocument") Then Exit Sub
     If pdm Is Nothing Then Set pdm = New Cls_PDM
    initori
 '==生成UItoolbar-===================
-    Dim mapMdl: Set mapMdl = KCL.setBTNmdl(mdlName)
-    Dim mapFunc As Object: Set mapFunc = KCL.setBTNFunc(mdlName)
-    Set g_Frm = Nothing:  Set g_Frm = KCL.newFrm(mdlName)
-    g_Frm.ShowToolbar mdlName, mapMdl, mapFunc
+    Dim mapMdl: Set mapMdl = KCL.setBTNmdl(mdlname)
+    Dim mapFunc As Object: Set mapFunc = KCL.setBTNFunc(mdlname)
+    Set g_Frm = Nothing:  Set g_Frm = KCL.newFrm(mdlname)
+    g_Frm.ShowToolbar mdlname, mapMdl, mapFunc
 End Sub
 Private Sub initsel()
     Set rdoc = CATIA.ActiveDocument
@@ -64,10 +64,10 @@ Function getSubAsm()
     Set rdoc = CATIA.ActiveDocument
     Set rprd = rdoc.Product
     Set msel = rdoc.Selection
-    Set oprd = CATIA.ActiveDocument.Product
+    Set oPrd = CATIA.ActiveDocument.Product
     Dim istr As String
     istr = "CATProductSearch.Product.Visibility=Hidden"
-    SelQuery istr, oprd
+    SelQuery istr, oPrd
 End Function
 
 Sub PrtHide_GS_click()
@@ -128,7 +128,7 @@ Sub PrtHide()
          filter(6) = "(((((((CATProductSearch.MfConstraint + CATStFreeStyleSearch.MfConstraint) + CATAsmSearch.MfConstraint) + CAT2DLSearch.MfConstraint) + CATSketchSearch.MfConstraint) + CATDrwSearch.MfConstraint) + CATPrtSearch.MfConstraint) + CATSpdSearch.MfConstraint),all"
  
  
-    SelQuery istr, oprd
+    SelQuery istr, oPrd
     Set HSF = oprt.HybridBodies
     Dim lst: Set lst = KCL.Initlst
     For Each itm In oprt.HybridBodies
@@ -193,9 +193,9 @@ Private Function SelQuery(iQuery As String, Optional ByVal iRange = Nothing)
   End If
 End Function
 
-Function getshowlst(oprd)
+Function getshowlst(oPrd)
  Dim istr$: istr = "Assembly Design.Product.Visibility=Visible"
- Call SelQuery(istr, oprd)
+ Call SelQuery(istr, oPrd)
   Dim lst: Set lst = KCL.Initlst
    For i = 1 To msel.count
       lst.Add msel.item(i).LeafProduct
@@ -204,9 +204,9 @@ Function getshowlst(oprd)
    msel.Clear
 End Function
 
-Function gethidelst(oprd)
+Function gethidelst(oPrd)
     Dim istr$: istr = "Assembly Design.Product.Visibility=Hidden"
-    SelQuery istr, oprd
+    SelQuery istr, oPrd
     Dim lst: Set lst = KCL.Initlst
         For i = 1 To msel.count
         lst.Add msel.item(i).LeafProduct
@@ -272,10 +272,10 @@ Sub showChild(lst)
     On Error GoTo 0
 End Sub
 
-Function getchildlst(oprd, lst)
+Function getchildlst(oPrd, lst)
     On Error Resume Next
-      lst.Add oprd
-    For Each itm In oprd.Products
+      lst.Add oPrd
+    For Each itm In oPrd.Products
         lst.Add itm
         getchildlst itm, lst
     Next

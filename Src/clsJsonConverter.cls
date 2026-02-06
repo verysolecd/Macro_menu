@@ -135,7 +135,7 @@ Private JsonOptions As json_Options
 ' @return {Object} (Dictionary or Collection)
 ' @throws 10001 - JSON parse error
 ''
-Private Const mdlName As String = "clsJsonConverter"
+Private Const mdlname As String = "clsJsonConverter"
 Public Function ParseJson(ByVal JsonString As String) As Object
     Dim json_Index As Long
     json_Index = 1
@@ -457,8 +457,8 @@ Private Function json_ParseObject(json_String As String, ByRef json_Index As Lon
     End If
 End Function
 
-Private Function json_ParseArray(json_String As String, ByRef json_Index As Long) As collection
-    Set json_ParseArray = New collection
+Private Function json_ParseArray(json_String As String, ByRef json_Index As Long) As Collection
+    Set json_ParseArray = New Collection
 
     json_SkipSpaces json_String, json_Index
     If VBA.Mid$(json_String, json_Index, 1) <> "[" Then

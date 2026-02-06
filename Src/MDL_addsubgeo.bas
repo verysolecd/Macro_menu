@@ -6,6 +6,7 @@ Attribute VB_Name = "MDL_addsubgeo"
 '{ControlTipText:创建一个子几何集}
 '{BackColor: }
 
+Private Const mdlname As String = "MDL_addsubgeo"
 Sub addsubgeo()
  If Not CanExecute("Productdocument,PartDocument") Then Exit Sub
     Set odoc = CATIA.ActiveDocument.Product
@@ -18,6 +19,6 @@ itype = TypeName(oprt.InWorkObject)
         Exit Sub
     End If
     Set og = colls.Add()
-    og.Name = "FAXX"
+    og.name = "FAXX"
 End Sub
 

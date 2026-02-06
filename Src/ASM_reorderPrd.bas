@@ -6,7 +6,7 @@ Attribute VB_Name = "ASM_reorderPrd"
 '{ControlTipText:产品排序}
 '{BackColor: }
 Option Explicit
-Private Const mdlName As String = "ASM_reorderPrd"
+Private Const mdlname As String = "ASM_reorderPrd"
 Sub reorderPrds()
     If Not CanExecute("ProductDocument") Then Exit Sub
     Dim prodoc As ProductDocument:
@@ -19,12 +19,12 @@ Sub reorderPrds()
     Dim OriginalMode As CatAsmPasteComponentMode
     OriginalMode = AssyMode.PasteComponentMode
     AssyMode.PasteComponentMode = catPasteWithCstOnCopyAndCut
-    Dim Names: Set Names = Get_SortedNames(Pros)
+    Dim names: Set names = Get_SortedNames(Pros)
     Dim sel As Selection: Set sel = prodoc.Selection
     Dim itm As Variant
     CATIA.HSOSynchronized = False
     sel.Clear
-    For Each itm In Names
+    For Each itm In names
         sel.Add Pros.item(itm)
     Next
     sel.Cut
@@ -43,7 +43,7 @@ Private Function Get_SortedNames(ByVal Pros As Products) As Object
     Set lst = KCL.Initlst()
     Dim Pro As Product
     For Each Pro In Pros
-        lst.Add Pro.Name
+        lst.Add Pro.name
     Next
     lst.Sort
     Set Get_SortedNames = lst

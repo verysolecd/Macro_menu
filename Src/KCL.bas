@@ -17,7 +17,7 @@ Private Declare PtrSafe Function SetClipboardData Lib "user32" (ByVal wFormat As
 
 '*****计时相关函数*****
 ' 启动秒表
-Private Const mdlName As String = "KCL"
+Private Const mdlname As String = "KCL"
 Sub SW_Start()
     mSW = timeGetTime
 End Sub
@@ -76,18 +76,36 @@ Function checkDocType(ByVal docTypes As Variant)
     End If
     checkDocType = True
 End Function
+Function SelPrd(ByVal msg$, _
+                    Optional ByVal filter As Variant = Empty)
+    If checkDocType("partdocument") Then
+        Set SelPrd = CATIA.ActiveDocument.Product
+        Exit Function
+    End If
+    Dim se As SelectedElement
+    Set se = SelectElement(msg, filter)
+    If IsNothing(se) Then
+        Set SelPrd = se
+    Else
+        Set SelPrd = se.LeafProduct
+    End If
+End Function
+
 ' 选择项目 /产品/零件/body/几何图形集等
 ''' @param:Msg-提示信息
 ''' @param:Filter-array(string),string 选择过滤器(默认为AnyObject)
 ''' @return:AnyObject
+
 Function SelectItem(ByVal msg$, _
                     Optional ByVal filter As Variant = Empty)
     Dim se As SelectedElement
     Set se = SelectElement(msg, filter)
     If IsNothing(se) Then
         Set SelectItem = se
-    Else
+    ElseIf TypeName(se) = "Partdocument" Then
         Set SelectItem = se.value
+    Else
+        SelectItem = se.LeafProduct
     End If
 End Function
 ' 选择元素
@@ -124,6 +142,20 @@ Function Selectmulti(ByVal msg$, _
     End Select
     Set Selectmulti = sel
 End Function
+
+Public Function defPrd()
+    Dim res As Integer
+    Dim tmp
+    Set tmp = Nothing
+    res = MsgBox("“是”选择，“否”根节点，“取消”退出", vbYesNoCancel + vbDefaultButton2, "选择产品")
+    Select Case res
+        Case 6: Set tmp = KCL.SelPrd("请选择目标产品")
+        Case 7: Set tmp = CATIA.ActiveDocument.Product
+        Case Else: Set tmp = Nothing
+    End Select
+    Set defPrd = tmp
+End Function
+
 ' 获取内部名称
 ''' @param:AOj-AnyObject
 ''' @return:String
@@ -144,8 +176,8 @@ Function GetParent_Of_T( _
     Dim anyObjName, parentName As String
     On Error Resume Next
         Set anyObj = asDisp(anyObj)
-        anyObjName = anyObj.Name
-        parentName = anyObj.Parent.Name
+        anyObjName = anyObj.name
+        parentName = anyObj.Parent.name
     On Error GoTo 0
     If TypeName(anyObj) = TypeName(anyObj.Parent) And _
        anyObjName = parentName Then
@@ -994,7 +1026,7 @@ Public Sub AddmdlName()
                 searchStartCol = 1
                 searchEndLine = startline
                 searchEndCol = -1
-                declText = "Private Const " & constName & " As String = """ & vbComp.Name & """"
+                declText = "Private Const " & constName & " As String = """ & vbComp.name & """"
                 ' Use variables for Find arguments
                 If Not codemod.Find("Const " & constName, searchStartLine, searchStartCol, searchEndLine, searchEndCol) Then
                     codemod.InsertLines startline, declText
@@ -1150,5 +1182,7 @@ Function GetControlType(ByVal alias As String) As String
         Case Else: GetControlType = "Forms.Label.1"
     End Select
 End Function
+
+
 
 

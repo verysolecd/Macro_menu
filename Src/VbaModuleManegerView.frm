@@ -19,7 +19,7 @@ Option Explicit
 Private mUtil As clsVBAUtilityLib
 Private mModuleMgr As clsVbaModuleManagerModel
 
-Private Const mdlName As String = "VbaModuleManegerView"
+Private Const mdlname As String = "VbaModuleManegerView"
 Private Sub UserForm_Initialize()
     Set mUtil = New clsVBAUtilityLib
     Set mModuleMgr = New clsVbaModuleManagerModel
@@ -28,10 +28,10 @@ Private Sub UserForm_Initialize()
 End Sub
 '** 事件 **
 Private Sub btnExport_Click()
-    Dim Res As Boolean
-    Res = export_project
+    Dim res As Boolean
+    res = export_project
     Call update_listbox
-    If Res Then
+    If res Then
         show_msg "导出完成"
     End If
 End Sub
@@ -71,9 +71,9 @@ Private Sub update_listbox()
         .ListIndex = -1
     End With
     If Me.ComboBox1.ListIndex < 0 Then Exit Sub
-    Dim Name As Variant
-    For Each Name In mModuleMgr.get_module_name_list(Me.ComboBox1.ListIndex + 1)
-        Call Me.ListBox1.AddItem(Name)
+    Dim name As Variant
+    For Each name In mModuleMgr.get_module_name_list(Me.ComboBox1.ListIndex + 1)
+        Call Me.ListBox1.AddItem(name)
     Next
     Dim btnEnabled As Boolean
     If mModuleMgr.has_user_data(Me.ComboBox1.ListIndex + 1) Then
@@ -110,7 +110,7 @@ Private Sub update_info_txt()
 End Sub
 'ComboBox初始设置
 Private Sub update_comboBox()
-    Dim projects As collection
+    Dim projects As Collection
     Set projects = mModuleMgr.get_project_name_list()
     If projects.count < 1 Then
         MsgBox "目标项目不存在"
@@ -129,7 +129,7 @@ End Sub
 'return: 对应索引
 Function get_index_by_list( _
         ByVal value As Variant, _
-        ByVal lst As collection) As Long
+        ByVal lst As Collection) As Long
     Dim i As Long
     For i = 1 To lst.count
         If lst.item(i) = value Then

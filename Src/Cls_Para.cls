@@ -15,22 +15,22 @@ Private pStr As Variant '参数字符段
 Private pTarget As Object '参数目标对象
 Private pobj As Object   '参数本身
 
-Private Const mdlName As String = "Cls_Para"
+Private Const mdlname As String = "Cls_Para"
 Private Sub Class_Initialize()
     Me.Desc = ""
 End Sub
 Public Sub Reset()
-    Me.Name = ""
+    Me.name = ""
     Me.itype = ""
     Me.str = ""
     Me.Desc = ""
     Set Me.obj = Nothing
     Set Me.target = Nothing
 End Sub
-Public Property Get Name() As String
-    Name = pName
+Public Property Get name() As String
+    name = pName
 End Property
-Public Property Let Name(ByVal value As String)
+Public Property Let name(ByVal value As String)
     pName = value
 End Property
 Public Property Get itype() As String
@@ -64,6 +64,6 @@ Public Property Set obj(value)
    Set pobj = value
 End Property
 Public Sub SetNT(ByVal newName As String, ByVal newType As String)
-    Me.Name = newName
+    Me.name = newName
     Me.itype = newType
 End Sub

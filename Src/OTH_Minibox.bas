@@ -17,7 +17,7 @@ Private Enum MINMAX
     Maxz = 5
 End Enum
 
-Private Const mdlName As String = "OTH_Minibox"
+Private Const mdlname As String = "OTH_Minibox"
 Sub mMinibox()
     Dim workDoc, workPt
     Dim msg As String
@@ -45,7 +45,7 @@ Sub mMinibox()
 
     Set workPt = workDoc.part
     
-    Dim targetBodies As collection
+    Dim targetBodies As Collection
     Set targetBodies = getBodies(prod)
     If targetBodies Is Nothing Then Exit Sub
     Dim ax As AxisSystem
@@ -65,7 +65,7 @@ Sub mMinibox()
         End If
     
     Set minBody = workPt.bodies.Add
-    minBody.Name = "MinimumBox"
+    minBody.name = "MinimumBox"
     Call changeColor(minBody)
  
     Dim supportRef As Reference
@@ -129,7 +129,7 @@ End Function
 
 Private Function getMaxSize_Bodies( _
     ByVal pt As part, _
-    ByVal bodies As collection, _
+    ByVal bodies As Collection, _
     ByVal ax As AxisSystem) _
     As Variant
     Dim vec As Variant
@@ -215,14 +215,14 @@ Private Function initPartDoc( _
     Set prods = belongProd.Products
     Dim newProd As Product
     Set newProd = prods.AddNewComponent("Part", "")
-    newProd.partNumber = "Mini_box_" & prod.partNumber
+    newProd.PartNumber = "Mini_box_" & prod.PartNumber
     Set initPartDoc = newProd.ReferenceProduct.Parent
 End Function
 
 
 Private Function getBodies( _
     ByVal prod As Product) _
-    As collection
+    As Collection
     Set getBodies = Nothing
     Dim sel As Selection
     Set sel = CATIA.ActiveDocument.Selection
@@ -230,14 +230,14 @@ Private Function getBodies( _
     sel.Clear
     sel.Add prod
     sel.Search "CATPrtSearch.BodyFeature.Visibility=Shown,sel"
-    Dim lst As collection
-    Set lst = New collection
+    Dim lst As Collection
+    Set lst = New Collection
     
     Dim i As Long
     Dim bdy As body
     For i = 1 To sel.Count2
         Set bdy = sel.Item2(i).value
-            If bdy.Shapes.count > 0 And bdy.Name <> "MinimumBox" Then
+            If bdy.Shapes.count > 0 And bdy.name <> "MinimumBox" Then
                 lst.Add bdy
             End If
     Next

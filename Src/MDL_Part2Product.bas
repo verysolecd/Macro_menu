@@ -1,5 +1,4 @@
 Attribute VB_Name = "MDL_Part2Product"
-'Attribute VB_Name = "m2_Part2Product"
 '{控件提示文本: 可将零件转换为产品}
 ' 检查零件文档中是否存在左手坐标系
 '{Gp:4}
@@ -9,13 +8,13 @@ Attribute VB_Name = "MDL_Part2Product"
 '{BackColor:}
 Option Explicit
 
-Private Const mdlName As String = "MDL_Part2Product"
+Private Const mdlname As String = "MDL_Part2Product"
 Sub isLhcoord()
     If Not CanExecute("PartDocument") Then Exit Sub
     Dim BaseDoc As PartDocument: Set BaseDoc = CATIA.ActiveDocument
     Dim BasePath As Variant: BasePath = Array(BaseDoc.FullName)
     Dim pt As part: Set pt = BaseDoc.part
-    Dim LeafItems As collection: Set LeafItems = Get_LeafItemLst(pt.bodies)
+    Dim LeafItems As Collection: Set LeafItems = Get_LeafItemLst(pt.bodies)
     Dim msg As String
     If LeafItems Is Nothing Then
         msg = "没有可复制的元素！"
@@ -47,7 +46,7 @@ Sub isLhcoord()
 End Sub
 
 Private Sub ToProduct(ByVal TopDoc As ProductDocument, _
-                      ByVal LeafItems As collection, _
+                      ByVal LeafItems As Collection, _
                       ByVal PasteType As String)
     Dim TopSel As Selection
     Set TopSel = TopDoc.Selection
@@ -60,11 +59,11 @@ Private Sub ToProduct(ByVal TopDoc As ProductDocument, _
     Dim ProdsNameDic As Object: Set ProdsNameDic = KCL.InitDic()
     CATIA.HSOSynchronized = False
     For Each itm In LeafItems
-        If ProdsNameDic.Exists(itm.Name) Then
-            Set TgtDoc = ProdsNameDic.item(itm.Name)
+        If ProdsNameDic.Exists(itm.name) Then
+            Set TgtDoc = ProdsNameDic.item(itm.name)
         Else
-            Set TgtDoc = Init_Part(prods, itm.Name)
-            ProdsNameDic.Add itm.Name, TgtDoc
+            Set TgtDoc = Init_Part(prods, itm.name)
+            ProdsNameDic.Add itm.name, TgtDoc
         End If
         Call Preparing_Copy(BaseSel, itm)
         With BaseSel
@@ -88,7 +87,7 @@ Private Sub Preparing_Copy(ByVal sel As Selection, ByVal itm As AnyObject)
         sel.Add itm
         Exit Sub
     End If
-    Dim ShpsLst As collection: Set ShpsLst = New collection
+    Dim ShpsLst As Collection: Set ShpsLst = New Collection
     ShpsLst.Add itm.HybridShapes
     Select Case TypeName(itm)
         Case "HybridBody"
@@ -105,7 +104,7 @@ Private Sub Preparing_Copy(ByVal sel As Selection, ByVal itm As AnyObject)
 End Sub
 
 Private Function Get_All_OdrGeoSetShapes(ByVal OdrGeoSet As OrderedGeometricalSet, _
-                                         ByVal lst As collection) As collection
+                                         ByVal lst As Collection) As Collection
     Dim child As OrderedGeometricalSet
     For Each child In OdrGeoSet.OrderedGeometricalSets
         lst.Add child.HybridShapes
@@ -117,7 +116,7 @@ Private Function Get_All_OdrGeoSetShapes(ByVal OdrGeoSet As OrderedGeometricalSe
 End Function
 
 Private Function Get_All_HbShapes(ByVal Hbdy As HybridBody, _
-                                  ByVal lst As collection) As collection
+                                  ByVal lst As Collection) As Collection
     Dim child As HybridBody
     For Each child In Hbdy.HybridBodies
         lst.Add child.HybridShapes
@@ -128,10 +127,10 @@ Private Function Get_All_HbShapes(ByVal Hbdy As HybridBody, _
     Set Get_All_HbShapes = lst
 End Function
 
-Private Function Get_LeafItemLst(ByVal pt As part) As collection
+Private Function Get_LeafItemLst(ByVal pt As part) As Collection
     Set Get_LeafItemLst = Nothing
     Dim sel As Selection: Set sel = pt.Parent.Selection
-    Dim TmpLst As collection: Set TmpLst = New collection
+    Dim TmpLst As Collection: Set TmpLst = New Collection
     Dim i As Long
     Dim filter As String
     filter = "(CATPrtSearch.BodyFeature.Visibility=Shown " & _
@@ -158,7 +157,7 @@ Private Function Get_LeafItemLst(ByVal pt As part) As collection
         LeafHBdys.Add Hbdy, 0
     Next
     Dim itm As AnyObject
-    Dim lst As collection: Set lst = New collection
+    Dim lst As Collection: Set lst = New Collection
     For Each itm In TmpLst
         Select Case TypeName(itm)
             Case "Body"
@@ -193,7 +192,6 @@ Private Function Is_LeafHybridBody(ByVal Hbdy As AnyObject, _
     CATIA.HSOSynchronized = True
     If cnt > 1 Then Is_LeafHybridBody = True
 End Function
-
 Private Function Init_Part(ByVal prods As Variant, _
                            ByVal PtNum As String) As PartDocument
     Dim prod As Product

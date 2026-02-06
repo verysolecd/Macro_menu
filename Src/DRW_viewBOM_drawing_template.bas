@@ -1,5 +1,5 @@
 Attribute VB_Name = "DRW_viewBOM_drawing_template"
-Private Const mdlName As String = "DRW_viewBOM_drawing_template"
+Private Const mdlname As String = "DRW_viewBOM_drawing_template"
 Sub main()
     CATIA.RefreshDisplay = False
     On Error Resume Next
@@ -26,13 +26,13 @@ Sub main()
     
     End If
     
-    Dim oprd: Set oprd = oView.GenerativeBehavior.Document
+    Dim oPrd: Set oPrd = oView.GenerativeBehavior.Document
     
-    If oprd Is Nothing Then MsgBox "没有关联的 Product": Exit Sub
+    If oPrd Is Nothing Then MsgBox "没有关联的 Product": Exit Sub
     
     ' 3. 导出并处理数据
-    oprd.GetItem("BillOfMaterial").SetSecondaryFormat fmt
-    oprd.GetItem("BillOfMaterial").Print "TXT", tmpPath, oprd
+    oPrd.GetItem("BillOfMaterial").SetSecondaryFormat fmt
+    oPrd.GetItem("BillOfMaterial").Print "TXT", tmpPath, oPrd
     
     Dim flatData: flatData = GetSortedBOM(tmpPath) ' 获取处理好并排序的数据
     If IsEmpty(flatData) Then Exit Sub
@@ -43,7 +43,7 @@ Sub main()
     If Err.Number = 0 Then oView.Selection.Clear: oView.Selection.Add tbl: oView.Selection.Delete
     
     Set tbl = oView.Tables.Add(50, 50, UBound(flatData, 1), UBound(flatData, 2), 10, 20)
-    tbl.Name = "GenBOM"
+    tbl.name = "GenBOM"
     
     For r = 1 To UBound(flatData, 1)
         For c = 1 To UBound(flatData, 2)

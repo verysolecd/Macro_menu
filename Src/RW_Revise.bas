@@ -8,25 +8,25 @@ Attribute VB_Name = "RW_Revise"
 '  %UI Button btnWrite 写回属性
 Option Explicit
 Private prd2rv
-Private Const mdlName As String = "RW_Revise"
+Private Const mdlname As String = "RW_Revise"
 
 Sub EditorToolbar()
 '    If Not CanExecute("ProductDocument") Then Exit Sub
     If pdm Is Nothing Then Set pdm = New Cls_PDM
     Dim mdlMap As Object: Set mdlMap = KCL.InitDic
-    mdlMap.Add "btnRead", mdlName
-    mdlMap.Add "btnWrite", mdlName
+    mdlMap.Add "btnRead", mdlname
+    mdlMap.Add "btnWrite", mdlname
     Dim funcMap As Object: Set funcMap = KCL.InitDic
     funcMap.Add "btnRead", "readPrd"
     funcMap.Add "btnWrite", "rvme"
-    If g_Frm Is Nothing Then Set g_Frm = KCL.newFrm(mdlName)
-    g_Frm.ShowToolbar mdlName, mdlMap, funcMap
+    If g_Frm Is Nothing Then Set g_Frm = KCL.newFrm(mdlname)
+    g_Frm.ShowToolbar mdlname, mdlMap, funcMap
 End Sub
 
 
 Sub readPrd()
  '---------获取待修改产品 '---------遍历修改产品及子产品
-    If pdm.CurrentProduct Is Nothing Then Set pdm.CurrentProduct = pdm.getiPrd()
+    If pdm.CurrentProduct Is Nothing Then Set pdm.CurrentProduct = KCL.defPrd()
     Dim Prd2Read: Set Prd2Read = pdm.CurrentProduct
         If Not Prd2Read Is Nothing Then
             If gws Is Nothing Then Set xlm = New Cls_XLM
@@ -46,7 +46,7 @@ Sub readPrd()
 End Sub
 Sub rvme()
 On Error GoTo ErrorHandler
-    If gws Is Nothing Or gws Is Empty Then Err.Description = "excel错误，请检查": Exit Sub
+    If xlm Is Nothing Then Err.Description = "excel错误，请检查": Exit Sub
      If pdm.CurrentProduct Is Nothing Then Exit Sub
          Dim currRow: currRow = 2
 '---------遍历修改产品及子产品------
@@ -55,17 +55,17 @@ On Error GoTo ErrorHandler
             prd2rv.ApplyWorkMode (3)
         Dim children: Set children = prd2rv.Products
  
-        Dim odata As Variant: odata = xlm.extract_ary
+        Dim oData As Variant: oData = xlm.extract_ary
 '--------map 修改ary------
     Dim iCols: iCols = Array(0, 2, 4, 6, 8, 10, 12)
     Dim outputArr As Variant, tempArr(1 To 6)
-    ReDim outputArr(1 To UBound(odata, 1), 1 To UBound(iCols))
+    ReDim outputArr(1 To UBound(oData, 1), 1 To UBound(iCols))
     Dim i, j
     For i = 1 To UBound(outputArr, 1) '-------遍历行
   '-------遍历获取X行要修改的数据
         For j = 1 To UBound(outputArr, 2) '-------遍历该行数组后输出一个一维数组作为要的修改参数
              outputArr(i, j) = ""  '-------初始化为空数组
-             If IsEmpty(odata(i, iCols(j))) = False Then outputArr(i, j) = odata(i, iCols(j))
+             If IsEmpty(oData(i, iCols(j))) = False Then outputArr(i, j) = oData(i, iCols(j))
              tempArr(j) = outputArr(i, j) '------
         Next j
     '-------遍历按行区分要修改的产品

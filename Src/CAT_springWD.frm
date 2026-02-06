@@ -32,7 +32,7 @@ Attribute VB_Exposed = False
     Private Const FONT_NAME As String = "Thoma"
     Private Const Frm_color As Long = &H8000000F ' 浅灰背景
     Private Const BTN_color As Long = &H8000000F ' 按钮灰蓝
-    Private Const mdlName As String = "CAT_springWD"
+Private Const mdlname As String = "CAT_springWD"
 
 ' --- 主构建函数 ---
 Sub setFrm(ttl, cfgs, Optional ByVal isVert As Boolean = False)
@@ -47,7 +47,7 @@ Sub setFrm(ttl, cfgs, Optional ByVal isVert As Boolean = False)
         Set ctr = Me.Controls.Add(cfg("Type"), cfg("Name"), True)
         With ctr
             If Not cfg("Type") = "Forms.TextBox.1" Then .Caption = cfg("Caption")
-            .Font.Name = FONT_NAME: .Font.Size = cls_frontsize: .AutoSize = False
+            .Font.name = FONT_NAME: .Font.Size = cls_frontsize: .AutoSize = False
             .Height = cls_H: .Width = cls_W:
             On Error Resume Next
                 If cfg("Color") <> "" Then .BackColor = KCL.ParseHex(cfg("Color"))
@@ -123,7 +123,7 @@ Private Sub FinalizeForm(ttl, txt_label_lst)
     Next
     With Me    ' 设置窗体属性
         .Caption = ttl: .BackColor = Frm_color
-        .Font.Name = FONT_NAME: .Font.Size = cls_frontsize
+        .Font.name = FONT_NAME: .Font.Size = cls_frontsize
         .StartUpPosition = 2
         .Width = maxW + (.Width - .InsideWidth) + Frm_LH_gap
         .Height = maxH + (.Height - .InsideHeight) + 1.5 * Frm_LH_gap

@@ -20,39 +20,39 @@ Attribute VB_Name = "ASM_1ex2stp"
 '------------------------------------------------
 Private ErrorMessage As String
 Private zippath
-Private Const mdlName As String = "ASM_1ex2stp"
+Private Const mdlname As String = "ASM_1ex2stp"
 Sub ex2stp_zip()
     If Not KCL.CanExecute("ProductDocument,partdocument") Then Exit Sub
 '  On Error Resume Next ' 临时开启错误处理
  Err.Number = 0: ErrorMessage = ""
  Dim odoc: Set odoc = CATIA.ActiveDocument
  Dim outputpath As String: outputpath = ""
- Dim oFrm: Set oFrm = KCL.newFrm(mdlName)
+ Dim oFrm: Set oFrm = KCL.newFrm(mdlname)
 
  
  oFrm.Show
  Select Case oFrm.BtnClicked
  Case "btnOK"
 '===========路径设置
-      If oFrm.Res("chk_path") Then
+      If oFrm.res("chk_path") Then
            outputpath = IIf(odoc.path = "", "", odoc.path)
       Else:
            outputpath = KCL.selFdl()
       End If
       If outputpath = "" Then ErrorMessage = "缺少导出路径，操作取消！": GoTo ShowMessage
 '===========零件号时间戳处理
-      If oFrm.Res("chk_tm") Then
+      If oFrm.res("chk_tm") Then
            Dim ttp: ttp = KCL.timestamp("min")
-               If oFrm.Res("chk_tm") Then
-                    pn = KCL.strbflast(odoc.Product.partNumber, "_")
+               If oFrm.res("chk_tm") Then
+                    pn = KCL.strbflast(odoc.Product.PartNumber, "_")
                          If KCL.ExistsKey(pn, "_") Then
-                             odoc.Product.partNumber = pn & ttp
+                             odoc.Product.PartNumber = pn & ttp
                          Else
-                             odoc.Product.partNumber = pn & "_" & ttp
+                             odoc.Product.PartNumber = pn & "_" & ttp
                          End If
                 End If
       End If
-      pn = odoc.Product.partNumber
+      pn = odoc.Product.PartNumber
 '==========STP文件名处理
         stpname = KCL.strbf1st(pn, "_") & "_" & ttp
         Dim opath(2) '0=路径，1=name，2=extname
@@ -63,10 +63,10 @@ Sub ex2stp_zip()
         If Not ex2zip(stpfilepath) Then GoTo ShowMessage
         KCL.DeleteMe stpfilepath ' 删除原始 STP 文件
 '============生成导出日志
-        If oFrm.Res("chk_log") Then
+        If oFrm.res("chk_log") Then
             logpath = opath(0) & "\" & "stp_export_log.md"
                loginfo = "## " & KCL.timestamp("day") & "  " & stpname & ".stp" & vbCrLf & _
-                         "  " & oFrm.Res("txt_log")
+                         "  " & oFrm.res("txt_log")
                KCL.Appendtext KCL.getmd(logpath), loginfo
         End If
         Case Else:

@@ -26,7 +26,7 @@ Private Const Fdis = 0.9
 Private thisdir
 Private oDic
 
-Private Const mdlName As String = "OTH_capture"
+Private Const mdlname As String = "OTH_capture"
 Sub Capturetopath()
 If Not KCL.CanExecute("ProductDocument") Then Exit Sub
     On Error Resume Next
@@ -86,10 +86,10 @@ On Error Resume Next
     
     oDic = KCL.InitDic
     
-     Dim oprd: Set oprd = rootPrd
-     If oprd Is Nothing Then Exit Sub
+     Dim oPrd: Set oPrd = rootPrd
+     If oPrd Is Nothing Then Exit Sub
      
-     oprd.ApplyWorkMode (3)  '3  DESIGN_MODE
+     oPrd.ApplyWorkMode (3)  '3  DESIGN_MODE
      Dim opath: opath = KCL.GetPath(KCL.getVbaDir & "\" & "oTemp")
      KCL.ClearDir (opath) '截图前先清空文件夹
      If gPic_Path = "" Then
@@ -97,9 +97,9 @@ On Error Resume Next
      End If
      
      oDic.Remove all
-     CaptureMe oprd, opath
+     CaptureMe oPrd, opath
      oDic.Remove all
-     Set oprd = Nothing
+     Set oPrd = Nothing
 '-----------恢复显示样式模式-------------
      CATIA.DisplayFileAlerts = True
      owd.WindowState = 0
@@ -124,9 +124,9 @@ Sub CaptureMe(iprd, oFolder)
      End With
      
       '--递归产品截图
-     If oDic.Exists(iprd.partNumber) = False Then  '递归产品截图
-        oDic(iprd.partNumber) = 1
-        imgfilename = oFolder & "\" & iprd.ReferenceProduct.partNumber & ".jpg"
+     If oDic.Exists(iprd.PartNumber) = False Then  '递归产品截图
+        oDic(iprd.PartNumber) = 1
+        imgfilename = oFolder & "\" & iprd.ReferenceProduct.PartNumber & ".jpg"
         oViewer.CaptureToFile 5, imgfilename
      End If
      If thisdir = "" Then

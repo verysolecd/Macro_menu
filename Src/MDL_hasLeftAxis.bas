@@ -8,7 +8,7 @@ Attribute VB_Name = "MDL_hasLeftAxis"
 '{ControlTipText:检查是否有左手坐标系}
 '{BackColor:33023}
 Option Explicit
-Private Const mdlName As String = "MDL_hasLeftAxis"
+Private Const mdlname As String = "MDL_hasLeftAxis"
 Sub LeftHand()
     ' 检查是否可以执行
     If Not CanExecute("PartDocument") Then Exit Sub
@@ -18,7 +18,7 @@ Sub LeftHand()
     Dim msg As String: msg = vbNullString
     For Each ax In Axs
         If IsLeft(ax) Then
-            msg = msg & ax.Name & vbNewLine
+            msg = msg & ax.name & vbNewLine
         End If
     Next
     If msg = vbNullString Then

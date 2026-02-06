@@ -5,13 +5,13 @@ Attribute VB_Name = "RW_1setgprd"
 '{ControlTipText:选择要被读取或修改的产品}
 '{BackColor:16744703}
 
-Private Const mdlName As String = "RW_1setgprd"
+Private Const mdlname As String = "RW_1setgprd"
 Sub setgprd()
-    If Not CanExecute("ProductDocument") Then Exit Sub
-    If pdm Is Nothing Then Set pdm = New Cls_PDM
-    Set pdm.CurrentProduct = pdm.getiPrd()
+'    If Not CanExecute("ProductDocument,partdocument") Then Exit Sub
+'    If pdm Is Nothing Then Set pdm = New Cls_PDM
+    Set pdm.CurrentProduct = KCL.defPrd
         If Not pdm.CurrentProduct Is Nothing Then
-           imsg = "被操作产品是" & pdm.CurrentProduct.partNumber
+           imsg = "被操作产品是" & pdm.CurrentProduct.PartNumber
             MsgBox imsg
         Else
              MsgBox "已退出，程序将结束"

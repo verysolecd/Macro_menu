@@ -8,7 +8,7 @@ Attribute VB_Name = "MDL_addgeotree"
 
 Private oprt
 
-Private Const mdlName As String = "MDL_newgeotree"
+Private Const mdlname As String = "MDL_addgeotree"
 Sub newgeo()
  If Not CanExecute("PartDocument") Then Exit Sub
  
@@ -21,12 +21,12 @@ Sub newgeo()
 
 Set og = colls.Add()
 crSkt og
-og.Name = "GEO_sheet"
+og.name = "GEO_sheet"
 Set colls = og.HybridBodies
 arr = Array("01_Profile", "02_Ribs", "03_Assy", "04_trim", "05_Pierce", "06_final part")
 For i = 0 To UBound(arr)
     Set og = colls.Add()
-    og.Name = arr(i)
+    og.name = arr(i)
     Next
 End Sub
 Sub crSkt(og)
@@ -38,7 +38,7 @@ oprt.InWorkObject = oPoint
 oprt.Update
 Set oPln = HSF.AddNewPlaneEquation(0#, 0#, 1#, 20#)
 Set pref = oPoint
-Set oref = oprt.CreateReferenceFromObject(pref)
+Set oRef = oprt.CreateReferenceFromObject(pref)
 oPln.SetReferencePoint oPoint  'oref
 og.AppendHybridShape oPln
 oprt.InWorkObject = oPln

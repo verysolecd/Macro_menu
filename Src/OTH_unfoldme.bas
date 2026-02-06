@@ -7,7 +7,7 @@ Attribute VB_Name = "OTH_unfoldme"
 '{BackColor:16744703}
 
 
-Private Const mdlName As String = "OTH_unfoldme"
+Private Const mdlname As String = "OTH_unfoldme"
 Sub unfold_children()
 If Not CanExecute("PartDocument") Then Exit Sub
 Dim osel: Set osel = CATIA.ActiveDocument.Selection
@@ -63,7 +63,7 @@ Else
     uFold.SurfaceType = 0 '0
     uFold.TargetOrientationMode = 0
     uFold.EdgeToTearPositioningOrientation = 0
-    uFold.Name = "unfold_" & targetshape.Name
+    uFold.name = "unfold_" & targetshape.name
     oprt.Update
     osel.Clear
     osel.Add uFold
@@ -71,7 +71,7 @@ Else
     osel.Clear
     oprt.Update
     Set targetHB = HBS.Add()
-    targetHB.Name = "unfold result" & i
+    targetHB.name = "unfold result" & i
     oprt.Update
     osel.Add targetHB
     osel.Paste

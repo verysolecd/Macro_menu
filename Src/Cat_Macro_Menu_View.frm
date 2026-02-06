@@ -47,7 +47,7 @@ Private WithEvents MPgs As MSForms.MultiPage
 Attribute MPgs.VB_VarHelpID = -1
 Option Explicit
 ' 设置窗体信息
-Private Const mdlName As String = "Cat_Macro_Menu_View"
+Private Const mdlname As String = "Cat_Macro_Menu_View"
 Sub Set_FormInfo(ByVal InfoLst As Object, _
                  ByVal PageMap As Object, _
                  ByVal formTitle As String, _
@@ -129,7 +129,7 @@ Private Sub Set_MPage(ByVal MPgs As MultiPage)
         .Top = lb_H * 2 + 2 * FrmMargin(1)
         .Left = FrmMargin(0)
         .TabFixedHeight = Tab_H: .TabFixedWidth = Tab_W  ' 标签高度\宽度
-        .Font.Name = "Arial": .Font.Size = Tab_frontsize
+        .Font.name = "Arial": .Font.Size = Tab_frontsize
         .MultiRow = True
         .Style = fmTabStyleButtons  ' 切换为按钮样式
         .TabOrientation = fmTabOrientationLeft
@@ -155,7 +155,7 @@ Private Function Init_Button(ByVal Ctls As Controls, _
     With BTN
         .Top = (Ctls.count - 1) * Btn_H - 1: .Height = Btn_H
         .Left = FrmMargin(2): .Width = Btn_W
-        .Font.Name = "Arial": .Font.Size = BTN_frontsize
+        .Font.name = "Arial": .Font.Size = BTN_frontsize
 '        .BackColor = RGB(89, 220, 220)  ' 设置按钮背景颜色
     End With
     Set Init_Button = BTN
@@ -189,13 +189,13 @@ Private Sub Try_SetProperty(ByVal ctrl As Object, _
     On Error GoTo 0
 End Sub
 ' 获取页面 - 若不存在则创建
-Private Function Get_Page(ByVal Pgs As Pages, ByVal Name As String) As Page
+Private Function Get_Page(ByVal Pgs As Pages, ByVal name As String) As Page
     Dim Pg As Page
     On Error Resume Next
-        Set Pg = Pgs.item(Name)
+        Set Pg = Pgs.item(name)
     On Error GoTo 0
     If Pg Is Nothing Then
-        Set Pg = Pgs.Add(Name, Name, Pgs.count)
+        Set Pg = Pgs.Add(name, name, Pgs.count)
     End If
     Set Get_Page = Pg
 End Function
@@ -211,7 +211,7 @@ Private Sub UpdateProductInfo()
     mColor = vbRed
     msg = "操作产品待选择"
     If Not prdObserver.CurrentProduct Is Nothing Then
-          msg = prdObserver.CurrentProduct.partNumber & "待修改"
+          msg = prdObserver.CurrentProduct.PartNumber & "待修改"
           mColor = vbGreen
     End If
         lblProductInfo.Caption = msg

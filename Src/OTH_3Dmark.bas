@@ -9,7 +9,7 @@ Attribute VB_Name = "OTH_3Dmark"
 ' Purpose: Create a label on a product.
 
 Private rprd
-Private Const mdlName As String = "OTH_3Dmark"
+Private Const mdlname As String = "OTH_3Dmark"
 Sub newlabel()
     If Not CanExecute("ProductDocument") Then Exit Sub
     Set rprd = CATIA.ActiveDocument.Product
@@ -18,28 +18,28 @@ Sub newlabel()
     recurthisPrd rprd
 End Sub
 
-Sub recurthisPrd(oprd)
-        If g_allPN.Exists(oprd.partNumber) = False Then
-            g_allPN(oprd.partNumber) = 1
-            Call recurexcute(oprd)
+Sub recurthisPrd(oPrd)
+        If g_allPN.Exists(oPrd.PartNumber) = False Then
+            g_allPN(oPrd.PartNumber) = 1
+            Call recurexcute(oPrd)
             End If
-        If oprd.Products.count > 0 Then
-                For Each Product In oprd.Products
+        If oPrd.Products.count > 0 Then
+                For Each Product In oPrd.Products
                     Call recurthisPrd(Product)
                  Next
         End If
 End Sub
-Sub recurexcute(oprd)
-    Call c3Dmark(oprd)
+Sub recurexcute(oPrd)
+    Call c3Dmark(oPrd)
 End Sub
-Sub c3Dmark(oprd)
+Sub c3Dmark(oPrd)
 
-If oprd.Products.count < 1 Then
+If oPrd.Products.count < 1 Then
     If pdm Is Nothing Then Set pdm = New Cls_PDM
-     info = pdm.infoPrd(oprd)
+     info = pdm.infoPrd(oPrd)
         On Error GoTo 0
         Dim pos(11), sTextString, cMarker3Ds, oMarker3D
-        oprd.Position.GetComponents pos
+        oPrd.Position.GetComponents pos
         sTextString = info(3) & vbNewLine & _
                         info(5) & vbNewLine & _
                         info(7)
@@ -53,7 +53,7 @@ If oprd.Products.count < 1 Then
         pos2(0) = pos(0) - 500
         pos2(1) = pos(1) + 200
         pos2(2) = pos(2) + 500
-        Set oMarker3D = cMarker3Ds.Add3DText(pos2, sTextString, pos1, oprd)
+        Set oMarker3D = cMarker3Ds.Add3DText(pos2, sTextString, pos1, oPrd)
         oMarker3D.TextSize = 6#
         oMarker3D.Update
     End If
@@ -62,7 +62,7 @@ End Sub
 Sub Pt_annotation()
 
 Set odoc = CATIA.ActiveDocument
- Set oprd = CATIA.ActiveDocument.Product
+ Set oPrd = CATIA.ActiveDocument.Product
     Set oprt = odoc.part
  Set oHb = KCL.SelectItem("请选择geoset", "HybridBody")
   Set opt = oHb.HybridShapes.item(1)
@@ -84,7 +84,7 @@ oprt.Update
 ' Set anote = AnttF.CreateTextNOA(usf)
   Set anote = AnttF.CreateFlagNote(usf)
     
-   anote.Name = "an1"
+   anote.name = "an1"
 '   anote.Text = "tetx1"
     anote.FlagNote = "tetx2"
 End Sub

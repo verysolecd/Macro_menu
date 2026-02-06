@@ -8,7 +8,7 @@ Attribute VB_Name = "DRW_VIewBOM"
 Private targetsheet
 Private drwDoc, osht, shts, oViews, Fct2, iformat(0 To 7), bfile, bcgView, mainview
 Private osel
-Private Const mdlName As String = "DRW_VIewBOM"
+Private Const mdlname As String = "DRW_VIewBOM"
 Sub DRW_create_BomTable()
  CATIA.RefreshDisplay = False
     Call m_init
@@ -30,7 +30,7 @@ tempAry = getPrd_BomAry(dprd, iformat)
  
  For i = 1 To bomview.Tables.count
     Set otable = bomview.Tables.item(i)
-    If otbale.Name = "bbom" Then
+    If otbale.name = "bbom" Then
             pos_x = otable.X - 20
             pos_y = otable.Y - 60
             bomview.Tables.Remove (i)
@@ -40,7 +40,7 @@ Next i
 Err.Clear
 On Error GoTo 0
     Set otable = bomview.Tables.Add(pos_x, pos_y, tolrow, tolcol, 10, 20)
-    otable.Name = "bbom"
+    otable.name = "bbom"
     For i = 1 To tolrow
         For j = 1 To tolcol
                 ostr = Trim(CStr((tempAry(i, j))))
@@ -139,7 +139,7 @@ End Function
 Function getBomlns(BomTxTfile)
     Dim fso: Set fso = KCL.GetFso
     Dim ts: Set ts = fso.OpenTextFile(BomTxTfile, 1)
-    Dim lns: Set lns = New collection
+    Dim lns: Set lns = New Collection
     Dim startLn: startLn = False
     Do Until ts.AtEndOfStream
         lineContent = Trim(ts.ReadLine)

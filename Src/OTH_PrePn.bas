@@ -17,54 +17,54 @@ Attribute VB_Name = "OTH_PrePn"
 
 
 Private prj
-Private Const mdlName As String = "OTH_PrePn"
+Private Const mdlname As String = "OTH_PrePn"
 Sub Pnmgr()
     If Not KCL.CanExecute("ProductDocument") Then Exit Sub
-    Dim oprd:    Set oprd = CATIA.ActiveDocument.Product
-    If oprd Is Nothing Then Exit Sub
-    Dim oFrm: Set oFrm = KCL.newFrm(mdlName): oFrm.Show
+    Dim oPrd:    Set oPrd = CATIA.ActiveDocument.Product
+    If oPrd Is Nothing Then Exit Sub
+    Dim oFrm: Set oFrm = KCL.newFrm(mdlname): oFrm.Show
     Select Case oFrm.BtnClicked
         Case "btnOK"
             istr = ""
-           If oFrm.Res("txt_str") <> "" And Not KCL.ExistsKey(oFrm.Res("txt_str"), "字符") Then istr = oFrm.Res("txt_str")
+           If oFrm.res("txt_str") <> "" And Not KCL.ExistsKey(oFrm.res("txt_str"), "字符") Then istr = oFrm.res("txt_str")
            If istr = "" Then Exit Sub
-                If oFrm.Res("chk_prefix") Then
-                    Call c_pn_Prefix(oprd, istr)
-                ElseIf oFrm.Res("chk_suffix") Then
-                    Call c_pn_suffix(oprd, istr)
-                ElseIf oFrm.Res("chk_delete") Then
-                    Call del_pn_midx(oprd, istr)
+                If oFrm.res("chk_prefix") Then
+                    Call c_pn_Prefix(oPrd, istr)
+                ElseIf oFrm.res("chk_suffix") Then
+                    Call c_pn_suffix(oPrd, istr)
+                ElseIf oFrm.res("chk_delete") Then
+                    Call del_pn_midx(oPrd, istr)
                 End If
         Case Else: Exit Sub
     End Select
 
 End Sub
 
-Sub c_pn_Prefix(oprd, istr)
-        pn = oprd.partNumber
+Sub c_pn_Prefix(oPrd, istr)
+        pn = oPrd.PartNumber
         purePN = KCL.straf1st(pn, "_")
-        oprd.partNumber = istr & "_" & purePN
-   If oprd.Products.count > 0 Then
-    For Each Product In oprd.Products
+        oPrd.PartNumber = istr & "_" & purePN
+   If oPrd.Products.count > 0 Then
+    For Each Product In oPrd.Products
         Call c_pn_Prefix(Product, istr)
     Next
     End If
 End Sub
 
-Sub c_pn_suffix(oprd, istr)
-    pn = oprd.partNumber
-    oprd.partNumber = pn & "_" & istr
-   If oprd.Products.count > 0 Then
-    For Each Product In oprd.Products
+Sub c_pn_suffix(oPrd, istr)
+    pn = oPrd.PartNumber
+    oPrd.PartNumber = pn & "_" & istr
+   If oPrd.Products.count > 0 Then
+    For Each Product In oPrd.Products
         Call c_pn_suffix(Product, istr)
     Next
     End If
 End Sub
-Function del_pn_midx(oprd, istr)
-        pn = oprd.partNumber
-        oprd.partNumber = VBA.Replace(pn, istr, "")
-  If oprd.Products.count > 0 Then
-    For Each Product In oprd.Products
+Function del_pn_midx(oPrd, istr)
+        pn = oPrd.PartNumber
+        oPrd.PartNumber = VBA.Replace(pn, istr, "")
+  If oPrd.Products.count > 0 Then
+    For Each Product In oPrd.Products
         Call del_pn_midx(Product, istr)
     Next
    End If
@@ -78,7 +78,7 @@ End Function
 Sub shot()
 MsgBox "没编呢"
 Exit Sub
- Dim iprd, rprd, oprd, children
+ Dim iprd, rprd, oPrd, children
  Dim xlsht, rng, RC(0 To 1), oArry()
  Dim i, oRowNb
   RC(0) = 3: RC(1) = 3
@@ -116,7 +116,7 @@ MsgBox ("已经保存图片")
 oWindow.Layout = catWindowSpecsAndGeom 'catWindowSpecsOnly ' catWindowGeomOnly
 End Sub
 Function shotme()
-    Dim iprd, rprd, oprd, children
+    Dim iprd, rprd, oPrd, children
     Dim xlsht, rng, RC(0 To 1), oArry()
     Dim i, oRowNb
      RC(0) = 3: RC(1) = 3

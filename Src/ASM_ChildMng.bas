@@ -13,10 +13,10 @@ Attribute VB_Name = "ASM_ChildMng"
 ' %UI Button btn_cancel 取消
 '------其他------------------------------
 
-Private Const mdlName As String = "ASM_ChildMng"
+Private Const mdlname As String = "ASM_ChildMng"
 Sub ChildMng()
    If Not KCL.CanExecute("ProductDocument") Then Exit Sub
-    Dim oFrm: Set oFrm = KCL.newFrm(mdlName):
+    Dim oFrm: Set oFrm = KCL.newFrm(mdlname):
      oFrm.isVertical = True
      oFrm.Show
               Select Case oFrm.BtnClicked
@@ -72,7 +72,7 @@ Sub DeleteChildren()
       osel.Add prd
     Next
       Dim BTN, bTitle, bResult
-      imsg = "将删除" & iSel.partNumber & iSel.Name & "下的所有子产品，您确认吗"
+      imsg = "将删除" & iSel.PartNumber & iSel.name & "下的所有子产品，您确认吗"
       BTN = vbYesNo + vbExclamation
       bResult = MsgBox(imsg, BTN, "bTitle")  ' Yes(6),No(7),cancel(2)
            Select Case bResult

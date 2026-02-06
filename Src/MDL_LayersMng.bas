@@ -7,7 +7,7 @@ Attribute VB_Name = "MDL_LayersMng"
 '{ControlTipText: 设置只显示当前图层，然后创建YZ向图纸}
 '{BackColor:12648447}
 Private i
-Private Const mdlName As String = "MDL_LayersMng"
+Private Const mdlname As String = "MDL_LayersMng"
 Sub LayersMng()
 If Not CanExecute("partDocument,productdocument") Then Exit Sub
 Set rdoc = CATIA.ActiveDocument
@@ -128,7 +128,7 @@ If iprd.Products.count < 1 Then
 Else
         For Each prd In iprd.Products
             Set oV = oVs.Add("AutomaticNaming")
-            oV.Name = prd.partNumber & "VIEW YZ"
+            oV.name = prd.PartNumber & "VIEW YZ"
             Set ViewGen = oV.GenerativeLinks
             Set ViewGBH = oV.GenerativeBehavior
                 ViewGBH.Document = prd

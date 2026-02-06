@@ -19,7 +19,7 @@ Private ws As Object
 Private bws As Object
 
 ' 在类初始化时检查实例
-Private Const mdlName As String = "Cls_XLM"
+Private Const mdlname As String = "Cls_XLM"
 Private Sub Class_Initialize()
 On Error Resume Next
     If gws Is Nothing Then
@@ -28,7 +28,7 @@ On Error Resume Next
         Set gws = gwb.ActiveSheet
         Set WB = gwb
         Set ws = gws
-        ws.Name = "bom"
+        ws.name = "bom"
     Else
         Set xlAPP = GetObject("Excel.Application")
         Set WB = gwb
@@ -106,7 +106,7 @@ Private Sub set_Header(header, idxrow)
     .range(.Cells(idxrow, 1), .Cells(idxrow, lastCol)).Interior.color = RGB(190, 190, 190)
     End With
      Dim mapcells: mapcells = Array(0, 1, 3, 5, 7, 9, 11, 13, 14)
-     Dim lastrow: lastrow = ws.Cells(ws.Rows.count, 2).End(xlUp).Row
+     Dim lastrow: lastrow = ws.Cells(ws.Rows.count, 2).End(xlUp).row
     For rowNb = 2 To lastrow
         For i = 1 To UBound(mapcells)
                 ws.Cells(rowNb, mapcells(i)).Interior.color = RGB(190, 190, 190)
@@ -151,7 +151,7 @@ End Function
 Public Function extract_ary()
  Dim resultAry As Variant
  Dim cntx, cnty
-    cntx = ws.Cells(ws.Rows.count, 1).End(xlUp).Row
+    cntx = ws.Cells(ws.Rows.count, 1).End(xlUp).row
     cnty = 14
  ReDim resultAry(1 To cntx, 1 To cnty)
   For idrow = 2 To cntx
@@ -176,7 +176,7 @@ xlhide
             Set LVcol = .Columns(2)
             LVcol.HorizontalAlignment = xlLeft
     End With
-    For row_num = 2 To ws.Cells(ws.Rows.count, 2).End(xlUp).Row ' 使用 xlApp.xlUp
+    For row_num = 2 To ws.Cells(ws.Rows.count, 2).End(xlUp).row ' 使用 xlApp.xlUp
         Dim cell_value As Variant
         cell_value = ws.Cells(row_num, 2).value
         If Not IsEmpty(cell_value) Then
@@ -184,7 +184,7 @@ xlhide
         End If
     Next
     ' 设置对齐方式和缩进级别
-    For Each cell In ws.range("B2:B" & ws.Cells(ws.Rows.count, 2).End(xlUp).Row) ' 使用 xlApp.xlUp
+    For Each cell In ws.range("B2:B" & ws.Cells(ws.Rows.count, 2).End(xlUp).row) ' 使用 xlApp.xlUp
         If Not IsEmpty(cell) Then
             cell.HorizontalAlignment = xlLeft ' 使用 xlApp.xlLeft
             If IsNumeric(cell.value) Then
@@ -214,7 +214,7 @@ Public Sub inject_gxbom(ByVal idata As Variant, Optional ByVal idcols As Variant
             End With
         End If
          End With
-     ws.Name = "BOM_xx" & format(Now, "yymmdd_hhmm")
+     ws.name = "BOM_xx" & format(Now, "yymmdd_hhmm")
 End Sub
 Sub inject_ary(ByVal idata As Variant, startrow, Optional ByVal idcols As Variant, Optional ByVal idx As Variant)
         If IsArray(idcols) And IsArray(idx) Then
@@ -254,14 +254,14 @@ Sub inject_bom(ByVal idata As Variant, Optional ByVal idcols As Variant, Optiona
     End If
         Call setxlHead("bom")
         Call LvMg
-    ws.Name = "BOM_xx" & format(Now, "yymmdd_hhmm")
+    ws.name = "BOM_xx" & format(Now, "yymmdd_hhmm")
 End Sub
 Sub inject_pic(irow, pncol, Piccol, ipath)
         Dim i&, rng As range
         Dim iPic As Shape
         Dim cntrow
         ws.Rows.RowHeight = 25
-        cntrow = ws.Cells(ws.Rows.count, 1).End(xlUp).Row
+        cntrow = ws.Cells(ws.Rows.count, 1).End(xlUp).row
                 For i = irow To cntrow
                  pn = ws.Cells(i, pncol).value
                  picpath = ipath & "\" & pn & ".jpg"

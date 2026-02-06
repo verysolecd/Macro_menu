@@ -14,7 +14,7 @@ Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
 
-Private Const mdlName As String = "FrmFlower"
+Private Const mdlname As String = "FrmFlower"
 Private Sub CmbHide_Click()
     Me.Hide
 End Sub

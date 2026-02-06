@@ -19,6 +19,7 @@ Private Const GroupName = _
 Private PageMap As Object
 
 ' --- Entry Point ---
+Private Const mdlname As String = "A00_Menu"
 Public Sub CATMain()
     Set PageMap = get_Tagcfg(GroupName, True)
     Dim MenuItems As Object
@@ -49,7 +50,7 @@ End Sub
 ' --- Core Logic: Scanning ---
 
 ' Scans the project for valid macros and returns a Collection of cls_menuCAT objects
-Private Function GetMenuItems() As collection
+Private Function GetMenuItems() As Collection
     
     Dim Apc As Object: Set Apc = KCL.GetApc()
     Dim ExecPjt As Object: Set ExecPjt = Apc.ExecutingProject
@@ -59,7 +60,7 @@ Private Function GetMenuItems() As collection
     Dim comps As Object: Set comps = ExecPjt.ProjectItems.VBComponents
     Dim comp As Object
     
-    Dim result As New collection
+    Dim result As New Collection
     For Each comp In comps
         If comp.Type = 1 Then ' vbext_ct_StdModule
             ProcessModule comp, pjtPath, result
@@ -70,14 +71,14 @@ Private Function GetMenuItems() As collection
 End Function
 
 ' Processes a single module: parses tags and checks entry point
-Private Sub ProcessModule(ByVal comp As Object, ByVal pjtPath As String, ByRef colls As collection)
+Private Sub ProcessModule(ByVal comp As Object, ByVal pjtPath As String, ByRef colls As Collection)
     Dim mdl As Object: Set mdl = comp.CodeModule
     If mdl.CountOfDeclarationLines < 1 Then Exit Sub
     Dim DecCode As String
     DecCode = mdl.Lines(1, mdl.CountOfDeclarationLines)
     ' 1. Parse Metadata using the Class
     Dim menuItem As New cls_menuCAT
-    If Not menuItem.InitFromCode(DecCode, mdl.Name, pjtPath) Then Exit Sub
+    If Not menuItem.InitFromCode(DecCode, mdl.name, pjtPath) Then Exit Sub
     ' 2. Check if Group is valid in our PageMap
     Dim grpKey As Variant
     If IsNumeric(menuItem.GroupName) Then
@@ -114,7 +115,7 @@ End Function
 
 ' --- Adapter Logic: Object Collection -> Sorted Dictionary ---
 ' This bridges the gap between our new Class-based logic and the old View expecting Dictionaries
-Private Function OrganizeForView(ByVal colls As collection) As Object
+Private Function OrganizeForView(ByVal colls As Collection) As Object
     Dim SoLst As Object
     Set SoLst = CreateObject("System.Collections.SortedList")
     

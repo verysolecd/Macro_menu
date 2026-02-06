@@ -6,7 +6,7 @@ Attribute VB_Name = "RW_3initme"
 '{ControlTipText:将选择的产品和子产品文档按模板格式化}
 '{BackColor:1229803}
 
-Private Const mdlName As String = "RW_3initme"
+Private Const mdlname As String = "RW_3initme"
 Sub iniThis()
  If Not KCL.CanExecute("ProductDocument,PartDocument") Then Exit Sub
  If pdm Is Nothing Then Set pdm = New Cls_PDM
@@ -16,7 +16,8 @@ Sub iniThis()
         Set pdm = Nothing
         Exit Sub
     End If
-Dim iprd: Set iprd = pdm.getiPrd()
+If pdm.CurrentProduct Is Nothing Then Set pdm.CurrentProduct = KCL.defPrd
+    Dim iprd: Set iprd = pdm.CurrentProduct
      If Not iprd Is Nothing Then
         On Error Resume Next
                Call recurInitPrd(iprd)
@@ -36,14 +37,14 @@ Sub initPrtdoc(doc)
     Dim iprd: Set iprd = doc.Product
     Call pdm.initPrd(iprd)
 End Sub
-Sub recurInitPrd(oprd)
+Sub recurInitPrd(oPrd)
     If pdm Is Nothing Then Set pdm = New Cls_PDM
-        If g_allPN.Exists(oprd.partNumber) = False Then
-            g_allPN(oprd.partNumber) = 1
-            Call pdm.initPrd(oprd)
+        If g_allPN.Exists(oPrd.PartNumber) = False Then
+            g_allPN(oPrd.PartNumber) = 1
+            Call pdm.initPrd(oPrd)
         End If
-    If oprd.Products.count > 0 Then
-        For Each Product In oprd.Products
+    If oPrd.Products.count > 0 Then
+        For Each Product In oPrd.Products
             Call recurInitPrd(Product)
         Next
     End If

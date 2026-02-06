@@ -6,10 +6,9 @@ Attribute VB_Name = "RW_6nosamebdy"
 '{ControlTipText:将零件计算重量的实体清单中重复的实体删除}
 '{BackColor:1229803}
 Option Explicit
-Private Const mdlName As String = "RW_6nosamebdy"
-Sub nosamebdy()
+Private Const mdlname As String = "RW_6nosamebdy"
+Public Sub nosamebdy()
  If Not KCL.CanExecute("ProductDocument,PartDocument") Then Exit Sub
-
   Dim iprd, oprt
  If KCL.checkDocType("PartDocument") Then
     Set oprt = CATIA.ActiveDocument.part
@@ -19,7 +18,8 @@ Sub nosamebdy()
  End If
   If pdm Is Nothing Then Set pdm = New Cls_PDM
   Set g_allPN = KCL.InitDic(vbTextCompare): g_allPN.RemoveAll  'g_allPN 是全局变量，不需要传递
- Set iprd = pdm.getiPrd()
+If pdm.CurrentProduct Is Nothing Then Set pdm.CurrentProduct = KCL.defPrd
+ Set iprd = pdm.CurrentProduct
  If Not iprd Is Nothing Then
      On Error Resume Next
             Call nosamebdy_prds(iprd)
@@ -35,32 +35,30 @@ Sub nosamebdy()
  End If
  g_allPN.RemoveAll
 End Sub
-Sub nosamebdy_prds(oprd)
+Sub nosamebdy_prds(oPrd)
     Dim Product
-        If g_allPN.Exists(oprd.partNumber) = False Then
-            g_allPN(oprd.partNumber) = 1
-            Call nosamebdy_prd(oprd)
+        If g_allPN.Exists(oPrd.PartNumber) = False Then
+            g_allPN(oPrd.PartNumber) = 1
+            Call nosamebdy_prd(oPrd)
         End If
-    If oprd.Products.count > 0 Then
-            For Each Product In oprd.Products
+    If oPrd.Products.count > 0 Then
+            For Each Product In oPrd.Products
                 Call nosamebdy_prds(Product)
              Next
     End If
 End Sub
-Public Sub nosamebdy_prd(oprd)
+Public Sub nosamebdy_prd(oPrd)
     Dim colls, oprt
-
     On Error Resume Next
-         Set oprt = oprd.ReferenceProduct.Parent.part
+         Set oprt = oPrd.ReferenceProduct.Parent.part
         If Err.Number <> 0 Then
             Err.Clear
             Set oprt = Nothing
         End If
     On Error GoTo 0
-    
     If Not oprt Is Nothing Then
         On Error Resume Next
-                Call nosamebdy_bdylst(oprd)
+                Call nosamebdy_bdylst(oprt)
                 Err.Clear
         On Error GoTo 0
     End If
@@ -69,7 +67,7 @@ Sub nosamebdy_bdylst(oprt)
     Dim lstPara, lstbdys, colls, oDic, keeplst, currobj, objkey, itm, bdy
     Set lstPara = oprt.Parameters.RootParameterSet.ParameterSets.item("Part_info")
     Set lstbdys = lstPara.DirectParameters.item("iBodys")
-  Set colls = lstbdys.valuelist
+  Set colls = lstbdys.ValueList
     Set oDic = KCL.InitDic
     Set keeplst = KCL.InitDic
     For Each currobj In colls
@@ -80,7 +78,7 @@ Sub nosamebdy_bdylst(oprt)
           End If
      Next
      For Each itm In colls
-      colls.Remove itm.Name
+      colls.Remove itm.name
         Next itm
     For Each bdy In oprt.bodies
            If keeplst.Exists(KCL.GetInternalName(bdy)) Then colls.Add bdy

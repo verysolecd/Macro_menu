@@ -7,7 +7,7 @@ Attribute VB_Name = "MDL_holecenter2"
 '{ControlTipText: 提示选择面后后导出面上所有孔中心}
 '{BackColor:12648447}
 
-Private Const mdlName As String = "MDL_holecenter2"
+Private Const mdlname As String = "MDL_holecenter2"
 Sub Faceholecenter()
   If Not CanExecute("PartDocument,ProductDocument") Then Exit Sub
 
@@ -21,13 +21,13 @@ Dim iSel: Set iSel = Nothing
         Set iSel = KCL.SelectItem(imsg, filter)
     On Error GoTo 0
     If Not iSel Is Nothing Then
-        Set oHb = oprt.HybridBodies.Add(): oHb.Name = "extracted points"
+        Set oHb = oprt.HybridBodies.Add(): oHb.name = "extracted points"
         Set oExtact = HSF.AddNewExtract(iSel)
             oHb.AppendHybridShape oExtact
             oprt.Update
-        Set oref = oprt.CreateReferenceFromObject(oExtact)
-        Set oFace = HSF.AddNewSurfaceDatum(oref)
-            HSF.DeleteObjectForDatum oref
+        Set oRef = oprt.CreateReferenceFromObject(oExtact)
+        Set oFace = HSF.AddNewSurfaceDatum(oRef)
+            HSF.DeleteObjectForDatum oRef
         Dim oBdry As HybridShapeBoundary: Set oBdry = HSF.AddNewBoundaryOfSurface(oFace)
             oHb.AppendHybridShape oBdry
         oprt.Update
@@ -42,12 +42,12 @@ Dim iSel: Set iSel = Nothing
         For Each Hole In oHb.HybridShapes
             osel.Add Hole
             If TypeOf Hole Is HybridShapeCircleTritangent Then
-                Set oref = oprt.CreateReferenceFromObject(Hole)
-                Set oCtr = HSF.AddNewPointCenter(oref)
+                Set oRef = oprt.CreateReferenceFromObject(Hole)
+                Set oCtr = HSF.AddNewPointCenter(oRef)
                 oHb.AppendHybridShape oCtr
-                Set oref = oprt.CreateReferenceFromObject(oCtr)
+                Set oRef = oprt.CreateReferenceFromObject(oCtr)
                 oprt.Update
-                Set pt = HSF.AddNewPointDatum(oref): pt.Name = "pt_" & i
+                Set pt = HSF.AddNewPointDatum(oRef): pt.name = "pt_" & i
                 oHb.AppendHybridShape pt
                 osel.Add oCtr
                 i = i + 1

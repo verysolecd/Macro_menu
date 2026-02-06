@@ -1,6 +1,6 @@
 Attribute VB_Name = "MDL_Shapeinfo"
 Private mdict, HSF, osel, oParas, spa
-Private Const mdlName As String = "MDL_Shapeinfo"
+Private Const mdlname As String = "MDL_Shapeinfo"
 Sub tube()
 '--判断是否是part，当前代码只能运行在part中，修改后才能在总成中运行，例如增加遍历
 If TypeName(CATIA.ActiveDocument) <> "PartDocument" Then
@@ -31,7 +31,7 @@ For Each lstitm In lst
     Case LCase("HybridShapeInstance")  '这里是实例化的接头类，对应零件内UDF实例
     '以下代码获取实例的参数信息，使用dict输出，也可以用其他输出方式
          Dim ipa: Set ipa = InitDic
-            ipa.Add lstitm.Name, "我是" & strbflast(lstitm.Name, ".")
+            ipa.Add lstitm.name, "我是" & strbflast(lstitm.name, ".")
             For i = 1 To 10  '如果实例有更多参数，10增加
             On Error Resume Next
                 Set pa = lstitm.GetParameterFromPosition(i)
@@ -53,16 +53,16 @@ For Each lstitm In lst
                 Set oSweep = GetParentSweep(oprt, lstitm) '获取加厚曲面的sweep
                     Set oCurve = GetParentcurve(oprt, oSweep) '获取的sweep的父级曲线
                     lg = getlength(oCurve)   '获取曲线长度
-                Debug.Print lstitm.Name & "_长度是"; Round(lg, 1) & "_厚度是" & tk  '输出厚度和长度，
+                Debug.Print lstitm.name & "_长度是"; Round(lg, 1) & "_厚度是" & tk  '输出厚度和长度，
     End Select
  Next
 End Sub
 Sub GetShapesByParameters(oprt)
     Set paras = oprt.Parameters
-    For Each P In paras
+    For Each p In paras
         On Error Resume Next
         Dim parentObj
-        Set parentObj = P.Parent
+        Set parentObj = p.Parent
         If Not parentObj Is Nothing Then
             If TypeName(parentObj) <> "Parameters" Then
                 If HSF.GetGeometricalFeatureType(parentObj) = 7 Then

@@ -29,7 +29,7 @@ Private Const TAG_ENTRYPNT = "ep"           ' 入口点标签
 Private Const TAG_PJTPATH = "pjt_path"      ' 项目路径标签
 Private Const TAG_MDLNAME = "mdl_name"      ' 模块名称标签
 Private Const TAG_PASS_BTN = "springwdBTN"  ' 传递按钮名称开关
-Private Const mdlName As String = "Cls_btEVT"
+Private Const mdlname As String = "Cls_btEVT"
 
 Private Sub Class_Initialize()
 
@@ -68,9 +68,9 @@ Private Sub mBTNwd_Click()
         For Each ctl In mParentFrm.Controls
             On Error Resume Next
             If TypeName(ctl) = "CheckBox" Then
-                 mResultDict(ctl.Name) = ctl.value
+                 mResultDict(ctl.name) = ctl.value
             ElseIf TypeName(ctl) = "TextBox" Then
-                 mResultDict(ctl.Name) = ctl.text
+                 mResultDict(ctl.name) = ctl.text
             End If
             On Error GoTo 0
         Next
@@ -92,7 +92,7 @@ Private Sub mBTN_click()
     
     Dim params As Variant
     If mInfo.Exists(TAG_PASS_BTN) And mInfo(TAG_PASS_BTN) = True Then
-        params = Array(mBTN.Name)
+        params = Array(mBTN.name)
     Else
         params = Array()
     End If

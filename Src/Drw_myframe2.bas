@@ -44,28 +44,28 @@ Attribute VB_Name = "Drw_myframe2"
 
 Public ActiveDoc, Fact, Selection
 Private sheets, Sheet, targetsheet, Views, View, Texts, text
-Private Name, m_MacroID, m_DisplayFormat As String
+Private name, m_MacroID, m_DisplayFormat As String
 Private m_RevRowHeight, m_checkRowHeight, m_RulerLength As Double
 Private m_Width, m_Height As Double
 Private X0, Y0, m_Offset As Double
 Private Nb_check, Nb_rv, m_NbOfRevision As Integer
 Private m_Col, m_Row, m_ColRev As Variant
-Private Const mdlName As String = "Drw_myframe2"
+Private Const mdlname As String = "Drw_myframe2"
 Sub drwFormat()
   If Not CATInit() Then Exit Sub
   On Error Resume Next
-      Name = Texts.GetItem("Reference_" + m_MacroID).Name
+      name = Texts.GetItem("Reference_" + m_MacroID).name
     If Err.Number <> 0 Then
-      Err.Clear: Name = "none"
+      Err.Clear: name = "none"
     End If
   On Error GoTo 0
     Dim oFrm: Set oFrm = New cls_dynaFrm: oFrm.Show
     If oFrm.IsCancelled Then Exit Sub
     Select Case oFrm.BtnClicked
-        Case "btn_create": If (Name = "none") Then CATDrw_Creation targetsheet
-        Case "btn_delete": If (Name <> "none") Then CATDrw_Deletion targetsheet
+        Case "btn_create": If (name = "none") Then CATDrw_Creation targetsheet
+        Case "btn_delete": If (name <> "none") Then CATDrw_Deletion targetsheet
         Case "btn_resize"
-            If (Name <> "none") Then
+            If (name <> "none") Then
              CATDrw_Resizing targetsheet
               CATDrw_Update targetsheet
             End If
@@ -286,9 +286,9 @@ Sub CATCreateTitleBlockStandard()
     CreateLine X(3), Y(6), X(2), Y(5), "TitleBlock_std_Line_4"
     Dim oCircle
     Set oCircle = Fact.CreateClosedCircle(X(4), Y(1), R1)
-    oCircle.Name = "TitleBlock_std_Line_Circle_1"
+    oCircle.name = "TitleBlock_std_Line_Circle_1"
     Set oCircle = Fact.CreateClosedCircle(X(4), Y(1), R2)
-    oCircle.Name = "TitleBlock_std_Line_Circle_2"
+    oCircle.name = "TitleBlock_std_Line_Circle_2"
     If Err.Number <> 0 Then Err.Clear
   On Error GoTo 0
 End Sub
@@ -296,22 +296,22 @@ End Sub
 Function newLineH(iX1, iX2, iY2, iName) As Curve2D
 Dim oLine, Point
   Set oLine = Fact.CreateLine(iX1, iY2, iX2, iY2)
-  oLine.Name = iName
+  oLine.name = iName
   Set Point = oLine.StartPoint 'Create the start point
-  Point.Name = iName & "_start"
+  Point.name = iName & "_start"
   Set Point = oLine.EndPoint 'Create the start point
-  Point.Name = iName & "_end"
+  Point.name = iName & "_end"
   Set newLineH = oLine
 End Function
 
 Function newLineV(iX1, iY1, iY2, iName) As Curve2D
 Dim oLine, Point
   Set oLine = Fact.CreateLine(iX1, iY1, iX1, iY2)
-  oLine.Name = iName
+  oLine.name = iName
   Set Point = oLine.StartPoint 'Create the start point
-  Point.Name = iName & "_start"
+  Point.name = iName & "_start"
   Set Point = oLine.EndPoint 'Create the start point
-  Point.Name = iName & "_end"
+  Point.name = iName & "_end"
 End Function
 
 Sub CATTitleBlockText()
@@ -433,7 +433,7 @@ Sub CATLinks()
     Dim txtItem
     txtItem = "TitleBlock_Text_" & wuliaobianma_assy_val
   
-    Texts.GetItem(txtItem).text = ProductDrawn.partNumber
+    Texts.GetItem(txtItem).text = ProductDrawn.PartNumber
     Texts.GetItem("TitleBlock_Text_Title_1").text = ProductDrawn.Definition
     Dim ProductAnalysis As Analyze
     Set ProductAnalysis = ProductDrawn.Analyze
@@ -479,20 +479,20 @@ End Sub
 Function CreateLine(iX1, iY1, iX2, iY2, iName) As Curve2D
 Dim Point
   Set CreateLine = Fact.CreateLine(iX1, iY1, iX2, iY2)
-  CreateLine.Name = iName
+  CreateLine.name = iName
   Set Point = CreateLine.StartPoint 'Create the start point
-  Point.Name = iName & "_start"
+  Point.name = iName & "_start"
   Set Point = CreateLine.EndPoint 'Create the start point
-  Point.Name = iName & "_end"
+  Point.name = iName & "_end"
 End Function
 Function CreateText(iValue, iX, iY, iName)
   Set CreateText = Texts.Add(iValue, iX, iY)
-  CreateText.Name = iName
+  CreateText.name = iName
   CreateText.AnchorPosition = catMiddleCenter
 End Function
 Function CreateTextAF(iValue, iX, iY, iName, iAnchorPosition, iFontSize)
   Set CreateTextAF = Texts.Add(iValue, iX, iY)
-  CreateTextAF.Name = iName
+  CreateTextAF.name = iName
   CreateTextAF.AnchorPosition = iAnchorPosition
   CreateTextAF.SetFontSize 0, 0, iFontSize
   CreateTextAF.TextProperties.Blanking = 0  'catBlankingInactive,catBlankingActive,  catBlankingOnGeom
@@ -588,7 +588,7 @@ Sub revertCST()
 End Sub
 Sub CATCreateReference()
   Set text = Texts.Add("", X0, Y0)
-  text.Name = "Reference_" + m_MacroID
+  text.name = "Reference_" + m_MacroID
 End Sub
 Private Function getDecCode()
     Dim COMObjectName$     ' 获取VBA版本对应的COM对象名称
@@ -762,12 +762,12 @@ End Sub
 Sub CAT2DL_ViewLayout(targetsheet)
   If Not CATInit() Then Exit Sub
   On Error Resume Next
-    Name = Texts.GetItem("Reference_" + m_MacroID).Name
+    name = Texts.GetItem("Reference_" + m_MacroID).name
   If Err.Number <> 0 Then
-    Err.Clear: Name = "none"
+    Err.Clear: name = "none"
   End If
   On Error GoTo 0
-    If (Name = "none") Then
+    If (name = "none") Then
       CATDrw_Creation (targetsheet)
     Else
       CATDrw_Resizing (targetsheet)
@@ -798,7 +798,7 @@ Dim nbtexts, i, notfound, wholename, leftText, refText
   While (notfound = 0 And i < nbtexts)
     i = i + 1
     Set text = Texts.item(i)
-    wholename = text.Name
+    wholename = text.name
     leftText = Left(wholename, 10)
     If (leftText = "Reference_") Then
       notfound = 1
@@ -807,7 +807,7 @@ Dim nbtexts, i, notfound, wholename, leftText, refText
         MsgBox "Frame and Titleblock already created!"
         CATCheckRef = 1
         Exit Function
-      ElseIf (text.Name <> refText) Then
+      ElseIf (text.name <> refText) Then
         MsgBox "Frame and Titleblock created using another style:" + Chr(10) + "        " + m_MacroID
         CATCheckRef = 1
         Exit Function

@@ -19,7 +19,7 @@ Private Declare PtrSafe Sub Sleep Lib "kernel32" (ByVal ms As Long)
 Private Const VER = "0.0.16"
 '调试模式
 Private m_DebugMode As Boolean
-Private Const mdlName As String = "clsVBAUtilityLib"
+Private Const mdlname As String = "clsVBAUtilityLib"
 Private Sub Class_Initialize()
     m_DebugMode = True
 End Sub
@@ -485,9 +485,9 @@ End Function
 'param:Variant(Of Array)
 'return:collection
 Function ArrayToCollection( _
-        ByVal ary As Variant) As collection
-    Dim lst As collection
-    Set lst = New collection
+        ByVal ary As Variant) As Collection
+    Dim lst As Collection
+    Set lst = New Collection
     If UBound(ary) < 0 Then Exit Function
     Dim v As Variant
     For Each v In ary

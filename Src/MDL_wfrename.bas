@@ -14,7 +14,7 @@ Attribute VB_Name = "MDL_wfrename"
 ' = 4 , Circle
 ' = 5 , Surface
 
-Private Const mdlName As String = "MDL_wfrename"
+Private Const mdlname As String = "MDL_wfrename"
 Sub wfname()
 If CATIA.Windows.count < 1 Then
 MsgBox "没有打开的窗口"
@@ -54,28 +54,28 @@ Set oWF = oshapes.item(i)
 str = HSF.GetGeometricalFeatureType(oWF)
 Select Case str
 Case 0
-    oWF.Name = "aShape" & ct(0)
+    oWF.name = "aShape" & ct(0)
     ct(0) = ct(0) + 1
 Case 1
-     oWF.Name = "point" & ct(1)
+     oWF.name = "point" & ct(1)
     ct(1) = ct(1) + 1
 Case 2
-   oWF.Name = "curve" & ct(2)
+   oWF.name = "curve" & ct(2)
     ct(2) = ct(2) + 1
 Case 3
-  oWF.Name = "line" & ct(3)
+  oWF.name = "line" & ct(3)
     ct(3) = ct(3) + 1
 Case 4
-   oWF.Name = "circle" & ct(4)
+   oWF.name = "circle" & ct(4)
     ct(4) = ct(4) + 1
 Case 5
-   oWF.Name = "surface" & ct(5)
+   oWF.name = "surface" & ct(5)
     ct(5) = ct(5) + 1
 Case 6
-   oWF.Name = "plane" & ct(6)
+   oWF.name = "plane" & ct(6)
    ct(6) = ct(6) + 1
 Case 7
-      oWF.Name = "solid" & ct(7)
+      oWF.name = "solid" & ct(7)
    ct(7) = ct(7) + 1
 End Select
 

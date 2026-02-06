@@ -15,7 +15,7 @@ Attribute VB_Name = "MDL_pt2xl_abscoord"
 Private mDoc, HSF, mHBS, msel
 Private needtrans As Boolean
 
-Private Const mdlName As String = "MDL_pt2xl_abscoord"
+Private Const mdlname As String = "MDL_pt2xl_abscoord"
 Sub Mpt2xl()
  If Not CanExecute("PartDocument") Then
         Exit Sub
@@ -75,7 +75,7 @@ Sub pt2xl(oHb)
                   msel.Delete
                   mDoc.part.Update
                 arr(irow, 0) = irow
-                arr(irow, 1) = opt.Name
+                arr(irow, 1) = opt.name
                 arr(irow, 2) = fincoord(0)
                 arr(irow, 3) = fincoord(1)
                 arr(irow, 4) = fincoord(2)

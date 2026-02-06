@@ -6,7 +6,7 @@ Attribute VB_Name = "CAT_Color"
 '{ControlTipText:白黑色背景切换}
 '{BackColor: }
 
-Private Const mdlName As String = "CAT_Color"
+Private Const mdlname As String = "CAT_Color"
 Sub swbcgColor()
     
     On Error GoTo ErrorHandler

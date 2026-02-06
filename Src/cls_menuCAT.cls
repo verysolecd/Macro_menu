@@ -30,6 +30,7 @@ Private Const TAG_PJTPATH = "pjt_path"
 Private Const TAG_MDLNAME = "mdl_name"
 
 ' --- Properties ---
+Private Const mdlname As String = "cls_menuCAT"
 Public Property Get Title() As String
     Title = mTitle
 End Property
@@ -108,9 +109,9 @@ Public Sub Run()
     On Error GoTo 0
 End Sub
 
-Public Function InitFromCode(ByVal DecCode As String, ByVal mdlName As String, ByVal currentPjtPath As String) As Boolean
+Public Function InitFromCode(ByVal DecCode As String, ByVal mdlname As String, ByVal currentPjtPath As String) As Boolean
     InitFromCode = False
-    mModuleName = mdlName
+    mModuleName = mdlname
     mModulePath = currentPjtPath
     mExtras.RemoveAll
     ' Quick check for Group tag to avoid heavy regex

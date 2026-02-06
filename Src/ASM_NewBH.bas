@@ -32,16 +32,16 @@ Attribute VB_Name = "ASM_NewBH"
       ' %info c,_Abandon,Abandoned,废案,Abandoned
       ' %info c,_Patterns,Fasteners,紧固件阵列,Fasteners_Pattern
 Private prj
-Private Const mdlName As String = "ASM_NewBH"
+Private Const mdlname As String = "ASM_NewBH"
 Sub NewBH()
     prj = KCL.GetInput("请输入项目名称"): If prj = "" Then Exit Sub
     Dim Tree As Object: Set Tree = ParsePn(KCL.getDecCode("ASM_NewBH"))
     Dim PStack As Object: Set PStack = KCL.InitDic
-    Dim k, oprd As Object, ref As Object, fast As Object
+    Dim k, oPrd As Object, ref As Object, fast As Object
     For Each k In Tree.keys
-        Set oprd = AddNode(PStack, Tree(k))
-        If InStr(1, k, "_ref", 1) > 0 Then Set ref = oprd
-        If InStr(1, k, "_Patterns", 1) > 0 Then Set fast = oprd
+        Set oPrd = AddNode(PStack, Tree(k))
+        If InStr(1, k, "_ref", 1) > 0 Then Set ref = oPrd
+        If InStr(1, k, "_Patterns", 1) > 0 Then Set fast = oPrd
     Next
     If Not (ref Is Nothing Or fast Is Nothing) Then
         CATIA.ActiveDocument.Selection.Add ref: CATIA.ActiveDocument.Selection.Copy
@@ -53,26 +53,26 @@ End Sub
 
 Function AddNode(PStack, D)
     Dim L%: L = IIf(D.Exists("Level"), CInt(D("Level")), 1)
-    Dim oprd, par, TP$: TP = "Product"
+    Dim oPrd, par, TP$: TP = "Product"
     If L < 1 Then L = 1
     If L = 1 Then
-        Set oprd = CATIA.Documents.Add("Product").Product:  Set PStack(1) = oprd
+        Set oPrd = CATIA.Documents.Add("Product").Product:  Set PStack(1) = oPrd
     Else
         Set par = PStack(IIf(PStack.Exists(L - 1), L - 1, 1))
         If D.Exists("Type") Then
             If VBA.UCase(VBA.Trim(D("Type"))) = "T" Then TP = "Part"
             If VBA.UCase(VBA.Trim(D("Type"))) = "C" Then TP = "Component"
         End If
-        If TP = "Component" Then Set oprd = par.Products.AddNewProduct("") Else Set oprd = par.Products.AddNewComponent(TP, "")
-       Set PStack(L) = oprd
+        If TP = "Component" Then Set oPrd = par.Products.AddNewProduct("") Else Set oPrd = par.Products.AddNewComponent(TP, "")
+       Set PStack(L) = oPrd
     End If
     On Error Resume Next
-    oprd.Name = D("Name")
-    With oprd.ReferenceProduct
-        .partNumber = prj & D("PartNumber"): .Nomenclature = D("Nomenclature"): .Definition = D("Definition")
+    oPrd.name = D("Name")
+    With oPrd.ReferenceProduct
+        .PartNumber = prj & D("PartNumber"): .Nomenclature = D("Nomenclature"): .Definition = D("Definition")
     End With
-    oprd.Update
-    Set AddNode = oprd
+    oPrd.Update
+    Set AddNode = oPrd
 End Function
 
 Private Function ParsePn(c$) As Object

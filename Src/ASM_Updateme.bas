@@ -3,7 +3,7 @@ Attribute VB_Name = "ASM_Updateme"
 '{Ep:Upall}
 '{Caption:更新零件}
 '{ControlTipText:遍历结构树并更新}
-Private Const mdlName As String = "ASM_Updateme"
+Private Const mdlname As String = "ASM_Updateme"
 Sub Upall()
    If Not CanExecute("ProductDocument") Then Exit Sub
     Dim part, doc

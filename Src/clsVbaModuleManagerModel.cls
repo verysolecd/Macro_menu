@@ -19,10 +19,10 @@ Private Const SEPARATOR = "|"                           '路径分隔符-VBA-JSO
 Private Const SOURCE_FOLDER_NAME = "Src"             '在CATVBA内创建时的文件夹
 Private mVbe As Object                                  'VBA编辑器
 Private mUtil As clsVBAUtilityLib                       '工具类
-Private mProjectLst As collection                       '项目列表
+Private mProjectLst As Collection                       '项目列表
 Private mUserDict As Object                             '用户数据字典
 Private mJson As clsJsonConverter                       'Json解析器
-Private Const mdlName As String = "clsVbaModuleManagerModel"
+Private Const mdlname As String = "clsVbaModuleManagerModel"
 Private Sub Class_Initialize()
     Set mUtil = New clsVBAUtilityLib
     mUtil.DebugMode = DEBUG_MODE
@@ -49,9 +49,9 @@ End Property
 '***方法***
 '获取项目
 'return:VBProject集合
-Function get_project_list() As collection
-    Dim lst As collection
-    Set lst = New collection
+Function get_project_list() As Collection
+    Dim lst As Collection
+    Set lst = New Collection
     Dim proj As Object
     For Each proj In mVbe.vBProjects
         lst.Add proj
@@ -60,12 +60,12 @@ Function get_project_list() As collection
 End Function
 '获取项目名
 'return:项目名
-Function get_project_name_list() As collection
-    Dim lst As collection
-    Set lst = New collection
+Function get_project_name_list() As Collection
+    Dim lst As Collection
+    Set lst = New Collection
     Dim proj As Object
     For Each proj In mProjectLst
-        lst.Add proj.Name
+        lst.Add proj.name
     Next
     Set get_project_name_list = lst
 End Function
@@ -73,9 +73,9 @@ End Function
 'param: projectIdx-项目索引
 'return: 模块集合
 Function get_module_list( _
-        ByVal projectIdx As Long) As collection
-    Dim lst As collection
-    Set lst = New collection
+        ByVal projectIdx As Long) As Collection
+    Dim lst As Collection
+    Set lst = New Collection
     Set get_module_list = lst
     Dim proj As Object
     On Error Resume Next
@@ -93,14 +93,14 @@ End Function
 'param: projectIdx-项目索引
 'return: 模块名集合
 Function get_module_name_list( _
-        ByVal projectIdx As Long) As collection
-    Dim lst As collection
-    Set lst = New collection
+        ByVal projectIdx As Long) As Collection
+    Dim lst As Collection
+    Set lst = New Collection
     Set get_module_name_list = lst
     Dim comp As Object
     For Each comp In get_module_list(projectIdx)
         If is_target_module_type(comp) Then
-            lst.Add comp.Name
+            lst.Add comp.name
         End If
     Next
 End Function
@@ -109,8 +109,8 @@ End Function
 'return: 函数名字符串
 Private Function get_fanction_names( _
         ByVal comp As Object) As String
-    Dim lst As collection
-    Set lst = New collection
+    Dim lst As Collection
+    Set lst = New Collection
     Dim buf As String
     Dim i As Long
     With comp.CodeModule
@@ -166,7 +166,7 @@ Function get_module_info( _
         totalCharCount = totalCharCount + GetValidCharacterCount(compX)
     Next
     get_module_info = _
-        "项目名称:" & proj.Name & vbCrLf & _
+        "项目名称:" & proj.name & vbCrLf & _
         "总体步数:" & totalCharCount & vbCrLf & _
         "文件路径:" & proj.fileName & vbCrLf & _
         "模块名称:" & ModuleName & "." & get_extension(comp) & vbCrLf & _
@@ -225,7 +225,7 @@ Function get_dir_by_project_name( _
     On Error GoTo 0
     If proj Is Nothing Then Exit Function
     Dim path As String
-    path = parentDirPath & "\" & proj.Name
+    path = parentDirPath & "\" & proj.name
     Dim fso As Object
     Set fso = mUtil.GetFso()
     If Not fso.FolderExists(path) Then
@@ -239,7 +239,7 @@ End Function
 Private Sub import_modules( _
         ByVal proj As Object, _
         ByVal dirPath As String)
-    Dim fileLst As collection
+    Dim fileLst As Collection
     Set fileLst = get_target_file_path_list( _
         dirPath, _
         Array( _
@@ -261,9 +261,9 @@ End Sub
 'return: 文件路径集合
 Private Function get_target_file_path_list( _
         ByVal path As String, _
-        ByVal targetExtensions As Variant) As collection
-    Dim lst As collection
-    Set lst = New collection
+        ByVal targetExtensions As Variant) As Collection
+    Dim lst As Collection
+    Set lst = New Collection
     Set get_target_file_path_list = lst
     Dim fso As Object
     Set fso = mUtil.GetFso()
@@ -272,7 +272,7 @@ Private Function get_target_file_path_list( _
     Dim file As Object
     Dim ext As String
     For Each file In dir.Files
-        ext = fso.GetExtensionName(file.Name)
+        ext = fso.GetExtensionName(file.name)
         If Not UBound(filter(targetExtensions, ext)) < 0 Then
             lst.Add file.path
         End If
@@ -287,12 +287,12 @@ Private Sub remove_modules( _
         Set proj = mProjectLst.item(projectIdx)
     On Error GoTo 0
     If proj Is Nothing Then Exit Sub
-    Dim lst As collection
+    Dim lst As Collection
     Set lst = get_module_name_list(projectIdx)
-    Dim Name As Variant ' String
+    Dim name As Variant ' String
     Dim comp As Object
-    For Each Name In get_module_name_list(projectIdx)
-        Set comp = proj.VBComponents(Name)
+    For Each name In get_module_name_list(projectIdx)
+        Set comp = proj.VBComponents(name)
         proj.VBComponents.Remove comp
     Next
 End Sub
@@ -310,13 +310,13 @@ Sub export_project( _
     On Error GoTo 0
     If proj Is Nothing Then Exit Sub
     
-    Dim Name 'As String
+    Dim name 'As String
     Dim comp As Object
-    For Each Name In get_module_name_list(projectIdx)
-        Set comp = proj.VBComponents(Name)
+    For Each name In get_module_name_list(projectIdx)
+        Set comp = proj.VBComponents(name)
         On Error Resume Next
             Dim fullPath As String
-            fullPath = dirPath & "\" & comp.Name & "." & get_extension(comp)
+            fullPath = dirPath & "\" & comp.name & "." & get_extension(comp)
             comp.Export fullPath
             If Not Err.Number = 0 Then
                 MsgBox "导出失败，请删除.git以外的文件后重试"
@@ -404,7 +404,7 @@ Private Sub update_userdata( _
     End If
     Dim info As Object
     Set info = mUtil.InitDict()
-    info.Add "name", proj.Name
+    info.Add "name", proj.name
     info.Add "path", path
     mUserDict.Add KEY, info
     Call cleanUp_userdata
@@ -437,7 +437,7 @@ Private Sub remove_module_files( _
     Dim fso As Object
     Set fso = mUtil.GetFso()
     If Not fso.FolderExists(dirPath) Then Exit Sub
-    Dim Paths As collection
+    Dim Paths As Collection
     Set Paths = get_target_file_path_list( _
         dirPath, _
         Array( _
@@ -463,7 +463,7 @@ Function get_this_project() As Object
     Dim thisProj As Object
     Dim proj As Object
     For Each proj In mVbe.vBProjects
-        If proj.Name = THIS_PROJECT_NAME Then
+        If proj.name = THIS_PROJECT_NAME Then
             Set get_this_project = proj
             Exit Function
         End If
@@ -504,8 +504,8 @@ End Function
 Private Sub cleanUp_userdata()
     Dim fso As Object
     Set fso = mUtil.GetFso()
-    Dim removeLst As collection
-    Set removeLst = New collection
+    Dim removeLst As Collection
+    Set removeLst = New Collection
     Dim filePath As String
     Dim dirPath As String
     Dim KEY As Variant 'String

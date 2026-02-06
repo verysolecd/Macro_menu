@@ -9,7 +9,7 @@ Attribute VB_Name = "OTH_Flower"
 Private X0 As Double
 Private Y0 As Double
 Private Z0 As Double
-Private Const mdlName As String = "OTH_Flower"
+Private Const mdlname As String = "OTH_Flower"
 Sub DF()
  If Not CanExecute("PartDocument") Then Exit Sub
     FrmFlower.Show
@@ -275,15 +275,15 @@ Sub Flower(Optional ByVal pp As Double)
 ' 1: Create Geometrical Sets---------------------
     Dim myHB As HybridBody
     Set myHB = HB1s.Add
-    myHB.Name = "GS_Flower_Wireframe"
+    myHB.name = "GS_Flower_Wireframe"
     
     Dim myHB2 As HybridBody
     Set myHB2 = HB1s.Add
-    myHB2.Name = "GS_Flower_Hidden-Surface"
+    myHB2.name = "GS_Flower_Hidden-Surface"
     
     Dim myHB3 As HybridBody
     Set myHB3 = HB1s.Add
-    myHB3.Name = "GS_Flower_Surface"
+    myHB3.name = "GS_Flower_Surface"
     
     Dim HSF As HybridShapeFactory
     Set HSF = myPart.HybridShapeFactory

@@ -1,5 +1,5 @@
 Attribute VB_Name = "DRW_ShtPage"
-Private Const mdlName As String = "DRW_ShtPage"
+Private Const mdlname As String = "DRW_ShtPage"
 Sub main()
     CATIA.RefreshDisplay = False
     Set shts = CATIA.ActiveDocument.sheets
@@ -17,18 +17,18 @@ Sub main()
        Set osht = lst(i)
        If osht.IsDetail = False Then
             osht.Activate
-                    oo = straf1st(osht.Name, " ")
+                    oo = straf1st(osht.name, " ")
             If i > 9 Then
-                    osht.Name = "SH" & i & oo
+                    osht.name = "SH" & i & oo
              Else
-                    osht.Name = "SH0" & i & oo
+                    osht.name = "SH0" & i & oo
             End If
             Set oView = osht.Views.item("Background View")
 '            oView.Activate
             Set ots = oView.Texts
             Set oDict = InitDic()
             For Each itm In ots
-               Set oDict(itm.Name) = itm
+               Set oDict(itm.name) = itm
             Next
             
             Set Pg1 = oDict("gongxxzhang")

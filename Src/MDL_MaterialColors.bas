@@ -1,12 +1,11 @@
 Attribute VB_Name = "MDL_MaterialColors"
-
 '{GP:4}
 '{EP:MaterialPainter}
 '{Caption:实体上色}
 '{ControlTipText: Apply industry standard colors to selection}
 '
 '------Buttons------------------------------
-' %UI Label lbl_steel Steel Grades:
+' %UI Label bl_steel Steel Grades:
 ' %UI Button btn_mild 软钢(<210)    #ADD8E6
 ' %UI Button btn_hss 高强钢(210-340)  #00BFFF
 ' %UI Button btn_ahss 先进高强(340-590)  #FFFF00
@@ -36,14 +35,11 @@ Attribute VB_Name = "MDL_MaterialColors"
 
 '------------------------------------------
 Option Explicit
-
 Private mprt
 Private mHSF
-Private Const mdlName As String = "MDL_MaterialColors"
-
+Private Const mdlname As String = "MDL_MaterialColors"
 ' Main Entry Point
 Sub MaterialPainter()
-
   Set mprt = KCL.get_inwork_part
   If mprt Is Nothing Then
         Dim doc
@@ -54,33 +50,27 @@ Sub MaterialPainter()
             End If
         Next
     End If
-    
     If mprt Is Nothing Then Exit Sub
     Set mHSF = mprt.HybridShapeFactory
-    Dim mapFunc: Set mapFunc = setMasterFunc(mdlName)
-    Dim mapMdl: Set mapMdl = KCL.setBTNmdl(mdlName)
-
+    Dim mapFunc: Set mapFunc = setMasterFunc(mdlname)
+    Dim mapMdl: Set mapMdl = KCL.setBTNmdl(mdlname)
     ' 3. Initialize Form with PassButtonName ENABLED
     Set g_Frm = Nothing
-    Set g_Frm = KCL.newFrm(mdlName)
+    Set g_Frm = KCL.newFrm(mdlname)
     g_Frm.PassButtonName = True ' <--- The Magic Switch
-    
     ' 4. Show Toolbar (Modeless)
-    g_Frm.ShowToolbar mdlName, mapMdl, mapFunc
+    g_Frm.ShowToolbar mdlname, mapMdl, mapFunc
 End Sub
-
-
 Sub Action_ClickHandler(ByVal btnName As String)
     If btnName = "btn_cancel" Then
         Unload g_Frm
         Exit Sub
     End If
-    Dim map: Set map = btn2case(mdlName)
+    Dim map: Set map = btn2case(mdlname)
     Dim mColor As Variant
     If map(btnName) <> "" Then mColor = KCL.ParseBDcolor(map(btnName))
     If IsArray(mColor) Then ApplyColor mColor
 End Sub
-
 Private Sub ApplyColor(ary As Variant)
     Dim osel
     Set osel = CATIA.ActiveDocument.Selection
@@ -99,7 +89,6 @@ Private Sub ApplyColor(ary As Variant)
             lst.Add itp
          Else
             On Error Resume Next
-              
                 Dim itype:  itype = mHSF.GetGeometricalFeatureType(itm)
                 Error.Clear
             On Error GoTo 0
@@ -108,7 +97,6 @@ Private Sub ApplyColor(ary As Variant)
     Next i
 osel.Clear
 Set itm = Nothing
-
 For Each itm In lst
     osel.Add itm
 Next
@@ -129,7 +117,6 @@ Function setMasterFunc(ByVal modName As String)
     Next
    Set setMasterFunc = map
 End Function
-
 Sub getcolor()
 Dim r, g, b
  r = CLng(0)

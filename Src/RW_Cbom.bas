@@ -12,16 +12,14 @@ Attribute VB_Name = "RW_Cbom"
 ' %UI Button btnOK  生成BOM
 ' %UI Button btncancel  取消
 Option Explicit
-Private Const mdlName As String = "RW_Cbom"
+Private Const mdlname As String = "RW_Cbom"
 Sub cBom()
     If Not KCL.CanExecute("ProductDocument") Then Exit Sub
     CATIA.StartCommand ("* iso")
-    
-    Dim oFrm: Set oFrm = KCL.newFrm(mdlName): oFrm.Show
-    
+    Dim oFrm: Set oFrm = KCL.newFrm(mdlname): oFrm.Show
     If oFrm.BtnClicked <> "btnOK" Then Exit Sub
     If pdm Is Nothing Then Set pdm = New Cls_PDM
-    If pdm.CurrentProduct Is Nothing Then Set pdm.CurrentProduct = pdm.getiPrd()
+    If pdm.CurrentProduct Is Nothing Then Set pdm.CurrentProduct = KCL.defPrd
     Dim iprd: Set iprd = pdm.CurrentProduct: If iprd Is Nothing Then Exit Sub
     If gws Is Nothing Then Set xlm = New Cls_XLM
     Call Cal_Mass
@@ -29,7 +27,7 @@ Sub cBom()
     g_counter = 1: Lv = 1
     Dim tmpData(): tmpData() = pdm.recurInfoPrd(iprd, Lv)
     
-If Not oFrm.Res("chk_GXfmt") Then
+If Not oFrm.res("chk_GXfmt") Then
         ReDim resultAry(1 To UBound(tmpData, 1), 1 To UBound(tmpData, 2) + 2)
         For i = 1 To UBound(tmpData, 1)
                  For j = 1 To UBound(resultAry, 2)
@@ -64,7 +62,7 @@ If Not oFrm.Res("chk_GXfmt") Then
           xlm.inject_gxbom resultAry, idcol, idrow
             
 End If
-    If oFrm.Res("chk_capture") Then
+    If oFrm.res("chk_capture") Then
       Call Capme
       Call xlm.inject_pic(startrow, Colpn, colPic, gPic_Path)
     End If

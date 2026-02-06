@@ -3,14 +3,14 @@ Private Declare PtrSafe Function OpenClipboard Lib "user32" (ByVal hwnd As LongP
 Private Declare PtrSafe Function EmptyClipboard Lib "user32" () As Long
 Private Declare PtrSafe Function CloseClipboard Lib "user32" () As Long
 Private Declare PtrSafe Function SetClipboardData Lib "user32" (ByVal wFormat As Long, ByVal hMem As LongPtr) As LongPtr
-Private Const mdlName As String = "ZZ_BCK"
+Private Const mdlname As String = "ZZ_BCK"
 Sub remove_usrP()
-Set oprd = CATIA.ActiveDocument.Product
-rm oprd
+Set oPrd = CATIA.ActiveDocument.Product
+rm oPrd
 End Sub
-Sub rm(oprd)
+Sub rm(oPrd)
     On Error Resume Next
-     Set refPrd = oprd.ReferenceProduct
+     Set refPrd = oPrd.ReferenceProduct
      Set oprt = refPrd.Parent.part
     Set colls = refPrd.Publications
     colls.Remove ("Location")
@@ -22,7 +22,7 @@ Sub rm(oprd)
         Set cm = colls.GetItem("cm")
         Set osel = CATIA.ActiveDocument.Selection
         osel.Clear: osel.Add cm: osel.Delete
-     Set colls = refPrd.Parent.part.relations
+     Set colls = refPrd.Parent.part.Relations
      colls.Remove ("CalM")
      colls.Remove ("CMAS")
      colls.Remove ("CTK")
@@ -30,9 +30,9 @@ Sub rm(oprd)
      colls.Remove ("iMass")
      colls.Remove ("iMaterial")
      colls.Remove ("iThickness")
-    If oprd.Products.count > 0 Then
-        For i = 1 To oprd.Products.count
-          rm (oprd.Products.item(i))
+    If oPrd.Products.count > 0 Then
+        For i = 1 To oPrd.Products.count
+          rm (oPrd.Products.item(i))
         Next
     End If
 On Error GoTo 0
@@ -55,7 +55,7 @@ End Sub
 
 ''==图纸页面=============================
 
-Private Const mdlName As String = "A0_pages"
+Private Const mdlname As String = "A0_pages"
 Sub main()
 CATIA.RefreshDisplay = False
     Set shts = CATIA.ActiveDocument.sheets
@@ -75,17 +75,17 @@ j = 1
        Set osht = lst(i)
        If osht.IsDetail = False Then
             osht.Activate
-                    oo = straf1st(osht.Name, " ")
+                    oo = straf1st(osht.name, " ")
         If i > 9 Then
-            osht.Name = "SH" & i & oo
+            osht.name = "SH" & i & oo
         Else
-             osht.Name = "SH0" & i & oo
+             osht.name = "SH0" & i & oo
         End If
             Set oView = osht.Views.item("Background View")
             Set ots = oView.Texts
             Set oDict = InitDic()
             For Each itm In ots
-               Set oDict(itm.Name) = itm
+               Set oDict(itm.name) = itm
             Next
            Set Pg1 = oDict("gongxxzhang")
             Pg1.text = "共" & shts.count - 1 & "页"

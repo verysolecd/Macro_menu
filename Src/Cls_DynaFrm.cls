@@ -12,7 +12,7 @@ Attribute VB_Exposed = False
 Private mForm, mdict, WD As Object
 Private mExecuted As Boolean
 Private mCfgStr As String
-Private mEventCol As collection
+Private mEventCol As Collection
 Private mIsVertical As Variant ' Empty=Auto, True=Vert, False=Horiz
 Private mPassBtn As Boolean
 
@@ -23,11 +23,11 @@ Private Const TAG_MDLNAME = "mdl_name"      ' 模块名称标签
 Private Const TAG_PASS_BTN = "springwdBTN"
 Private pjt As String
 ' --- Lifecycle ---
-Private Const mdlName As String = "cls_dynaFrm"
+Private Const mdlname As String = "cls_dynaFrm"
 Private Sub Class_Initialize()
     mExecuted = False
     Set mdict = CreateObject("Scripting.Dictionary")
-    Set mEventCol = New collection
+    Set mEventCol = New Collection
     pjt = KCL.GetVBAprj
     mIsVertical = Empty
 End Sub
@@ -46,11 +46,11 @@ Private Sub Class_Terminate()
 End Sub
 
 ' --- Public API ---
-Public Sub Init(ByVal mdlName As String)
-    mCfgStr = getbf1stproc(mdlName)
+Public Sub Init(ByVal mdlname As String)
+    mCfgStr = getbf1stproc(mdlname)
 End Sub
-Public Property Get Res() As Object
-EnsureExecuted: Set Res = mdict
+Public Property Get res() As Object
+EnsureExecuted: Set res = mdict
 End Property
 Public Property Get BtnClicked() As Variant
 EnsureExecuted: BtnClicked = IIf(mdict.Exists("btn_clicked"), mdict("btn_clicked"), "")
@@ -111,10 +111,10 @@ Private Sub BindEvents(frm As Object, modMap As Object, macMap As Object)
     Dim isScript As Boolean
     isScript = (Not modMap Is Nothing) And (Not macMap Is Nothing)
     
-    Set mEventCol = New collection
+    Set mEventCol = New Collection
     For Each ctl In frm.Controls
         If TypeName(ctl) = "CommandButton" Then
-            btnName = ctl.Name
+            btnName = ctl.name
             Set handler = New Cls_btEVT
                 If isScript And Not modMap Is Nothing Then  '非模态按钮  对应cls_btEVT set_ButtonEvent
                     If modMap.Exists(btnName) And macMap.Exists(btnName) Then

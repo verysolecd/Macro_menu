@@ -6,7 +6,7 @@ Attribute VB_Name = "ASM_CMP"
 '{ControlTipText:对比旧、新数据}
 '{BackColor:}
 
-Private Const mdlName As String = "ASM_CMP"
+Private Const mdlname As String = "ASM_CMP"
 Sub myCMP()
  If Not CanExecute("ProductDocument") Then Exit Sub
 Dim rprd As Product
@@ -32,7 +32,7 @@ Set colls = rprd.Products
       If prd2 Is Nothing Then Exit Sub
     If Not IsNothing(prd1) And Not IsNothing(prd1) Then
             Dim CMPR: Set CMPR = oComps.Add(prd1, prd2, 1#, 1#, 2)
-                pn2 = KCL.rmchn(prd2.partNumber)
+                pn2 = KCL.rmchn(prd2.PartNumber)
                 opath(0) = prd2.ReferenceProduct.Parent.path
                 opath(2) = "3dmap"
                    Mt(0) = "AddedMaterial"
