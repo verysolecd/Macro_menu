@@ -9,16 +9,19 @@ Attribute VB_Name = "MDL_addsubgeo"
 Private Const mdlname As String = "MDL_addsubgeo"
 Sub addsubgeo()
  If Not CanExecute("Productdocument,PartDocument") Then Exit Sub
-    Set odoc = CATIA.ActiveDocument.Product
     Set oprt = KCL.get_inwork_part
+    Set igeo = Nothing
     Set colls = oprt.HybridBodies
-itype = TypeName(oprt.InWorkObject)
+    
+    itype = TypeName(oprt.InWorkObject)
     If LCase(itype) = LCase("hybridbody") Then
-        Set colls = oprt.InWorkObject.HybridBodies
-    Else
-        Exit Sub
+        Set igeo = oprt.InWorkObject
+        Set colls = igeo.HybridBodies
     End If
-    Set og = colls.Add()
-    og.name = "FAXX"
+    Set og = colls.Add(): og.name = "FAXX"
+    On Error Resume Next
+    If Not igeo Is Nothing Then Set oprt.InWorkObject = oprt.MainBody 'og.HybridBodies.Parent
+    Error.Clear
+    On Error Resume Next
 End Sub
 

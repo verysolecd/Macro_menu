@@ -30,7 +30,7 @@ Sub cpChildren()
     Set odoc = CATIA.ActiveDocument
     Set osel = CATIA.ActiveDocument.Selection: osel.Clear
     On Error GoTo ErrorHandler
-        Call KCL.setASM(False)
+        Call KCL.CATquick(False)
         imsg = "请先点击选择源父产品，再点击选择目标父产品": MsgBox imsg
         filter(0) = "Product"
         Dim sourcePrd, targetPrd As Product
@@ -52,11 +52,11 @@ Sub cpChildren()
             osel.Clear
             Set targetPrd = Nothing
             Set sourcePrd = Nothing
-            Call KCL.setASM(True)
+           Call KCL.CATquick(True)
     On Error GoTo 0
 ErrorHandler:
         If Err.Number <> 0 Then
-            Call KCL.setASM(True)
+            Call KCL.CATquick(True)
                 MsgBox "CATIA 程序错误：" & Err.Description, vbCritical
             Exit Sub
         End If

@@ -102,10 +102,8 @@ Function SelectItem(ByVal msg$, _
     Set se = SelectElement(msg, filter)
     If IsNothing(se) Then
         Set SelectItem = se
-    ElseIf TypeName(se) = "Partdocument" Then
-        Set SelectItem = se.value
     Else
-        SelectItem = se.LeafProduct
+        Set SelectItem = se.value
     End If
 End Function
 ' 选择元素
@@ -1184,5 +1182,37 @@ Function GetControlType(ByVal alias As String) As String
 End Function
 
 
+Public Function CATquick(ByVal Quick As Boolean, Optional ByVal updateCap As Boolean = False)
+    Dim setcls:  Set setcls = CATIA.SettingControllers
+    Dim Asmg:   Set Asmg = setcls.item("CATAsmGeneralSettingCtrl")
+    Dim Vismg:   Set Vismg = setcls.item("CATVizVisualizationSettingCtrl")
+    Dim btnCaption As String
+    With CATIA
+    
+    If Quick Then
+        '.DisableNewUndoRedoTransaction
+        '.EnableNewUndoRedoTransaction
+         .RefreshDisplay = False
+            Asmg.AutoUpdateMode = 0 '0: catManualUpdate
+            Vismg.Viz3DFixedAccuracy = 5
+            btnCaption = "屏幕更新(关)"
+    Else
+        '.DisableNewUndoRedoTransaction
+        '.EnableNewUndoRedoTransaction
+        .RefreshDisplay = True
+       Asmg.AutoUpdateMode = 1 '1: catAutomaticUpdate
+        Vismg.Viz3DFixedAccuracy = 0.02
+        btnCaption = "屏幕更新(开)"
+    End If
+    End With
+     On Error Resume Next
+        If Not A00_globalVar.g_Btn Is Nothing Then
+          If updateCap = True Then A00_globalVar.g_Btn.Caption = btnCaption
+        End If
+     Set A00_globalVar.g_Btn = Nothing
+    CATquick = Quick
+    CATIA.ActiveWindow.ActiveViewer.Update
+    On Error GoTo 0
+End Function
 
 

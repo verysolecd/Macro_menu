@@ -10,10 +10,9 @@ Private oprt
 
 Private Const mdlname As String = "MDL_addgeotree"
 Sub newgeo()
- If Not CanExecute("PartDocument") Then Exit Sub
- 
-    Set odoc = CATIA.ActiveDocument.Product
-    Set oprt = odoc.ReferenceProduct.Parent.part
+ If Not CanExecute("PartDocument,productdocument") Then Exit Sub
+  Set oprt = KCL.get_inwork_part
+
     Set colls = oprt.HybridBodies
     On Error Resume Next
     Set og = colls.item("Geo_sheet")

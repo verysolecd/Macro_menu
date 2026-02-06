@@ -13,8 +13,8 @@ Sub Upall()
             Exit For
         End If
     Next
-'tosave =doc.saved
-'if tosave =false then
+    'tosave =doc.saved
+    'if tosave =false then
     For Each doc In CATIA.Documents
       isupdated = True
       If TypeName(doc) = "PartDocument" Then
