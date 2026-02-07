@@ -4,11 +4,11 @@ Private Declare PtrSafe Function EmptyClipboard Lib "user32" () As Long
 Private Declare PtrSafe Function CloseClipboard Lib "user32" () As Long
 Private Declare PtrSafe Function SetClipboardData Lib "user32" (ByVal wFormat As Long, ByVal hMem As LongPtr) As LongPtr
 Private Const mdlname As String = "ZZ_BCK"
-Sub remove_usrP()
+Private Sub remove_usrP()
 Set oPrd = CATIA.ActiveDocument.Product
 rm oPrd
 End Sub
-Sub rm(oPrd)
+Private Sub rm(oPrd)
     On Error Resume Next
      Set refPrd = oPrd.ReferenceProduct
      Set oprt = refPrd.Parent.part
@@ -20,8 +20,8 @@ Sub rm(oPrd)
     colls.Remove ("iMaterial")
      Set colls = refPrd.Parent.part.Parameters.RootParameterSet.ParameterSets
         Set cm = colls.GetItem("cm")
-        Set osel = CATIA.ActiveDocument.Selection
-        osel.Clear: osel.Add cm: osel.Delete
+        Set oSel = CATIA.ActiveDocument.Selection
+        oSel.Clear: oSel.Add cm: oSel.Delete
      Set colls = refPrd.Parent.part.Relations
      colls.Remove ("CalM")
      colls.Remove ("CMAS")
@@ -40,7 +40,7 @@ End Sub
 
 
 ''==遍历递归=============================
-Sub recurAyo(ayo)
+Private Sub recurAyo(ayo)
     Dim colls: Set itm = ayo.Products
     For Each itm In colls
         Call recurFunc(itm)
@@ -56,7 +56,7 @@ End Sub
 ''==图纸页面=============================
 
 Private Const mdlname As String = "A0_pages"
-Sub main()
+Private Sub main()
 CATIA.RefreshDisplay = False
     Set shts = CATIA.ActiveDocument.sheets
       Set osht = Nothing
@@ -98,7 +98,7 @@ j = 1
      Set oView = osht.Views.item(1)
       osht.Activate
 End Sub
-Function straf1st(istr, iext)
+Private Function straf1st(istr, iext)
 Dim idx
 idx = InStr(istr, iext)
 If idx > 0 Then
@@ -108,7 +108,7 @@ If idx > 0 Then
     End If
 End Function
 
-Function InitDic()
+Private Function InitDic()
     Dim dic As Object
     Set dic = CreateObject("Scripting.Dictionary")
     dic.compareMode = compareMode

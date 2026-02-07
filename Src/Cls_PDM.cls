@@ -10,13 +10,6 @@ Attribute VB_Exposed = False
 
 '=======================================================================================
 ' 类名: Cls_PDM (UTF-8)
-' 描述: CATIA 产品数据 management 类，负责属性获取、BOM 生成、机电协同等。
-' 优化点:
-'   1. 使用 Collection 蓄积行数据，避免递归中的数组重定义和复制开销。
-'   2. 优化 count_me 逻辑，通过预先统计同级零件数量减少冗余扫描。
-'   3. 统一属性获取接口，强化类型声明。
-'   4. 移除对全局变量 g_counter, gfn 的依赖，增强类的独立性。
-'=======================================================================================
 
 Option Explicit
 
@@ -194,10 +187,10 @@ Public Function ProduceBOM(ByVal rootPrd As Object, Optional ByVal filterDuplica
     Dim colCount As Long: colCount = UBound(mRows(1))
     Dim result() As Variant: ReDim result(1 To rowCount, 0 To colCount)
     
-    Dim r As Long, c As Long, rowData As Variant
-    For r = 1 To rowCount
-        rowData = mRows(r)
-        For c = 0 To colCount: result(r, c) = rowData(c): Next
+    Dim R As Long, c As Long, rowData As Variant
+    For R = 1 To rowCount
+        rowData = mRows(R)
+        For c = 0 To colCount: result(R, c) = rowData(c): Next
     Next
     ProduceBOM = result
 End Function
@@ -243,10 +236,10 @@ Public Function attLv2Prd(oPrd) As Variant
     If mRows.count = 0 Then attLv2Prd = Empty: Exit Function
     
     Dim result() As Variant: ReDim result(1 To mRows.count, 1 To 9)
-    Dim r As Long, c As Long, rowData As Variant
-    For r = 1 To mRows.count
-        rowData = mRows(r)
-        For c = 1 To 9: result(r, c) = rowData(c): Next
+    Dim R As Long, c As Long, rowData As Variant
+    For R = 1 To mRows.count
+        rowData = mRows(R)
+        For c = 1 To 9: result(R, c) = rowData(c): Next
     Next
     attLv2Prd = result
 End Function
@@ -272,10 +265,10 @@ Public Function gxBom(ByVal oPrd As Object, ByVal level As Long) As Variant
     If mRows.count = 0 Then gxBom = Empty: Exit Function
     
     Dim result() As Variant: ReDim result(1 To mRows.count, 1 To 16)
-    Dim r As Long, c As Long, rowData As Variant
-    For r = 1 To mRows.count
-        rowData = mRows(r)
-        For c = 1 To 16: result(r, c) = rowData(c): Next
+    Dim R As Long, c As Long, rowData As Variant
+    For R = 1 To mRows.count
+        rowData = mRows(R)
+        For c = 1 To 16: result(R, c) = rowData(c): Next
     Next
     gxBom = result
 End Function

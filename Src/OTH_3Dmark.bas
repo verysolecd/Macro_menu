@@ -61,9 +61,9 @@ End Sub
 
 Sub Pt_annotation()
 
-Set odoc = CATIA.ActiveDocument
+Set oDoc = CATIA.ActiveDocument
  Set oPrd = CATIA.ActiveDocument.Product
-    Set oprt = odoc.part
+    Set oprt = oDoc.part
  Set oHb = KCL.SelectItem("请选择geoset", "HybridBody")
   Set opt = oHb.HybridShapes.item(1)
 Set anSets = oprt.AnnotationSets

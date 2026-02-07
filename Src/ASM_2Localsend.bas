@@ -9,22 +9,22 @@ Private Const mdlname As String = "ASM_2Localsend"
 Sub sendDir()
     If Not CanExecute("ProductDocument,DrawingDocument") Then Exit Sub
     CATIA.DisplayFileAlerts = True
-    Dim odoc: Set odoc = CATIA.ActiveDocument
-    ipath_name = odoc.path & "\" & odoc.name
+    Dim oDoc: Set oDoc = CATIA.ActiveDocument
+    ipath_name = oDoc.path & "\" & oDoc.name
     Dim opath
-        opath = KCL.ofParentPath(odoc.path)
+        opath = KCL.ofParentPath(oDoc.path)
     Dim pn
-        If KCL.IsObj_T(odoc, "DrawingDocument") Then
-            pn = KCL.strbflast(odoc.name, ".")
+        If KCL.IsObj_T(oDoc, "DrawingDocument") Then
+            pn = KCL.strbflast(oDoc.name, ".")
         Else
-            pn = odoc.Product.PartNumber
+            pn = oDoc.Product.PartNumber
         End If
     Dim bckFolderName As String
     fName = KCL.rmchn(pn)    '将零件号所有中文字符替换为" "
     bckFolderName = KCL.strbflast(fName, "_") & "_" & KCL.timestamp("min")
     bckpath = opath & bckFolderName
     
-    If KCL.isExists(odoc.path) Then
+    If KCL.isExists(oDoc.path) Then
         Dim BTN, bTitle, bResult
             imsg = "将备份到" & bckpath & "您确认吗？"
             BTN = vbYesNo + vbExclamation

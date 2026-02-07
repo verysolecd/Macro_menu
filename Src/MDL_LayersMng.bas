@@ -53,12 +53,12 @@ Set rprd = rdoc.Product
 '    osel.Delete
 'oDoc.CurrentFilter = "All visible"
 End Sub
-Sub appFilterLayer(odoc)
-Dim osel
-Set osel = CATIA.ActiveDocument.Selection
+Sub appFilterLayer(oDoc)
+Dim oSel
+Set oSel = CATIA.ActiveDocument.Selection
  '---显示过滤器管理管理
  ily = ""
- ly = odoc.CurrentLayer
+ ly = oDoc.CurrentLayer
 If ly <> "None" Then
      Dim BTN, bTitle, bResult
       imsg = "只显示当前图层还是您输入一个图层？" & vbCrLf & vbCrLf
@@ -84,11 +84,11 @@ If ly <> "None" Then
                     If fstr <> "" Then
                         filterdef = fstr
                          filtername = "only_" & fstr & "_shown"
-                           odoc.CreateFilter filtername, filterdef
-                           odoc.CurrentFilter = filtername
+                           oDoc.CreateFilter filtername, filterdef
+                           oDoc.CurrentFilter = filtername
                     End If
                 Case 6  '===选择“是”====
-                 odoc.CurrentFilter = "Only current layer visible"
+                 oDoc.CurrentFilter = "Only current layer visible"
        End Select
 End If
 End Sub

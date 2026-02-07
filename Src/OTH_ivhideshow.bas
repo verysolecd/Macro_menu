@@ -35,8 +35,8 @@ Sub setHideshow()
 '==生成UItoolbar-===================
     Dim mapMdl: Set mapMdl = KCL.setBTNmdl(mdlname)
     Dim mapFunc As Object: Set mapFunc = KCL.setBTNFunc(mdlname)
-    Set g_Frm = Nothing:  Set g_Frm = KCL.newFrm(mdlname)
-    g_Frm.ShowToolbar mdlname, mapMdl, mapFunc
+    Set g_frm = Nothing:  Set g_frm = KCL.newFrm(mdlname)
+    g_frm.ShowToolbar mdlname, mapMdl, mapFunc
 End Sub
 Private Sub initsel()
     Set rdoc = CATIA.ActiveDocument

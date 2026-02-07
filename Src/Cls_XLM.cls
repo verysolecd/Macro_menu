@@ -207,7 +207,7 @@ Public Sub inject_gxbom(ByVal idata As Variant, Optional ByVal idcols As Variant
             End With
         End If
          End With
-     ws.name = "BOM_xx" & format(Now, "yymmdd_hhmm")
+     ws.name = "BOM_xx" & Format(Now, "yymmdd_hhmm")
 End Sub
 Sub inject_ary(ByVal idata As Variant, startrow, Optional ByVal idcols As Variant, Optional ByVal idx As Variant)
         If IsArray(idcols) And IsArray(idx) Then
@@ -247,7 +247,7 @@ Sub inject_bom(ByVal idata As Variant, Optional ByVal idcols As Variant, Optiona
     End If
         Call setxlHead("bom")
         Call LvMg
-    ws.name = "BOM_xx" & format(Now, "yymmdd_hhmm")
+    ws.name = "BOM_xx" & Format(Now, "yymmdd_hhmm")
 End Sub
 Sub inject_pic(irow, pncol, Piccol, ipath)
         Dim i&, rng As range

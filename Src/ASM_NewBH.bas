@@ -51,25 +51,25 @@ Sub NewBH()
     If PStack.Exists(1) Then Call recurInitPrd(PStack(1))
 End Sub
 
-Function AddNode(PStack, D)
-    Dim L%: L = IIf(D.Exists("Level"), CInt(D("Level")), 1)
+Function AddNode(PStack, d)
+    Dim L%: L = IIf(d.Exists("Level"), CInt(d("Level")), 1)
     Dim oPrd, par, TP$: TP = "Product"
     If L < 1 Then L = 1
     If L = 1 Then
         Set oPrd = CATIA.Documents.Add("Product").Product:  Set PStack(1) = oPrd
     Else
         Set par = PStack(IIf(PStack.Exists(L - 1), L - 1, 1))
-        If D.Exists("Type") Then
-            If VBA.UCase(VBA.Trim(D("Type"))) = "T" Then TP = "Part"
-            If VBA.UCase(VBA.Trim(D("Type"))) = "C" Then TP = "Component"
+        If d.Exists("Type") Then
+            If VBA.UCase(VBA.Trim(d("Type"))) = "T" Then TP = "Part"
+            If VBA.UCase(VBA.Trim(d("Type"))) = "C" Then TP = "Component"
         End If
         If TP = "Component" Then Set oPrd = par.Products.AddNewProduct("") Else Set oPrd = par.Products.AddNewComponent(TP, "")
        Set PStack(L) = oPrd
     End If
     On Error Resume Next
-    oPrd.name = D("Name")
+    oPrd.name = d("Name")
     With oPrd.ReferenceProduct
-        .PartNumber = prj & D("PartNumber"): .Nomenclature = D("Nomenclature"): .Definition = D("Definition")
+        .PartNumber = prj & d("PartNumber"): .Nomenclature = d("Nomenclature"): .Definition = d("Definition")
     End With
     oPrd.Update
     Set AddNode = oPrd
@@ -84,10 +84,10 @@ Private Function ParsePn(c$) As Object
         For Each m In RE.Execute(c)
             curI = Len(m.SubMatches(0))
             curL = GetLev(curI, curL, H)
-            Dim D: Set D = KCL.InitDic(1)
-            D.Add "Level", curL: D.Add "Type", VBA.Trim(m.SubMatches(1)): D.Add "PartNumber", VBA.Trim(m.SubMatches(2))
-            D.Add "Nomenclature", VBA.Trim(m.SubMatches(3)): D.Add "Definition", VBA.Trim(m.SubMatches(4)): D.Add "Name", VBA.Trim(m.SubMatches(5))
-            lst.Add D("PartNumber"), D
+            Dim d: Set d = KCL.InitDic(1)
+            d.Add "Level", curL: d.Add "Type", VBA.Trim(m.SubMatches(1)): d.Add "PartNumber", VBA.Trim(m.SubMatches(2))
+            d.Add "Nomenclature", VBA.Trim(m.SubMatches(3)): d.Add "Definition", VBA.Trim(m.SubMatches(4)): d.Add "Name", VBA.Trim(m.SubMatches(5))
+            lst.Add d("PartNumber"), d
         Next
     End If
     Set ParsePn = lst

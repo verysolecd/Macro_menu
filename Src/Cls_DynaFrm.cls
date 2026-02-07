@@ -39,7 +39,7 @@ Private Sub Class_Terminate()
     Set mForm = Nothing
     Set mEventCol = Nothing
     mExecuted = False
-    Set g_Frm = Nothing
+    Set g_frm = Nothing
     pjt = ""
     mCfgStr = ""
     Error.Clear

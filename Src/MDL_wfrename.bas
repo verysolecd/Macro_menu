@@ -20,9 +20,9 @@ Sub wfname()
         MsgBox "没有打开的窗口"
         Exit Sub
     End If
-Dim odoc
+Dim oDoc
 On Error Resume Next
-Set odoc = CATIA.ActiveDocument
+Set oDoc = CATIA.ActiveDocument
 On Error GoTo 0
 
 Set oprt = KCL.get_inwork_part
@@ -30,8 +30,8 @@ Set oprt = KCL.get_inwork_part
 Dim HSF:  Set HSF = oprt.HybridShapeFactory
 
 Dim HBS: Set HBS = oprt.HybridBodies
-Dim osel: Set osel = odoc.Selection
-osel.Clear
+Dim oSel: Set oSel = oDoc.Selection
+oSel.Clear
 '=======要求选择几何图形集和坐标
 Dim imsg
 imsg = "请选择元素所在的几何图形集"

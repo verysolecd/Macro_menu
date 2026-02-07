@@ -3,51 +3,34 @@ Private Const mdlname As String = "DRW_viewBOM_drawing_template"
 Sub main()
     CATIA.RefreshDisplay = False
     On Error Resume Next
-
-
    fmt = Array("Number", "Part Number", "Quantity", "Nomenclature", "Definition", "Material", "Product Description")
-
     Dim tmpPath: tmpPath = CATIA.SystemService.Environ("TEMP") & "\bom_temp.md"
     Debug.Print tmpPath
-    
-    ' 2. 获取视图与产品
+' 2. 获取视图与产品
     Dim oSheet: Set oSheet = CATIA.ActiveDocument.sheets.ActiveSheet
     Dim oView: Set oView = oSheet.Views.ActiveView
-    
     Dim iScene: Set iScene = oView.GenerativeBehavior.Document
-    
     If iScene Is Nothing Then MsgBox "没有关联的Product": Exit Sub
-    
     If TypeName(iScene) = "ProductScene" Then
         iScene.Parent.Parent
-    
     ElseIf TypeName(iScene) = "Product" Then
-    
-    
     End If
-    
     Dim oPrd: Set oPrd = oView.GenerativeBehavior.Document
-    
     If oPrd Is Nothing Then MsgBox "没有关联的 Product": Exit Sub
-    
-    ' 3. 导出并处理数据
+' 3. 导出并处理数据
     oPrd.GetItem("BillOfMaterial").SetSecondaryFormat fmt
     oPrd.GetItem("BillOfMaterial").Print "TXT", tmpPath, oPrd
-    
     Dim flatData: flatData = GetSortedBOM(tmpPath) ' 获取处理好并排序的数据
     If IsEmpty(flatData) Then Exit Sub
-    
     ' 4. 更新表格
-    Dim tbl, r, c
+    Dim tbl, R, c
     Err.Clear: Set tbl = oView.Tables.item("GenBOM")
     If Err.Number = 0 Then oView.Selection.Clear: oView.Selection.Add tbl: oView.Selection.Delete
-    
     Set tbl = oView.Tables.Add(50, 50, UBound(flatData, 1), UBound(flatData, 2), 10, 20)
     tbl.name = "GenBOM"
-    
-    For r = 1 To UBound(flatData, 1)
+    For R = 1 To UBound(flatData, 1)
         For c = 1 To UBound(flatData, 2)
-            tbl.SetCellString r, c, CStr(flatData(r, c))
+            tbl.SetCellString R, c, CStr(flatData(R, c))
         Next
     Next
     CATIA.RefreshDisplay = True
@@ -78,24 +61,24 @@ Function GetSortedBOM(fPath)
     If vCount = 0 Then Exit Function
     
     ' 转为 2D 矩阵 (1-based fit for CATIA Table)
-    Dim r, c, colCount, mat
+    Dim R, c, colCount, mat
     colCount = UBound(validRows(0)) + 1
     ReDim mat(vCount, colCount)
     
-    For r = 0 To vCount - 1
+    For R = 0 To vCount - 1
         For c = 0 To colCount - 1
-            mat(r + 1, c + 1) = validRows(r)(c)
+            mat(R + 1, c + 1) = validRows(R)(c)
         Next
     Next
     
     ' 冒泡排序 (从第2行开始，跳过标题)
     Dim j, k, tmp
-    For r = 2 To vCount
-        For j = r + 1 To vCount
+    For R = 2 To vCount
+        For j = R + 1 To vCount
             ' 比较第1列 (Number)
-            If ShouldSwap(mat(r, 1), mat(j, 1)) Then
+            If ShouldSwap(mat(R, 1), mat(j, 1)) Then
                 For k = 1 To colCount ' 交换整行
-                    tmp = mat(r, k): mat(r, k) = mat(j, k): mat(j, k) = tmp
+                    tmp = mat(R, k): mat(R, k) = mat(j, k): mat(j, k) = tmp
                 Next
             End If
         Next

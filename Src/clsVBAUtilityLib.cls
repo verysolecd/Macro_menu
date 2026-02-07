@@ -69,10 +69,10 @@ Function DumpVariable( _
         Case "Byte":        DumpVariable = "CByte(" & X & ")"
         Case "Decimal":     DumpVariable = "CDec(" & X & ")"
         Case "Date"
-            Dim D As String, t As String
-            If Abs(X) >= 1 Then D = Month(X) & "/" & Day(X) & "/" & Year(X)
-            If Not IsInt(X) Then t = format(X, "h:nn:ss AM/PM")
-            DumpVariable = "#" & VBA.Trim(D & " " & t) & "#"
+            Dim d As String, t As String
+            If Abs(X) >= 1 Then d = Month(X) & "/" & Day(X) & "/" & Year(X)
+            If Not IsInt(X) Then t = Format(X, "h:nn:ss AM/PM")
+            DumpVariable = "#" & VBA.Trim(d & " " & t) & "#"
         Case "String"
             If StrPtr(X) = 0 Then
                 DumpVariable = "vbNullString"

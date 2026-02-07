@@ -20,7 +20,7 @@ Sub addsubgeo()
     End If
     Set og = colls.Add(): og.name = "FAXX"
     On Error Resume Next
-    If Not igeo Is Nothing Then Set oprt.InWorkObject = oprt.MainBody 'og.HybridBodies.Parent
+    If Not igeo Is Nothing Then oprt.InWorkObject = og.HybridBodies.Parent
     Error.Clear
     On Error Resume Next
 End Sub

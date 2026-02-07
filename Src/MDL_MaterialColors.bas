@@ -55,15 +55,15 @@ Sub MaterialPainter()
     Dim mapFunc: Set mapFunc = setMasterFunc(mdlname)
     Dim mapMdl: Set mapMdl = KCL.setBTNmdl(mdlname)
     ' 3. Initialize Form with PassButtonName ENABLED
-    Set g_Frm = Nothing
-    Set g_Frm = KCL.newFrm(mdlname)
-    g_Frm.PassButtonName = True ' <--- The Magic Switch
+    Set g_frm = Nothing
+    Set g_frm = KCL.newFrm(mdlname)
+    g_frm.PassButtonName = True ' <--- The Magic Switch
     ' 4. Show Toolbar (Modeless)
-    g_Frm.ShowToolbar mdlname, mapMdl, mapFunc
+    g_frm.ShowToolbar mdlname, mapMdl, mapFunc
 End Sub
 Sub Action_ClickHandler(ByVal btnName As String)
     If btnName = "btn_cancel" Then
-        Unload g_Frm
+        Unload g_frm
         Exit Sub
     End If
     Dim map: Set map = btn2case(mdlname)
@@ -72,17 +72,17 @@ Sub Action_ClickHandler(ByVal btnName As String)
     If IsArray(mColor) Then ApplyColor mColor
 End Sub
 Private Sub ApplyColor(ary As Variant)
-    Dim osel
-    Set osel = CATIA.ActiveDocument.Selection
-    Dim r, g, b, i
-    r = ary(0): g = ary(1): b = ary(2)
-    If osel.count = 0 Then
-        Set osel = KCL.Selectmulti("请选择BODY")
+    Dim oSel
+    Set oSel = CATIA.ActiveDocument.Selection
+    Dim R, G, B, i
+    R = ary(0): G = ary(1): B = ary(2)
+    If oSel.count = 0 Then
+        Set oSel = KCL.Selectmulti("请选择BODY")
     End If
   Dim lst: Set lst = KCL.Initlst
   Dim itm, itp
-   For i = 1 To osel.count
-         Set itm = osel.item(i).value
+   For i = 1 To oSel.count
+         Set itm = oSel.item(i).value
          Set itp = Nothing
          Set itp = KCL.GetParent_Of_T(itm, "Body")
          If Not itp Is Nothing Then
@@ -95,13 +95,13 @@ Private Sub ApplyColor(ary As Variant)
          End If
         If itype = 7 Then lst.Add itm
     Next i
-osel.Clear
+oSel.Clear
 Set itm = Nothing
 For Each itm In lst
-    osel.Add itm
+    oSel.Add itm
 Next
-    osel.VisProperties.SetRealColor r, g, b, 0 '(R, G, B, Inheritance=1)
-    osel.Clear
+    oSel.VisProperties.SetRealColor R, G, B, 0 '(R, G, B, Inheritance=1)
+    oSel.Clear
     On Error GoTo 0
 End Sub
 Function setMasterFunc(ByVal modName As String)
@@ -118,16 +118,16 @@ Function setMasterFunc(ByVal modName As String)
    Set setMasterFunc = map
 End Function
 Sub getcolor()
-Dim r, g, b
- r = CLng(0)
- g = CLng(0)
- b = CLng(0)
+Dim R, G, B
+ R = CLng(0)
+ G = CLng(0)
+ B = CLng(0)
  Dim ss
  Set ss = CATIA.ActiveDocument.Selection.VisProperties
- ss.GetRealColor r, g, b
+ ss.GetRealColor R, G, B
  Dim ary
- ary = Array(r, g, b)
- Debug.Print r & "," & g & "," & b
+ ary = Array(R, G, B)
+ Debug.Print R & "," & G & "," & B
  End Sub
 Function btn2case(ByVal modName As String)
     Set btn2case = Nothing

@@ -1,19 +1,29 @@
 Attribute VB_Name = "KCL"
 'Attribute VB_Name = "KCL"
 Option Explicit
+
 Private mSW& ' 秒表开始时间
 Private Declare PtrSafe Function OpenClipboard Lib "user32" (ByVal hwnd As LongPtr) As Long
 Private Declare PtrSafe Function EmptyClipboard Lib "user32" () As Long
 Private Declare PtrSafe Function CloseClipboard Lib "user32" () As Long
 Private Declare PtrSafe Function SetClipboardData Lib "user32" (ByVal wFormat As Long, ByVal hMem As LongPtr) As LongPtr
 
-#If VBA7 And Win64 Then
+#If VBA7 Then
+    ' 现有的声明
     Private Declare PtrSafe Function timeGetTime Lib "winmm.dll" () As Long
     Private Declare PtrSafe Function SetForegroundWindow Lib "user32" (ByVal hwnd As LongPtr) As Long
+    Private Declare PtrSafe Function ShowWindow Lib "user32" (ByVal hwnd As LongPtr, ByVal nCmdShow As Long) As Long
 #Else
     Private Declare Function timeGetTime Lib "winmm.dll" () As Long
-    Private Declare  Function SetForegroundWindow Lib "user32" (ByVal hwnd As Long) As Long
+    Private Declare Function SetForegroundWindow Lib "user32" (ByVal hwnd As Long) As Long
+    Private Declare Function ShowWindow Lib "user32" (ByVal hwnd As Long, ByVal nCmdShow As Long) As Long
 #End If
+' 常量定义
+Private Const SW_MAXIMIZE = 3
+Private Const SW_NORMAL = 1
+
+
+
 
 '*****计时相关函数*****
 ' 启动秒表
@@ -214,16 +224,16 @@ End Function
 'End Function
 Public Function get_inwork_part()  'in Assembly
     Set get_inwork_part = Nothing
-    Dim odoc: Set odoc = CATIA.ActiveDocument
-    Dim sDocType As String: sDocType = LCase(TypeName(odoc))
+    Dim oDoc: Set oDoc = CATIA.ActiveDocument
+    Dim sDocType As String: sDocType = LCase(TypeName(oDoc))
     If sDocType = "partdocument" Then
-        Set get_inwork_part = odoc.part
+        Set get_inwork_part = oDoc.part
         Exit Function
     ElseIf sDocType <> "productdocument" Then
         Exit Function
     End If
 
-    Dim msel: Set msel = odoc.Selection
+    Dim msel: Set msel = oDoc.Selection
     ' 1. Cache Existing Selection
     Dim bRestore As Boolean: bRestore = False
     Dim cachedSel() As Variant
@@ -356,18 +366,18 @@ End Function
 Public Function getSearch(ByRef iDoc, ByRef ifilter As Variant)
     Set getSearch = Nothing
       On Error Resume Next
-             Dim osel As Selection, i
-             Set osel = iDoc.Selection
-              osel.Clear
+             Dim oSel As Selection, i
+             Set oSel = iDoc.Selection
+              oSel.Clear
     Select Case TypeName(ifilter)
         Case "string"
-        With osel
+        With oSel
             .Clear
             .Search (ifilter)
             .VisProperties.SetShow 1
         End With
     End Select
-        Set getSearch = osel
+        Set getSearch = oSel
 End Function
 
 '*****数组相关函数*****
@@ -649,7 +659,7 @@ Public Function timestamp(Optional ByVal ostr) As String
         Case ExistsKey(ostr, "s"): FT = "yymmdd.hhnnss"
         Case Else: FT = "yymmdd"  ' 默认格式，避免未赋值情况
     End Select
-    timestamp = format(Now, FT)
+    timestamp = Format(Now, FT)
 End Function
 Function isEngPath(ByVal path As String) As Boolean
     Dim i As Long, charCode As Long
@@ -874,29 +884,19 @@ End Sub
 
 ' 检查并激活已存在的窗口
 Function ActivateExistingWindow(ByVal strPath As String) As Boolean
-    On Error GoTo ErrorHandler
-    Dim shellApp As Object, window As Object
-    Set shellApp = getshell
-    For Each window In shellApp.Windows   ' 遍历所有资源管理器窗口
-        On Error Resume Next
-        If VBA.InStr(VBA.UCase(window.FullName), "EXPLORER.EXE") > 0 Then   ' 检查是否为资源管理器窗口
-            Dim windowPath As String
-            windowPath = window.Document.folder.Self.path      ' 获取窗口路径并比较（不区分大小写）
-            If VBA.LCase(windowPath) = VBA.LCase(strPath) Then
-'
-'            Shell("C:\WINDOWS\CALC.EXE", 1)
-                window.Visible = True    ' 激活已存在的窗口
-                AppActivate window.hwnd
+    Dim w As Object
+    On Error Resume Next
+    For Each w In CreateObject("Shell.Application").Windows
+        If LCase(w.Document.folder.Self.path) = LCase(strPath) Then
+            If Err.Number = 0 Then ' 确保路径访问没报错
+                 ShowWindow w.hwnd, 1        ' 1 = SW_SHOWNORMAL (普通模式/还原)
+                SetForegroundWindow w.hwnd  ' 激活到前台
                 ActivateExistingWindow = True
                 Exit Function
             End If
+            Err.Clear
         End If
-        On Error GoTo ErrorHandler
-    Next window
-    ActivateExistingWindow = False
-    Exit Function
-ErrorHandler:
-    ActivateExistingWindow = False
+    Next
 End Function
 
 ' 打开文件夹
@@ -1004,39 +1004,7 @@ Public Function getDecCode(modName)
     If DecCnt < 1 Then Exit Function
         getDecCode = mdl.CodeModule.Lines(1, DecCnt) ' 获取声明代码
 End Function
-Public Sub AddmdlName()
-    Dim vbComp As Object
-    Dim codemod As Object
-    Dim i As Long, startline As Long, prockind As Long
-    Dim searchStartLine As Long, searchStartCol As Long
-    Dim searchEndLine As Long, searchEndCol As Long
-    Dim declText As String, constName As String, procName As String
-    constName = "mdlname"
-    Dim vbprj As Object: Set vbprj = KCL.GetApc().ExecutingProject.VBProject
-    Dim colls: Set colls = vbprj.VBComponents
-    For Each vbComp In colls
-        Set codemod = vbComp.CodeModule
-        For i = 1 To codemod.CountOfLines
-            procName = codemod.ProcOfLine(i, prockind)
-            If procName <> "" Then
-                startline = codemod.ProcBodyLine(procName, prockind)
-                searchStartLine = 1
-                searchStartCol = 1
-                searchEndLine = startline
-                searchEndCol = -1
-                declText = "Private Const " & constName & " As String = """ & vbComp.name & """"
-                ' Use variables for Find arguments
-                If Not codemod.Find("Const " & constName, searchStartLine, searchStartCol, searchEndLine, searchEndCol) Then
-                    codemod.InsertLines startline, declText
-                Else
-                    codemod.ReplaceLine searchStartLine, declText
-                End If
-                Exit For
-            End If
-        Next i
-    Next vbComp
-        MsgBox "已增加模组名变量 mdlname", vbInformation, "已增加模组名变量 mdlname"
-End Sub
+
 Public Function getbf1stproc(modName)
     getbf1stproc = ""
     Dim mdl:  Set mdl = KCL.getmdl(modName)
@@ -1055,8 +1023,8 @@ End Function
 Function getmeas(itm)
     Set getmeas = Nothing
    If Not itm Is Nothing Then
-       Dim odoc: Set odoc = CATIA.ActiveDocument
-      Dim spa:  Set spa = odoc.GetWorkbench("SPAWorkbench")
+       Dim oDoc: Set oDoc = CATIA.ActiveDocument
+      Dim spa:  Set spa = oDoc.GetWorkbench("SPAWorkbench")
         Set getmeas = spa.GetMeasurable(itm)
     End If
 End Function
@@ -1095,34 +1063,34 @@ Function newFrm(Optional ByVal modName As String = "", Optional ByVal isVertical
    Set newFrm = oFrm
 End Function
 Public Function ParseHex(ByVal hexStr)
-Dim r, g, b
+Dim R, G, B
     hexStr = Replace(hexStr, "#", "")
     If Len(hexStr) <> 6 Then
         ParseHex = ""
         Exit Function
     End If
     On Error Resume Next ' 防止非法字符报错
-    r = VAL("&H" & Mid(hexStr, 1, 2))
-    g = VAL("&H" & Mid(hexStr, 3, 2))
-    b = VAL("&H" & Mid(hexStr, 5, 2))
+    R = VAL("&H" & Mid(hexStr, 1, 2))
+    G = VAL("&H" & Mid(hexStr, 3, 2))
+    B = VAL("&H" & Mid(hexStr, 5, 2))
    
     On Error GoTo 0
-   ParseHex = RGB(r, g, b)
+   ParseHex = RGB(R, G, B)
 End Function
 
 Public Function ParseBDcolor(ByVal hexStr)
-Dim r, g, b
+Dim R, G, B
     hexStr = Replace(hexStr, "#", "")
     If Len(hexStr) <> 6 Then
         ParseBDcolor = ""
         Exit Function
     End If
     On Error Resume Next ' 防止非法字符报错
-    r = VAL("&H" & Mid(hexStr, 1, 2))
-    g = VAL("&H" & Mid(hexStr, 3, 2))
-    b = VAL("&H" & Mid(hexStr, 5, 2))
+    R = VAL("&H" & Mid(hexStr, 1, 2))
+    G = VAL("&H" & Mid(hexStr, 3, 2))
+    B = VAL("&H" & Mid(hexStr, 5, 2))
     On Error GoTo 0
-   ParseBDcolor = Array(r, g, b)
+   ParseBDcolor = Array(R, G, B)
 End Function
 
 ' --- UI Parsing Helpers ---

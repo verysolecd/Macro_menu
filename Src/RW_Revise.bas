@@ -19,8 +19,8 @@ Sub EditorToolbar()
     Dim funcMap As Object: Set funcMap = KCL.InitDic
     funcMap.Add "btnRead", "readPrd"
     funcMap.Add "btnWrite", "rvme"
-    If g_Frm Is Nothing Then Set g_Frm = KCL.newFrm(mdlname)
-    g_Frm.ShowToolbar mdlname, mdlMap, funcMap
+    If g_frm Is Nothing Then Set g_frm = KCL.newFrm(mdlname)
+    g_frm.ShowToolbar mdlname, mdlMap, funcMap
 End Sub
 
 

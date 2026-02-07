@@ -10,8 +10,8 @@ Attribute VB_Name = "OTH_unfoldme"
 Private Const mdlname As String = "OTH_unfoldme"
 Sub unfold_children()
 If Not CanExecute("PartDocument") Then Exit Sub
-Dim osel: Set osel = CATIA.ActiveDocument.Selection
-osel.Clear
+Dim oSel: Set oSel = CATIA.ActiveDocument.Selection
+oSel.Clear
 Set oprt = CATIA.ActiveDocument.part
 Set HSF = oprt.HybridShapeFactory: Set HBS = oprt.HybridBodies
 Dim uFold As HybridShapeUnfold: Set uFold = HSF.AddNewUnfold()
@@ -65,17 +65,17 @@ Else
     uFold.EdgeToTearPositioningOrientation = 0
     uFold.name = "unfold_" & targetshape.name
     oprt.Update
-    osel.Clear
-    osel.Add uFold
-    osel.Copy
-    osel.Clear
+    oSel.Clear
+    oSel.Add uFold
+    oSel.Copy
+    oSel.Clear
     oprt.Update
     Set targetHB = HBS.Add()
     targetHB.name = "unfold result" & i
     oprt.Update
-    osel.Add targetHB
-    osel.Paste
-    osel.Clear
+    oSel.Add targetHB
+    oSel.Paste
+    oSel.Clear
     oprt.Update
     oprt.InWorkObject = targetHB
 End If

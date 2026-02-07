@@ -23,9 +23,9 @@ Private zippath
 Private Const mdlname As String = "ASM_1ex2stp"
 Sub ex2stp_zip()
     If Not KCL.CanExecute("ProductDocument,partdocument") Then Exit Sub
-'  On Error Resume Next ' 临时开启错误处理
+On Error Resume Next ' 临时开启错误处理
  Err.Number = 0: ErrorMessage = ""
- Dim odoc: Set odoc = CATIA.ActiveDocument
+ Dim oDoc: Set oDoc = CATIA.ActiveDocument
  Dim outputpath As String: outputpath = ""
  Dim oFrm: Set oFrm = KCL.newFrm(mdlname)
 
@@ -35,7 +35,7 @@ Sub ex2stp_zip()
  Case "btnOK"
 '===========路径设置
       If oFrm.res("chk_path") Then
-           outputpath = IIf(odoc.path = "", "", odoc.path)
+           outputpath = IIf(oDoc.path = "", "", oDoc.path)
       Else:
            outputpath = KCL.selFdl()
       End If
@@ -44,21 +44,21 @@ Sub ex2stp_zip()
       If oFrm.res("chk_tm") Then
            Dim ttp: ttp = KCL.timestamp("min")
                If oFrm.res("chk_tm") Then
-                    pn = KCL.strbflast(odoc.Product.PartNumber, "_")
+                    pn = KCL.strbflast(oDoc.Product.PartNumber, "_")
                          If KCL.ExistsKey(pn, "_") Then
-                             odoc.Product.PartNumber = pn & ttp
+                             oDoc.Product.PartNumber = pn & ttp
                          Else
-                             odoc.Product.PartNumber = pn & "_" & ttp
+                             oDoc.Product.PartNumber = pn & "_" & ttp
                          End If
                 End If
       End If
-      pn = odoc.Product.PartNumber
+      pn = oDoc.Product.PartNumber
 '==========STP文件名处理
         stpname = KCL.strbf1st(pn, "_") & "_" & ttp
         Dim opath(2) '0=路径，1=name，2=extname
         opath(0) = outputpath:        opath(1) = stpname:        opath(2) = "stp"
         Dim stpfilepath As String: stpfilepath = KCL.JoinPathName(opath)
-        odoc.ExportData stpfilepath, "stp"     '=======导出stp
+        oDoc.ExportData stpfilepath, "stp"     '=======导出stp
         If Not KCL.isExists(stpfilepath) Then ErrorMessage = "未找到:" & stpfilepath: GoTo ShowMessage '=======检查文件存在性
         If Not ex2zip(stpfilepath) Then GoTo ShowMessage
         KCL.DeleteMe stpfilepath ' 删除原始 STP 文件
@@ -90,7 +90,7 @@ ShowMessage:
 Wexit:
     Set oFrm = Nothing
 
-    Set odoc = Nothing
+    Set oDoc = Nothing
     On Error GoTo 0 ' 关闭错误处理
     ErrorMessage = "" ' 重置错误信息
 End Sub
