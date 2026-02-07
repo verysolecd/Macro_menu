@@ -105,23 +105,31 @@ Private Sub set_Header(header, idxrow)
     .range(.Cells(idxrow, 1), .Cells(idxrow, lastCol)).value = header
     .range(.Cells(idxrow, 1), .Cells(idxrow, lastCol)).Interior.color = RGB(190, 190, 190)
     End With
-     Dim mapcells: mapcells = Array(0, 1, 3, 5, 7, 9, 11, 13, 14)
-     Dim lastrow: lastrow = ws.Cells(ws.Rows.count, 2).End(xlUp).row
-    For rowNb = 2 To lastrow
-        For i = 1 To UBound(mapcells)
-                ws.Cells(rowNb, mapcells(i)).Interior.color = RGB(190, 190, 190)
-        Next i
-        Next rowNb
 End Sub
+Private Sub RVbackColor()
+
+
+      Dim mapcells: mapcells = Array(0, 1, 3, 5, 7, 9, 11, 13, 14)
+        Dim lastrow: lastrow = ws.Cells(ws.rows.count, 1).End(xlUp).row
+    
+        For rowNb = 2 To lastrow
+            For i = 1 To UBound(mapcells)
+                    ws.Cells(rowNb, mapcells(i)).Interior.color = RGB(190, 190, 190)
+            Next i
+            Next rowNb
+
+
+End Sub
+     
 
 Public Sub clear_table()
     ws.UsedRange.ClearContents
 End Sub
 
-Public Sub setxlHead(ByVal s$)
-Select Case s
+Public Sub setxlHead(ByVal S$)
+Select Case S
     Case "bom": Call set_Header(header_bom, 1)
-    Case "rv": Call set_Header(header_rv, 1)
+    Case "rv": Call set_Header(header_rv, 1): RVbackColor
     Case "gxbom": Call set_Header(hdgx, 4)
  End Select
 End Sub
@@ -132,31 +140,16 @@ Set gws = Nothing
 Set gwb = Nothing
 Set xlAPP = Nothing
 End Sub
-Public Function extract_data(indRow)
-    Dim iCols
-    iCols = Array(0, 2, 4, 6, 8, 10, 12)
-    Dim tempArr As Variant
-    tempArr = ws.Rows(indRow).Resize(1, 14).value
-    Dim j As Long
-    Dim outputArr As Variant
-    ReDim outputArr(1 To UBound(iCols))
-    For j = 1 To UBound(iCols)
-         outputArr(j) = ""
-         If IsEmpty(tempArr(1, iCols(j))) = False Then
-         outputArr(j) = tempArr(1, iCols(j))
-         End If
-    Next
-    extract_data = outputArr ' 返回提取的数据
-End Function
+
 Public Function extract_ary()
  Dim resultAry As Variant
  Dim cntx, cnty
-    cntx = ws.Cells(ws.Rows.count, 1).End(xlUp).row
+    cntx = ws.Cells(ws.rows.count, 1).End(xlUp).row
     cnty = 14
  ReDim resultAry(1 To cntx, 1 To cnty)
   For idrow = 2 To cntx
          Dim tempArr As Variant
-            tempArr = ws.Rows(idrow).Resize(1, cnty).value
+            tempArr = ws.rows(idrow).Resize(1, cnty).value
         For j = 1 To cnty
             resultAry(idrow, j) = tempArr(1, j)
         Next j
@@ -176,15 +169,15 @@ xlhide
             Set LVcol = .Columns(2)
             LVcol.HorizontalAlignment = xlLeft
     End With
-    For row_num = 2 To ws.Cells(ws.Rows.count, 2).End(xlUp).row ' 使用 xlApp.xlUp
+    For row_num = 2 To ws.Cells(ws.rows.count, 2).End(xlUp).row ' 使用 xlApp.xlUp
         Dim cell_value As Variant
         cell_value = ws.Cells(row_num, 2).value
         If Not IsEmpty(cell_value) Then
-            ws.Rows(row_num).OutlineLevel = cell_value
+            ws.rows(row_num).OutlineLevel = cell_value
         End If
     Next
     ' 设置对齐方式和缩进级别
-    For Each cell In ws.range("B2:B" & ws.Cells(ws.Rows.count, 2).End(xlUp).row) ' 使用 xlApp.xlUp
+    For Each cell In ws.range("B2:B" & ws.Cells(ws.rows.count, 2).End(xlUp).row) ' 使用 xlApp.xlUp
         If Not IsEmpty(cell) Then
             cell.HorizontalAlignment = xlLeft ' 使用 xlApp.xlLeft
             If IsNumeric(cell.value) Then
@@ -260,8 +253,8 @@ Sub inject_pic(irow, pncol, Piccol, ipath)
         Dim i&, rng As range
         Dim iPic As Shape
         Dim cntrow
-        ws.Rows.RowHeight = 25
-        cntrow = ws.Cells(ws.Rows.count, 1).End(xlUp).row
+        ws.rows.RowHeight = 25
+        cntrow = ws.Cells(ws.rows.count, 1).End(xlUp).row
                 For i = irow To cntrow
                  pn = ws.Cells(i, pncol).value
                  picpath = ipath & "\" & pn & ".jpg"

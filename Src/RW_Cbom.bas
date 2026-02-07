@@ -26,7 +26,7 @@ Sub cBom()
     Dim Lv, i, j, Colpn, colPic, idcol, idrow
     g_counter = 1: Lv = 1
     Dim tmpData(): tmpData() = pdm.recurInfoPrd(iprd, Lv)
-    
+
 If Not oFrm.res("chk_GXfmt") Then
         ReDim resultAry(1 To UBound(tmpData, 1), 1 To UBound(tmpData, 2) + 2)
         For i = 1 To UBound(tmpData, 1)
@@ -60,7 +60,7 @@ If Not oFrm.res("chk_GXfmt") Then
           idrow = Array(0, 1, 2, 3, 4, 5, 6, 8, 7, 14, 12, 10)
           startrow = 5: Colpn = 6: colPic = 8
           xlm.inject_gxbom resultAry, idcol, idrow
-            
+
 End If
     If oFrm.res("chk_capture") Then
       Call Capme
@@ -79,6 +79,5 @@ On Error Resume Next
       Error.Clear
       On Error GoTo 0
 End Sub
-
-
+'
 

@@ -19,7 +19,7 @@ Attribute VB_Name = "OTH_PrePn"
 Private prj
 Private Const mdlname As String = "OTH_PrePn"
 Sub Pnmgr()
-    If Not KCL.CanExecute("ProductDocument") Then Exit Sub
+    If Not KCL.CanExecute("ProductDocument,partdocument") Then Exit Sub
     Dim oPrd:    Set oPrd = CATIA.ActiveDocument.Product
     If oPrd Is Nothing Then Exit Sub
     Dim oFrm: Set oFrm = KCL.newFrm(mdlname): oFrm.Show

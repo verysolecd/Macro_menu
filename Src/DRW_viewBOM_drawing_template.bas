@@ -104,9 +104,9 @@ Function GetSortedBOM(fPath)
 End Function
 
 ' --- 辅助：行分割 ---
-Function SplitLine(s)
-    s = Mid(s, 2, Len(s) - 2) ' 去头尾 |
-    Dim arr: arr = Split(s, "|")
+Function SplitLine(S)
+    S = Mid(S, 2, Len(S) - 2) ' 去头尾 |
+    Dim arr: arr = Split(S, "|")
     Dim i: For i = 0 To UBound(arr): arr(i) = Trim(arr(i)): Next
     SplitLine = arr
 End Function

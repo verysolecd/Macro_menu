@@ -302,8 +302,8 @@ Private Function IsStringAry(ByVal ary As Variant) As Boolean
     IsStringAry = True
 End Function
 ' 将字符串转换为数组变量
-Private Function strToAry(ByVal s$) As Variant
-    Dim ary As Variant: ary = Split(s, ",")
+Private Function strToAry(ByVal S$) As Variant
+    Dim ary As Variant: ary = Split(S, ",")
     Dim oAry() As Variant: ReDim oAry(UBound(ary))
     Dim i&
     For i = 0 To UBound(ary)
@@ -675,12 +675,12 @@ NextChar:
     isEngPath = True
 End Function
 ' 检查字符串是否包含特殊符号
-Function HasSpecialChars(ByVal s As String) As Boolean
+Function HasSpecialChars(ByVal S As String) As Boolean
     Dim validChars As String
     Dim i As Long
     validChars = "!@#$%^&*()-_=+[]{};:'"",.<>/?\|~\/"
-    For i = 1 To Len(s)
-        If InStr(validChars, Mid(s, i, 1)) > 0 Then
+    For i = 1 To Len(S)
+        If InStr(validChars, Mid(S, i, 1)) > 0 Then
             HasSpecialChars = True
             Exit Function
         End If
@@ -690,13 +690,13 @@ End Function
 
 '此函数替换字符串中的特殊符号
 
-Function ReplaceSpcChar(ByVal s As String) As String
+Function ReplaceSpcChar(ByVal S As String) As String
     Dim regEx: Set regEx = getRegexp()
     ' 1. Windows系统非法: \ / : * ? " < > |
     ' 2. 用户自定义非法: ! @ # 【 】 { } ~ 《 》 ， ^ % & （ ） ( ) 、
     regEx.Pattern = "[\\/:*?""<>|!@#【】{}~《》，\^%&（）\(\)、]+"
     regEx.Global = True
-    ReplaceSpcChar = regEx.Replace(s, "_")
+    ReplaceSpcChar = regEx.Replace(S, "_")
     Set regEx = Nothing
 End Function
 
@@ -709,7 +709,7 @@ Function rmchn(ByVal inputString$) As String
     Set regEx = Nothing
 End Function
 
-Function ReplaceBadChar(ByVal s As String) As String
+Function ReplaceBadChar(ByVal S As String) As String
     Dim regEx: Set regEx = getRegexp()
     ' 组合模式：
     ' 1. [\\/:*?""<>|!@#【】{}~《》，\^%&（）\(\)、]  -> 特殊符号
@@ -717,7 +717,7 @@ Function ReplaceBadChar(ByVal s As String) As String
     ' 3. +                                      -> 连续匹配
     regEx.Pattern = "[\\/:*?""<>|!@#【】Φ{}~《》，\^%&（）\(\)、\u4e00-\u9fa5]+"
     regEx.Global = True
-    ReplaceBadChar = regEx.Replace(s, "_")
+    ReplaceBadChar = regEx.Replace(S, "_")
     Set regEx = Nothing
 End Function
 
