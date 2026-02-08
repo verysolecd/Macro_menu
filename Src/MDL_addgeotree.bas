@@ -12,7 +12,7 @@ Private Const mdlname As String = "MDL_addgeotree"
 Sub newgeo()
  If Not CanExecute("PartDocument,productdocument") Then Exit Sub
   Set oprt = KCL.get_inwork_part
-
+If IsNothing(oprt) Then Exit Sub
     Set colls = oprt.HybridBodies
     On Error Resume Next
     Set og = colls.item("Geo_sheet")

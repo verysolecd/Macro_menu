@@ -1,5 +1,6 @@
 Attribute VB_Name = "OTH_3Dmark"
 
+
 ' 为产品创建3D标识
 '{GP:6}
 '{EP:newlabel}
@@ -33,16 +34,23 @@ Sub recurexcute(oPrd)
     Call c3Dmark(oPrd)
 End Sub
 Sub c3Dmark(oPrd)
-
 If oPrd.Products.count < 1 Then
     If pdm Is Nothing Then Set pdm = New Cls_PDM
-     info = pdm.infoPrd(oPrd)
+Dim info As Bomline
+   info = pdm.getBomLine(oPrd)
         On Error GoTo 0
         Dim pos(11), sTextString, cMarker3Ds, oMarker3D
         oPrd.Position.GetComponents pos
-        sTextString = info(3) & vbNewLine & _
-                        info(5) & vbNewLine & _
-                        info(7)
+        
+        ' Updated for Bomline Typed return
+        Dim def As String, mat As String, massStr As String
+        def = info.Definition
+        mat = info.Material
+        massStr = Format(info.Mass, "0.000") & " kg" ' Format mass nicely
+        
+        sTextString = def & vbNewLine & _
+                        mat & vbNewLine & _
+                        massStr
         Set cMarker3Ds = rprd.GetTechnologicalObject("Marker3Ds")
 
         Dim pos1(2), pos2(2)
@@ -88,4 +96,6 @@ oprt.Update
 '   anote.Text = "tetx1"
     anote.FlagNote = "tetx2"
 End Sub
+
+
 

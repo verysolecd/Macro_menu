@@ -38,7 +38,7 @@ For Each lstitm In lst
                 If Not pa Is Nothing Then
                 nameInRel = GetInternalName(pa)
                 'ipa.Add itm.Name, 333333
-                ipa.Add nameInRel, pa.value
+                ipa.Add nameInRel, pa.Value
             End If
             Err.Clear
             On Error GoTo 0
@@ -49,7 +49,7 @@ For Each lstitm In lst
         '以下代码获取加厚曲面的参数信息，使用了debug.print输出，可以修改为输出到excel
         '扩展代码以输出更多信息
          ' Debug.Print lstitm.Name & "是加厚曲面"
-             tk = lstitm.TopOffset.value '获取加厚曲面的厚度
+             tk = lstitm.TopOffset.Value '获取加厚曲面的厚度
                 Set oSweep = GetParentSweep(oprt, lstitm) '获取加厚曲面的sweep
                     Set oCurve = GetParentcurve(oprt, oSweep) '获取的sweep的父级曲线
                     lg = getlength(oCurve)   '获取曲线长度
@@ -122,7 +122,7 @@ CATIA.RefreshDisplay = False
                     internalName = GetInternalName(shp)
                     If Not mdict.Exists(internalName) Then
                         oSel.Clear: oSel.Add shp
-                        Set realShp = oSel.item(1).value: oSel.Clear
+                        Set realShp = oSel.item(1).Value: oSel.Clear
                         mdict.Add internalName, realShp
                     End If
                 End If

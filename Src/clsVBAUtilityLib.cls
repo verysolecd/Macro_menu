@@ -157,7 +157,7 @@ Private Function ReMatch( _
     If ms.count < 1 Then: GoTo Ending
     Dim sms As Object:    Set sms = ms(0).SubMatches
     ReDim ret(sms.count)
-    ret(0) = ms.item(0).value
+    ret(0) = ms.item(0).Value
     Dim i As Integer
     For i = 1 To UBound(ret): ret(i) = sms.item(i - 1): Next
 Ending:
@@ -307,14 +307,14 @@ Function DeepCopyDict( _
         ByVal source As Variant) As Object
     Dim KEY As Variant
     Dim newDict As Object
-    Dim value As Variant
+    Dim Value As Variant
     Set newDict = CreateObject("Scripting.Dictionary")
     For Each KEY In source.keys
-        value = source.item(KEY)
-        If TypeName(value) = "Dictionary" Then
-            Set value = DeepCopyDict(value)
+        Value = source.item(KEY)
+        If TypeName(Value) = "Dictionary" Then
+            Set Value = DeepCopyDict(Value)
         End If
-        newDict.Add KEY, value
+        newDict.Add KEY, Value
     Next KEY
     Set DeepCopyDict = newDict
 End Function
@@ -325,19 +325,19 @@ End Function
 'return:Variant(Of Array)
 Function InitArray( _
         ByVal count As Long, _
-        Optional ByVal value As Variant = Empty) As Variant
+        Optional ByVal Value As Variant = Empty) As Variant
     Dim ary() As Variant
     If count < 0 Then
         ary = Array()
     Else
         ReDim ary(count)
     End If
-    If IsEmpty(value) Then
+    If IsEmpty(Value) Then
         InitArray = ary
     End If
     Dim i As Long
     For i = 0 To UBound(ary)
-        ary(i) = value
+        ary(i) = Value
     Next
     InitArray = ary
 End Function

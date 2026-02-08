@@ -142,7 +142,7 @@ Private Function Get_LeafItemLst(ByVal pt As part) As Collection
         .Add pt
         .Search filter
         For i = 1 To .Count2
-            TmpLst.Add .item(i).value
+            TmpLst.Add .item(i).Value
         Next
         .Clear
     End With

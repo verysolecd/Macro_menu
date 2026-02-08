@@ -60,12 +60,12 @@ Public Property Get IsCancelled() As Boolean
     IsCancelled = IIf(mdict.Exists("btn_clicked") And mdict("btn_clicked") <> "UserClosed", False, True)
 End Property
 
-Public Property Let isVertical(ByVal VAL As Boolean)
-    mIsVertical = VAL
+Public Property Let isVertical(ByVal val As Boolean)
+    mIsVertical = val
 End Property
 
-Public Property Let PassButtonName(ByVal VAL As Boolean)
-    mPassBtn = VAL
+Public Property Let PassButtonName(ByVal val As Boolean)
+    mPassBtn = val
 End Property
 
 Public Sub Show(Optional ByVal iShowMode As FormShowConstants = vbModal, _

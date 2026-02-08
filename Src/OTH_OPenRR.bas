@@ -90,8 +90,8 @@ Sub UnlockSelection()
     On Error Resume Next
     
     For i = 1 To sel.count
-        If TypeName(sel.item(i).value) = "Product" Then
-            Set prod = sel.item(i).value
+        If TypeName(sel.item(i).Value) = "Product" Then
+            Set prod = sel.item(i).Value
 
             Set doc = prod.ReferenceProduct.Parent
             If Not doc Is Nothing Then

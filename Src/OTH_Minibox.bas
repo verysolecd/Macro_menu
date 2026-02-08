@@ -236,7 +236,7 @@ Private Function getBodies( _
     Dim i As Long
     Dim bdy As body
     For i = 1 To sel.Count2
-        Set bdy = sel.Item2(i).value
+        Set bdy = sel.Item2(i).Value
             If bdy.Shapes.count > 0 And bdy.name <> "MinimumBox" Then
                 lst.Add bdy
             End If
@@ -397,7 +397,7 @@ Private Sub initConstraint( _
     If dist < 0.001 Then Exit Sub 'IsMissing(Dist)????
     Dim Leng As Length
     Set Leng = Cst.Dimension
-    Leng.value = dist
+    Leng.Value = dist
 End Sub
 Private Sub initPad( _
     ByVal bdy As body, _
@@ -413,7 +413,7 @@ Private Sub initPad( _
     pad.DirectionOrientation = catRegularOrientation
     Dim MinZ As Length
     Set MinZ = pad.SecondLimit.Dimension
-    MinZ.value = poss(MINMAX.MinZ) * -1
+    MinZ.Value = poss(MINMAX.MinZ) * -1
 End Sub
 Private Sub changeColor( _
     ByVal itm As AnyObject)

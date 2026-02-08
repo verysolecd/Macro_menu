@@ -107,10 +107,7 @@ On Error Resume Next
      CATIA.RefreshDisplay = True
      CATIA.ActiveWindow.Layout = 2 ' catWindowSpecsAndGeom
      CATIA.StartCommand ("Compass")
-    
-
 On Error GoTo 0
-
 End Sub
 Sub CaptureMe(iprd, oFolder)
     On Error Resume Next
@@ -148,7 +145,7 @@ Sub CaptureMe(iprd, oFolder)
          If children.count > 0 Then
               For i = 1 To children.count     ' 递归处理每个子产品
                    oSel.Add children.item(i): Visp.SetShow 0: oSel.Clear '显示当前子产品
-                     Call CaptureMe(children.item(i), oFolder)
+                   Call CaptureMe(children.item(i), oFolder)
                    oSel.Add children.item(i): Visp.SetShow 1: oSel.Clear  ' 隐藏当前子产品
               Next
         End If
@@ -156,7 +153,7 @@ Sub CaptureMe(iprd, oFolder)
         For Each cPrd In children
           oSel.Add cPrd
         Next
-          Visp.SetShow 0: oSel.Clear
+Visp.SetShow 0: oSel.Clear
        
 End Sub
 Sub HideNonBody(iDoc)

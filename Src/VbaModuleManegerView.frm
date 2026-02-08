@@ -87,7 +87,7 @@ Private Sub update_listbox()
         .btnOpen.Enabled = btnEnabled
     End With
     '模块列表的更新
-    If Me.ComboBox1.value = mModuleMgr.project_name Then
+    If Me.ComboBox1.Value = mModuleMgr.project_name Then
         Me.btnImport.Enabled = False
     End If
 End Sub
@@ -97,15 +97,15 @@ Private Sub update_info_txt()
         Me.TextBox1.text = vbNullString
         Exit Sub
     End If
-    Dim value As String
+    Dim Value As String
     If Me.ListBox1.ListIndex < 0 Then
-        value = ""
+        Value = ""
     Else
-        value = Me.ListBox1.value
+        Value = Me.ListBox1.Value
     End If
     Me.TextBox1.text = mModuleMgr.get_module_info( _
         Me.ComboBox1.ListIndex + 1, _
-        value _
+        Value _
     )
 End Sub
 'ComboBox初始设置
@@ -128,11 +128,11 @@ End Sub
 'param: lst-搜索目标集合
 'return: 对应索引
 Function get_index_by_list( _
-        ByVal value As Variant, _
+        ByVal Value As Variant, _
         ByVal lst As Collection) As Long
     Dim i As Long
     For i = 1 To lst.count
-        If lst.item(i) = value Then
+        If lst.item(i) = Value Then
             get_index_by_list = i - 1
             Exit Function
         End If

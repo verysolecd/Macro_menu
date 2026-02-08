@@ -113,7 +113,7 @@ Function SelectItem(ByVal msg$, _
     If IsNothing(se) Then
         Set SelectItem = se
     Else
-        Set SelectItem = se.value
+        Set SelectItem = se.Value
     End If
 End Function
 ' 选择元素
@@ -242,7 +242,7 @@ Public Function get_inwork_part()  'in Assembly
         bRestore = True
         ReDim cachedSel(msel.count - 1)
         For i = 1 To msel.count
-           Set cachedSel(i - 1) = msel.item(i).value
+           Set cachedSel(i - 1) = msel.item(i).Value
         Next
     End If
     
@@ -1070,9 +1070,9 @@ Dim R, G, B
         Exit Function
     End If
     On Error Resume Next ' 防止非法字符报错
-    R = VAL("&H" & Mid(hexStr, 1, 2))
-    G = VAL("&H" & Mid(hexStr, 3, 2))
-    B = VAL("&H" & Mid(hexStr, 5, 2))
+    R = val("&H" & Mid(hexStr, 1, 2))
+    G = val("&H" & Mid(hexStr, 3, 2))
+    B = val("&H" & Mid(hexStr, 5, 2))
    
     On Error GoTo 0
    ParseHex = RGB(R, G, B)
@@ -1086,9 +1086,9 @@ Dim R, G, B
         Exit Function
     End If
     On Error Resume Next ' 防止非法字符报错
-    R = VAL("&H" & Mid(hexStr, 1, 2))
-    G = VAL("&H" & Mid(hexStr, 3, 2))
-    B = VAL("&H" & Mid(hexStr, 5, 2))
+    R = val("&H" & Mid(hexStr, 1, 2))
+    G = val("&H" & Mid(hexStr, 3, 2))
+    B = val("&H" & Mid(hexStr, 5, 2))
     On Error GoTo 0
    ParseBDcolor = Array(R, G, B)
 End Function

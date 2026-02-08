@@ -13,21 +13,16 @@ Sub DRW_create_BomTable()
  CATIA.RefreshDisplay = False
     Call m_init
 On Error Resume Next
-
 If drwDoc Is Nothing Then Exit Sub
     Set bomview = KCL.SelectItem("请选择bom视图", "DrawingView")
         If bomview Is Nothing Then Exit Sub
-        
-        
     Set dprd = bomview.GenerativeBehavior.Document 'DrawingViewGenerativeBehavior/DrawingViewGenerativeBehavior
         If Not IsObj_T(dprd, "Product") Then Exit Sub
-
 tempAry = getPrd_BomAry(dprd, iformat)
  tolrow = UBound(tempAry, 1)
  tolcol = UBound(tempAry, 2)
  pos_x = 50: pos_y = 50
  Set otable = Nothing
- 
  For i = 1 To bomview.Tables.count
     Set otable = bomview.Tables.item(i)
     If otbale.name = "bbom" Then
@@ -52,14 +47,14 @@ End Sub
 Private Sub m_init()
 
 If Not CanExecute("DrawingDocument") Then Exit Sub
-iformat(0) = "Number"
-iformat(1) = "Part Number"
-iformat(2) = "Quantity"
-iformat(3) = "Nomenclature"
-iformat(4) = "Defintion"
-iformat(5) = "Mass"
-iformat(6) = "Density"
-iformat(7) = "Material"
+    iformat(0) = "Number"
+    iformat(1) = "Part Number"
+    iformat(2) = "Quantity"
+    iformat(3) = "Nomenclature"
+    iformat(4) = "Defintion"
+    iformat(5) = "Mass"
+    iformat(6) = "Density"
+    iformat(7) = "Material"
  opath = KCL.GetPath(KCL.getVbaDir & "\" & "oTemp")
  bfile = opath & "\bom_recap.txt"
  

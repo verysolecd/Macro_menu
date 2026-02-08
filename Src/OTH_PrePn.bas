@@ -70,11 +70,6 @@ Function del_pn_midx(oPrd, istr)
    End If
 End Function
 
-
-
-
-
-
 Sub shot()
 MsgBox "没编呢"
 Exit Sub

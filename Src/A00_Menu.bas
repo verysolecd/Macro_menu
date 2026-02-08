@@ -185,15 +185,15 @@ Private Function get_Tagcfg(ByVal txt As String, Optional ByVal KeyToLong As Boo
     
     Dim matches As Object: Set matches = Reg.Execute(txt)
     Dim match As Object
-    Dim KEY As Variant, VAL As Variant
+    Dim KEY As Variant, val As Variant
     
     For Each match In matches
         If match.SubMatches.count >= 2 Then
             KEY = Trim(match.SubMatches(0))
-            VAL = Trim(match.SubMatches(1))
+            val = Trim(match.SubMatches(1))
             
             If KeyToLong And IsNumeric(KEY) Then KEY = CLng(KEY)
-            If dic.Exists(KEY) Then dic(KEY) = VAL Else dic.Add KEY, VAL
+            If dic.Exists(KEY) Then dic(KEY) = val Else dic.Add KEY, val
         End If
     Next
     

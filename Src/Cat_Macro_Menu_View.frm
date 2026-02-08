@@ -163,7 +163,7 @@ End Function
 ' 尝试设置控件属性
 Private Sub Try_SetProperty(ByVal ctrl As Object, _
                             ByVal PptyName As String, _
-                            ByVal value As Variant)
+                            ByVal Value As Variant)
     On Error Resume Next
         Err.Number = 0
         Dim tmp As Variant: tmp = CallByName(ctrl, PptyName, VbGet)
@@ -173,15 +173,15 @@ Private Sub Try_SetProperty(ByVal ctrl As Object, _
         End If
         Select Case TypeName(tmp)
             Case "Empty": Exit Sub
-            Case "Long": value = CLng(value)
-            Case "Boolean": value = CBool(value)
-            Case "Currency": value = CCur(value)
+            Case "Long": Value = CLng(Value)
+            Case "Boolean": Value = CBool(Value)
+            Case "Currency": Value = CCur(Value)
         End Select
         If Not Err.Number = 0 Then
           '  Debug.Print value & ": 类型转换失败(" & Err.Number & ")"
             Exit Sub
         End If
-        Call CallByName(ctrl, PptyName, VbLet, value)
+        Call CallByName(ctrl, PptyName, VbLet, Value)
         If Not Err.Number = 0 Then
            ' Debug.Print value & ": 设置属性失败(" & Err.Number & ")"
             Exit Sub

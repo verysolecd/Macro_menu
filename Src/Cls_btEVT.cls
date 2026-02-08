@@ -50,8 +50,8 @@ End Sub
 Public Property Set ParentFrm(ByVal frm As Object)
     Set mParentFrm = frm
 End Property
-Public Property Let ControlID(ByVal value As String)
-    mControlID = value
+Public Property Let ControlID(ByVal Value As String)
+    mControlID = Value
 End Property
 Public Property Set ControlBTN(ByVal BTN As MSForms.CommandButton)
     Set mBTNwd = BTN
@@ -68,7 +68,7 @@ Private Sub mBTNwd_Click()
         For Each ctl In mParentFrm.Controls
             On Error Resume Next
             If TypeName(ctl) = "CheckBox" Then
-                 mResultDict(ctl.name) = ctl.value
+                 mResultDict(ctl.name) = ctl.Value
             ElseIf TypeName(ctl) = "TextBox" Then
                  mResultDict(ctl.name) = ctl.text
             End If

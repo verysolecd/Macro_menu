@@ -59,11 +59,11 @@ Function LV2_Mass(oPrd, Lv)
                 If children.count > 0 Then
                     For i = 1 To children.count
                         Call LV2_Mass(children.item(i), Lv + 1)
-                        total = total + children.item(i).ReferenceProduct.UserRefProperties.item("Mass").value
+                        total = total + children.item(i).ReferenceProduct.UserRefProperties.item("Mass").Value
                     Next
-                        oPrd.ReferenceProduct.UserRefProperties.item("Mass").value = total
+                        oPrd.ReferenceProduct.UserRefProperties.item("Mass").Value = total
                 Else
-                        total = oPrd.ReferenceProduct.UserRefProperties.item("Mass").value
+                        total = oPrd.ReferenceProduct.UserRefProperties.item("Mass").Value
                 End If
         End If
 End Function

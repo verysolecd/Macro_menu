@@ -90,7 +90,7 @@ Sub PrtHide_Skt_click()
     SelQuery ss, oprt
     Dim lst: Set lst = KCL.Initlst
     For i = 1 To msel.count
-       lst.Add msel.item(i).value
+       lst.Add msel.item(i).Value
 '      lst.Add msel.item(i).LeafProduct
     Next
     

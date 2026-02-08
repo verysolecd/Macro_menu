@@ -23,24 +23,16 @@ Sub EditorToolbar()
     g_frm.ShowToolbar mdlname, mdlMap, funcMap
 End Sub
 
-
 Sub readPrd()
  '---------获取待修改产品 '---------遍历修改产品及子产品
     If pdm.CurrentProduct Is Nothing Then Set pdm.CurrentProduct = KCL.defPrd()
     Dim Prd2Read: Set Prd2Read = pdm.CurrentProduct
         If Not Prd2Read Is Nothing Then
             If gws Is Nothing Then Set xlm = New Cls_XLM
-            Dim currRow: currRow = 2
-            g_counter = 1
-            Prd2Read.ApplyWorkMode (3)
-            Dim idcol, idrow
-            idcol = Array(0, 1, 3, 5, 7, 9, 11, 13, 14) '' 目标列号, 0号元素不占位置
-            idrow = Array(0, 1, 2, 3, 4, 5, 6, 7, 8) ' 对应的属性索引（0-based）
-            Dim tmpData(): tmpData = pdm.attLv2Prd(Prd2Read)
-            xlm.inject_ary tmpData, currRow, idcol, idrow
-            xlm.setxlHead ("rv")
-            xlm.xlshow
-                xlAPP.Visible = True
+            Dim bomlns() As Bomline
+            bomlns = pdm.GetReviseItems(Prd2Read)
+            xlm.inject_RvData bomlns
+            xlAPP.Visible = True
         End If
         Set Prd2Read = Nothing
 End Sub
@@ -83,6 +75,7 @@ ErrorHandler:
     If Err.Number <> 0 Then:  MsgBox Err.Description, vbCritical: Err.Clear
         Exit Sub
 End Sub
+
 
 
 

@@ -1,5 +1,4 @@
 Attribute VB_Name = "MDL_setThreadcolor"
-
 '{GP:4}
 '{EP:Run_SetThreadColors}
 '{Caption:批量点坐标}
@@ -87,7 +86,7 @@ Private Sub ProcessPart(oPart As part)
                 ' 检查是否开启了螺纹属性 (0 = catThreadedHoleThreading)
                 If oShape.ThreadingMode = 0 Then
                     On Error Resume Next
-                    dDia = oShape.ThreadDiameter.value
+                    dDia = oShape.ThreadDiameter.Value
                     If Err.Number = 0 Then bIsThread = True
                     On Error GoTo 0
                 Else

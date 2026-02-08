@@ -661,7 +661,7 @@ Sub CATMoveTitleBlockText(Translation)
   SelectAll "CATDrwSearch.DrwText.Name=TitleBlock_Text_*"
   count = Selection.Count2
   For ii = 1 To count
-    Set text = Selection.Item2(ii).value
+    Set text = Selection.Item2(ii).Value
     text.X = text.X + Translation(0)
     text.Y = text.Y + Translation(1)
   Next
@@ -691,7 +691,7 @@ Sub CATMoveRevisionBlockText(Translation)
   SelectAll "CATDrwSearch.DrwText.Name=RevisionBlock_Text_*"
   count = Selection.Count2
   For ii = 1 To count
-    Set text = Selection.Item2(ii).value
+    Set text = Selection.Item2(ii).Value
     text.X = text.X + Translation(0)
     text.Y = text.Y + Translation(1)
   Next

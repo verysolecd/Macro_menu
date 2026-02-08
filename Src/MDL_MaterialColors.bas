@@ -5,19 +5,18 @@ Attribute VB_Name = "MDL_MaterialColors"
 '{ControlTipText: Apply industry standard colors to selection}
 '
 '------Buttons------------------------------
-' %UI Label bl_steel Steel Grades:
 ' %UI Button btn_mild 软钢(<210)    #ADD8E6
 ' %UI Button btn_hss 高强钢(210-340)  #00BFFF
 ' %UI Button btn_ahss 先进高强(340-590)  #FFFF00
 ' %UI Button btn_uhss 超高强(590-980) #FFA500
 ' %UI Button btn_Gpa Gpa钢 (980-1200) #ff0033
 ' %UI Button btn_HF 热成型 (>1200) #B22222
-' %UI Button btn_Alu1 铝合金<180  #90EE90
-' %UI Button btn_Alu2 铝合金180~240  #8FBC8F
-' %UI Button btn_Alu3 铝合金>240 #228B22
+' %UI Label bl_steel ----------
+' %UI Button btn_Alu1 铝合金(<180)  #90EE90
+' %UI Button btn_Alu2 铝合金(180~240)  #8FBC8F
+' %UI Button btn_Alu3 铝合金(>240) #228B22
 ' %UI Button btn_Fas 紧固件      #A52A2A
 ' %UI Button btn_glue 胶水 #C8A2C8
-' %UI Button btn_cancel Close
 
 '≤210MPa       浅蓝色    MS=Array(173,216,230)  #ADD8E6
 '210-340MPa    深天蓝     HSS=Array(0,191,255)      #00BFFF
@@ -82,7 +81,7 @@ Private Sub ApplyColor(ary As Variant)
   Dim lst: Set lst = KCL.Initlst
   Dim itm, itp
    For i = 1 To oSel.count
-         Set itm = oSel.item(i).value
+         Set itm = oSel.item(i).Value
          Set itp = Nothing
          Set itp = KCL.GetParent_Of_T(itm, "Body")
          If Not itp Is Nothing Then
