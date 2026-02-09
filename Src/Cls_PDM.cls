@@ -364,17 +364,34 @@ Private Sub EnsureParamExists(ByVal coll As Object, ByVal name As String, ByVal 
     On Error GoTo 0
 End Sub
 
+
 Private Sub EnsurePublication(ByVal refPrd As Object, ByVal pubName As String, ByVal refPath As String)
     On Error Resume Next
     Dim pubs As Object: Set pubs = refPrd.Publications
     Dim oPub As Object: Set oPub = pubs.item(pubName)
-    If oPub Is Nothing Then
-        Dim oRef As Object: Set oRef = refPrd.CreateReferenceFromName(refPrd.partNumber & "\" & refPath)
+    
+    Dim isupdated As Boolean: isupdated = True
+    
+    If IsNothing(oPub) Then
         Set oPub = pubs.Add(pubName)
+        isupdated = False
+    Else
+        Dim valObj As Object: Set valObj = Nothing
+            Set valObj = oPub.Valuation
+        If valObj Is Nothing Then
+            isupdated = False
+'            pubs.Remove (pubName)
+'            Set oPub = pubs.Add(pubName)
+        End If
+    End If
+    
+    If isupdated = False Then
+        Dim oRef As Object: Set oRef = refPrd.CreateReferenceFromName(refPrd.partNumber & "\" & refPath)
         pubs.SetDirect pubName, oRef
     End If
     On Error GoTo 0
 End Sub
+
 
 Private Sub ApplyEngineeringLogic(ByVal oPart As Object, ByVal refPrd As Object, ByVal infoSet As Object)
     Dim rels As Object: Set rels = oPart.Relations
