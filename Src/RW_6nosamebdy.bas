@@ -37,8 +37,8 @@ If pdm.CurrentProduct Is Nothing Then Set pdm.CurrentProduct = KCL.defPrd
 End Sub
 Sub nosamebdy_prds(oPrd)
     Dim Product
-        If g_allPN.Exists(oPrd.PartNumber) = False Then
-            g_allPN(oPrd.PartNumber) = 1
+        If g_allPN.Exists(oPrd.partNumber) = False Then
+            g_allPN(oPrd.partNumber) = 1
             Call nosamebdy_prd(oPrd)
         End If
     If oPrd.Products.count > 0 Then

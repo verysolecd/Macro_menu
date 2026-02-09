@@ -98,7 +98,7 @@ Private Sub mBTN_click()
     End If
     
     On Error Resume Next
-        Set A00_globalVar.g_Btn = mBTN
+        Set g_Btn = mBTN
         Call ss.ExecuteScript(mInfo(TAG_PJTPATH), _
                               catScriptLibraryTypeVBAProject, _
                               mInfo(TAG_MDLNAME), _

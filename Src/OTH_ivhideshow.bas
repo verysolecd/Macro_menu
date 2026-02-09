@@ -13,11 +13,12 @@ Attribute VB_Name = "OTH_ivhideshow"
 ' %UI Label lbL_jpzcs  键盘造车手出品
 ' %UI Button back2ori 恢复显示
 ' %UI Button allshow 显示所有产品
+' %UI Button allhide 隐藏所有产品
 ' %UI Button sel_child_show 显示选定产品
-' %UI Button AsmHide_Plns 隐藏所有平面
-' %UI Label lbL_4 ------
 ' %UI Button onlysel_hide  隐藏选定产品only
-' %UI Button allhide 隐藏所有
+' %UI Label lbL_4 ------
+' %UI Button AsmHide_Plns 隐藏所有平面
+' %UI Button AsmHide_axis 隐藏所有坐标系
 ' %UI Label lbL_5  '--以下针对零件--'
 ' %UI Button PrtHide_GS 隐藏根GSS
 ' %UI Button PrtHide_Skt 隐藏所有草图
@@ -93,7 +94,6 @@ Sub PrtHide_Skt_click()
        lst.Add msel.item(i).Value
 '      lst.Add msel.item(i).LeafProduct
     Next
-    
     hide_in_lst lst
     msel.Clear
 End Sub
@@ -114,11 +114,9 @@ Sub PrtHide()
 ''Part Design'.Sketch&
 ''Generative Shape Design'.Sketch&
 ''Functional Molded Part'.Sketch
- 
   filter = "(CATPrtSearch.BodyFeature.Visibility=Shown " & _
             "+ CATPrtSearch.OpenBodyFeature.Visibility=Shown" & _
             "+ CATPrtSearch.MMOrderedGeometricalSet.Visibility=Shown),sel"
-            
             
          filter(1) = "(((CATStFreeStyleSearch.Plane + CATPrtSearch.Plane) + CATGmoSearch.Plane) + CATSpdSearch.Plane),all"
          filter(2) = "(((CATStFreeStyleSearch.AxisSystem + CATPrtSearch.AxisSystem) + CATGmoSearch.AxisSystem) + CATSpdSearch.AxisSystem),all"
@@ -267,7 +265,7 @@ Sub showChild(lst)
     On Error Resume Next
     For Each itm In lst
        Set ilst = KCL.Initlst
-     show_in_lst getchildlst(itm, ilst)
+        show_in_lst getchildlst(itm, ilst)
     Next
     On Error GoTo 0
 End Sub

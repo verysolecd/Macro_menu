@@ -72,7 +72,7 @@ Sub DeleteChildren()
       oSel.Add prd
     Next
       Dim BTN, bTitle, bResult
-      imsg = "将删除" & iSel.PartNumber & iSel.name & "下的所有子产品，您确认吗"
+      imsg = "将删除" & iSel.partNumber & iSel.name & "下的所有子产品，您确认吗"
       BTN = vbYesNo + vbExclamation
       bResult = MsgBox(imsg, BTN, "bTitle")  ' Yes(6),No(7),cancel(2)
            Select Case bResult

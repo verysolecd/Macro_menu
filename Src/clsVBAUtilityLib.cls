@@ -7,12 +7,8 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
-'/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/
-'/_/
 '/_/ clsVbaUtilityLib
 '/_/ 主要处理数组、字典
-'/_/
-'/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/
 Option Explicit
 'Win API
 Private Declare PtrSafe Sub Sleep Lib "kernel32" (ByVal ms As Long)
@@ -239,8 +235,6 @@ Function GetThisDir() As String
     projFilePath = oApc.ExecutingProject.VBProject.fileName
     GetThisDir = GetFso.GetParentFolderName(projFilePath)
 End Function
-
-
 'Scripting.Dictionary
 'param:compareMode-Long
 'return:Object(Of Dictionary)
@@ -332,9 +326,7 @@ Function InitArray( _
     Else
         ReDim ary(count)
     End If
-    If IsEmpty(Value) Then
-        InitArray = ary
-    End If
+    If IsEmpty(Value) Then InitArray = ary
     Dim i As Long
     For i = 0 To UBound(ary)
         ary(i) = Value

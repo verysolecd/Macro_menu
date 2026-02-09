@@ -278,7 +278,7 @@ Public Sub inject_RvData(data() As Bomline, Optional ByVal startrow As Long = 2)
         For i = 1 To cnt
             With data(i)
                 Select Case c
-                    Case 0: buffer(i, 1) = .PartNumber
+                    Case 0: buffer(i, 1) = .partNumber
                     Case 1: buffer(i, 1) = .Nomenclature
                     Case 2: buffer(i, 1) = .Definition
                     Case 3: buffer(i, 1) = .InstanceName

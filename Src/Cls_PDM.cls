@@ -7,9 +7,13 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
-
-
 Option Explicit
+
+Private Type PropResult
+    obj As Object
+    Value As Variant
+    IsValid As Boolean
+End Type
 Public Event ProductChanged()
 ' 私有变量
 Private mProduct As Object          ' 存储当前产品
@@ -19,22 +23,17 @@ Private mRows As Collection         ' 用于递归收集 BOM 行数据的临时�
 Private mItems() As Bomline       ' Dynamic array for Bomlines
 Private mItemCount As Long        ' Current count of items
 Private Const CHUNK_SIZE As Long = 150 ' Array growth chunk size
-'=-------------------------------------------------------
-
+'-------------------------------------------------------
 Private EKL_STR As String 'As String '= "let lst(list) set lst=Part_info\iBodys let V (Volume) V=0 let i(integer) i=1 for i while i<=lst.Size() {V=V+smartVolume(lst.GetItem(i)) i=i+1} Part_info\sumVol =V"
 Private Const ekl1 As String = "let lst(list) set lst=Part_info\iBodys let V (Volume) V=0 let i(integer) i=1"
 Private Const ekl2 As String = " for i while i<=lst.Size() {V=V+smartVolume(lst.GetItem(i)) i=i+1} Part_info\sumVol =V"
-' 初始化
 Private Const mdlname As String = "Cls_PDM"
 Private Sub Class_Initialize()
     On Error Resume Next
     Set g_allPN = KCL.InitDic ' 保持与全局变量同步
     Set mProduct = Nothing
-    
-    ' Initialize array
     mItemCount = 0
     ReDim mItems(1 To CHUNK_SIZE)
-    
     If CATIA.Documents.count > 0 Then
         Set mSelection = CATIA.ActiveDocument.Selection
         mSelection.Clear
@@ -42,10 +41,8 @@ Private Sub Class_Initialize()
         Set rootPrd = CATIA.ActiveDocument.Product
         If Not rootPrd Is Nothing Then rootPrd.ApplyWorkMode (3)
     End If
-'    iniarr
     On Error GoTo 0
 End Sub
-
 
 Public Property Get CurrentProduct() As Object
     Set CurrentProduct = mProduct
@@ -62,7 +59,6 @@ Private Function GetPropertyValue(ByVal Collection As Object, ByVal ItemIdentifi
     On Error Resume Next
     Dim result As PropResult
     Set result.obj = Collection.item(ItemIdentifier)
-    
     If Err.Number = 0 And Not result.obj Is Nothing Then
         result.Value = result.obj.Value
         result.IsValid = True
@@ -71,7 +67,6 @@ Private Function GetPropertyValue(ByVal Collection As Object, ByVal ItemIdentifi
         result.Value = "__"
         result.IsValid = False
     End If
-    
     GetPropertyValue = result
     On Error GoTo 0
 End Function
@@ -96,7 +91,7 @@ Public Function getBomLine(ByVal oPrd As Object) As Bomline
     Dim userProps As Object: Set userProps = refPrd.UserRefProperties
     
     With item
-        .PartNumber = refPrd.PartNumber
+        .partNumber = refPrd.partNumber
         .Nomenclature = refPrd.Nomenclature
         .Definition = refPrd.Definition
         .InstanceName = oPrd.name
@@ -135,10 +130,10 @@ Private Function QtyinLV(ByVal oPrd As Object) As Long
         QtyinLV = 1: Exit Function
     End If
     Dim productsColl As Products: Set productsColl = oPrd.Parent
-    Dim targetPN As String: targetPN = oPrd.ReferenceProduct.PartNumber
+    Dim targetPN As String: targetPN = oPrd.ReferenceProduct.partNumber
     Dim i As Long, cnt As Long: cnt = 0
     For i = 1 To productsColl.count
-        If productsColl.item(i).ReferenceProduct.PartNumber = targetPN Then cnt = cnt + 1
+        If productsColl.item(i).ReferenceProduct.partNumber = targetPN Then cnt = cnt + 1
     Next
     QtyinLV = cnt
     On Error GoTo 0
@@ -178,8 +173,8 @@ Private Sub TraverseProductTree(ByVal oPrd As Object, ByVal level As Long, ByVal
         For i = 1 To children.count
             Dim child As Object: Set child = children.item(i)
             If filterDuplicate Then
-                If Not dict.Exists(child.ReferenceProduct.PartNumber) Then ' Fixed: use ReferenceProduct
-                    dict.Add child.ReferenceProduct.PartNumber, 1
+                If Not dict.Exists(child.ReferenceProduct.partNumber) Then ' Fixed: use ReferenceProduct
+                    dict.Add child.ReferenceProduct.partNumber, 1
                     TraverseProductTree child, level + 1, filterDuplicate
                 End If
             Else
@@ -202,7 +197,7 @@ Public Function attLv2Prd(oPrd) As Variant
     ' Note: This mapping matches the legacy expected format (approx)
     For R = 1 To mItemCount
         With mItems(R)
-            result(R, 1) = .PartNumber
+            result(R, 1) = .partNumber
             result(R, 2) = .Nomenclature
             result(R, 3) = .Definition
             result(R, 4) = .InstanceName
@@ -252,7 +247,7 @@ Public Function modatt(ByVal oPrd As Object, ByVal oData As Variant)
             Dim isChanged As Boolean: isChanged = False
             
             Select Case i
-                Case 1: If oData(1) <> currAtt.PartNumber Then isChanged = True
+                Case 1: If oData(1) <> currAtt.partNumber Then isChanged = True
                 Case 2: If oData(2) <> currAtt.Nomenclature Then isChanged = True
                 Case 3: If oData(3) <> currAtt.Definition Then isChanged = True
                 Case 4: If oData(4) <> currAtt.InstanceName Then isChanged = True
@@ -261,7 +256,7 @@ Public Function modatt(ByVal oPrd As Object, ByVal oData As Variant)
             End Select
             If isChanged Then
                 Select Case i
-                    Case 1: refPrd.PartNumber = oData(i)
+                    Case 1: refPrd.partNumber = oData(i)
                     Case 2: refPrd.Nomenclature = oData(i)
                     Case 3: refPrd.Definition = oData(i)
                     Case 4: oPrd.name = oData(i)
@@ -374,7 +369,7 @@ Private Sub EnsurePublication(ByVal refPrd As Object, ByVal pubName As String, B
     Dim pubs As Object: Set pubs = refPrd.Publications
     Dim oPub As Object: Set oPub = pubs.item(pubName)
     If oPub Is Nothing Then
-        Dim oRef As Object: Set oRef = refPrd.CreateReferenceFromName(refPrd.PartNumber & "\" & refPath)
+        Dim oRef As Object: Set oRef = refPrd.CreateReferenceFromName(refPrd.partNumber & "\" & refPath)
         Set oPub = pubs.Add(pubName)
         pubs.SetDirect pubName, oRef
     End If
@@ -406,32 +401,6 @@ Private Sub CreateFormula(ByVal rels As Object, ByVal fName As String, ByVal tar
     On Error GoTo 0
 End Sub
 
-'---------------------------------------------------------------------------------------
-' 交互与工具
-'---------------------------------------------------------------------------------------
-Public Function catSel1(ByVal prompt As String, Optional ByVal filter As String = "Product") As Object
-' 单选产品/零件 (catSel1)
-    On Error Resume Next
-    Set catSel1 = KCL.SelectItem(prompt, filter)
-    On Error GoTo 0
-End Function
-Public Function catSelx(ByVal prompt As String) As Collection
-    Set catSelx = New Collection
-    If mSelection Is Nothing Then Exit Function
-    mSelection.Clear
-    
-    Dim filters(0) As Variant: filters(0) = "Product"
-    If mSelection.SelectElement3(filters, prompt, True, 2, True) = "Normal" Then
-        Dim i As Long
-        For i = 1 To mSelection.count
-            catSelx.Add mSelection.item(i).LeafProduct
-        Next
-    End If
-    mSelection.Clear
-End Function
-Public Sub freePrd()
-    Set mProduct = Nothing
-End Sub
 
 Public Sub DelQuery(ByVal iQuery As String, Optional ByVal iRange = Nothing)
     If mSelection Is Nothing Then Exit Sub

@@ -44,15 +44,15 @@ On Error Resume Next ' 临时开启错误处理
       If oFrm.res("chk_tm") Then
            Dim ttp: ttp = KCL.timestamp("min")
                If oFrm.res("chk_tm") Then
-                    pn = KCL.strbflast(oDoc.Product.PartNumber, "_")
+                    pn = KCL.strbflast(oDoc.Product.partNumber, "_")
                          If KCL.ExistsKey(pn, "_") Then
-                             oDoc.Product.PartNumber = pn & ttp
+                             oDoc.Product.partNumber = pn & ttp
                          Else
-                             oDoc.Product.PartNumber = pn & "_" & ttp
+                             oDoc.Product.partNumber = pn & "_" & ttp
                          End If
                 End If
       End If
-      pn = oDoc.Product.PartNumber
+      pn = oDoc.Product.partNumber
 '==========STP文件名处理
         stpname = KCL.strbf1st(pn, "_") & "_" & ttp
         Dim opath(2) '0=路径，1=name，2=extname

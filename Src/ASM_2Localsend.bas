@@ -17,7 +17,7 @@ Sub sendDir()
         If KCL.IsObj_T(oDoc, "DrawingDocument") Then
             pn = KCL.strbflast(oDoc.name, ".")
         Else
-            pn = oDoc.Product.PartNumber
+            pn = oDoc.Product.partNumber
         End If
     Dim bckFolderName As String
     fName = KCL.rmchn(pn)    '将零件号所有中文字符替换为" "

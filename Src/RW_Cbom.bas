@@ -20,36 +20,35 @@ Sub cBom()
     Dim oFrm: Set oFrm = KCL.newFrm(mdlname): oFrm.Show
     If oFrm.BtnClicked <> "btnOK" Then Exit Sub
     If pdm Is Nothing Then Set pdm = New Cls_PDM
-    If pdm.CurrentProduct Is Nothing Then Set pdm.CurrentProduct = KCL.defPrd
-    Dim iprd: Set iprd = pdm.CurrentProduct: If iprd Is Nothing Then Exit Sub
-    If gws Is Nothing Then Set xlm = New Cls_XLM
+    If IsNothing(pdm.CurrentProduct) Then Set pdm.CurrentProduct = KCL.defPrd
+    Dim iprd: Set iprd = pdm.CurrentProduct: If IsNothing(iprd) Then Exit Sub
+    If IsNothing(gws) Then Set xlm = New Cls_XLM
     Call Cal_Mass
     Dim i, j, startrow, Colpn, colPic
-        Dim bomlns() As Bomline
-        bomlns = pdm.ProduceBOM(iprd)
+        Dim bomlns() As Bomline: bomlns = pdm.ProduceBOM(iprd)
     If Not oFrm.res("chk_GXfmt") Then
         startrow = 2: Colpn = 3: colPic = 6
         xlm.inject_Bom ConvertBOM_Standard(bomlns), startrow
+        startrow = 2: Colpn = 3: colPic = 6
     Else
         startrow = 5: Colpn = 6: colPic = 8
         xlm.inject_GXbom ConvertBOM_GX(bomlns), startrow
+        startrow = 5: Colpn = 6: colPic = 8
     End If
     If oFrm.res("chk_capture") Then
-      Call Capme
-      Call xlm.inject_pic(startrow, Colpn, colPic, gPic_Path)
+      Call CapPrd(iprd)
+      Call xlm.inject_pic(startrow, Colpn, colPic, g_Picpath)
     End If
        GoTo CleanUp
 CleanUp:
 On Error Resume Next
-    Unload oFrm
-     Set oFrm = Nothing
+    Unload oFrm: Set oFrm = Nothing
+    Set iprd = Nothing
     xlm.xlshow
-   Set iprd = Nothing
-   KCL.ClearDir (gPic_Path)
-   gPic_Path = ""
-      xlm.freesheet
-      Error.Clear
-      On Error GoTo 0
+   KCL.ClearDir (g_Picpath)
+   g_Picpath = ""
+   Error.Clear
+   On Error GoTo 0
 End Sub
 Private Function ConvertBOM_Standard(data() As Bomline) As Variant
  'Dim arr2D As Variant: arr2D = ConvertBOM_Standard(data)
@@ -61,7 +60,7 @@ Private Function ConvertBOM_Standard(data() As Bomline) As Variant
         With data(i)
             arr2D(i, 1) = i                     ' No. 编号
             arr2D(i, 2) = .level                ' Layout 层级
-            arr2D(i, 3) = .PartNumber           ' PN 零件号
+            arr2D(i, 3) = .partNumber           ' PN 零件号
             arr2D(i, 4) = .Nomenclature         ' Nomenclature 英文名称
             arr2D(i, 5) = .Definition           ' Definition 中文名称
             ' arr2D(i, 6) 图像列，后续填充
@@ -93,7 +92,7 @@ Private Function ConvertBOM_GX(data() As Bomline) As Variant
             arr2D(i, 3) = IIf(.level = 2, 2, "")
             arr2D(i, 4) = IIf(.level = 3, 3, "")
             arr2D(i, 5) = IIf(.level = 4, 4, "")
-            arr2D(i, 6) = .PartNumber                            ' PART NO.
+            arr2D(i, 6) = .partNumber                            ' PART NO.
             arr2D(i, 7) = ""                                     ' DRAWING NO.
             arr2D(i, 8) = .Definition                            ' 中文名称
             arr2D(i, 9) = .Nomenclature                          ' ITEM NAME

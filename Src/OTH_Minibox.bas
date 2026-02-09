@@ -215,7 +215,7 @@ Private Function initPartDoc( _
     Set prods = belongProd.Products
     Dim newProd As Product
     Set newProd = prods.AddNewComponent("Part", "")
-    newProd.PartNumber = "Mini_box_" & prod.PartNumber
+    newProd.partNumber = "Mini_box_" & prod.partNumber
     Set initPartDoc = newProd.ReferenceProduct.Parent
 End Function
 

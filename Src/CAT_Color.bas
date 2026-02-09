@@ -38,12 +38,12 @@ Sub swbcgColor()
         btnCaption = "背景颜色(白)"
     End If
     
-    If Not A00_globalVar.g_Btn Is Nothing Then
-        A00_globalVar.g_Btn.Caption = btnCaption
+    If Not g_Btn Is Nothing Then
+        g_Btn.Caption = btnCaption
     End If
     
     On Error GoTo 0
- Set A00_globalVar.g_Btn = Nothing
+ Set g_Btn = Nothing
 ErrorHandler:
     If Err.Number <> 0 Then
         Select Case Err.Number

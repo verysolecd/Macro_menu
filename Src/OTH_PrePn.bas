@@ -41,9 +41,9 @@ Sub Pnmgr()
 End Sub
 
 Sub c_pn_Prefix(oPrd, istr)
-        pn = oPrd.PartNumber
+        pn = oPrd.partNumber
         purePN = KCL.straf1st(pn, "_")
-        oPrd.PartNumber = istr & "_" & purePN
+        oPrd.partNumber = istr & "_" & purePN
    If oPrd.Products.count > 0 Then
     For Each Product In oPrd.Products
         Call c_pn_Prefix(Product, istr)
@@ -52,8 +52,8 @@ Sub c_pn_Prefix(oPrd, istr)
 End Sub
 
 Sub c_pn_suffix(oPrd, istr)
-    pn = oPrd.PartNumber
-    oPrd.PartNumber = pn & "_" & istr
+    pn = oPrd.partNumber
+    oPrd.partNumber = pn & "_" & istr
    If oPrd.Products.count > 0 Then
     For Each Product In oPrd.Products
         Call c_pn_suffix(Product, istr)
@@ -61,8 +61,8 @@ Sub c_pn_suffix(oPrd, istr)
     End If
 End Sub
 Function del_pn_midx(oPrd, istr)
-        pn = oPrd.PartNumber
-        oPrd.PartNumber = VBA.Replace(pn, istr, "")
+        pn = oPrd.partNumber
+        oPrd.partNumber = VBA.Replace(pn, istr, "")
   If oPrd.Products.count > 0 Then
     For Each Product In oPrd.Products
         Call del_pn_midx(Product, istr)

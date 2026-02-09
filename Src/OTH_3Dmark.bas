@@ -20,8 +20,8 @@ Sub newlabel()
 End Sub
 
 Sub recurthisPrd(oPrd)
-        If g_allPN.Exists(oPrd.PartNumber) = False Then
-            g_allPN(oPrd.PartNumber) = 1
+        If g_allPN.Exists(oPrd.partNumber) = False Then
+            g_allPN(oPrd.partNumber) = 1
             Call recurexcute(oPrd)
             End If
         If oPrd.Products.count > 0 Then

@@ -732,7 +732,7 @@ Sub CATLinks()
     Set ViewDocument = ViewDocument.Parent
   Next
   If Not ProductDrawn Is Nothing Then
-    Texts.GetItem("TitleBlock_Text_EnoviaV5_Effectivity").text = ProductDrawn.PartNumber
+    Texts.GetItem("TitleBlock_Text_EnoviaV5_Effectivity").text = ProductDrawn.partNumber
     Texts.GetItem("TitleBlock_Text_Title_1").text = ProductDrawn.Definition
     Dim ProductAnalysis As Analyze
     Set ProductAnalysis = ProductDrawn.Analyze

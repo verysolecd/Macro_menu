@@ -128,7 +128,7 @@ If iprd.Products.count < 1 Then
 Else
         For Each prd In iprd.Products
             Set oV = oVs.Add("AutomaticNaming")
-            oV.name = prd.PartNumber & "VIEW YZ"
+            oV.name = prd.partNumber & "VIEW YZ"
             Set ViewGen = oV.GenerativeLinks
             Set ViewGBH = oV.GenerativeBehavior
                 ViewGBH.Document = prd

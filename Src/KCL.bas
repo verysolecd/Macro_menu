@@ -2,7 +2,7 @@ Attribute VB_Name = "KCL"
 'Attribute VB_Name = "KCL"
 Option Explicit
 
-Private mSW& ' 秒表开始时间
+
 Private Declare PtrSafe Function OpenClipboard Lib "user32" (ByVal hwnd As LongPtr) As Long
 Private Declare PtrSafe Function EmptyClipboard Lib "user32" () As Long
 Private Declare PtrSafe Function CloseClipboard Lib "user32" () As Long
@@ -21,9 +21,42 @@ Private Declare PtrSafe Function SetClipboardData Lib "user32" (ByVal wFormat As
 ' 常量定义
 Private Const SW_MAXIMIZE = 3
 Private Const SW_NORMAL = 1
+Private mSW& ' 秒表开始时间
 
+Public Type Bomline
+    level           As Integer        ' 层级
+    partNumber      As String    ' 件号
+    Nomenclature    As String  ' 英文名称
+    Definition      As String    ' 中文名称
+    InstanceName    As String  ' 实例名
+    Quantity        As Long        ' 数量
+    Mass            As Double          ' 单重
+    Material        As String      ' 材质
+    Thickness       As Double     ' 厚度
+    Density         As Double       ' 密度
+    UserProp1       As String
+    UserProp2       As String
+End Type
 
+Public Type ParamItem
+    name            As String
+    ParamType       As String
+    Value           As Variant
+    target          As Object    ' 指向 CATIA Parameter 对象
+    Description     As String
+End Type
 
+Public rootDoc
+Public rootPrd  As Object
+Public xlAPP As Object
+Public gwb As Object
+Public gws  As Object
+Public pdm As New Cls_PDM
+Public xlm As New Cls_XLM
+Public g_allPN As Object
+Public g_Picpath
+Public g_frm As cls_dynaFrm
+Public g_Btn
 
 '*****计时相关函数*****
 ' 启动秒表
@@ -100,12 +133,10 @@ Function SelPrd(ByVal msg$, _
         Set SelPrd = se.LeafProduct
     End If
 End Function
-
 ' 选择项目 /产品/零件/body/几何图形集等
 ''' @param:Msg-提示信息
 ''' @param:Filter-array(string),string 选择过滤器(默认为AnyObject)
 ''' @return:AnyObject
-
 Function SelectItem(ByVal msg$, _
                     Optional ByVal filter As Variant = Empty)
     Dim se As SelectedElement
@@ -363,20 +394,41 @@ Public Function getItm(iName, colls)
     Set itm = Nothing
 End Function
 
-Public Function getSearch(ByRef iDoc, ByRef ifilter As Variant)
+Public Function SelectQuery(iQuery As String, Optional ByVal iRange = Nothing)
+    Set SelectQuery = Nothing
+  Dim msel: Set msel = CATIA.ActiveDocument.Selection
+  msel.Clear
+    If VarType(iQuery) = vbString Then
+         iQuery = VBA.LCase(iQuery)
+        iQuery = VBA.Split(iQuery, ",") '过滤器转数组
+    End If
+    If Not checkFilterType(iQuery) Then Exit Function '过滤器检查，非数组则退出
+    Dim i As Long, Qry As String
+    For i = LBound(iQuery) To UBound(iQuery)
+        Qry = iQuery(i)
+        If iRange Is Nothing Then
+          msel.Search Qry & ",all"
+        Else
+           msel.Add iRange
+           msel.Search Qry & ",sel"
+        End If
+    Next i
+    Set SelectQuery = msel
+End Function
+
+Public Function getSearch(ByRef ifilter As Variant, ByRef iDoc)
     Set getSearch = Nothing
-      On Error Resume Next
+    On Error Resume Next
              Dim oSel As Selection, i
              Set oSel = iDoc.Selection
               oSel.Clear
-    Select Case TypeName(ifilter)
-        Case "string"
+    If LCase(TypeName(ifilter)) = "string" Then
         With oSel
             .Clear
             .Search (ifilter)
             .VisProperties.SetShow 1
         End With
-    End Select
+    End If
         Set getSearch = oSel
 End Function
 
@@ -508,7 +560,7 @@ Function isExists(ByVal path$) As Boolean
     End If
     Set fso = Nothing
 End Function
-Function GetPath(ByVal path$)
+Function GetPath(ByVal path$) As String
     GetPath = ""
      Dim fso As Object: Set fso = GetFso
      If isExists(path) Then
@@ -518,6 +570,7 @@ Function GetPath(ByVal path$)
      End If
      Set fso = Nothing
 End Function
+'打开并定位到
 Sub explorepath(ByVal ipath)
  Dim thisdir, shell, cmd
     thisdir = ""
@@ -1174,10 +1227,10 @@ Public Function CATquick(ByVal Quick As Boolean, Optional ByVal updateCap As Boo
     End If
     End With
      On Error Resume Next
-        If Not A00_globalVar.g_Btn Is Nothing Then
-          If updateCap = True Then A00_globalVar.g_Btn.Caption = btnCaption
+        If Not g_Btn Is Nothing Then
+          If updateCap = True Then g_Btn.Caption = btnCaption
         End If
-     Set A00_globalVar.g_Btn = Nothing
+     Set g_Btn = Nothing
     CATquick = Quick
     CATIA.ActiveWindow.ActiveViewer.Update
     On Error GoTo 0

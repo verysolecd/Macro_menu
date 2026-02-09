@@ -35,7 +35,7 @@ End Sub
 ' 递归遍历装配体，使用数组 (level, product) 作为字典值
 Sub recurTreeLV(ByVal lvl As Integer, ByRef aProd As Product, ByRef dict As Object, ByRef maxLvl As Integer)
     If lvl > maxLvl Then maxLvl = lvl
-    Dim pn As String: pn = Trim(aProd.PartNumber)
+    Dim pn As String: pn = Trim(aProd.partNumber)
     If pn = "" Then pn = "Unnamed_" & Replace(CreateObject("Scriptlet.TypeLib").GUID, "-", "")
     
     If Not dict.Exists(pn) Then
@@ -64,7 +64,7 @@ Sub SaveByLV(ByRef dict As Object, ByVal maxLvl As Integer, ByVal folder As Stri
                                     Dim str1: str1 = info(1).ReferenceProduct.Parent.FullName
                                     Dim ary: ary = Split(str1, ".")
                                          For i = LBound(ary) To UBound(ary)
-                                              If info(1).ReferenceProduct.PartNumber = ary(i) Then suffix = ".CATProduct"
+                                              If info(1).ReferenceProduct.partNumber = ary(i) Then suffix = ".CATProduct"
                                          Next i
                             End Select
                 End Select

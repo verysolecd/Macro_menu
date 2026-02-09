@@ -21,158 +21,164 @@ Attribute VB_Name = "OTH_capture"
 '    Private Declare Function CopyImage Lib "user32" (ByVal handle As Long, ByVal un1 As Long, ByVal n1 As Long, ByVal n2 As Long, ByVal un2 As Long) As Long
 '    Private Declare Function LoadImage Lib "user32" Alias "LoadImageA" (ByVal hInst As Long, ByVal lpsz As String, ByVal un1 As Long, ByVal n1 As Long, ByVal n2 As Long, ByVal un2 As Long) As Long
 '#End If
-Const CF_BITMAP = 2
-Private Const Fdis = 0.9
-Private thisdir
-Private oDic
+Option Explicit
 
-Private Const mdlname As String = "OTH_capture"
-Sub Capturetopath()
-If Not KCL.CanExecute("ProductDocument") Then Exit Sub
-    On Error Resume Next
-     CATIA.StartCommand ("* iso")
-      Dim BTN, bTitle, bResult
-      imsg = "如要截图，请等待ISO视角调整完毕后点击确认"
-        BTN = vbYesNo + vbExclamation
-        bResult = MsgBox(imsg, BTN, "bTitle")  ' Yes(6),No(7),cancel(2)
-        Select Case bResult
-            Case 7: Exit Sub '===选择“否”====
-            Case 2: Exit Sub '===选择“取消”====
-            Case 6  '===选择“是”====
-                Call Capme
-            End Select
-  If Err.Number = 0 Then
-     KCL.openpath (thisdir)
-   End If
-     Err.Clear
-On Error GoTo 0
+' ==============================================================================
+' Module: OTH_capture
+' Description: Captures screenshots of CATIA products recursively.
+' ==============================================================================
 
+' --- Configuration Types ---
+Private Type CaptureSettings
+    BackgroundColor As Variant
+    FocusFactor As Double
+    ViewDirection As Variant
+    RenderingMode As Integer
+    AspectHeightRatio As Double
+    ResolutionWidth As Long
+End Type
+
+' --- Constants ---
+Private Const DEFAULT_FOCUS_FACTOR = 0.9
+Private Const MDL_NAME As String = "OTH_capture"
+' --- State Variables ---
+Private m_Settings As CaptureSettings
+Private m_ProcessedPN As Object ' Scripting.Dictionary
+Private m_FirstImagePath As String
+
+' ==============================================================================
+' Public Entry Point
+' ==============================================================================
+Sub CaptureTopath()
+    If Not KCL.CanExecute("ProductDocument,PartDocument") Then Exit Sub
+    CATIA.StartCommand ("* iso")
+    Dim response As VbMsgBoxResult
+    response = MsgBox("如要截图，请等待ISO视角调整完毕后点击确认", vbYesNo + vbExclamation, "确认截图")
+    If response <> vbYes Then Exit Sub
+    CapPrd CATIA.ActiveDocument.Product
+    
+    If m_FirstImagePath <> "" Then
+        KCL.openpath KCL.ofParentPath(m_FirstImagePath)
+    End If
 End Sub
-
-Sub Capme()
- If Not KCL.CanExecute("ProductDocument,PartDocument") Then Exit Sub
- If pdm Is Nothing Then
-        Set pdm = New Cls_PDM
- End If
-On Error Resume Next
-'-----------设置显示样式模式-------------
-    Call HideNonBody(rootDoc)
+' ==============================================================================
+' Core Execution Logic
+' ==============================================================================
+Sub CapPrd(oPrd)
+'    On Error GoTo ErrorHandler
+    If Not KCL.CanExecute("ProductDocument,PartDocument") Then Exit Sub
+    If oPrd Is Nothing Then Exit Sub
+    ' Setup Environment
+     InitializeSettings
+    CATIA.StartCommand ("Compass") ' Toggle Compass (Hide)
+    CATIA.RefreshDisplay = False
+    oPrd.ApplyWorkMode 3 ' DESIGN_MODE
+    HideNonBody CATIA.ActiveDocument
+    SetCAPDisplay
+    Set m_ProcessedPN = KCL.InitDic
+    Dim tempPath As String    ' Prepare Output Folder
+    tempPath = KCL.GetPath(KCL.getVbaDir & "\oTemp"): KCL.ClearDir tempPath
+    g_Picpath = tempPath
+    CaptureRecursive oPrd, tempPath     ' Start Recursive Capture
+    Set m_ProcessedPN = Nothing
+    RecoverDisplay
+    CATIA.StartCommand ("Compass") ' Toggle Compass (Restore)
     CATIA.RefreshDisplay = True
-    CATIA.DisplayFileAlerts = False
-'    With CATIA.Application
-'      .Width = 1920 / 2
-'      .Height = 1080 '.Width * 0.618
-'    End With
-    
-    With CATIA.ActiveWindow
-         .WindowState = 0  '   '0 catWindowStateMaximized 1   catWindowStateMinimized,2   catWindowStateNormal
-         .Width = 1080
-         .Height = .Width * 0.618
-         .Layout = 1    ' 仅显示几何视图
+    Exit Sub
+ErrorHandler:
+    CATIA.RefreshDisplay = True
+    MsgBox "Error in CapPrd: " & Err.Description, vbCritical, MDL_NAME
+End Sub
+
+Private Sub CaptureRecursive(targetPrd, ByVal folderPath As String)
+    Dim viewer As viewer: Set viewer = CATIA.ActiveWindow.ActiveViewer
+    Dim partNumber As String: partNumber = targetPrd.partNumber
+    If Not m_ProcessedPN.Exists(partNumber) Then
+        Dim imgFile As String
+        imgFile = folderPath & "\" & partNumber & ".jpg"
+        viewer.CaptureToFile 5, imgFile ' 5 = catCaptureFormatJPEG
+        If m_FirstImagePath = "" Then m_FirstImagePath = imgFile
+        m_ProcessedPN.Add partNumber, 1
+    End If
+    Dim children As Products: Set children = targetPrd.Products
+    If children.count = 0 Then Exit Sub
+    Dim sel As Selection: Set sel = CATIA.ActiveDocument.Selection
+    Dim visp: Set visp = sel.VisProperties
+    ' Hide all children first (Performance optimization: Bulk Selection)
+    sel.Clear
+    Dim i As Long
+    For i = 1 To children.count
+        sel.Add children.item(i)
+    Next
+    visp.SetShow 1 ' Hide
+    sel.Clear
+    ' Iterate and Capture
+    For i = 1 To children.count
+        Dim child As Product: Set child = children.item(i)
+        ' Show current child
+        sel.Add child
+        visp.SetShow 0 ' Show
+        sel.Clear
+        ' Recurse
+        CaptureRecursive child, folderPath
+        sel.Add child
+        visp.SetShow 1 ' Hide
+        sel.Clear
+    Next
+    For i = 1 To children.count
+        sel.Add children.item(i)
+    Next
+    visp.SetShow 0
+    sel.Clear
+End Sub
+
+Private Sub InitializeSettings()
+    With m_Settings
+        .BackgroundColor = Array(1, 1, 1) ' White
+        .FocusFactor = DEFAULT_FOCUS_FACTOR
+        .ViewDirection = Array(-1, -1, -1) ' Isometric
+        .RenderingMode = 1 ' Shading with Edges
+        .AspectHeightRatio = 0.618
+        .ResolutionWidth = 1080
     End With
+    m_FirstImagePath = ""
+End Sub
 
-  CATIA.RefreshDisplay = False
-     Dim oViewer
-     Set oViewer = CATIA.ActiveWindow.ActiveViewer
-     With oViewer
-        .RenderingMode = 1 ' catRenderShadingWithEdges
-        .Viewpoint3D.PutSightDirection Array(-1, -1, -1)
+Private Sub SetCAPDisplay()
+    With CATIA.ActiveWindow
+        .WindowState = 0 ' Maximized
+        .Width = m_Settings.ResolutionWidth
+        .Height = .Width * m_Settings.AspectHeightRatio
+        .Layout = 1 ' Geometry only
+    End With
+    Dim oViewer: Set oViewer = CATIA.ActiveWindow.ActiveViewer
+    With oViewer
+        .RenderingMode = m_Settings.RenderingMode
+        .Viewpoint3D.PutSightDirection m_Settings.ViewDirection
         .Reframe
-        .Viewpoint3D.FocusDistance = oViewer.Viewpoint3D.FocusDistance * Fdis
-        .PutBackgroundColor Array(1, 1, 1) '白色背景
-     End With
-         
-    CATIA.StartCommand ("Compass")  '隐藏指南针
-    
-    oDic = KCL.InitDic
-    
-     Dim oPrd: Set oPrd = rootPrd
-     If oPrd Is Nothing Then Exit Sub
-     
-     oPrd.ApplyWorkMode (3)  '3  DESIGN_MODE
-     Dim opath: opath = KCL.GetPath(KCL.getVbaDir & "\" & "oTemp")
-     KCL.ClearDir (opath) '截图前先清空文件夹
-     If gPic_Path = "" Then
-            gPic_Path = opath
-     End If
-     
-     oDic.Remove all
-     CaptureMe oPrd, opath
-     oDic.Remove all
-     Set oPrd = Nothing
-'-----------恢复显示样式模式-------------
-     CATIA.DisplayFileAlerts = True
-     owd.WindowState = 0
-     oViewer.PutBackgroundColor Array(0.2, 0.2, 0.4)
-     CATIA.RefreshDisplay = True
-     CATIA.ActiveWindow.Layout = 2 ' catWindowSpecsAndGeom
-     CATIA.StartCommand ("Compass")
-On Error GoTo 0
+        .Viewpoint3D.FocusDistance = .Viewpoint3D.FocusDistance * m_Settings.FocusFactor
+        .PutBackgroundColor m_Settings.BackgroundColor
+    End With
 End Sub
-Sub CaptureMe(iprd, oFolder)
-    On Error Resume Next
-    '--调整视角和显示
-     Dim oViewer: Set oViewer = CATIA.ActiveWindow.ActiveViewer
-     With oViewer
-         .RenderingMode = 1 ' catRenderShadingWithEdges
-        .Viewpoint3D.PutSightDirection Array(-1, -1, -1)
-         .Reframe
-         .Viewpoint3D.FocusDistance = oViewer.Viewpoint3D.FocusDistance * Fdis
-     End With
-     
-      '--递归产品截图
-     If oDic.Exists(iprd.PartNumber) = False Then  '递归产品截图
-        oDic(iprd.PartNumber) = 1
-        imgfilename = oFolder & "\" & iprd.ReferenceProduct.PartNumber & ".jpg"
-        oViewer.CaptureToFile 5, imgfilename
-     End If
-     If thisdir = "" Then
-          thisdir = imgfilename
-     End If
-          
-    Dim oSel: Set oSel = CATIA.ActiveDocument.Selection
-    oSel.Clear
-    Dim Visp: Set Visp = oSel.VisProperties
-    Dim children, i
-    Set children = iprd.Products
-    '---- 隐藏所有子产品
-        For Each cPrd In children
-            oSel.Add cPrd
-        Next
-    Visp.SetShow 1: oSel.Clear
-        
-     '---- 逐一显示子产品-截图-隐藏子产品
-         If children.count > 0 Then
-              For i = 1 To children.count     ' 递归处理每个子产品
-                   oSel.Add children.item(i): Visp.SetShow 0: oSel.Clear '显示当前子产品
-                   Call CaptureMe(children.item(i), oFolder)
-                   oSel.Add children.item(i): Visp.SetShow 1: oSel.Clear  ' 隐藏当前子产品
-              Next
-        End If
-   ' 重新显示每个子产品
-        For Each cPrd In children
-          oSel.Add cPrd
-        Next
-Visp.SetShow 0: oSel.Clear
-       
-End Sub
-Sub HideNonBody(iDoc)
-     On Error Resume Next
-         Dim oSel As Selection, i
-         Dim filter(1 To 6) As Variant
-         filter(1) = "(((CATStFreeStyleSearch.Plane + CATPrtSearch.Plane) + CATGmoSearch.Plane) + CATSpdSearch.Plane),all"
-         filter(2) = "(((CATStFreeStyleSearch.AxisSystem + CATPrtSearch.AxisSystem) + CATGmoSearch.AxisSystem) + CATSpdSearch.AxisSystem),all"
-         filter(3) = "((((((CATStFreeStyleSearch.Point + CAT2DLSearch.2DPoint) + CATSketchSearch.2DPoint) + CATDrwSearch.2DPoint) + CATPrtSearch.Point) + CATGmoSearch.Point) + CATSpdSearch.Point),all"
-         filter(4) = "((((((CATStFreeStyleSearch.Curve + CAT2DLSearch.2DCurve) + CATSketchSearch.2DCurve) + CATDrwSearch.2DCurve) + CATPrtSearch.Curve) + CATGmoSearch.Curve) + CATSpdSearch.Curve),all"
-         filter(5) = "(((CATStFreeStyleSearch.Surface + CATPrtSearch.Surface) + CATGmoSearch.Surface) + CATSpdSearch.Surface),all"
-         filter(6) = "(((((((CATProductSearch.MfConstraint + CATStFreeStyleSearch.MfConstraint) + CATAsmSearch.MfConstraint) + CAT2DLSearch.MfConstraint) + CATSketchSearch.MfConstraint) + CATDrwSearch.MfConstraint) + CATPrtSearch.MfConstraint) + CATSpdSearch.MfConstraint),all"
-         For i = LBound(filter) To UBound(filter)
-               KCL.getSearch(iDoc, filter(i)).VisProperties.SetShow 1
-         Next
-          Err.Clear
-     On Error GoTo 0
+Private Sub RecoverDisplay()
+    CATIA.ActiveWindow.Layout = 2 ' Specs and Geometry
+    Dim oViewer: Set oViewer = CATIA.ActiveWindow.ActiveViewer
+    oViewer.PutBackgroundColor Array(0.2, 0.2, 0.4) ' Default Dark Blue
+    oViewer.Reframe
 End Sub
 
+Private Sub HideNonBody(iDoc)
+    Dim sel As Selection: Set sel = iDoc.Selection: sel.Clear
+    Dim searchStr As String
+    searchStr = ".Plane + .AxisSystem + .Point + .2DPoint + .Curve + .2DCurve + .Surface + .MfConstraint,all"
+    On Error Resume Next
+    sel.Search searchStr
+    If sel.count > 0 Then
+        sel.VisProperties.SetShow 1 ' 隐藏 (catVisPropertyNoShow)
+        sel.Clear
+    End If
+    On Error GoTo 0
+End Sub
 
 
 
