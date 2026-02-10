@@ -7,14 +7,30 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
-
 ' --- State ---
 Private mForm, mdict, WD As Object
 Private mExecuted As Boolean
 Private mCfgStr As String
 Private mEventCol As Collection
+' Clipboard API
+Private Declare PtrSafe Function OpenClipboard Lib "user32" (ByVal hwnd As LongPtr) As Long
+Private Declare PtrSafe Function EmptyClipboard Lib "user32" () As Long
+Private Declare PtrSafe Function CloseClipboard Lib "user32" () As Long
+Private Declare PtrSafe Function SetClipboardData Lib "user32" (ByVal wFormat As Long, ByVal hMem As LongPtr) As LongPtr
+Private Declare PtrSafe Function GlobalAlloc Lib "kernel32" (ByVal wFlags As Long, ByVal dwBytes As LongPtr) As LongPtr
+Private Declare PtrSafe Function GlobalLock Lib "kernel32" (ByVal hMem As LongPtr) As LongPtr
+Private Declare PtrSafe Function GlobalUnlock Lib "kernel32" (ByVal hMem As LongPtr) As Long
+Private Declare PtrSafe Sub CopyMemory Lib "kernel32" Alias "RtlMoveMemory" (ByVal Destination As LongPtr, ByVal Source As Any, ByVal Length As LongPtr)
+
+Private Const GMEM_MOVEABLE = &H2
+Private Const CF_TEXT = 1
+
 Private mIsVertical As Variant ' Empty=Auto, True=Vert, False=Horiz
 Private mPassBtn As Boolean
+Private mIsAlertMode As Boolean
+Private mAlertMsg As String
+Private WithEvents mCopyBtn As MSForms.CommandButton
+Attribute mCopyBtn.VB_VarHelpID = -1
 
 ' --- Constants ---
 Private Const TAG_ENTRYPNT = "ep"           ' 入口点标签
@@ -42,6 +58,8 @@ Private Sub Class_Terminate()
     Set g_frm = Nothing
     pjt = ""
     mCfgStr = ""
+    mIsAlertMode = False
+    mAlertMsg = ""
     Error.Clear
 End Sub
 
@@ -68,6 +86,13 @@ Public Property Let PassButtonName(ByVal val As Boolean)
     mPassBtn = val
 End Property
 
+Public Sub Alert(ByVal Content As String)
+    mIsAlertMode = True
+    mAlertMsg = Content
+    mExecuted = False ' Auto-Reset for Alert
+    Show vbModal
+End Sub
+
 Public Sub Show(Optional ByVal iShowMode As FormShowConstants = vbModal, _
                 Optional ByVal ModuleMap As Object = Nothing, _
                 Optional ByVal MacroMap As Object = Nothing)
@@ -85,9 +110,36 @@ Public Sub Show(Optional ByVal iShowMode As FormShowConstants = vbModal, _
         btnvert = mIsVertical         ' 手动挡
     End If
     WD.setFrm ttl, ctrlCfg, btnvert
-    BindEvents WD, ModuleMap, MacroMap  '为窗口的按钮绑定事件
+    
+    If mIsAlertMode Then
+        Dim ctl As Control
+        WD.Tag = ""
+        For Each ctl In WD.Controls
+            If TypeName(ctl) = "CommandButton" Then
+                ctl.Visible = False
+            ElseIf TypeName(ctl) = "TextBox" Then
+                ctl.Value = mAlertMsg
+            End If
+        Next
+        
+        ' Dynamic Copy Button
+        Dim btnCopy As MSForms.CommandButton
+        Set btnCopy = WD.Controls.Add("Forms.CommandButton.1", "btn_Copy", True)
+        With btnCopy
+            .Caption = "复制并关闭"
+            .Width = 80
+            .Height = 24
+            .Left = (WD.InsideWidth - .Width) / 2
+            .Top = WD.InsideHeight - .Height - 6
+        End With
+        Set mCopyBtn = btnCopy
+        
+    Else
+        BindEvents WD, ModuleMap, MacroMap  '为窗口的按钮绑定事件
+    End If
+    
     WD.Show iShowMode
-If iShowMode = vbModal Then
+If iShowMode = vbModal And mIsAlertMode = False Then
        If WD.Tag = "" Then
             WD.Tag = "UserClosed": Unload WD: Set WD = Nothing
             Exit Sub
@@ -95,7 +147,7 @@ If iShowMode = vbModal Then
         If mdict Is Nothing Then Set mdict = KCL.InitDic
             mdict.Add "btn_clicked", WD.Tag
            WD.Hide: Unload WD: Set WD = Nothing
-        End If
+End If
 End Sub
 Public Sub ShowToolbar(ByVal modName As String, _
                        ByVal modMap As Object, _
@@ -137,10 +189,36 @@ Private Sub BindEvents(frm As Object, modMap As Object, macMap As Object)
     Next
 End Sub
 
-
 Private Sub EnsureExecuted()
     If Not mExecuted And mCfgStr <> "" Then Show vbModal
 End Sub
+
+Private Sub mCopyBtn_Click()
+    On Error Resume Next
+    Dim hGlobal As LongPtr
+    Dim lpGlobal As LongPtr
+    Dim sText As String
+    sText = mAlertMsg & vbNullChar
+    hGlobal = GlobalAlloc(GMEM_MOVEABLE, LenB(sText))
+    If hGlobal <> 0 Then
+        lpGlobal = GlobalLock(hGlobal)
+        If lpGlobal <> 0 Then
+            CopyMemory lpGlobal, StrPtr(StrConv(sText, vbFromUnicode)), LenB(StrConv(sText, vbFromUnicode))
+            GlobalUnlock hGlobal
+            
+            If OpenClipboard(0) <> 0 Then
+                EmptyClipboard
+                SetClipboardData CF_TEXT, hGlobal
+                CloseClipboard
+            End If
+        End If
+    End If
+    Unload WD
+'    mIsAlertMode = False
+
+End Sub
+
+
 
 
 

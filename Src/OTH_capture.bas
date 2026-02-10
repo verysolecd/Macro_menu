@@ -49,6 +49,7 @@ Private m_FirstImagePath As String
 ' ==============================================================================
 ' Public Entry Point
 ' ==============================================================================
+Private Const mdlname As String = "OTH_capture"
 Sub CaptureTopath()
     If Not KCL.CanExecute("ProductDocument,PartDocument") Then Exit Sub
     CATIA.StartCommand ("* iso")
@@ -58,7 +59,7 @@ Sub CaptureTopath()
     CapPrd CATIA.ActiveDocument.Product
     
     If m_FirstImagePath <> "" Then
-        KCL.openpath KCL.ofParentPath(m_FirstImagePath)
+        KCL.SmartOPenPath KCL.ofParentPath(m_FirstImagePath)
     End If
 End Sub
 ' ==============================================================================

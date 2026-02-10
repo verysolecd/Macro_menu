@@ -15,6 +15,7 @@ Private Type ThreadRule
     B As Integer
 End Type
 Private Rules() As ThreadRule
+Private Const mdlname As String = "MDL_setThreadcolor"
 Sub SetThreadColors()
     InitConfig
     Dim oDoc As Document
@@ -113,11 +114,11 @@ Private Sub ProcessPart(oPart As part)
     oSel.Clear
 End Sub
 
-Private Function GetColorByDia(d As Double, ByRef R As Integer, ByRef G As Integer, ByRef B As Integer) As Boolean
+Private Function GetColorByDia(D As Double, ByRef R As Integer, ByRef G As Integer, ByRef B As Integer) As Boolean
     Dim k As Integer
     GetColorByDia = False
     For k = LBound(Rules) To UBound(Rules)
-        If d >= Rules(k).MinDia And d <= Rules(k).MaxDia Then
+        If D >= Rules(k).MinDia And D <= Rules(k).MaxDia Then
             R = Rules(k).R
             G = Rules(k).G
             B = Rules(k).B

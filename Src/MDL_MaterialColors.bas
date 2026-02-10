@@ -39,7 +39,7 @@ Private mHSF
 Private Const mdlname As String = "MDL_MaterialColors"
 ' Main Entry Point
 Sub MaterialPainter()
-  Set mprt = KCL.get_inwork_part
+  Set mprt = KCL.get_workPartDoc.part
   If mprt Is Nothing Then
         Dim doc
         For Each doc In CATIA.Documents

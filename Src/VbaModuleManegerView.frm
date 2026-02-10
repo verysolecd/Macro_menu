@@ -16,13 +16,13 @@ Attribute VB_Exposed = False
 
 
 Option Explicit
-Private mUtil As clsVBAUtilityLib
-Private mModuleMgr As clsVbaModuleManagerModel
+Private mUtil As Cls_VbaUltiliseLib
+Private mModuleMgr As Cls_VbaMdlMgr
 
 Private Const mdlname As String = "VbaModuleManegerView"
 Private Sub UserForm_Initialize()
-    Set mUtil = New clsVBAUtilityLib
-    Set mModuleMgr = New clsVbaModuleManagerModel
+    Set mUtil = New Cls_VbaUltiliseLib
+    Set mModuleMgr = New Cls_VbaMdlMgr
     Me.Caption = mModuleMgr.Title
     Call update_comboBox
 End Sub

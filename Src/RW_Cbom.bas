@@ -15,7 +15,7 @@ Attribute VB_Name = "RW_Cbom"
 Option Explicit
 Private Const mdlname As String = "RW_Cbom"
 Sub cBom()
-    If Not KCL.CanExecute("ProductDocument") Then Exit Sub
+    If Not KCL.CanExecute("ProductDocument,partdocument") Then Exit Sub
     CATIA.StartCommand ("* iso")
     Dim oFrm: Set oFrm = KCL.newFrm(mdlname): oFrm.Show
     If oFrm.BtnClicked <> "btnOK" Then Exit Sub
@@ -39,8 +39,8 @@ Sub cBom()
       Call CapPrd(iprd)
       Call xlm.inject_pic(startrow, Colpn, colPic, g_Picpath)
     End If
-       GoTo CleanUp
-CleanUp:
+       GoTo Cleanup
+Cleanup:
 On Error Resume Next
     Unload oFrm: Set oFrm = Nothing
     Set iprd = Nothing

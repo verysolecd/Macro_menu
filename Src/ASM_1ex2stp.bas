@@ -28,8 +28,6 @@ On Error Resume Next ' 临时开启错误处理
  Dim oDoc: Set oDoc = CATIA.ActiveDocument
  Dim outputpath As String: outputpath = ""
  Dim oFrm: Set oFrm = KCL.newFrm(mdlname)
-
- 
  oFrm.Show
  Select Case oFrm.BtnClicked
  Case "btnOK"
@@ -71,7 +69,7 @@ On Error Resume Next ' 临时开启错误处理
         End If
         Case Else:
             Exit Sub
-    End Select
+End Select
       If Err.Number <> 0 Then
         ErrorMessage = "导出失败：" & Err.Description
         GoTo ShowMessage
@@ -85,11 +83,10 @@ ShowMessage:
             MsgBox "导出成功" & vbCrLf & _
                     stpfilepath & "文件已压缩" & vbCrLf & _
                     "原始文件已删除。", vbInformation
-            KCL.openpath (zippath)
+            KCL.SmartOPenPath (zippath)
         End If
 Wexit:
     Set oFrm = Nothing
-
     Set oDoc = Nothing
     On Error GoTo 0 ' 关闭错误处理
     ErrorMessage = "" ' 重置错误信息
@@ -98,7 +95,7 @@ End Sub
 Function ex2zip(oFilepath) As Boolean
  On Error GoTo seterror
     ex2zip = False
-    Dim result, shell, cmd, path7z
+    Dim Result, shell, cmd, path7z
     '=======================
         path7z = "D:\for use\7-Zip\7z.exe"
         If KCL.isExists(path7z) Then
@@ -109,8 +106,8 @@ Function ex2zip(oFilepath) As Boolean
             cmd = "powershell -Command ""Compress-Archive -Path '""" & oFilepath & """' -DestinationPath '""" & zippath & """' -CompressionLevel Optimal -Force"""
         End If
     '=======================
-    Set shell = CreateObject("WScript.Shell"): result = shell.Run(cmd, 0, True)
-    If result <> 0 Then Err.Clear
+    Set shell = CreateObject("WScript.Shell"): Result = shell.Run(cmd, 0, True)
+    If Result <> 0 Then Err.Clear
     If KCL.isExists(zippath) Then
             ex2zip = True
             Exit Function

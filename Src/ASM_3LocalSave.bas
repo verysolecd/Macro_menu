@@ -12,9 +12,9 @@ Private Const mdlname As String = "ASM_3LocalSave"
 Sub Localsave()
     Dim origAlert As Boolean: origAlert = CATIA.DisplayFileAlerts
     CATIA.DisplayFileAlerts = False
-    If Not CanExecute("ProductDocument") Then GoTo CleanUp
+    If Not CanExecute("ProductDocument,partdocument") Then GoTo Cleanup
     Dim savePath As String: savePath = KCL.selFdl
-    If savePath = "" Then GoTo CleanUp
+    If savePath = "" Then GoTo Cleanup
 '    On Error GoTo ErrHandler
     Dim rootProd As Product: Set rootProd = CATIA.ActiveDocument.Product
     Set docs = KCL.InitDic   ' 初始化字典，仅一次
@@ -22,14 +22,14 @@ Sub Localsave()
     Call recurTreeLV(1, rootProd, docs, maxLvl)
     Call SaveByLV(docs, maxLvl, savePath)
     MsgBox "批量保存完成！" & vbCrLf & "保存路径：" & savePath, vbInformation, "CATIA批量保存"
-CleanUp:
+Cleanup:
     CATIA.DisplayFileAlerts = origAlert
     Set docs = Nothing
     Set rootProd = Nothing
     Exit Sub
 ErrHandler:
     MsgBox "保存失败：" & Err.Description & vbCrLf & "错误代码：" & Err.Number, vbCritical, "CATIA批量保存"
-    Resume CleanUp
+    Resume Cleanup
 End Sub
 
 ' 递归遍历装配体，使用数组 (level, product) 作为字典值

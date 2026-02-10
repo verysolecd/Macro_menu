@@ -29,7 +29,7 @@ End If
     Set itm = KCL.SelectItem(imsg, filter)
 If Not itm Is Nothing Then
     Set oPlane = itm
-    Set refplane = oprt.CreateReferenceFromObject(oPlane)
+    Set refPlane = oprt.CreateReferenceFromObject(oPlane)
 Else
     Exit Sub
 End If
@@ -59,7 +59,7 @@ Else
     uFold.OriginToUnfold = reforg
     Set refDir = oprt.CreateReferenceFromObject(dir1)
     uFold.DirectionToUnfold = refDir
-    uFold.TargetPlane = refplane
+    uFold.TargetPlane = refPlane
     uFold.SurfaceType = 0 '0
     uFold.TargetOrientationMode = 0
     uFold.EdgeToTearPositioningOrientation = 0

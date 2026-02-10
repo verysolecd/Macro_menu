@@ -9,7 +9,7 @@ Attribute VB_Name = "MDL_addsubgeo"
 Private Const mdlname As String = "MDL_addsubgeo"
 Sub addsubgeo()
  If Not CanExecute("Productdocument,PartDocument") Then Exit Sub
-    Set oprt = KCL.get_inwork_part
+    Set oprt = KCL.get_workPartDoc.part
     Set igeo = Nothing
     Set colls = oprt.HybridBodies
     

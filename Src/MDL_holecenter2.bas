@@ -11,7 +11,7 @@ Private Const mdlname As String = "MDL_holecenter2"
 Sub Faceholecenter()
   If Not CanExecute("PartDocument,ProductDocument") Then Exit Sub
 
-    Set oprt = KCL.get_inwork_part
+    Set oprt = KCL.get_workPartDoc.part
     Set HSF = oprt.HybridShapeFactory
 '======= 选择要识别的面
 Dim iSel: Set iSel = Nothing

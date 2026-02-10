@@ -7,7 +7,7 @@ Attribute VB_Name = "ASM_2Localsend"
 
 Private Const mdlname As String = "ASM_2Localsend"
 Sub sendDir()
-    If Not CanExecute("ProductDocument,DrawingDocument") Then Exit Sub
+    If Not CanExecute("ProductDocument,DrawingDocument,partdocument") Then Exit Sub
     CATIA.DisplayFileAlerts = True
     Dim oDoc: Set oDoc = CATIA.ActiveDocument
     ipath_name = oDoc.path & "\" & oDoc.name

@@ -41,7 +41,7 @@ If Not CanExecute("DrawingDocument") Then Exit Sub
         filePath(2) = "pdf"
         Dim pdfpath As String: pdfpath = KCL.JoinPathName(filePath)
         oDoc.ExportData pdfpath, "pdf"
-        KCL.openpath pdfpath
+        KCL.SmartOPenPath pdfpath
     DraftMgr.PutAttr "DimDesignMode", currSet
     DraftMgr.Commit
 On Error GoTo 0

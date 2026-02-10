@@ -72,7 +72,7 @@ Function getSubAsm()
 End Function
 
 Sub PrtHide_GS_click()
-    Set oprt = KCL.get_inwork_part
+    Set oprt = KCL.get_workPartDoc.part
     If oprt Is Nothing Then Exit Sub
     Set HSF = oprt.HybridBodies
     Dim lst: Set lst = KCL.Initlst
@@ -84,7 +84,7 @@ End Sub
 
 Sub PrtHide_Skt_click()
     initsel
-    Set oprt = KCL.get_inwork_part
+    Set oprt = KCL.get_workPartDoc.part
     If oprt Is Nothing Then Exit Sub
     msel.Clear
     Dim ss As String: ss = "Type=Sketch"
@@ -109,7 +109,7 @@ Sub AsmHide_Plns_click()
 End Sub
 
 Sub PrtHide()
-    Set oprt = KCL.get_inwork_part
+    Set oprt = KCL.get_workPartDoc.part
 ' Dim istr As String: istr =
 ''Part Design'.Sketch&
 ''Generative Shape Design'.Sketch&

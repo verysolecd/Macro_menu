@@ -2,12 +2,12 @@ VERSION 1.0 CLASS
 BEGIN
   MultiUse = -1  'True
 END
-Attribute VB_Name = "clsVBAUtilityLib"
+Attribute VB_Name = "Cls_VbaUltiliseLib"
 Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
-'/_/ clsVbaUtilityLib
+'/_/ cls_VbaUltiliseLib
 '/_/ 主要处理数组、字典
 Option Explicit
 'Win API
@@ -15,7 +15,7 @@ Private Declare PtrSafe Sub Sleep Lib "kernel32" (ByVal ms As Long)
 Private Const VER = "0.0.16"
 '调试模式
 Private m_DebugMode As Boolean
-Private Const mdlname As String = "clsVBAUtilityLib"
+Private Const mdlname As String = "Cls_VbaUltiliseLib"
 Private Sub Class_Initialize()
     m_DebugMode = True
 End Sub
@@ -65,10 +65,10 @@ Function DumpVariable( _
         Case "Byte":        DumpVariable = "CByte(" & X & ")"
         Case "Decimal":     DumpVariable = "CDec(" & X & ")"
         Case "Date"
-            Dim d As String, t As String
-            If Abs(X) >= 1 Then d = Month(X) & "/" & Day(X) & "/" & Year(X)
+            Dim D As String, t As String
+            If Abs(X) >= 1 Then D = Month(X) & "/" & Day(X) & "/" & Year(X)
             If Not IsInt(X) Then t = Format(X, "h:nn:ss AM/PM")
-            DumpVariable = "#" & VBA.Trim(d & " " & t) & "#"
+            DumpVariable = "#" & VBA.Trim(D & " " & t) & "#"
         Case "String"
             If StrPtr(X) = 0 Then
                 DumpVariable = "vbNullString"
@@ -176,7 +176,7 @@ Err438:
     Dim e As ErrObject: Set e = Err
     Select Case e.Number
         Case 438: ToStr = TypeName(X): Resume Next
-        Case Else: Err.Raise e.Number, e.source, e.Description, e.HelpFile, e.HelpContext
+        Case Else: Err.Raise e.Number, e.Source, e.Description, e.HelpFile, e.HelpContext
     End Select
 Escape:
 End Function
@@ -298,13 +298,13 @@ End Function
 'param:source-Object(Of Dictionary)
 'return:Object(Of Dictionary)
 Function DeepCopyDict( _
-        ByVal source As Variant) As Object
+        ByVal Source As Variant) As Object
     Dim KEY As Variant
     Dim newDict As Object
     Dim Value As Variant
     Set newDict = CreateObject("Scripting.Dictionary")
-    For Each KEY In source.keys
-        Value = source.item(KEY)
+    For Each KEY In Source.keys
+        Value = Source.item(KEY)
         If TypeName(Value) = "Dictionary" Then
             Set Value = DeepCopyDict(Value)
         End If
@@ -506,21 +506,21 @@ Function ArraySlice( _
         Exit Function
     End If
     ' 设置结果数组的大小
-    Dim result() As Variant
-    ReDim result(0 To EndIndex - StartIndex)
+    Dim Result() As Variant
+    ReDim Result(0 To EndIndex - StartIndex)
     ' 数组切片
     Dim j As Long
     j = 0
     Dim i As Long
     For i = StartIndex To EndIndex
         If IsObject(arr(0)) Then
-            Set result(j) = arr(i)
+            Set Result(j) = arr(i)
         Else
-            Let result(j) = arr(i)
+            Let Result(j) = arr(i)
         End If
         j = j + 1
     Next i
-    ArraySlice = result
+    ArraySlice = Result
 End Function
 '************************************************************************
 '*  冒泡排序

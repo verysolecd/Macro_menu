@@ -234,36 +234,27 @@ Private Function asDisp(o As INFITF.CATBaseDispatch) As INFITF.CATBaseDispatch
     Set asDisp = o
 End Function
 
-'Public Function get_inwork_part()  'in Assembly
-'Set get_inwork_part = Nothing
-'   Dim odoc: Set odoc = CATIA.ActiveDocument
-'   Dim msel: Set msel = odoc.Selection: msel.Clear
-'     Dim itemp
-'    Select Case LCase(TypeName(odoc))
-'        Case LCase("PartDocument"): Set itemp = odoc.part
-'        Case LCase("productDocument")
-'            msel.Search "CATprtSearch.PartFeature,in"
-'            On Error Resume Next
-'            Set itemp = Nothing
-'                Set itemp = msel.item(1).LeafProduct.ReferenceProduct.Parent.part
-'             Err.Clear
-'             On Error GoTo 0
-'        Case Else: Set itemp = Nothing
-'    End Select
-'        Set get_inwork_part = itemp
-'
-'End Function
-Public Function get_inwork_part()  'in Assembly
-    Set get_inwork_part = Nothing
+Public Function get_aPartDoc()
+    Set get_aPartDoc = Nothing
+    Dim oprt, doc
+    For Each doc In CATIA.Documents
+        If TypeName(doc) = "PartDocument" Then
+            Set get_aPartDoc = doc
+            Exit Function
+            End If
+    Next
+End Function
+
+Public Function get_workPartDoc()  'in Assembly
+    Set get_workPartDoc = Nothing
     Dim oDoc: Set oDoc = CATIA.ActiveDocument
     Dim sDocType As String: sDocType = LCase(TypeName(oDoc))
     If sDocType = "partdocument" Then
-        Set get_inwork_part = oDoc.part
+        Set get_workPartDoc = oDoc
         Exit Function
     ElseIf sDocType <> "productdocument" Then
         Exit Function
     End If
-
     Dim msel: Set msel = oDoc.Selection
     ' 1. Cache Existing Selection
     Dim bRestore As Boolean: bRestore = False
@@ -276,15 +267,13 @@ Public Function get_inwork_part()  'in Assembly
            Set cachedSel(i - 1) = msel.item(i).Value
         Next
     End If
-    
     ' 2. Perform Search for Active Context
     msel.Clear
     msel.Search "CATprtSearch.PartFeature,in"
-    
     Dim itemp
     Set itemp = Nothing
     On Error Resume Next
-        If msel.count > 0 Then Set itemp = msel.item(1).LeafProduct.ReferenceProduct.Parent.part
+        If msel.count > 0 Then Set itemp = msel.item(1).LeafProduct.ReferenceProduct.Parent '.part
     Err.Clear
     On Error GoTo 0
     
@@ -299,7 +288,7 @@ Public Function get_inwork_part()  'in Assembly
         Next
         On Error GoTo 0
     End If
-    Set get_inwork_part = itemp
+    Set get_workPartDoc = itemp
 End Function
 
 
@@ -917,7 +906,7 @@ Function GetVBAprj() As String
     GetVBAprj = oApc.ExecutingProject.VBProject.fileName
 End Function
 ' 智能打开路径（优先激活已存在窗口）
-Sub openpath(ByVal strPath As String)
+Sub SmartOPenPath(ByVal strPath As String)
     Dim fso As Object: Set fso = GetFso
     If Len(strPath) > 3 And Right(strPath, 1) = "\" Then
         strPath = Left(strPath, Len(strPath) - 1)
@@ -937,13 +926,13 @@ End Sub
 
 ' 检查并激活已存在的窗口
 Function ActivateExistingWindow(ByVal strPath As String) As Boolean
-    Dim w As Object
+    Dim W As Object
     On Error Resume Next
-    For Each w In CreateObject("Shell.Application").Windows
-        If LCase(w.Document.folder.Self.path) = LCase(strPath) Then
+    For Each W In CreateObject("Shell.Application").Windows
+        If LCase(W.Document.folder.Self.path) = LCase(strPath) Then
             If Err.Number = 0 Then ' 确保路径访问没报错
-                 ShowWindow w.hwnd, 1        ' 1 = SW_SHOWNORMAL (普通模式/还原)
-                SetForegroundWindow w.hwnd  ' 激活到前台
+                 ShowWindow W.hwnd, 1        ' 1 = SW_SHOWNORMAL (普通模式/还原)
+                SetForegroundWindow W.hwnd  ' 激活到前台
                 ActivateExistingWindow = True
                 Exit Function
             End If
@@ -953,7 +942,7 @@ Function ActivateExistingWindow(ByVal strPath As String) As Boolean
 End Function
 
 ' 打开文件夹
-Sub openDir(ByVal strPath As String)
+Private Sub openDir(ByVal strPath As String)
     On Error GoTo ErrorHandler
     If InStr(strPath, " ") > 0 Then      ' 处理包含空格的路径
         strPath = """" & strPath & """"
@@ -965,7 +954,7 @@ ErrorHandler:
 End Sub
 
 ' 打开文件位置并选中文件
-Sub OpenFileLocation(ByVal strFilePath As String)
+Private Sub OpenFileLocation(ByVal strFilePath As String)
     On Error GoTo ErrorHandler
     strFilePath = """" & strFilePath & """"  ' 确保文件路径被引号包围
     shell "explorer.exe /select," & strFilePath, vbMaximizedFocus
@@ -982,8 +971,6 @@ End Sub
 '        DoEvents ' 允许系统处理其他事件
 '    Next i
 'End Sub
-
-
 Public Function Push_Dic(ByVal dic As Object, _
                           ByVal KEY As Variant, _
                           ByVal item As Variant) As Object
@@ -1027,11 +1014,6 @@ Public Function GetBrepName(MyBRepName As String) As String
     MyBRepName = MyBRepName + ");WithPermanentBody;WithoutBuildError;WithSelectingFeatureSupport;MFBRepVersion_CXR15)"
     GetBrepName = MyBRepName
 End Function
-
-
-
-
-
 Function getmdl(Optional ByVal modName As String = "")
   Set getmdl = Nothing
     Dim Apc As Object: Set Apc = KCL.GetApc()

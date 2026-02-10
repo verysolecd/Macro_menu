@@ -57,22 +57,19 @@ End Property
 ' 返回：PropResult 类型 (Obj, Value, IsValid)
 Private Function GetPropertyValue(ByVal Collection As Object, ByVal ItemIdentifier As Variant) As PropResult
     On Error Resume Next
-    Dim result As PropResult
-    Set result.obj = Collection.item(ItemIdentifier)
-    If Err.Number = 0 And Not result.obj Is Nothing Then
-        result.Value = result.obj.Value
-        result.IsValid = True
+    Dim Result As PropResult
+    Set Result.obj = Collection.item(ItemIdentifier)
+    If Err.Number = 0 And Not Result.obj Is Nothing Then
+        Result.Value = Result.obj.Value
+        Result.IsValid = True
     Else
-        Set result.obj = Nothing
-        result.Value = "__"
-        result.IsValid = False
+        Set Result.obj = Nothing
+        Result.Value = "__"
+        Result.IsValid = False
     End If
-    GetPropertyValue = result
+    GetPropertyValue = Result
     On Error GoTo 0
 End Function
-
-
-
 '---------------------------------------------------------------------------------------
 ' BOM 生成核心逻辑 (性能优化版)
 '---------------------------------------------------------------------------------------
@@ -148,13 +145,13 @@ Public Function ProduceBOM(ByVal rootPrd As Object, Optional ByVal filterDuplica
     TraverseProductTree rootPrd, 1, filterDuplicate
     If mItemCount = 0 Then Exit Function
     ' Trim array to actual size and return
-    Dim result() As Bomline
-    ReDim result(1 To mItemCount)
+    Dim Result() As Bomline
+    ReDim Result(1 To mItemCount)
     Dim i As Long
     For i = 1 To mItemCount
-        result(i) = mItems(i)
+        Result(i) = mItems(i)
     Next
-    ProduceBOM = result
+    ProduceBOM = Result
 End Function
 
 ' 递归辅助函数
@@ -191,24 +188,24 @@ Public Function attLv2Prd(oPrd) As Variant
     ReDim mItems(1 To CHUNK_SIZE)
     TraverseTwoLevels oPrd
     If mItemCount = 0 Then attLv2Prd = Empty: Exit Function
-    Dim result() As Variant: ReDim result(1 To mItemCount, 1 To 9)
-    Dim R As Long, c As Long
+    Dim Result() As Variant: ReDim Result(1 To mItemCount, 1 To 9)
+    Dim R As Long, C As Long
     ' Convert Bomline array to Variant array for legacy compatibility
     ' Note: This mapping matches the legacy expected format (approx)
     For R = 1 To mItemCount
         With mItems(R)
-            result(R, 1) = .partNumber
-            result(R, 2) = .Nomenclature
-            result(R, 3) = .Definition
-            result(R, 4) = .InstanceName
-            result(R, 5) = .Material
-            result(R, 6) = .Density
-            result(R, 7) = .Mass
-            result(R, 8) = .Thickness
-            result(R, 9) = .Quantity
+            Result(R, 1) = .partNumber
+            Result(R, 2) = .Nomenclature
+            Result(R, 3) = .Definition
+            Result(R, 4) = .InstanceName
+            Result(R, 5) = .Material
+            Result(R, 6) = .Density
+            Result(R, 7) = .Mass
+            Result(R, 8) = .Thickness
+            Result(R, 9) = .Quantity
         End With
     Next
-    attLv2Prd = result
+    attLv2Prd = Result
 End Function
 
 ' 获取用于 RW_Revise 的强类型数据 (替代 attLv2Prd)
@@ -219,13 +216,13 @@ Public Function GetReviseItems(ByVal oPrd As Object) As Bomline()
     
     If mItemCount = 0 Then Exit Function
     
-    Dim result() As Bomline
-    ReDim result(1 To mItemCount)
+    Dim Result() As Bomline
+    ReDim Result(1 To mItemCount)
     Dim i As Long
     For i = 1 To mItemCount
-        result(i) = mItems(i)
+        Result(i) = mItems(i)
     Next
-    GetReviseItems = result
+    GetReviseItems = Result
 End Function
 
 Private Sub TraverseTwoLevels(ByVal oPrd As Object)
@@ -410,11 +407,11 @@ Private Sub ApplyEngineeringLogic(ByVal oPart As Object, ByVal refPrd As Object,
     On Error GoTo 0
 End Sub
 
-Private Sub CreateFormula(ByVal rels As Object, ByVal fName As String, ByVal target As Object, ByVal source As String)
+Private Sub CreateFormula(ByVal rels As Object, ByVal fName As String, ByVal target As Object, ByVal Source As String)
     Dim f As Object: Set f = Nothing
     On Error Resume Next
     Set f = rels.item(fName)
-    If f Is Nothing Then Set f = rels.CreateFormula(fName, "", target, source)
+    If f Is Nothing Then Set f = rels.CreateFormula(fName, "", target, Source)
     On Error GoTo 0
 End Sub
 

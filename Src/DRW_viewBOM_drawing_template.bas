@@ -23,14 +23,14 @@ Sub main()
     Dim flatData: flatData = GetSortedBOM(tmpPath) ' 获取处理好并排序的数据
     If IsEmpty(flatData) Then Exit Sub
     ' 4. 更新表格
-    Dim tbl, R, c
+    Dim tbl, R, C
     Err.Clear: Set tbl = oView.Tables.item("GenBOM")
     If Err.Number = 0 Then oView.Selection.Clear: oView.Selection.Add tbl: oView.Selection.Delete
     Set tbl = oView.Tables.Add(50, 50, UBound(flatData, 1), UBound(flatData, 2), 10, 20)
     tbl.name = "GenBOM"
     For R = 1 To UBound(flatData, 1)
-        For c = 1 To UBound(flatData, 2)
-            tbl.SetCellString R, c, CStr(flatData(R, c))
+        For C = 1 To UBound(flatData, 2)
+            tbl.SetCellString R, C, CStr(flatData(R, C))
         Next
     Next
     CATIA.RefreshDisplay = True
@@ -61,13 +61,13 @@ Function GetSortedBOM(fPath)
     If vCount = 0 Then Exit Function
     
     ' 转为 2D 矩阵 (1-based fit for CATIA Table)
-    Dim R, c, colCount, mat
+    Dim R, C, colCount, mat
     colCount = UBound(validRows(0)) + 1
     ReDim mat(vCount, colCount)
     
     For R = 0 To vCount - 1
-        For c = 0 To colCount - 1
-            mat(R + 1, c + 1) = validRows(R)(c)
+        For C = 0 To colCount - 1
+            mat(R + 1, C + 1) = validRows(R)(C)
         Next
     Next
     

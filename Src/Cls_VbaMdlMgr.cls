@@ -2,7 +2,7 @@ VERSION 1.0 CLASS
 BEGIN
   MultiUse = -1  'True
 END
-Attribute VB_Name = "clsVbaModuleManagerModel"
+Attribute VB_Name = "Cls_VbaMdlMgr"
 Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
@@ -18,16 +18,16 @@ Private Const USER_JSON_NAME = "user_data.json"         '数据保存文件名
 Private Const SEPARATOR = "|"                           '路径分隔符-VBA-JSON对策
 Private Const SOURCE_FOLDER_NAME = "Src"             '在CATVBA内创建时的文件夹
 Private mVbe As Object                                  'VBA编辑器
-Private mUtil As clsVBAUtilityLib                       '工具类
+Private mUtil As Cls_VbaUltiliseLib                       '工具类
 Private mProjectLst As Collection                       '项目列表
 Private mUserDict As Object                             '用户数据字典
-Private mJson As clsJsonConverter                       'Json解析器
-Private Const mdlname As String = "clsVbaModuleManagerModel"
+Private mJson As Cls_JsonConverter                       'Json解析器
+Private Const mdlname As String = "Cls_VbaMdlMgr"
 Private Sub Class_Initialize()
-    Set mUtil = New clsVBAUtilityLib
+    Set mUtil = New Cls_VbaUltiliseLib
     mUtil.DebugMode = DEBUG_MODE
     Set mVbe = mUtil.GetVbe()
-    Set mJson = New clsJsonConverter
+    Set mJson = New Cls_JsonConverter
     Set mProjectLst = get_project_list()
     Set mUserDict = get_user_data()
 End Sub

@@ -25,7 +25,7 @@ On Error Resume Next
 Set oDoc = CATIA.ActiveDocument
 On Error GoTo 0
 
-Set oprt = KCL.get_inwork_part
+Set oprt = KCL.get_workPartDoc.part
 
 Dim HSF:  Set HSF = oprt.HybridShapeFactory
 
