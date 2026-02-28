@@ -1,5 +1,4 @@
 Attribute VB_Name = "MDL_Part2Product"
-'{控件提示文本: 可将零件转换为产品}
 ' 检查零件文档中是否存在左手坐标系
 '{Gp:4}
 '{Ep:isLhcoord}

@@ -5,8 +5,8 @@ Private Declare PtrSafe Function CloseClipboard Lib "user32" () As Long
 Private Declare PtrSafe Function SetClipboardData Lib "user32" (ByVal wFormat As Long, ByVal hMem As LongPtr) As LongPtr
 Private Const mdlname As String = "ZZ_BCK"
 Private Sub remove_usrP()
-Set oPrd = CATIA.ActiveDocument.Product
-rm oPrd
+    Set oPrd = CATIA.ActiveDocument.Product
+    rm oPrd
 End Sub
 Private Sub rm(oPrd)
     On Error Resume Next
@@ -55,7 +55,6 @@ End Sub
 
 ''==图纸页面=============================
 
-Private Const mdlname As String = "A0_pages"
 Private Sub main()
 CATIA.RefreshDisplay = False
     Set shts = CATIA.ActiveDocument.sheets

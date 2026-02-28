@@ -31,10 +31,6 @@ Private Const TAG_MDLNAME = "mdl_name"      ' 模块名称标签
 Private Const TAG_PASS_BTN = "springwdBTN"  ' 传递按钮名称开关
 Private Const mdlname As String = "Cls_btEVT"
 
-Private Sub Class_Initialize()
-
-End Sub
-
 ' For MLess / Script Mode
 Sub set_ButtonEvent(ByVal BTN As MSForms.CommandButton, _
                     ByVal BtnInfo As Object, _

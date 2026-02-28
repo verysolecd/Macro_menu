@@ -7,6 +7,7 @@ Attribute VB_Name = "CAT_Color"
 '{BackColor: }
 
 Private Const mdlname As String = "CAT_Color"
+
 Sub swbcgColor()
     
     On Error GoTo ErrorHandler
@@ -43,15 +44,15 @@ Sub swbcgColor()
     End If
     
     On Error GoTo 0
- Set g_Btn = Nothing
+    Set g_Btn = Nothing
 ErrorHandler:
     If Err.Number <> 0 Then
         Select Case Err.Number
-            Case 1001
-                MsgBox "CATIA 错误：" & Err.Description, vbCritical
-                Err.Clear
-                Exit Sub
-            Case 1002
+        Case 1001
+            MsgBox "CATIA 错误：" & Err.Description, vbCritical
+            Err.Clear
+            Exit Sub
+        Case 1002
         End Select
     End If
 End Sub
