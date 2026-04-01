@@ -352,6 +352,7 @@ End Sub
 Private Sub EnsureParamExists(ByVal coll As Object, ByVal name As String, ByVal pType As String)
     On Error Resume Next
     Dim p As Object: Set p = coll.item(name)
+    
     If p Is Nothing Then
         Select Case pType
             Case "String": coll.CreateString name, ""
@@ -364,31 +365,40 @@ End Sub
 
 Private Sub EnsurePublication(ByVal refPrd As Object, ByVal pubName As String, ByVal refPath As String)
     On Error Resume Next
-    Dim pubs As Object: Set pubs = refPrd.Publications
-    Dim oPub As Object: Set oPub = pubs.item(pubName)
-    
-    Dim isupdated As Boolean: isupdated = True
-    
-    If IsNothing(oPub) Then
-        Set oPub = pubs.Add(pubName)
-        isupdated = False
-    Else
-        Dim valObj As Object: Set valObj = Nothing
-            Set valObj = oPub.Valuation
-        If valObj Is Nothing Then
-            isupdated = False
-'            pubs.Remove (pubName)
-'            Set oPub = pubs.Add(pubName)
+    Dim pubs As Object
+    Dim oPub As Object:
+'    Set pubs = refPrd.Publications
+'    Set oPub = pubs.item(pubName)
+'    Dim isupdated As Boolean: isupdated = True
+'    If IsNothing(oPub) Then
+'        Set oPub = pubs.Add(pubName)
+'        isupdated = False
+'    Else
+'        Dim valObj As Object: Set valObj = Nothing
+'            Set valObj = oPub.Valuation
+'        If valObj Is Nothing Then
+'            isupdated = False
+''            pubs.Remove (pubName)
+''            Set oPub = pubs.Add(pubName)
+'        End If
+'    End If
+'    If isupdated = False Then
+        Dim oRef As Object: Set oRef = refPrd.CreateReferenceFromName("." & "\" & refPath)
+        pubs.SetDirect pubName, oRef
+        
+        If Err.Number <> 0 Then
+            Debug.Print "发布失败：" & pubName & " → SetDirect执行错误"
+            Exit Sub
         End If
     End If
-    
-    If isupdated = False Then
-        Dim oRef As Object: Set oRef = refPrd.CreateReferenceFromName(refPrd.partNumber & "\" & refPath)
-        pubs.SetDirect pubName, oRef
-    End If
+    refPrd.Update
+        Set oPub = pubs.item(pubName)
+        If oPub Is Nothing Or oPub.Valuation Is Nothing Then
+            Debug.Print "发布失败：" & pubName & " → 发布估值无效"
+            Exit Sub
+        End If
     On Error GoTo 0
 End Sub
-
 
 Private Sub ApplyEngineeringLogic(ByVal oPart As Object, ByVal refPrd As Object, ByVal infoSet As Object)
     Dim rels As Object: Set rels = oPart.Relations
@@ -396,22 +406,30 @@ Private Sub ApplyEngineeringLogic(ByVal oPart As Object, ByVal refPrd As Object,
     ' 规则：体积计算
     Dim rule As Object: Set rule = rels.item("sum_all_Vol")
     EKL_STR = ekl1 & ekl2
-    If rule Is Nothing Then Set rule = rels.CreateProgram("sum_all_Vol", "计算体积", EKL_STR)
+    If rule Is Nothing Then
+        Set rule = rels.CreateProgram("sum_all_Vol", "计算体积", EKL_STR)
+    Else
+         rule.Modify EKL_STR
+    End If
     rule.Hidden = True
     ' 公式：质量计算
-    CreateFormula rels, "cal_Mass", infoSet.DirectParameters.item("Mass"), "round(Part_info\sumVol * Part_info\Density, ""kg"", 3)"
-    ' 链接到 UserRefProperties
-    CreateFormula rels, "link_Mass", refPrd.UserRefProperties.item("Mass"), "Part_info\Mass"
+    CreateFormula rels, "cal_Mass", infoSet.DirectParameters.item("Mass"), "round(Part_info\sumVol * Part_info\Density, ""kg"", 4)"
+    CreateFormula rels, "link_Mass", refPrd.UserRefProperties.item("Mass"), "Part_info\Mass"   ' 链接到 UserRefProperties
     CreateFormula rels, "link_Thickness", refPrd.UserRefProperties.item("Thickness"), "Part_info\Thickness"
     CreateFormula rels, "link_Density", refPrd.UserRefProperties.item("Density"), "Part_info\Density"
     On Error GoTo 0
 End Sub
 
-Private Sub CreateFormula(ByVal rels As Object, ByVal fName As String, ByVal target As Object, ByVal Source As String)
+Private Sub CreateFormula(ByVal rels As Object, ByVal fName As String, ByVal targetPara As Object, ByVal F_value As String)
     Dim f As Object: Set f = Nothing
     On Error Resume Next
-    Set f = rels.item(fName)
-    If f Is Nothing Then Set f = rels.CreateFormula(fName, "", target, Source)
+        Set f = rels.item(fName)
+        If f Is Nothing Then
+            Set f = rels.CreateFormula(fName, "", targetPara, F_value)
+        Else
+             If StrComp(f.Value, F_value, vbTextCompare) <> 0 Then f.Modify (F_value)
+        End If
+    f.Hidden = True
     On Error GoTo 0
 End Sub
 

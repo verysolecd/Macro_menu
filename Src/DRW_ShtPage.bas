@@ -17,7 +17,7 @@ Sub main()
        Set osht = lst(i)
        If osht.IsDetail = False Then
             osht.Activate
-                    oo = straf1st(osht.name, " ")
+                    oo = StrAF(osht.name, " ")
             If i > 9 Then
                     osht.name = "SH" & i & oo
              Else
@@ -42,13 +42,13 @@ Sub main()
      lst(lst.count).Activate
      Set oView = osht.Views.item(1)
 End Sub
-Function straf1st(istr, iext)
+Function StrAF(istr, iext)
 Dim idx
 idx = InStr(istr, iext)
 If idx > 0 Then
-        straf1st = Mid(istr, idx)
+        StrAF = Mid(istr, idx)
     Else
-        straf1st = istr
+        StrAF = istr
     End If
 End Function
 Function InitDic()

@@ -9,5 +9,4 @@ Private Const mdlname As String = "RW_2freegPrd"
 Sub freegprd()
     Set pdm.CurrentProduct = Nothing
     MsgBox "已清空待操作产品"
-    Call clearall
 End Sub

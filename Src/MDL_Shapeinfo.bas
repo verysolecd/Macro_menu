@@ -1,5 +1,5 @@
 Attribute VB_Name = "MDL_Shapeinfo"
-Private mdict, HSF, oSel, oParas, spa
+Private mdict, HSF, osel, oParas, spa
 Private Const mdlname As String = "MDL_Shapeinfo"
 Sub tube()
 '--判断是否是part，当前代码只能运行在part中，修改后才能在总成中运行，例如增加遍历
@@ -11,7 +11,7 @@ End If
         Set oDoc = CATIA.ActiveDocument
         Set spa = oDoc.GetWorkbench("SPAWorkbench")
         Set oprt = oDoc.part
-        Set oSel = oDoc.Selection
+        Set osel = oDoc.Selection
         Set oParas = oprt.Parameters
         Set HSF = oDoc.part.HybridShapeFactory
         Set HBS = oDoc.part.HybridBodies
@@ -121,8 +121,8 @@ CATIA.RefreshDisplay = False
                 If itype = 7 Then
                     internalName = GetInternalName(shp)
                     If Not mdict.Exists(internalName) Then
-                        oSel.Clear: oSel.Add shp
-                        Set realShp = oSel.item(1).Value: oSel.Clear
+                        osel.Clear: osel.Add shp
+                        Set realShp = osel.item(1).Value: osel.Clear
                         mdict.Add internalName, realShp
                     End If
                 End If

@@ -30,8 +30,8 @@ Set oprt = KCL.get_workPartDoc.part
 Dim HSF:  Set HSF = oprt.HybridShapeFactory
 
 Dim HBS: Set HBS = oprt.HybridBodies
-Dim oSel: Set oSel = oDoc.Selection
-oSel.Clear
+Dim osel: Set osel = oDoc.Selection
+osel.Clear
 '=======要求选择几何图形集和坐标
 Dim imsg
 imsg = "请选择元素所在的几何图形集"

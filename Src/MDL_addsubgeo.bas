@@ -18,10 +18,13 @@ Sub addsubgeo()
         Set igeo = oprt.InWorkObject
         Set colls = igeo.HybridBodies
     End If
+    
     Set og = colls.Add(): og.name = "FAXX"
+    Set og = colls.Add(): og.name = "FAXX"
+    
     On Error Resume Next
     If Not igeo Is Nothing Then oprt.InWorkObject = og.HybridBodies.Parent
-    Error.Clear
+        Error.Clear
     On Error Resume Next
 End Sub
 

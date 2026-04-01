@@ -71,17 +71,17 @@ Sub Action_ClickHandler(ByVal btnName As String)
     If IsArray(mColor) Then ApplyColor mColor
 End Sub
 Private Sub ApplyColor(ary As Variant)
-    Dim oSel
-    Set oSel = CATIA.ActiveDocument.Selection
+    Dim osel
+    Set osel = CATIA.ActiveDocument.Selection
     Dim R, G, B, i
     R = ary(0): G = ary(1): B = ary(2)
-    If oSel.count = 0 Then
-        Set oSel = KCL.Selectmulti("请选择BODY")
+    If osel.count = 0 Then
+        Set osel = KCL.Selectmulti("请选择BODY")
     End If
   Dim lst: Set lst = KCL.Initlst
   Dim itm, itp
-   For i = 1 To oSel.count
-         Set itm = oSel.item(i).Value
+   For i = 1 To osel.count
+         Set itm = osel.item(i).Value
          Set itp = Nothing
          Set itp = KCL.GetParent_Of_T(itm, "Body")
          If Not itp Is Nothing Then
@@ -94,13 +94,13 @@ Private Sub ApplyColor(ary As Variant)
          End If
         If itype = 7 Then lst.Add itm
     Next i
-oSel.Clear
+osel.Clear
 Set itm = Nothing
 For Each itm In lst
-    oSel.Add itm
+    osel.Add itm
 Next
-    oSel.VisProperties.SetRealColor R, G, B, 0 '(R, G, B, Inheritance=1)
-    oSel.Clear
+    osel.VisProperties.SetRealColor R, G, B, 0 '(R, G, B, Inheritance=1)
+    osel.Clear
     On Error GoTo 0
 End Sub
 Function setMasterFunc(ByVal modName As String)

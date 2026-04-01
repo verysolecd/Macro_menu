@@ -1,7 +1,7 @@
 Attribute VB_Name = "MDL_LayersMng"
 'Attribute VB_Name = "MDL_LayersMng"
 ' 获得识别特征下的所有孔中心
-'{GP:4}
+'{GP:}
 '{EP:LayersMng}
 '{Caption:当前层创建YZ向图纸}
 '{ControlTipText: 设置只显示当前图层，然后创建YZ向图纸}
@@ -54,8 +54,8 @@ Set rprd = rdoc.Product
 'oDoc.CurrentFilter = "All visible"
 End Sub
 Sub appFilterLayer(oDoc)
-Dim oSel
-Set oSel = CATIA.ActiveDocument.Selection
+Dim osel
+Set osel = CATIA.ActiveDocument.Selection
  '---显示过滤器管理管理
  ily = ""
  ly = oDoc.CurrentLayer

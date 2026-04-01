@@ -16,7 +16,7 @@ Sub Faceholecenter()
 '======= 选择要识别的面
 Dim iSel: Set iSel = Nothing
     Dim imsg: imsg = "选择要识别的面"
-    Dim filter(0): filter(0) = "Face"
+    Dim filter(0): filter(0) = "Face,HybridShape"
     On Error Resume Next
         Set iSel = KCL.SelectItem(imsg, filter)
     On Error GoTo 0
@@ -31,16 +31,16 @@ Dim iSel: Set iSel = Nothing
         Dim oBdry As HybridShapeBoundary: Set oBdry = HSF.AddNewBoundaryOfSurface(oFace)
             oHb.AppendHybridShape oBdry
         oprt.Update
-        Dim oSel: Set oSel = CATIA.ActiveDocument.Selection
-        oSel.Clear: oSel.Add oBdry
+        Dim osel: Set osel = CATIA.ActiveDocument.Selection
+        osel.Clear: osel.Add oBdry
             CATIA.StartCommand ("Disassemble")
             CATIA.RefreshDisplay = True
                 MsgBox "请拆解窗口选择only domain后点击ok，再点击本窗口的ok"
             CATIA.RefreshDisplay = False
-        oSel.Clear
+        osel.Clear
         i = 1
         For Each Hole In oHb.HybridShapes
-            oSel.Add Hole
+            osel.Add Hole
             If TypeOf Hole Is HybridShapeCircleTritangent Then
                 Set oRef = oprt.CreateReferenceFromObject(Hole)
                 Set oCtr = HSF.AddNewPointCenter(oRef)
@@ -49,19 +49,19 @@ Dim iSel: Set iSel = Nothing
                 oprt.Update
                 Set pt = HSF.AddNewPointDatum(oRef): pt.name = "pt_" & i
                 oHb.AppendHybridShape pt
-                oSel.Add oCtr
+                osel.Add oCtr
                 i = i + 1
               Else
-                oSel.Add Hole
+                osel.Add Hole
             End If
         Next
                 On Error Resume Next
-                    oSel.Delete: oSel.Clear
+                    osel.Delete: osel.Clear
                  On Error GoTo 0
      End If
      
      CATIA.RefreshDisplay = True
-     Set oSel = Nothing
+     Set osel = Nothing
      Set iSel = Nothing
 End Sub
 

@@ -20,7 +20,7 @@ Private PageMap As Object
 
 ' --- Entry Point ---
 Private Const mdlname As String = "A00_Menu"
-Public Sub CATMain()
+Sub CATMain()
     Set PageMap = get_Tagcfg(GroupName, True)
     Dim MenuItems As Object
     Set MenuItems = GetMenuItems()

@@ -1,11 +1,15 @@
 Attribute VB_Name = "A0TEST"
 Private Const mdlname As String = "A0TEST"
+
 Sub tet()
 
 Set oPrd = CATIA.ActiveDocument.Product
+Set mm = KCL.SelectElement("nihao")
 
-Set bd = oPrd.Products.item(1)
+MsgBox "d"
 
 
+HybridShapeSurfaceExplicit
 
 End Sub
+

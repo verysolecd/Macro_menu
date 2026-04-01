@@ -408,17 +408,17 @@ End Function
 Public Function getSearch(ByRef ifilter As Variant, ByRef iDoc)
     Set getSearch = Nothing
     On Error Resume Next
-             Dim oSel As Selection, i
-             Set oSel = iDoc.Selection
-              oSel.Clear
+             Dim osel As Selection, i
+             Set osel = iDoc.Selection
+              osel.Clear
     If LCase(TypeName(ifilter)) = "string" Then
-        With oSel
+        With osel
             .Clear
             .Search (ifilter)
             .VisProperties.SetShow 1
         End With
     End If
-        Set getSearch = oSel
+        Set getSearch = osel
 End Function
 
 '*****数组相关函数*****
@@ -788,10 +788,10 @@ End Function
 
 
 '@iStr string
-'获得字符串最后一个"iext"之前的字符或返回原字符
-Function strbflast(str, iext)
+'获得字符串最后一个"ikey"之前的字符或返回原字符
+Function strbflast(str, ikey)
 Dim idx
-idx = InStrRev(str, iext)
+idx = InStrRev(str, ikey)
 If idx > 0 Then
         strbflast = Left(str, idx)
     Else
@@ -799,29 +799,20 @@ If idx > 0 Then
     End If
 End Function
 
-'@iStr string
-'获得字符串第一个"iext"之前的字符或返回原字符
-Function strbf1st(istr, iext)
-    Dim oPrefix
-        Dim underscorePos As Long
-        underscorePos = InStr(istr, iext)
-        If underscorePos > 0 Then
-            oPrefix = Left(istr, underscorePos - 1)
-        Else
-           oPrefix = istr
-        End If
-        strbf1st = oPrefix
+'@iStr string 原字符串
+'@ikey string 分隔符
+'返回：第一个ikey之前的字符，未找到则返回原字符串
+Function StrBF(istr, ikey)
+    Dim pos As Long
+    pos = InStr(istr, ikey)
+    StrBF = IIf(pos > 0, Left(istr, pos - 1), istr)
 End Function
  '@iStr string
-'获得字符串第一个"iext"之后的字符或返回原字符
-Function straf1st(istr, iext)
-Dim idx
-idx = InStr(istr, iext)
-If idx > 0 Then
-        straf1st = Mid(istr, idx)
-    Else
-        straf1st = istr
-    End If
+'获得字符串第一个"ikey"之后的内容，若无则原内容
+Function StrAF(istr, ikey)
+   Dim pos As Long
+    pos = InStr(istr, ikey)
+    StrAF = IIf(pos > 0, Mid(istr, pos + Len(ikey)), istr)
 End Function
 '创建md文件
 Function getmd(ByVal ipath_name As String)

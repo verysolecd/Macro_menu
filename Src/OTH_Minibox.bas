@@ -34,7 +34,7 @@ Sub cRMinibox()
     Dim workDoc As Document
     Dim prod As Product
     Dim msg As String: msg = "请选择要创建包络尺寸的产品"
-    Dim oSel: Set oSel = CATIA.ActiveDocument.Selection
+    Dim osel: Set osel = CATIA.ActiveDocument.Selection
             If KCL.checkDocType("PartDocument") Then
                 Set prod = CATIA.ActiveDocument.Product
             ElseIf KCL.checkDocType("ProductDocument") Then
@@ -81,8 +81,8 @@ Sub cRMinibox()
         Dim bdy As AnyObject
         Set bdy = KCL.getItm(MINBODYNAME, workPt.bodies)
         If Not KCL.IsNothing(bdy) Then
-            oSel.Clear: oSel.Add bdy
-            oSel.Delete: oSel.Clear
+            osel.Clear: osel.Add bdy
+            osel.Delete: osel.Clear
         End If
         Set minBody = workPt.bodies.Add
         minBody.name = MINBODYNAME

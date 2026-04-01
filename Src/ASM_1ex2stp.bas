@@ -53,7 +53,7 @@ Sub ex2stp_zip()
         End If
         pn = oDoc.Product.partNumber
         '==========STP文件名处理
-        stpname = KCL.strbf1st(pn, "_") & "_" & ttp
+        stpname = KCL.StrBF(pn, "_") & "_" & ttp
         Dim opath(2)                             '0=路径，1=name，2=extname
         opath(0) = outputpath:        opath(1) = stpname:        opath(2) = "stp"
         Dim stpfilepath As String: stpfilepath = KCL.JoinPathName(opath)
