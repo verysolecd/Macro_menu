@@ -189,7 +189,7 @@ Public Function attLv2Prd(oPrd) As Variant
     TraverseTwoLevels oPrd
     If mItemCount = 0 Then attLv2Prd = Empty: Exit Function
     Dim Result() As Variant: ReDim Result(1 To mItemCount, 1 To 9)
-    Dim R As Long, C As Long
+    Dim R As Long, c As Long
     ' Convert Bomline array to Variant array for legacy compatibility
     ' Note: This mapping matches the legacy expected format (approx)
     For R = 1 To mItemCount

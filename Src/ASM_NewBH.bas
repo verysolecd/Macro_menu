@@ -75,13 +75,13 @@ Function AddNode(PStack, D)
     Set AddNode = oPrd
 End Function
 
-Private Function ParsePn(C$) As Object
+Private Function ParsePn(c$) As Object
     Dim RE As Object, m, lst, curL%, H(20) As Integer, curI%
     Set RE = CreateObject("VBScript.RegExp"): Set lst = KCL.InitDic(1)
     RE.Global = True: RE.MultiLine = True: RE.Pattern = "^(\s*)'\s*%info\s+([^,]*),+([^,]*),+([^,]*),+([^,]*),+([^,\r\n]*).*$"
-    If RE.test(C) Then
+    If RE.test(c) Then
         H(0) = -1: H(1) = 0
-        For Each m In RE.Execute(C)
+        For Each m In RE.Execute(c)
             curI = Len(m.SubMatches(0))
             curL = GetLev(curI, curL, H)
             Dim D: Set D = KCL.InitDic(1)

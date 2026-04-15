@@ -80,8 +80,8 @@ Sub GetShapesByParameters(oprt)
     On Error GoTo 0
 End Sub
 Sub recurallBody(iHB, HSF)
-    Dim Shps: Set Shps = iHB.HybridShapes
-    For Each shp In Shps
+    Dim shps: Set shps = iHB.HybridShapes
+    For Each shp In shps
         If HSF.GetGeometricalFeatureType(shp) = 7 Then
             oname = GetInternalName(shp)
              If mdict.Exists(oname) = False Then
@@ -114,9 +114,9 @@ End Function
 Sub GetShapesByRecursion(iHB)
 CATIA.RefreshDisplay = False
     On Error Resume Next
-      Set Shps = iHB.HybridShapes
-        If Not Shps Is Nothing Then
-            For Each shp In Shps
+      Set shps = iHB.HybridShapes
+        If Not shps Is Nothing Then
+            For Each shp In shps
                itype = HSF.GetGeometricalFeatureType(shp)
                 If itype = 7 Then
                     internalName = GetInternalName(shp)
@@ -138,7 +138,7 @@ CATIA.RefreshDisplay = False
     On Error GoTo 0
     CATIA.RefreshDisplay = True
 End Sub
-Function GetParentSweep(targetPart, thickSurf) As Object
+Function GetParentSweep(TargetPart, thickSurf) As Object
     On Error Resume Next
     Set GetParentSweep = Nothing
     Set inputRef = thickSurf.Surface
@@ -153,7 +153,7 @@ Function GetParentSweep(targetPart, thickSurf) As Object
         potentialName = nameParts(i)
         If InStr(potentialName, "Face") = 0 And InStr(potentialName, "Edge") = 0 And InStr(potentialName, "Vertex") = 0 Then
             Err.Clear
-            Set foundObj = targetPart.FindObjectByName(potentialName)
+            Set foundObj = TargetPart.FindObjectByName(potentialName)
             If Err.Number = 0 And Not foundObj Is Nothing Then
 '                If InStr(TypeName(foundObj), "HybridShapeSweep") > 0 Or TypeName(foundObj) = "HybridShapeSweep" Then
                     Set GetParentSweep = foundObj
@@ -164,7 +164,7 @@ Function GetParentSweep(targetPart, thickSurf) As Object
     Next i
     On Error GoTo 0
 End Function
-Function GetParentcurve(targetPart, thickSurf) As Object
+Function GetParentcurve(TargetPart, thickSurf) As Object
     On Error Resume Next
     Set GetParentcurve = Nothing
     Set inputRef = thickSurf.FirstGuideCrv
@@ -179,7 +179,7 @@ Function GetParentcurve(targetPart, thickSurf) As Object
         potentialName = nameParts(i)
         If InStr(potentialName, "Face") = 0 And InStr(potentialName, "Edge") = 0 And InStr(potentialName, "Vertex") = 0 Then
             Err.Clear
-            Set foundObj = targetPart.FindObjectByName(potentialName)
+            Set foundObj = TargetPart.FindObjectByName(potentialName)
             If Err.Number = 0 And Not foundObj Is Nothing Then
 '                If InStr(TypeName(foundObj), "HybridShapeSweep") > 0 Or TypeName(foundObj) = "HybridShapeSweep" Then
                     Set GetParentcurve = foundObj

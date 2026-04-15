@@ -386,12 +386,12 @@ Private Function CreatePlane( _
     ByVal axRef As Reference, _
     ByVal A As Double, _
     ByVal B As Double, _
-    ByVal C As Double) _
+    ByVal c As Double) _
     As HybridShapePlaneEquation
     
     Dim Fact As HybridShapeFactory
     Set Fact = pt.HybridShapeFactory
-    Set CreatePlane = Fact.AddNewPlaneEquation(A, B, C, dynaExtrum)
+    Set CreatePlane = Fact.AddNewPlaneEquation(A, B, c, dynaExtrum)
     If Not axRef Is Nothing Then
         CreatePlane.RefAxisSystem = axRef
     End If

@@ -94,9 +94,9 @@ Private Sub Preparing_Copy(ByVal sel As Selection, ByVal itm As AnyObject)
         Case "OrderedGeometricalSet"
             Set ShpsLst = Get_All_OdrGeoSetShapes(itm, ShpsLst)
     End Select
-    Dim Shps As HybridShapes, shp As HybridShape
-    For Each Shps In ShpsLst
-        For Each shp In Shps
+    Dim shps As HybridShapes, shp As HybridShape
+    For Each shps In ShpsLst
+        For Each shp In shps
             sel.Add shp
         Next
     Next

@@ -187,17 +187,17 @@ Public Sub inject_ary(ByVal data As Variant, Optional ByVal startrow As Long = 2
     xlhide
     ' 如果只传了1个参数（兼容旧/调试调用），直接写入
     If IsMissing(targetCols) Or IsMissing(sourceIndices) Then
-        Dim R As Long, C As Long
+        Dim R As Long, c As Long
         On Error Resume Next
         R = UBound(data, 1)
-        C = UBound(data, 2)
+        c = UBound(data, 2)
         If Err.Number <> 0 Then Exit Sub
         On Error GoTo 0
         
         Dim lastRowSimple As Long
         lastRowSimple = startrow + R - 1
         With ws
-            .Range(.Cells(startrow, 1), .Cells(lastRowSimple, C)).Value = data
+            .Range(.Cells(startrow, 1), .Cells(lastRowSimple, c)).Value = data
         End With
         Call LvMg
         ws.name = "BOM_" & Format(Now, "yymmdd_hhmm")
@@ -271,13 +271,13 @@ Public Sub inject_RvData(data() As Bomline, Optional ByVal startrow As Long = 2)
     Dim cnt As Long: cnt = UBound(data)
     Dim targetCols: targetCols = Array(1, 3, 5, 7, 9, 11, 13, 14)
     Dim buffer() As Variant: ReDim buffer(1 To cnt, 1 To 1)
-    Dim C As Long, i As Long
+    Dim c As Long, i As Long
     startrow = 2
     Call setxlHead("rv")
-        For C = 0 To UBound(targetCols)
+        For c = 0 To UBound(targetCols)
         For i = 1 To cnt
             With data(i)
-                Select Case C
+                Select Case c
                     Case 0: buffer(i, 1) = .partNumber
                     Case 1: buffer(i, 1) = .Nomenclature
                     Case 2: buffer(i, 1) = .Definition
@@ -289,8 +289,8 @@ Public Sub inject_RvData(data() As Bomline, Optional ByVal startrow As Long = 2)
                 End Select
             End With
         Next i
-        ws.Cells(startrow, targetCols(C)).Resize(cnt, 1).Value = buffer
-    Next C
+        ws.Cells(startrow, targetCols(c)).Resize(cnt, 1).Value = buffer
+    Next c
         Call RVbackColor
     xlshow
 End Sub
