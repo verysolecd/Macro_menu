@@ -96,19 +96,19 @@ Public Sub Run()
     On Error GoTo 0
 End Sub
 
-Public Function InitFromCode(ByVal DecCode As String, ByVal mdlname As String, ByVal currentPjtPath As String) As Boolean
+Public Function InitFromCode(ByVal decCode As String, ByVal mdlname As String, ByVal currentPjtPath As String) As Boolean
     InitFromCode = False
     mModuleName = mdlname
     mModulePath = currentPjtPath
     mExtras.RemoveAll
     ' Quick check for Group tag to avoid heavy regex
-    If InStr(1, DecCode, TAG_GROUP, vbTextCompare) = 0 Then Exit Function
+    If InStr(1, decCode, TAG_GROUP, vbTextCompare) = 0 Then Exit Function
     Dim Reg As Object: Set Reg = CreateObject("VBScript.RegExp")
     With Reg
         .Pattern = TAG_S & "(.*?)" & TAG_D & "(.*?)" & TAG_E
         .Global = True
     End With
-    Dim matches As Object: Set matches = Reg.Execute(DecCode)
+    Dim matches As Object: Set matches = Reg.Execute(decCode)
     Set Reg = Nothing
     If matches.count < 1 Then Exit Function
     Dim match As Object, SubMatchs As Object

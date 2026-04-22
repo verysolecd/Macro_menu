@@ -14,7 +14,7 @@ Private wsEVT As Cls_WsEvt
 Private wb As Object
 Private ws As Object
 
-' åœ¨ç±»åˆå§‹åŒ–æ—¶æ£€æŸ¥å®ä¾‹
+' ÔÚÀà³õÊ¼»¯Ê±¼ì²éÊµÀı
 Private Const mdlname As String = "Cls_XLM"
 Private Sub Class_Initialize()
 On Error Resume Next
@@ -23,7 +23,7 @@ On Error Resume Next
         Set gwb = xlAPP.Workbooks.Add
         Set gws = gwb.ActiveSheet
         Set wb = gwb: Set ws = gws
-        ws.name = "bom"
+        ws.Name = "bom"
     Else
         Set xlAPP = GetObject("Excel.Application")
         Set wb = gwb: Set ws = gws
@@ -36,39 +36,39 @@ On Error GoTo 0
     iniarr
 End Sub
 Private Sub iniarr()
-    header_bom(1) = "No." & Chr(10) & "ç¼–å·"
-    header_bom(2) = "Layout" & Chr(10) & "å±‚çº§"
-    header_bom(3) = "PN" & Chr(10) & "é›¶ä»¶å·"
-    header_bom(4) = "Nomenclature" & Chr(10) & "è‹±æ–‡åç§°"
-    header_bom(5) = "Definition" & Chr(10) & "ä¸­æ–‡åç§°"
-    header_bom(6) = "Picture" & Chr(10) & "å›¾åƒ"
-    header_bom(7) = "Quantity" & Chr(10) & "æ•°é‡(PCS)"
-    header_bom(8) = "Weight" & Chr(10) & "å•è´¨é‡"
-    header_bom(9) = "sum_Weight" & Chr(10) & "æ€»è´¨é‡"
-    header_bom(10) = "Material" & Chr(10) & "ææ–™"
-    header_bom(11) = "Thickness" & Chr(10) & "åšåº¦(mm)"
+    header_bom(1) = "No." & Chr(10) & "±àºÅ"
+    header_bom(2) = "Layout" & Chr(10) & "²ã¼¶"
+    header_bom(3) = "PN" & Chr(10) & "Áã¼şºÅ"
+    header_bom(4) = "Nomenclature" & Chr(10) & "Ó¢ÎÄÃû³Æ"
+    header_bom(5) = "Definition" & Chr(10) & "ÖĞÎÄÃû³Æ"
+    header_bom(6) = "Picture" & Chr(10) & "Í¼Ïñ"
+    header_bom(7) = "Quantity" & Chr(10) & "ÊıÁ¿(PCS)"
+    header_bom(8) = "Weight" & Chr(10) & "µ¥ÖÊÁ¿"
+    header_bom(9) = "sum_Weight" & Chr(10) & "×ÜÖÊÁ¿"
+    header_bom(10) = "Material" & Chr(10) & "²ÄÁÏ"
+    header_bom(11) = "Thickness" & Chr(10) & "ºñ¶È(mm)"
     header_bom(12) = ""
-    header_bom(13) = "Material" & Chr(10) & "ææ–™"
-    header_bom(14) = "Density" & Chr(10) & "å¯†åº¦(kg/m^3)"
-    header_bom(15) = "UTS" & Chr(10) & "æŠ—æ‹‰(Mpa)"
-    header_bom(16) = "YS" & Chr(10) & "å±ˆæœ(Mpa)"
-    header_bom(17) = "EL" & Chr(10) & "å»¶ä¼¸ç‡(%)"
+    header_bom(13) = "Material" & Chr(10) & "²ÄÁÏ"
+    header_bom(14) = "Density" & Chr(10) & "ÃÜ¶È(kg/m^3)"
+    header_bom(15) = "UTS" & Chr(10) & "¿¹À­(Mpa)"
+    header_bom(16) = "YS" & Chr(10) & "Çü·ş(Mpa)"
+    header_bom(17) = "EL" & Chr(10) & "ÑÓÉìÂÊ(%)"
    
 
-    header_rv(1) = "é›¶ä»¶å·" & Chr(10) & "Partnumber"
-    header_rv(2) = "æ›´æ”¹" & Chr(10) & "ä»¶å·"
-    header_rv(3) = "è‹±æ–‡åç§°" & Chr(10) & "Nomenclature"
-    header_rv(4) = "æ›´æ”¹" & Chr(10) & "è‹±æ–‡å"
-    header_rv(5) = "ä¸­æ–‡åç§°" & Chr(10) & "Definition"
-    header_rv(6) = "æ›´æ”¹" & Chr(10) & "ä¸­æ–‡å"
-    header_rv(7) = "å®ä¾‹å" & Chr(10) & "InstanceName"
-    header_rv(8) = "æ›´æ”¹" & Chr(10) & "å®ä¾‹å"
-    header_rv(9) = "ææ–™" & Chr(10) & "material"
-    header_rv(10) = "å®šä¹‰" & Chr(10) & "ææ–™"
-    header_rv(11) = "å¯†åº¦" & Chr(10) & "Density"
-    header_rv(12) = "æ›´æ”¹" & Chr(10) & "å¯†åº¦"
-    header_rv(13) = "è´¨é‡" & Chr(10) & "Mass"
-    header_rv(14) = "åšåº¦" & Chr(10) & "Thickness"
+    header_rv(1) = "Áã¼şºÅ" & Chr(10) & "Partnumber"
+    header_rv(2) = "¸ü¸Ä" & Chr(10) & "¼şºÅ"
+    header_rv(3) = "Ó¢ÎÄÃû³Æ" & Chr(10) & "Nomenclature"
+    header_rv(4) = "¸ü¸Ä" & Chr(10) & "Ó¢ÎÄÃû"
+    header_rv(5) = "ÖĞÎÄÃû³Æ" & Chr(10) & "Definition"
+    header_rv(6) = "¸ü¸Ä" & Chr(10) & "ÖĞÎÄÃû"
+    header_rv(7) = "ÊµÀıÃû" & Chr(10) & "InstanceName"
+    header_rv(8) = "¸ü¸Ä" & Chr(10) & "ÊµÀıÃû"
+    header_rv(9) = "²ÄÁÏ" & Chr(10) & "material"
+    header_rv(10) = "¶¨Òå" & Chr(10) & "²ÄÁÏ"
+    header_rv(11) = "ÃÜ¶È" & Chr(10) & "Density"
+    header_rv(12) = "¸ü¸Ä" & Chr(10) & "ÃÜ¶È"
+    header_rv(13) = "ÖÊÁ¿" & Chr(10) & "Mass"
+    header_rv(14) = "ºñ¶È" & Chr(10) & "Thickness"
     
     hdgx(1) = "NO."
     hdgx(2) = "TIRE"
@@ -77,7 +77,7 @@ Private Sub iniarr()
     hdgx(5) = ""
     hdgx(6) = "PART NO."
     hdgx(7) = "DRAWING NO."
-    hdgx(8) = "ä¸­æ–‡åç§°"
+    hdgx(8) = "ÖĞÎÄÃû³Æ"
     hdgx(9) = "ITEM NAME"
     hdgx(10) = "Ver."
     hdgx(11) = "QTY."
@@ -91,7 +91,7 @@ Private Sub set_Header(header, Optional ByVal idxrow = 2)
     lastCol = UBound(header) - LBound(header) + 1
     With ws
     .Range(.Cells(idxrow, 1), .Cells(idxrow, lastCol)).Value = header
-    .Range(.Cells(idxrow, 1), .Cells(idxrow, lastCol)).Interior.color = RGB(190, 190, 190)
+    .Range(.Cells(idxrow, 1), .Cells(idxrow, lastCol)).Interior.Color = RGB(190, 190, 190)
     End With
 End Sub
 Private Sub RVbackColor()
@@ -99,7 +99,7 @@ Private Sub RVbackColor()
         Dim lastrow: lastrow = ws.Cells(ws.Rows.count, 1).End(xlUp).row
         For rowNb = 2 To lastrow
             For i = 1 To UBound(mapcells)
-                ws.Cells(rowNb, mapcells(i)).Interior.color = RGB(190, 190, 190)
+                ws.Cells(rowNb, mapcells(i)).Interior.Color = RGB(190, 190, 190)
             Next i
         Next rowNb
 End Sub
@@ -137,13 +137,13 @@ Public Function extract_ary()
             resultAry(idrow, j) = tempArr(1, j)
         Next j
    Next idrow
-    extract_ary = resultAry ' è¿”å›æå–çš„æ•°æ®
+    extract_ary = resultAry ' ·µ»ØÌáÈ¡µÄÊı¾İ
 End Function
 
 Private Sub LvMg()
 xlhide
-    Dim row_num As Long ' å£°æ˜ row_num å˜é‡
-    Dim cell ' å£°æ˜ cell å˜é‡
+    Dim row_num As Long ' ÉùÃ÷ row_num ±äÁ¿
+    Dim cell ' ÉùÃ÷ cell ±äÁ¿
      With ws
             .Cells.ClearOutline
             .Outline.AutomaticStyles = False
@@ -152,19 +152,19 @@ xlhide
             Set LVcol = .Columns(2)
             LVcol.HorizontalAlignment = xlLeft
     End With
-    For row_num = 2 To ws.Cells(ws.Rows.count, 2).End(xlUp).row ' ä½¿ç”¨ xlApp.xlUp
+    For row_num = 2 To ws.Cells(ws.Rows.count, 2).End(xlUp).row ' Ê¹ÓÃ xlApp.xlUp
         Dim cell_value As Variant
         cell_value = ws.Cells(row_num, 2).Value
         If Not IsEmpty(cell_value) Then
             ws.Rows(row_num).OutlineLevel = cell_value
         End If
     Next
-    ' è®¾ç½®å¯¹é½æ–¹å¼å’Œç¼©è¿›çº§åˆ«
-    For Each cell In ws.Range("B2:B" & ws.Cells(ws.Rows.count, 2).End(xlUp).row) ' ä½¿ç”¨ xlApp.xlUp
+    ' ÉèÖÃ¶ÔÆë·½Ê½ºÍËõ½ø¼¶±ğ
+    For Each cell In ws.Range("B2:B" & ws.Cells(ws.Rows.count, 2).End(xlUp).row) ' Ê¹ÓÃ xlApp.xlUp
         If Not IsEmpty(cell) Then
-            cell.HorizontalAlignment = xlLeft ' ä½¿ç”¨ xlApp.xlLeft
+            cell.HorizontalAlignment = xlLeft ' Ê¹ÓÃ xlApp.xlLeft
             If IsNumeric(cell.Value) Then
-                cell.IndentLevel = cell.Value ' ä¿®æ”¹ç¼©è¿›çº§åˆ«ä¸å•å…ƒæ ¼å€¼ç›¸ç­‰
+                cell.IndentLevel = cell.Value ' ĞŞ¸ÄËõ½ø¼¶±ğÓëµ¥Ôª¸ñÖµÏàµÈ
             End If
         End If
     Next
@@ -180,12 +180,12 @@ End Sub
 
 
 
-' é€šç”¨æ•°ç»„æ³¨å…¥æ–¹æ³• (æ”¯æŒ legacy/debug åŠ RW_Revise çš„è°ƒç”¨)
-' RW_Revise è°ƒç”¨æ ¼å¼: inject_ary(data, startRow, targetCols, sourceIndices)
-' Debug è°ƒç”¨æ ¼å¼: inject_ary(data)
+' Í¨ÓÃÊı×é×¢Èë·½·¨ (Ö§³Ö legacy/debug ¼° RW_Revise µÄµ÷ÓÃ)
+' RW_Revise µ÷ÓÃ¸ñÊ½: inject_ary(data, startRow, targetCols, sourceIndices)
+' Debug µ÷ÓÃ¸ñÊ½: inject_ary(data)
 Public Sub inject_ary(ByVal data As Variant, Optional ByVal startrow As Long = 2, Optional ByVal targetCols As Variant, Optional ByVal sourceIndices As Variant)
     xlhide
-    ' å¦‚æœåªä¼ äº†1ä¸ªå‚æ•°ï¼ˆå…¼å®¹æ—§/è°ƒè¯•è°ƒç”¨ï¼‰ï¼Œç›´æ¥å†™å…¥
+    ' Èç¹ûÖ»´«ÁË1¸ö²ÎÊı£¨¼æÈİ¾É/µ÷ÊÔµ÷ÓÃ£©£¬Ö±½ÓĞ´Èë
     If IsMissing(targetCols) Or IsMissing(sourceIndices) Then
         Dim R As Long, c As Long
         On Error Resume Next
@@ -200,27 +200,27 @@ Public Sub inject_ary(ByVal data As Variant, Optional ByVal startrow As Long = 2
             .Range(.Cells(startrow, 1), .Cells(lastRowSimple, c)).Value = data
         End With
         Call LvMg
-        ws.name = "BOM_" & Format(Now, "yymmdd_hhmm")
+        ws.Name = "BOM_" & Format(Now, "yymmdd_hhmm")
         xlshow
         Exit Sub
     End If
-    ' 4å‚æ•°æ¨¡å¼ (RW_Revise ç”¨æ³•)
+    ' 4²ÎÊıÄ£Ê½ (RW_Revise ÓÃ·¨)
     Dim rCount As Long, cCount As Long
     rCount = UBound(data, 1)
-    cCount = UBound(targetCols) ' RW_Revise ä¼ å…¥çš„æ˜¯ Array(...)ï¼Œé€šå¸¸ä»0å¼€å§‹
+    cCount = UBound(targetCols) ' RW_Revise ´«ÈëµÄÊÇ Array(...)£¬Í¨³£´Ó0¿ªÊ¼
     Dim i As Long, j As Long, tCol As Long, sIdx As Long
     Dim val As Variant
     On Error Resume Next
-    ' Loop through data rows (attLv2Prdè¿”å›æ˜¯1-based)
+    ' Loop through data rows (attLv2Prd·µ»ØÊÇ1-based)
     For i = 1 To rCount
         ' Loop through mapping columns
         For j = LBound(targetCols) To UBound(targetCols)
             tCol = targetCols(j)
             sIdx = sourceIndices(j)
             
-            ' RW_Revise ä¸­ targetCols å¯èƒ½åŒ…å« 0 (å ä½ç¬¦)
+            ' RW_Revise ÖĞ targetCols ¿ÉÄÜ°üº¬ 0 (Õ¼Î»·û)
             If tCol > 0 Then
-                ' sIdx æ˜¯æ•°æ®æºçš„åˆ—ç´¢å¼• (éœ€ç¡®ä¿åœ¨èŒƒå›´å†…)
+                ' sIdx ÊÇÊı¾İÔ´µÄÁĞË÷Òı (ĞèÈ·±£ÔÚ·¶Î§ÄÚ)
                 If sIdx > 0 And sIdx <= UBound(data, 2) Then
                     val = data(i, sIdx)
                     ws.Cells(startrow + i - 1, tCol).Value = val
@@ -230,7 +230,7 @@ Public Sub inject_ary(ByVal data As Variant, Optional ByVal startrow As Long = 2
     Next i
     On Error GoTo 0
     
-    ws.name = "Revise_" & Format(Now, "hhmm")
+    ws.Name = "Revise_" & Format(Now, "hhmm")
     ' RW_Revise calls xlshow/visible explicitly after this
 End Sub
 
@@ -250,9 +250,9 @@ xlhide:
         End If
     End With
     Call LvMg
-    ws.name = "BOM_" & Format(Now, "yymmdd_hhmm")
+    ws.Name = "BOM_" & Format(Now, "yymmdd_hhmm")
 End Sub
-' è½¬æ¢å‡½æ•°ï¼šBomline() â†’ äºŒç»´æ•°ç»„ (æ ‡å‡†BOMæ ¼å¼)
+' ×ª»»º¯Êı£ºBomline() ¡ú ¶şÎ¬Êı×é (±ê×¼BOM¸ñÊ½)
 
 Public Sub inject_GXbom(arr2D As Variant, Optional ByVal startrow As Long = 5)
     xlhide
@@ -263,7 +263,7 @@ Public Sub inject_GXbom(arr2D As Variant, Optional ByVal startrow As Long = 5)
     With ws
         .Range(.Cells(startrow, 1), .Cells(lastrow, colCount)).Value = arr2D
     End With
-    ws.name = "GX_" & Format(Now, "yymmdd_hhmm")
+    ws.Name = "GX_" & Format(Now, "yymmdd_hhmm")
 End Sub
 
 Public Sub inject_RvData(data() As Bomline, Optional ByVal startrow As Long = 2)
@@ -305,24 +305,24 @@ Sub inject_pic(irow, pncol, Piccol, ipath)
                  pn = ws.Cells(i, pncol).Value
                  picpath = ipath & "\" & pn & ".jpg"
                 If KCL.isExists(picpath) = False Then
-                   ws.Cells(i, Piccol).Value = "ç¼ºå°‘å›¾ç‰‡" & picpath
+                   ws.Cells(i, Piccol).Value = "È±ÉÙÍ¼Æ¬" & picpath
                 Else
                     ws.Cells(i, Piccol).Value = ""
                     Set iPic = ws.Shapes.AddPicture(picpath, False, True, 0, 0, -1, -1)
                     Set rng = ws.Cells(i, Piccol)
-                With iPic ' ä¿æŒçºµæ¨ªæ¯”
-                    .LockAspectRatio = msoTrue  'è®¡ç®—æœ€ä½³å°ºå¯¸ä»¥é€‚åº”å•å…ƒæ ¼
+                With iPic ' ±£³Ö×İºá±È
+                    .LockAspectRatio = msoTrue  '¼ÆËã×î¼Ñ³ß´çÒÔÊÊÓ¦µ¥Ôª¸ñ
                     Dim cellRatio, imgRatio
                     cellRatio = rng.Width / rng.Height
                     imgRatio = .Width / .Height
-                    If imgRatio > cellRatio Then  'å›¾ç‰‡è¾ƒå®½ï¼Œä»¥å•å…ƒæ ¼å®½åº¦ä¸ºå‡†
+                    If imgRatio > cellRatio Then  'Í¼Æ¬½Ï¿í£¬ÒÔµ¥Ôª¸ñ¿í¶ÈÎª×¼
                         .Width = rng.Width * 0.9
-                        .Top = rng.Top + (rng.Height - .Height) / 2 'å‚ç›´å±…ä¸­
+                        .Top = rng.Top + (rng.Height - .Height) / 2 '´¹Ö±¾ÓÖĞ
                         .Left = rng.Left
-                    Else 'å›¾ç‰‡è¾ƒé«˜ï¼Œä»¥å•å…ƒæ ¼é«˜åº¦ä¸ºå‡†
+                    Else 'Í¼Æ¬½Ï¸ß£¬ÒÔµ¥Ôª¸ñ¸ß¶ÈÎª×¼
                         .Height = rng.Height * 0.8
                         .Top = rng.Top + (rng.Height - .Height) / 2
-                        .Left = rng.Left + (rng.Width - .Width) / 2 'æ°´å¹³å±…ä¸­
+                        .Left = rng.Left + (rng.Width - .Width) / 2 'Ë®Æ½¾ÓÖĞ
                     End If
                     .Placement = xlMoveAndSize
                 End With
@@ -334,8 +334,8 @@ Public Sub xlshow()
   xlAPP.Visible = True
       With xlAPP.Windows(1)
         .WindowState = xlNormal
-        .Width = 1080  ' è®¾ç½®çª—å£å®½åº¦
-        .Height = .Width * 0.618 ' è®¾ç½®çª—å£é«˜åº¦
+        .Width = 1080  ' ÉèÖÃ´°¿Ú¿í¶È
+        .Height = .Width * 0.618 ' ÉèÖÃ´°¿Ú¸ß¶È
     End With
        With xlAPP
         .ScreenUpdating = True

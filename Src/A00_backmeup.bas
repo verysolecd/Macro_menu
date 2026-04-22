@@ -28,7 +28,7 @@ Public Sub AddmdlName()
                 searchStartCol = 1
                 searchEndLine = startline
                 searchEndCol = -1
-                declText = "Private Const " & constName & " As String = """ & vbComp.name & """"
+                declText = "Private Const " & constName & " As String = """ & vbComp.Name & """"
                 ' Use variables for Find arguments
                 If Not codemod.Find("Const " & constName, searchStartLine, searchStartCol, searchEndLine, searchEndCol) Then
                     codemod.InsertLines startline, declText
@@ -39,5 +39,5 @@ Public Sub AddmdlName()
             End If
         Next i
     Next vbComp
-        MsgBox "宸插鍔犳ā缁勫悕鍙橀噺 mdlname", vbInformation, "宸插鍔犳ā缁勫悕鍙橀噺 mdlname"
+        MsgBox "已增加模组名变量 mdlname", vbInformation, "已增加模组名变量 mdlname"
 End Sub

@@ -17,24 +17,24 @@ Sub main()
        Set osht = lst(i)
        If osht.IsDetail = False Then
             osht.Activate
-                    oo = StrAF(osht.name, " ")
+                    oo = StrAF(osht.Name, " ")
             If i > 9 Then
-                    osht.name = "SH" & i & oo
+                    osht.Name = "SH" & i & oo
              Else
-                    osht.name = "SH0" & i & oo
+                    osht.Name = "SH0" & i & oo
             End If
             Set oView = osht.Views.item("Background View")
 '            oView.Activate
             Set ots = oView.Texts
             Set oDict = InitDic()
             For Each itm In ots
-               Set oDict(itm.name) = itm
+               Set oDict(itm.Name) = itm
             Next
             
             Set Pg1 = oDict("gongxxzhang")
-            Pg1.text = "å…±" & shts.count - 1 & "é¡µ"
+            Pg1.text = "¹²" & shts.count - 1 & "Ò³"
             Set Pg2 = oDict("dixxzhang")
-            Pg2.text = "ç¬¬" & i & "é¡µ"
+            Pg2.text = "µÚ" & i & "Ò³"
             oView.SaveEdition
         End If
     Next

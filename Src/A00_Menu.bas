@@ -3,7 +3,7 @@ Attribute VB_Name = "A00_Menu"
 Option Explicit
 
 ' --- Configuration ---
-Const formTitle = "é”®ç›˜é€ è½¦æ‰‹"
+Const formTitle = "¼üÅÌÔì³µÊÖ"
 Private Const MENU_HIDE_TYPE = True
 Private Const Menu_Modeless = True
 
@@ -25,7 +25,7 @@ Sub CATMain()
     Dim MenuItems As Object
     Set MenuItems = GetMenuItems()
     If MenuItems Is Nothing Then
-        MsgBox "æœªæ‰¾åˆ°å¯ç”¨çš„å®ä¿¡æ¯", vbExclamation
+        MsgBox "Î´ÕÒµ½¿ÉÓÃµÄºêĞÅÏ¢", vbExclamation
         Exit Sub
     End If
 
@@ -74,11 +74,11 @@ End Function
 Private Sub ProcessModule(ByVal comp As Object, ByVal pjtPath As String, ByRef colls As Collection)
     Dim mdl As Object: Set mdl = comp.CodeModule
     If mdl.CountOfDeclarationLines < 1 Then Exit Sub
-    Dim DecCode As String
-    DecCode = mdl.Lines(1, mdl.CountOfDeclarationLines)
+    Dim decCode As String
+    decCode = mdl.lines(1, mdl.CountOfDeclarationLines)
     ' 1. Parse Metadata using the Class
     Dim menuItem As New cls_menuCAT
-    If Not menuItem.InitFromCode(DecCode, mdl.name, pjtPath) Then Exit Sub
+    If Not menuItem.InitFromCode(decCode, mdl.Name, pjtPath) Then Exit Sub
     ' 2. Check if Group is valid in our PageMap
     Dim grpKey As Variant
     If IsNumeric(menuItem.GroupName) Then

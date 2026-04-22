@@ -39,7 +39,7 @@ On Error GoTo 0
 End Sub
 
 
-''==éå†é€’å½’=============================
+''==±éÀúµİ¹é=============================
 Private Sub recurAyo(ayo)
     Dim colls: Set itm = ayo.Products
     For Each itm In colls
@@ -53,7 +53,7 @@ Private Sub recurAyo(ayo)
     End If
 End Sub
 
-''==å›¾çº¸é¡µé¢=============================
+''==Í¼Ö½Ò³Ãæ=============================
 
 Private Sub main()
 CATIA.RefreshDisplay = False
@@ -74,22 +74,22 @@ j = 1
        Set osht = lst(i)
        If osht.IsDetail = False Then
             osht.Activate
-                    oo = StrAF(osht.name, " ")
+                    oo = StrAF(osht.Name, " ")
         If i > 9 Then
-            osht.name = "SH" & i & oo
+            osht.Name = "SH" & i & oo
         Else
-             osht.name = "SH0" & i & oo
+             osht.Name = "SH0" & i & oo
         End If
             Set oView = osht.Views.item("Background View")
             Set ots = oView.Texts
             Set oDict = InitDic()
             For Each itm In ots
-               Set oDict(itm.name) = itm
+               Set oDict(itm.Name) = itm
             Next
            Set Pg1 = oDict("gongxxzhang")
-            Pg1.text = "å…±" & shts.count - 1 & "é¡µ"
+            Pg1.text = "¹²" & shts.count - 1 & "Ò³"
             Set Pg2 = oDict("dixxzhang")
-            Pg2.text = "ç¬¬" & i & "é¡µ"
+            Pg2.text = "µÚ" & i & "Ò³"
             oView.SaveEdition
         End If
     Next
@@ -116,22 +116,22 @@ End Function
 
 
 Sub shot()
-MsgBox "æ²¡ç¼–å‘¢"
+MsgBox "Ã»±àÄØ"
 Exit Sub
  Dim iprd, rprd, oPrd, children
  Dim xlsht, rng, RC(0 To 1), oArry()
  Dim i, oRowNb
   RC(0) = 3: RC(1) = 3
     On Error Resume Next
-    Set CATIA = GetObject(, "CATIA.Application") 'è·å–catiaç¨‹åº
+    Set CATIA = GetObject(, "CATIA.Application") '»ñÈ¡catia³ÌĞò
     Dim oDoc: Set oDoc = CATIA.ActiveDocument
     Set rprd = CATIA.ActiveDocument.Product
          If Err.Number <> 0 Then
-            MsgBox "è¯·æ‰“å¼€CATIAå¹¶æ‰“å¼€ä½ çš„äº§å“ï¼Œå†è¿è¡Œæœ¬ç¨‹åº": Err.Clear
+            MsgBox "Çë´ò¿ªCATIA²¢´ò¿ªÄãµÄ²úÆ·£¬ÔÙÔËĞĞ±¾³ÌĞò": Err.Clear
             Exit Sub
          End If
     On Error GoTo 0
-    Set xlAPP = GetObject(, "Excel.Application") 'è·å–excelç¨‹åº
+    Set xlAPP = GetObject(, "Excel.Application") '»ñÈ¡excel³ÌĞò
     Set xlsht = xlAPP.ActiveSheet: xlsht.Columns(2).NumberFormatLocal = "0.000"
 Dim oWindow, oViewer
 Dim file_type As String
@@ -139,20 +139,20 @@ Set oWindow = CATIA.ActiveWindow
 oWindow.Layout = catWindowGeomOnly
 Set oViewer = oWindow.ActiveViewer
 oViewer.Reframe
-'====ä¿®æ”¹èƒŒæ™¯é¢œè‰²=====
+'====ĞŞ¸Ä±³¾°ÑÕÉ«=====
 Dim MyViewer, oColor(2)
 Set MyViewer = CATIA.ActiveWindow.ActiveViewer
 MyViewer.GetBackgroundColor oColor
 MyViewer.PutBackgroundColor Array(1, 1, 1) ' Change background color to WHITE
-'====ä¿®æ”¹èƒŒæ™¯é¢œè‰²=====
+'====ĞŞ¸Ä±³¾°ÑÕÉ«=====
 file_type = "tiff"
 Dim oname, CapturePath, oType
-  CapturePath = CATIA.FileSelectionBox("è¾“å…¥æ–‡ä»¶å", file_type, CatFileSelectionModeSave)
+  CapturePath = CATIA.FileSelectionBox("ÊäÈëÎÄ¼şÃû", file_type, CatFileSelectionModeSave)
   oname = CapturePath & "." & file_type
 oType = catCaptureFormatTIFF 'catCaptureFormatBMP catCaptureFormatJPEG
 MyViewer.CaptureToFile oType, oname ' MAIN SENTENCE!! STORE THE PICTURE IN ANY FORMAT
 MyViewer.PutBackgroundColor oColor ' Change background original
-MsgBox ("å·²ç»ä¿å­˜å›¾ç‰‡")
+MsgBox ("ÒÑ¾­±£´æÍ¼Æ¬")
 oWindow.Layout = catWindowSpecsAndGeom 'catWindowSpecsOnly ' catWindowGeomOnly
 End Sub
 Function shotme()
@@ -161,15 +161,15 @@ Function shotme()
     Dim i, oRowNb
      RC(0) = 3: RC(1) = 3
        On Error Resume Next
-       Set CATIA = GetObject(, "CATIA.Application") 'è·å–catiaç¨‹åº
+       Set CATIA = GetObject(, "CATIA.Application") '»ñÈ¡catia³ÌĞò
        Dim oDoc: Set oDoc = CATIA.ActiveDocument
        Set rprd = CATIA.ActiveDocument.Product
             If Err.Number <> 0 Then
-               MsgBox "è¯·æ‰“å¼€CATIAå¹¶æ‰“å¼€ä½ çš„äº§å“ï¼Œå†è¿è¡Œæœ¬ç¨‹åº": Err.Clear
+               MsgBox "Çë´ò¿ªCATIA²¢´ò¿ªÄãµÄ²úÆ·£¬ÔÙÔËĞĞ±¾³ÌĞò": Err.Clear
                Exit Sub
             End If
     On Error GoTo 0
-    Set xlAPP = GetObject(, "Excel.Application") 'è·å–excelç¨‹åº
+    Set xlAPP = GetObject(, "Excel.Application") '»ñÈ¡excel³ÌĞò
     Set xlsht = xlAPP.ActiveSheet: xlsht.Columns(2).NumberFormatLocal = "0.000"
     Dim oWindow, oViewer
     Dim file_type As String
@@ -177,21 +177,21 @@ Function shotme()
     oWindow.Layout = catWindowGeomOnly
     Set oViewer = oWindow.ActiveViewer
     oViewer.Reframe
-'====ä¿®æ”¹èƒŒæ™¯é¢œè‰²=====
+'====ĞŞ¸Ä±³¾°ÑÕÉ«=====
     Dim MyViewer, oColor(2)
     Set MyViewer = CATIA.ActiveWindow.ActiveViewer
     MyViewer.GetBackgroundColor oColor
     MyViewer.PutBackgroundColor Array(1, 1, 1) ' Change background color to WHITE
-'====ä¿®æ”¹èƒŒæ™¯é¢œè‰²=====
+'====ĞŞ¸Ä±³¾°ÑÕÉ«=====
     file_type = "tiff"
     Dim oname, CapturePath, oType
     MyViewer.CaptureToClipboard
-      CapturePath = CATIA.FileSelectionBox("è¾“å…¥æ–‡ä»¶å", file_type, CatFileSelectionModeSave)
+      CapturePath = CATIA.FileSelectionBox("ÊäÈëÎÄ¼şÃû", file_type, CatFileSelectionModeSave)
       oname = CapturePath & "." & file_type
     oType = catCaptureFormatTIFF 'catCaptureFormatBMP catCaptureFormatJPEG
     MyViewer.CaptureToFile oType, oname ' MAIN SENTENCE!! STORE THE PICTURE IN ANY FORMAT
     MyViewer.PutBackgroundColor oColor ' Change background original
-    MsgBox ("å·²ç»ä¿å­˜å›¾ç‰‡")
+    MsgBox ("ÒÑ¾­±£´æÍ¼Æ¬")
     oWindow.Layout = catWindowSpecsAndGeom 'catWindowSpecsOnly ' catWindowGeomOnly
 End Function
 

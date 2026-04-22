@@ -26,22 +26,22 @@ Private Sub UserForm_Initialize()
     Me.Caption = mModuleMgr.Title
     Call update_comboBox
 End Sub
-'** äº‹ä»¶ **
+'** ÊÂ¼ş **
 Private Sub btnExport_Click()
     Dim res As Boolean
     res = export_project
     Call update_listbox
     If res Then
-        show_msg "å¯¼å‡ºå®Œæˆ"
+        show_msg "µ¼³öÍê³É"
     End If
 End Sub
 Private Sub btnimport_Click()
     Call import_project
-    show_msg "å¯¼å…¥å®Œæˆ" & vbCrLf & "è¯·ä¿å­˜é¡¹ç›®"
+    show_msg "µ¼ÈëÍê³É" & vbCrLf & "Çë±£´æÏîÄ¿"
 End Sub
 Private Sub btnOverwrite_Click()
     Call overwriting_project
-    show_msg "å¯¼å‡ºå®Œæˆ"
+    show_msg "µ¼³öÍê³É"
 End Sub
 Private Sub btnFinish_Click()
     Call finish
@@ -53,27 +53,27 @@ Private Sub ComboBox1_Change()
     Call update_listbox
 End Sub
 Private Sub btnOpen_Click()
-    'ä»…æ‰“å¼€æ–‡ä»¶å¤¹
+    '½ö´ò¿ªÎÄ¼ş¼Ğ
     Call mModuleMgr.open_folder( _
         Me.ComboBox1.ListIndex + 1 _
     )
 End Sub
-'** æ”¯æŒ **
-'ç»“æŸ
+'** Ö§³Ö **
+'½áÊø
 Private Sub finish()
     Me.Hide
     Unload Me
 End Sub
-'æ¨¡å—åˆ—è¡¨çš„æ›´æ–°
+'Ä£¿éÁĞ±íµÄ¸üĞÂ
 Private Sub update_listbox()
     With Me.ListBox1
         .Clear
         .ListIndex = -1
     End With
     If Me.ComboBox1.ListIndex < 0 Then Exit Sub
-    Dim name As Variant
-    For Each name In mModuleMgr.get_module_name_list(Me.ComboBox1.ListIndex + 1)
-        Call Me.ListBox1.AddItem(name)
+    Dim Name As Variant
+    For Each Name In mModuleMgr.get_module_name_list(Me.ComboBox1.ListIndex + 1)
+        Call Me.ListBox1.AddItem(Name)
     Next
     Dim btnEnabled As Boolean
     If mModuleMgr.has_user_data(Me.ComboBox1.ListIndex + 1) Then
@@ -86,12 +86,12 @@ Private Sub update_listbox()
         .btnImport.Enabled = btnEnabled
         .btnOpen.Enabled = btnEnabled
     End With
-    'æ¨¡å—åˆ—è¡¨çš„æ›´æ–°
+    'Ä£¿éÁĞ±íµÄ¸üĞÂ
     If Me.ComboBox1.Value = mModuleMgr.project_name Then
         Me.btnImport.Enabled = False
     End If
 End Sub
-'ä¿¡æ¯æ–‡æœ¬çš„æ›´æ–°
+'ĞÅÏ¢ÎÄ±¾µÄ¸üĞÂ
 Private Sub update_info_txt()
     If Me.ComboBox1.ListIndex < 0 Then
         Me.TextBox1.text = vbNullString
@@ -108,12 +108,12 @@ Private Sub update_info_txt()
         Value _
     )
 End Sub
-'ComboBoxåˆå§‹è®¾ç½®
+'ComboBox³õÊ¼ÉèÖÃ
 Private Sub update_comboBox()
     Dim projects As Collection
     Set projects = mModuleMgr.get_project_name_list()
     If projects.count < 1 Then
-        MsgBox "ç›®æ ‡é¡¹ç›®ä¸å­˜åœ¨"
+        MsgBox "Ä¿±êÏîÄ¿²»´æÔÚ"
         Call finish
         Exit Sub
     End If
@@ -123,10 +123,10 @@ Private Sub update_comboBox()
     Next
     ComboBox1.ListIndex = 0
 End Sub
-'Listä¸­æŒ‡å®šæ–‡å­—çš„ç´¢å¼•è·å–
-'param: value-æœç´¢æ–‡å­—
-'param: lst-æœç´¢ç›®æ ‡é›†åˆ
-'return: å¯¹åº”ç´¢å¼•
+'ListÖĞÖ¸¶¨ÎÄ×ÖµÄË÷Òı»ñÈ¡
+'param: value-ËÑË÷ÎÄ×Ö
+'param: lst-ËÑË÷Ä¿±ê¼¯ºÏ
+'return: ¶ÔÓ¦Ë÷Òı
 Function get_index_by_list( _
         ByVal Value As Variant, _
         ByVal lst As Collection) As Long
@@ -139,7 +139,7 @@ Function get_index_by_list( _
     Next
     get_index_by_list = -1
 End Function
-'é¡¹ç›®çš„å¯¼å…¥
+'ÏîÄ¿µÄµ¼Èë
 Private Sub import_project()
     Dim projIdx As Long
     projIdx = Me.ComboBox1.ListIndex + 1
@@ -148,22 +148,22 @@ Private Sub import_project()
     )
     Call update_listbox
 End Sub
-'é¡¹ç›®çš„å¯¼å‡º
+'ÏîÄ¿µÄµ¼³ö
 Private Function export_project() As Boolean
     export_project = False
     Dim projIdx As Long
     projIdx = Me.ComboBox1.ListIndex + 1
     Dim msg As String
-    msg = "åœ¨CATVBAæ–‡ä»¶çš„æ–‡ä»¶å¤¹å†…åˆ›å»ºå—ï¼Ÿ" & vbCrLf & _
-        "(æ˜¯-æ–‡ä»¶å¤¹å†…åˆ›å»º å¦-å¯¹è¯æ¡†æŒ‡å®š)"
+    msg = "ÔÚCATVBAÎÄ¼şµÄÎÄ¼ş¼ĞÄÚ´´½¨Âğ£¿" & vbCrLf & _
+        "(ÊÇ-ÎÄ¼ş¼ĞÄÚ´´½¨ ·ñ-¶Ô»°¿òÖ¸¶¨)"
     Select Case MsgBox(msg, vbYesNoCancel + vbQuestion, mModuleMgr.Title)
         Case vbYes
-            'é¡¹ç›®æ–‡ä»¶å¤¹å†…
+            'ÏîÄ¿ÎÄ¼ş¼ĞÄÚ
             mModuleMgr.export_project_child_folder ( _
                 projIdx _
             )
         Case vbNo
-            'å¯¹è¯æ¡†æŒ‡å®š
+            '¶Ô»°¿òÖ¸¶¨
             Dim dirPath As String
             dirPath = get_folder_path()
             If dirPath = vbNullString Then Exit Function
@@ -177,13 +177,13 @@ Private Function export_project() As Boolean
                 path _
             )
         Case Else
-            'å–æ¶ˆ
+            'È¡Ïû
             Exit Function
     End Select
     export_project = True
 End Function
-'æ–‡ä»¶å¤¹è·¯å¾„è·å–å¯¹è¯æ¡†
-'return: æ–‡ä»¶å¤¹è·¯å¾„
+'ÎÄ¼ş¼ĞÂ·¾¶»ñÈ¡¶Ô»°¿ò
+'return: ÎÄ¼ş¼ĞÂ·¾¶
 Private Function get_folder_path() As String
 '    Dim dirPicker As New clsFolderPicker
 '    get_folder_path = dirPicker.show_folder_picker()
@@ -191,13 +191,13 @@ Private Function get_folder_path() As String
     get_folder_path = KCL.selFdl
     
 End Function
-'é¡¹ç›®çš„è¦†ç›–å¯¼å‡º
+'ÏîÄ¿µÄ¸²¸Çµ¼³ö
 Private Sub overwriting_project()
     Call mModuleMgr.overwriting_project( _
         Me.ComboBox1.ListIndex + 1 _
     )
 End Sub
-'æ¶ˆæ¯
+'ÏûÏ¢
 Private Sub show_msg( _
         ByVal msg As String)
     MsgBox msg, vbOKOnly, Me.Caption

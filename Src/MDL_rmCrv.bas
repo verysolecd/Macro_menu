@@ -2,8 +2,8 @@ Attribute VB_Name = "MDL_rmCrv"
 
 '{Gp:4}
 '{Ep:rmCrv}
-'{Caption:ç„Šç¼çº¿æ¸…ç†}
-'{ControlTipText:æ¸…ç†ç„Šç¼æ–‡ä»¶ä¸­ç”¨ä¸åˆ°çš„çº¿æ¡}
+'{Caption:º¸·ìÏßÇåÀí}
+'{ControlTipText:ÇåÀíº¸·ìÎÄ¼şÖĞÓÃ²»µ½µÄÏßÌõ}
 '{BackColor:}
 
 
@@ -11,38 +11,38 @@ Private Const TYPE_CURVE As Long = 3
 Private Const TYPE_SWEEP As Long = 7
 
 Sub rmCrv()
-    If CATIA.Windows.count < 1 Then MsgBox "æ²¡æœ‰æ‰“å¼€çš„çª—å£": Exit Sub
+    If CATIA.Windows.count < 1 Then MsgBox "Ã»ÓĞ´ò¿ªµÄ´°¿Ú": Exit Sub
     Dim oDoc:  Set oDoc = CATIA.ActiveDocument
     Dim oprt:  Set oprt = KCL.get_workPartDoc.part
     Dim osel:  Set osel = oDoc.Selection
     Dim HSF:   Set HSF = oDoc.part.HybridShapeFactory
     CATIA.RefreshDisplay = False
     CATIA.HSOSynchronized = False
-    ' â•â• Step 1: Search è·å–æ‰€æœ‰ Sweepï¼Œæå–å¼•ç”¨æ›²çº¿ â•â•
+    ' ¨T¨T Step 1: Search »ñÈ¡ËùÓĞ Sweep£¬ÌáÈ¡ÒıÓÃÇúÏß ¨T¨T
     Dim refSet: Set refSet = KCL.InitDic
     Dim sweeps: Set sweeps = KCL.Initlst
     osel.Clear
-    osel.Search "CATGMOSearch.Surface,all" ' Sweep æ˜¯æ›²é¢çš„å­ç±»å‹,æˆ–è®¸å¯ä»¥ä½¿ç”¨
+    osel.Search "CATGMOSearch.Surface,all" ' Sweep ÊÇÇúÃæµÄ×ÓÀàĞÍ,»òĞí¿ÉÒÔÊ¹ÓÃ
     'osel.Search "CATPrtSearch.HybridShapeSweep,all"
     Dim i
     For i = 1 To osel.count
         Dim shp: Set shp = osel.item(i).Value
         If HSF.GetGeometricalFeatureType(shp) = TYPE_SWEEP Then sweeps.Add shp
     Next
-    ' è§£ææ¯ä¸ª Sweep å¼•ç”¨çš„å¼•å¯¼çº¿ï¼ˆReference â†’ Shape ä»éœ€ Resolveï¼‰
+    ' ½âÎöÃ¿¸ö Sweep ÒıÓÃµÄÒıµ¼Ïß£¨Reference ¡ú Shape ÈÔĞè Resolve£©
     Dim sw, crv
     For Each sw In sweeps
         Set crv = Resolve(osel, sw.FirstGuideCrv)
         If Not crv Is Nothing Then refSet(KCL.GetInternalName(crv)) = 1
     Next
-    ' â•â• Step 2: Search è·å–æ‰€æœ‰æ›²çº¿ â•â•
+    ' ¨T¨T Step 2: Search »ñÈ¡ËùÓĞÇúÏß ¨T¨T
     osel.Clear
     osel.Search "CATGMOSearch.Curve,all"
     Dim curves: Set curves = KCL.Initlst
     For i = 1 To osel.count
         curves.Add osel.item(i).Value
     Next
-    ' â•â• Step 3: æ‰¹é‡é€‰ä¸­æœªå¼•ç”¨æ›²çº¿ â†’ ä¸€æ¬¡åˆ é™¤ â•â•
+    ' ¨T¨T Step 3: ÅúÁ¿Ñ¡ÖĞÎ´ÒıÓÃÇúÏß ¡ú Ò»´ÎÉ¾³ı ¨T¨T
     osel.Clear
     Dim c
     For Each c In curves
@@ -51,7 +51,7 @@ Sub rmCrv()
     If osel.count > 0 Then osel.Delete
     CATIA.HSOSynchronized = True
     CATIA.RefreshDisplay = True
-    MsgBox "æ— ç”¨çº¿æ¡å·²ç»æ¸…ç†"
+    MsgBox "ÎŞÓÃÏßÌõÒÑ¾­ÇåÀí"
 End Sub
 
 Private Function Resolve(osel, obj) As Object

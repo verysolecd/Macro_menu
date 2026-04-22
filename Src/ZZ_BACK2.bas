@@ -13,20 +13,20 @@ Private Declare PtrSafe Function SetClipboardData Lib "user32" (ByVal wFormat As
 '    Dim activeWindow As Object
 '    Dim tempFilePath As String
 '
-'    ' 鑾峰彇CATIA搴旂敤绋嬪簭瀹炰緥
+'    ' 获取CATIA应用程序实例
 '    Set CATIA = GetObject(, "CATIA.Application")
 '    Set activeWindow = CATIA.activeWindow
 '
-'    ' 涓存椂鏂囦欢璺緞
+'    ' 临时文件路径
 '    tempFilePath = Environ$("TEMP") & "\temp_screenshot.png"
 '
-'    ' 鎹曡幏娲诲姩绐楀彛鎴浘
-'    activeWindow.ActiveViewer.CaptureToFile tempFilePath, 0, True ' 0琛ㄧずPNG鏍煎紡
+'    ' 捕获活动窗口截图
+'    activeWindow.ActiveViewer.CaptureToFile tempFilePath, 0, True ' 0表示PNG格式
 '
-'    ' 澶嶅埗鍒板壀璐存澘
+'    ' 复制到剪贴板
 '    CopyImageToClipboard tempFilePath
 '
-'    ' 娓呯悊
+'    ' 清理
 '    Kill tempFilePath
 '
 '    Set activeWindow = Nothing
@@ -34,11 +34,11 @@ Private Declare PtrSafe Function SetClipboardData Lib "user32" (ByVal wFormat As
 'End Sub
 '
 'Private Sub CopyImageToClipboard(ByVal imagePath As String)
-'    ' 浣跨敤Windows Script Host鍒涘缓Shell搴旂敤绋嬪簭瀵硅薄
+'    ' 使用Windows Script Host创建Shell应用程序对象
 '    Dim objShell As Object
 '    Set objShell = CreateObject("WScript.Shell")
 '
-'    ' 浣跨敤PowerShell鍛戒护澶嶅埗鍥剧墖鍒板壀璐存澘
+'    ' 使用PowerShell命令复制图片到剪贴板
 '    Dim psCommand As String
 '    psCommand = "powershell -command ""Add-Type -AssemblyName System.Windows.Forms; [System.Windows.Forms.Clipboard]::SetImage([System.Drawing.Image]::FromFile('"" & imagePath & ""'))"""
 '

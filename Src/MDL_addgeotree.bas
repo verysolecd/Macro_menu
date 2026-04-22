@@ -1,9 +1,8 @@
 Attribute VB_Name = "MDL_addgeotree"
-
 '{GP:4}
 '{Ep:newgeo}
-'{Caption:鍒涘缓鍑犱綍闆唥
-'{ControlTipText:鍒涘缓鍩轰簬妯℃澘鐨勫嚑浣曟爲}
+'{Caption:创建几何集}
+'{ControlTipText:创建基于模板的几何树}
 '{BackColor: }
 
 Private oprt
@@ -20,24 +19,24 @@ If IsNothing(oprt) Then Exit Sub
 
 Set og = colls.Add()
 crSkt og
-og.name = "GEO_sheet"
+og.Name = "GEO_sheet"
 Set colls = og.HybridBodies
 arr = Array("01_Profile", "02_Ribs", "03_Assy", "04_trim", "05_Pierce", "06_final part")
 
 For i = 0 To UBound(arr)
     Set og = colls.Add()
-    og.name = arr(i)
+    og.Name = arr(i)
 Next
     
 Set og = colls.item(arr(3))
 Set subcolls = og.HybridBodies
 For i = 1 To 3
-    Set og = subcolls.Add(): og.name = "TR_0" & i
+    Set og = subcolls.Add(): og.Name = "TR_0" & i
 Next
 Set og = colls.item(arr(4))
 Set subcolls = og.HybridBodies
 For i = 1 To 3
-    Set og = subcolls.Add(): og.name = "PI_0" & i
+    Set og = subcolls.Add(): og.Name = "PI_0" & i
 Next
 
 End Sub

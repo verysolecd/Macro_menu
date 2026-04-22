@@ -2,8 +2,8 @@ Attribute VB_Name = "MDL_addsubgeo"
 'Attribute VB_Name = "m20_newgeotree"
 '{GP:4}
 '{Ep:addsubgeo}
-'{Caption:瀛愬嚑浣曢泦}
-'{ControlTipText:鍒涘缓涓�涓瓙鍑犱綍闆唥
+'{Caption:子几何集}
+'{ControlTipText:创建一个子几何集}
 '{BackColor: }
 
 Private Const mdlname As String = "MDL_addsubgeo"
@@ -19,8 +19,8 @@ Sub addsubgeo()
         Set colls = igeo.HybridBodies
     End If
     
-    Set og = colls.Add(): og.name = "FAXX"
-    Set og = colls.Add(): og.name = "FAXX"
+    Set og = colls.Add(): og.Name = "FAXX"
+    Set og = colls.Add(): og.Name = "FAXX"
     
     On Error Resume Next
     If Not igeo Is Nothing Then oprt.InWorkObject = og.HybridBodies.Parent

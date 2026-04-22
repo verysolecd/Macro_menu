@@ -2,8 +2,8 @@ Attribute VB_Name = "CAT_SWScr"
 
 '{GP:7}
 '{Ep:switchRefresh}
-'{Caption: 灞忓箷鏇存柊}
-'{ControlTipText:绂佹灞忓箷鏇存柊浠ラ槻姝㈠崱椤縸
+'{Caption: 屏幕更新}
+'{ControlTipText:禁止屏幕更新以防止卡顿}
 '{BackColor: }
 Private Quick
 Private Const mdlname As String = "CAT_SWScr"

@@ -1,24 +1,23 @@
 Attribute VB_Name = "RW_Cbom"
-
-'------å®ä¿¡æ¯-----------------------------------------------------
+'------ºêĞÅÏ¢-----------------------------------------------------
 '{GP:1}
 '{Ep:cBom}
-'{Caption:ç”ŸæˆBOM}
-'{ControlTipText:ä¸€é”®ç”Ÿæˆå¸¦æœ‰æˆªå›¾çš„BOM}
+'{Caption:Éú³ÉBOM}
+'{ControlTipText:Ò»¼üÉú³É´øÓĞ½ØÍ¼µÄBOM}
 '{BackColor:16744703}
-'------å¼¹çª—æ§ä»¶----------------------------------------------------
-' %UI Label lbL_jpzcs  é”®ç›˜é€ è½¦æ‰‹å‡ºå“
-' %UI CheckBox chk_capture   æ˜¯å¦åŒæ—¶æˆªå›¾åˆ°catia
-' %UI CheckBox chk_GXfmt   æ˜¯å¦GXæ ¼å¼
-' %UI Button btnOK  ç”ŸæˆBOM
-' %UI Button btncancel  å–æ¶ˆ
+'------µ¯´°¿Ø¼ş----------------------------------------------------
+' %UI Label lbL_jpzcs  ¼üÅÌÔì³µÊÖ³öÆ·
+' %UI CheckBox chk_capture   ÊÇ·ñÍ¬Ê±½ØÍ¼µ½catia
+' %UI CheckBox chk_GXfmt   ÊÇ·ñGX¸ñÊ½
+' %UI Button btnOK  Éú³ÉBOM
+' %UI Button btncancel  È¡Ïû
 Option Explicit
 Private Const mdlname As String = "RW_Cbom"
 Sub cBom()
     If Not KCL.CanExecute("ProductDocument,partdocument") Then Exit Sub
     CATIA.StartCommand ("* iso")
-    Dim oFrm: Set oFrm = KCL.newFrm(mdlname): oFrm.Show
-    If oFrm.BtnClicked <> "btnOK" Then Exit Sub
+    Dim oEng: Set oEng = KCL.newEngine(mdlname): oEng.Show
+    If oEng.ClickedButton <> "btnOK" Then Exit Sub
     If pdm Is Nothing Then Set pdm = New Cls_PDM
     If IsNothing(pdm.CurrentProduct) Then Set pdm.CurrentProduct = KCL.defPrd
     Dim iprd: Set iprd = pdm.CurrentProduct: If IsNothing(iprd) Then Exit Sub
@@ -26,7 +25,7 @@ Sub cBom()
     Call Cal_Mass
     Dim i, j, startrow, Colpn, colPic
         Dim bomlns() As Bomline: bomlns = pdm.ProduceBOM(iprd)
-    If Not oFrm.res("chk_GXfmt") Then
+    If Not oEng.Results("chk_GXfmt") Then
         startrow = 2: Colpn = 3: colPic = 6
         xlm.inject_Bom ConvertBOM_Standard(bomlns), startrow
         startrow = 2: Colpn = 3: colPic = 6
@@ -35,14 +34,14 @@ Sub cBom()
         xlm.inject_GXbom ConvertBOM_GX(bomlns), startrow
         startrow = 5: Colpn = 6: colPic = 8
     End If
-    If oFrm.res("chk_capture") Then
+    If oEng.Results("chk_capture") Then
       Call CapPrd(iprd)
       Call xlm.inject_pic(startrow, Colpn, colPic, g_Picpath)
     End If
        GoTo Cleanup
 Cleanup:
 On Error Resume Next
-    Unload oFrm: Set oFrm = Nothing
+    Unload oEng: Set oEng = Nothing
     Set iprd = Nothing
     xlm.xlshow
    KCL.ClearDir (g_Picpath)
@@ -58,26 +57,26 @@ Private Function ConvertBOM_Standard(data() As Bomline) As Variant
     Dim i As Long
     For i = 1 To rowCount
         With data(i)
-            arr2D(i, 1) = i                     ' No. ç¼–å·
-            arr2D(i, 2) = .level                ' Layout å±‚çº§
-            arr2D(i, 3) = .partNumber           ' PN é›¶ä»¶å·
-            arr2D(i, 4) = .Nomenclature         ' Nomenclature è‹±æ–‡åç§°
-            arr2D(i, 5) = .Definition           ' Definition ä¸­æ–‡åç§°
-            ' arr2D(i, 6) å›¾åƒåˆ—ï¼Œåç»­å¡«å……
-            arr2D(i, 7) = .Quantity             ' Quantity æ•°é‡
-            arr2D(i, 8) = .Mass                 ' Weight å•è´¨é‡
-            ' arr2D(i, 9) æ€»è´¨é‡ç”±å…¬å¼è®¡ç®—
-            arr2D(i, 10) = .Material            ' Material ææ–™
-            arr2D(i, 11) = .Thickness           ' Thickness åšåº¦
-            ' arr2D(i, 12) ç©ºåˆ—
-            arr2D(i, 13) = .Material            ' Material ææ–™(é‡å¤)
-            arr2D(i, 14) = .Density             ' Density å¯†åº¦
-            ' arr2D(i, 15-17) é¢„ç•™ç»™ææ–™å±æ€§(æŠ—æ‹‰ã€å±ˆæœã€å»¶ä¼¸ç‡)
+            arr2D(i, 1) = i                     ' No. ±àºÅ
+            arr2D(i, 2) = .level                ' Layout ²ã¼¶
+            arr2D(i, 3) = .partNumber           ' PN Áã¼şºÅ
+            arr2D(i, 4) = .Nomenclature         ' Nomenclature Ó¢ÎÄÃû³Æ
+            arr2D(i, 5) = .Definition           ' Definition ÖĞÎÄÃû³Æ
+            ' arr2D(i, 6) Í¼ÏñÁĞ£¬ºóĞøÌî³ä
+            arr2D(i, 7) = .Quantity             ' Quantity ÊıÁ¿
+            arr2D(i, 8) = .Mass                 ' Weight µ¥ÖÊÁ¿
+            ' arr2D(i, 9) ×ÜÖÊÁ¿ÓÉ¹«Ê½¼ÆËã
+            arr2D(i, 10) = .Material            ' Material ²ÄÁÏ
+            arr2D(i, 11) = .Thickness           ' Thickness ºñ¶È
+            ' arr2D(i, 12) ¿ÕÁĞ
+            arr2D(i, 13) = .Material            ' Material ²ÄÁÏ(ÖØ¸´)
+            arr2D(i, 14) = .Density             ' Density ÃÜ¶È
+            ' arr2D(i, 15-17) Ô¤Áô¸ø²ÄÁÏÊôĞÔ(¿¹À­¡¢Çü·ş¡¢ÑÓÉìÂÊ)
         End With
     Next i
     ConvertBOM_Standard = arr2D
 End Function
-' è½¬æ¢å‡½æ•°ï¼šBomline() â†’ äºŒç»´æ•°ç»„ (GXæ ¼å¼)
+' ×ª»»º¯Êı£ºBomline() ¡ú ¶şÎ¬Êı×é (GX¸ñÊ½)
 Private Function ConvertBOM_GX(data() As Bomline) As Variant
  '   Dim arr2D As Variant: arr2D = ConvertBOM_GX(data)
     Dim rowCount As Long: rowCount = UBound(data)
@@ -87,14 +86,14 @@ Private Function ConvertBOM_GX(data() As Bomline) As Variant
     For i = 1 To rowCount
         With data(i)
             arr2D(i, 1) = i                                      ' NO.
-            ' Level spreading (Cols 2-5) - TIREåˆ—
+            ' Level spreading (Cols 2-5) - TIREÁĞ
             arr2D(i, 2) = IIf(.level = 1, 1, "")
             arr2D(i, 3) = IIf(.level = 2, 2, "")
             arr2D(i, 4) = IIf(.level = 3, 3, "")
             arr2D(i, 5) = IIf(.level = 4, 4, "")
             arr2D(i, 6) = .partNumber                            ' PART NO.
             arr2D(i, 7) = ""                                     ' DRAWING NO.
-            arr2D(i, 8) = .Definition                            ' ä¸­æ–‡åç§°
+            arr2D(i, 8) = .Definition                            ' ÖĞÎÄÃû³Æ
             arr2D(i, 9) = .Nomenclature                          ' ITEM NAME
             arr2D(i, 10) = ""                                    ' Ver.
             arr2D(i, 11) = .Quantity                             ' QTY.
@@ -102,8 +101,9 @@ Private Function ConvertBOM_GX(data() As Bomline) As Variant
             arr2D(i, 13) = .Mass                                 ' UNIT WEIGHT
             arr2D(i, 14) = ""                                       ' TOTAL WEIGHT
             arr2D(i, 15) = .Material                             ' MATERIAL
-            arr2D(i, 16) = ""                                    ' å¤‡ç”¨åˆ—
+            arr2D(i, 16) = ""                                    ' ±¸ÓÃÁĞ
         End With
     Next i
     ConvertBOM_GX = arr2D
 End Function
+

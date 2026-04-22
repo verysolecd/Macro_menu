@@ -2,8 +2,8 @@ Attribute VB_Name = "OTH_Flower"
 'Attribute VB_Name = "OTH_flower"
 '{GP:4446}
 '{Ep:DF}
-'{Caption:澶╂潃鐨勫皬鑺眪
-'{ControlTipText: 鍙互鐢讳竴浜涜姳鍑烘潵}
+'{Caption:天杀的小花}
+'{ControlTipText: 可以画一些花出来}
 '{BackColor:16744703}
 
 Private X0 As Double
@@ -21,7 +21,7 @@ Sub iPos(Optional ByVal pp As Double)
     idstx = val(FrmFlower.TxtDeltaX.text) * 2.3
    idsty = val(FrmFlower.TxtDeltaX.text) * 2.6
     
-     If pp > 1 Then '寰幆鐢诲浘
+     If pp > 1 Then '循环画图
     
        For i = 1 To pp
           For j = 1 To pp
@@ -275,15 +275,15 @@ Sub Flower(Optional ByVal pp As Double)
 ' 1: Create Geometrical Sets---------------------
     Dim myHB As HybridBody
     Set myHB = HB1s.Add
-    myHB.name = "GS_Flower_Wireframe"
+    myHB.Name = "GS_Flower_Wireframe"
     
     Dim myHB2 As HybridBody
     Set myHB2 = HB1s.Add
-    myHB2.name = "GS_Flower_Hidden-Surface"
+    myHB2.Name = "GS_Flower_Hidden-Surface"
     
     Dim myHB3 As HybridBody
     Set myHB3 = HB1s.Add
-    myHB3.name = "GS_Flower_Surface"
+    myHB3.Name = "GS_Flower_Surface"
     
     Dim HSF As HybridShapeFactory
     Set HSF = myPart.HybridShapeFactory

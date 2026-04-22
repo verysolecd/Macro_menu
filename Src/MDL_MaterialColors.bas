@@ -1,44 +1,52 @@
 Attribute VB_Name = "MDL_MaterialColors"
+'Attribute VB_Name = "MDL_MaterialColors"
 '{GP:4}
 '{EP:MaterialPainter}
-'{Caption:å®ä½“ä¸Šè‰²}
+'{Caption:ÊµÌåÉÏÉ«}
 '{ControlTipText: Apply industry standard colors to selection}
 '
 '------Buttons------------------------------
-' %UI Button btn_mild è½¯é’¢(<210)    #ADD8E6
-' %UI Button btn_hss é«˜å¼ºé’¢(210-340)  #00BFFF
-' %UI Button btn_ahss å…ˆè¿›é«˜å¼º(340-590)  #FFFF00
-' %UI Button btn_uhss è¶…é«˜å¼º(590-980) #FFA500
-' %UI Button btn_Gpa Gpaé’¢ (980-1200) #ff0033
-' %UI Button btn_HF çƒ­æˆå‹ (>1200) #B22222
+' %UI Button btn_mild Èí¸Ö(<210)    #ADD8E6
+' %UI Button btn_hss ¸ßÇ¿¸Ö(210-340)  #00BFFF
+' %UI Button btn_ahss ÏÈ½ø¸ßÇ¿(340-590)  #FFFF00
+' %UI Button btn_uhss ³¬¸ßÇ¿(590-980) #FFA500
+' %UI Button btn_Gpa Gpa¸Ö (980-1200) #ff0033
+' %UI Button btn_HF ÈÈ³ÉĞÍ (>1200) #B22222
 ' %UI Label bl_steel ----------
-' %UI Button btn_Alu1 é“åˆé‡‘(<180)  #90EE90
-' %UI Button btn_Alu2 é“åˆé‡‘(180~240)  #8FBC8F
-' %UI Button btn_Alu3 é“åˆé‡‘(>240) #228B22
-' %UI Button btn_Fas ç´§å›ºä»¶      #A52A2A
-' %UI Button btn_glue èƒ¶æ°´ #C8A2C8
+' %UI Button btn_Alu1 ÂÁºÏ½ğ(<180)  #90EE90
+' %UI Button btn_Alu2 ÂÁºÏ½ğ(180~240)  #8FBC8F
+' %UI Button btn_Alu3 ÂÁºÏ½ğ(>240) #228B22
+' %UI Button btn_Fas ½ô¹Ì¼ş      #A52A2A
+' %UI Button btn_glue ½ºË® #C8A2C8
+' %UI Label bl_steel ----------
 
-'â‰¤210MPa       æµ…è“è‰²    MS=Array(173,216,230)  #ADD8E6
-'210-340MPa    æ·±å¤©è“     HSS=Array(0,191,255)      #00BFFF
-'340-590MPa    é»„è‰²      AHSS=Array(255,255,0)    #FFFF00
-'590-980MPa   æ©™è‰²      UHSS=Array(255,165,0)    #FFA500
 
-'980-1200MPa  æ©™çº¢è‰²   Gpa=Array(255,0,51)    #ff0033
-'1200-1600    æ·±ç²‰è‰²      HF=Array(255,20,147)      #FF1493
-'ï¼œ280MPa      æµ…ç»¿è‰²    Alu=Array(144,238,144) #90EE90
-'180~240      æ·±æµ·æ´‹ç»¿    Alu2=Array(34,139,34)   #8FBC8F
-'â‰¥280MPa       æ·±ç»¿è‰²    Alu2=Array(34,139,34)  #228B22
+'¡Ü210MPa       Ç³À¶É«    MS=Array(173,216,230)  #ADD8E6
+'210-340MPa    ÉîÌìÀ¶     HSS=Array(0,191,255)      #00BFFF
+'340-590MPa    »ÆÉ«      AHSS=Array(255,255,0)    #FFFF00
+'590-980MPa   ³ÈÉ«      UHSS=Array(255,165,0)    #FFA500
 
-' ç´§å›ºä»¶       æ£•è‰²      Fas=Array(165, 42, 42)     #A52A2A
-'Glue          æ·¡ç´«è‰²    Glue=Arrary(200,160,200)  #C8A2C8
+'980-1200MPa  ³ÈºìÉ«   Gpa=Array(255,0,51)    #ff0033
+'1200-1600    Éî·ÛÉ«      HF=Array(255,20,147)      #FF1493
+'£¼280MPa      Ç³ÂÌÉ«    Alu=Array(144,238,144) #90EE90
+'180~240      Éîº£ÑóÂÌ    Alu2=Array(34,139,34)   #8FBC8F
+'¡İ280MPa       ÉîÂÌÉ«    Alu2=Array(34,139,34)  #228B22
+
+' ½ô¹Ì¼ş       ×ØÉ«      Fas=Array(165, 42, 42)     #A52A2A
+'Glue          µ­×ÏÉ«    Glue=Arrary(200,160,200)  #C8A2C8
 
 '------------------------------------------
 Option Explicit
 Private mprt
 Private mHSF
+Private mEngine As Cls_DynaUIEngine
 Private Const mdlname As String = "MDL_MaterialColors"
 ' Main Entry Point
 Sub MaterialPainter()
+
+
+
+    Set mprt = Nothing
   Set mprt = KCL.get_workPartDoc.part
   If mprt Is Nothing Then
         Dim doc
@@ -52,17 +60,15 @@ Sub MaterialPainter()
     If mprt Is Nothing Then Exit Sub
     Set mHSF = mprt.HybridShapeFactory
     Dim mapFunc: Set mapFunc = setMasterFunc(mdlname)
-    Dim mapMdl: Set mapMdl = KCL.setBTNmdl(mdlname)
-    ' 3. Initialize Form with PassButtonName ENABLED
-    Set g_frm = Nothing
-    Set g_frm = KCL.newFrm(mdlname)
-    g_frm.PassButtonName = True ' <--- The Magic Switch
-    ' 4. Show Toolbar (Modeless)
-    g_frm.ShowToolbar mdlname, mapMdl, mapFunc
+    ' 3. Initialize Engine with PassButtonName ENABLED
+    Set mEngine = New Cls_DynaUIEngine
+    mEngine.PassButtonName = True ' <--- The Magic Switch
+    ' 4. Show Toolbar (Modeless) ¡ª modMap ×Ô¶¯¹¹½¨, ½ö´«×Ô¶¨Òå macMap
+    mEngine.ShowToolbar mdlname, , mapFunc
 End Sub
 Sub Action_ClickHandler(ByVal btnName As String)
     If btnName = "btn_cancel" Then
-        Unload g_frm
+        Set mEngine = Nothing
         Exit Sub
     End If
     Dim map: Set map = btn2case(mdlname)
@@ -76,7 +82,7 @@ Private Sub ApplyColor(ary As Variant)
     Dim R, G, B, i
     R = ary(0): G = ary(1): B = ary(2)
     If osel.count = 0 Then
-        Set osel = KCL.Selectmulti("è¯·é€‰æ‹©BODY")
+        Set osel = KCL.Selectmulti("ÇëÑ¡ÔñBODY")
     End If
   Dim lst: Set lst = KCL.Initlst
   Dim itm, itp
@@ -108,7 +114,7 @@ Function setMasterFunc(ByVal modName As String)
     Dim ctrllst:    Set ctrllst = KCL.ParseUIConfig(KCL.getbf1stproc(modName))
     Dim map: Set map = KCL.InitDic
     Dim ctrl
-    For Each ctrl In ctrllst    'æ˜ å°„BTNåå­—å’Œå¯¹åº”å‡½æ•°
+    For Each ctrl In ctrllst    'Ó³ÉäBTNÃû×ÖºÍ¶ÔÓ¦º¯Êı
         Select Case ctrl("Type")
             Case "Forms.CommandButton.1"
                 map(ctrl("Name")) = "Action_ClickHandler"
@@ -141,3 +147,9 @@ Function btn2case(ByVal modName As String)
     Next
    Set btn2case = map
 End Function
+
+Sub threadColor()
+
+
+End Sub
+sss

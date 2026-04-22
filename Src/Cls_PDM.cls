@@ -15,11 +15,11 @@ Private Type PropResult
     IsValid As Boolean
 End Type
 Public Event ProductChanged()
-' ç§æœ‰å˜é‡
-Private mProduct As Object          ' å­˜å‚¨å½“å‰äº§å“
-Private mSelection As Object        ' å­˜å‚¨å½“å‰é€‰æ‹©é›†
-Private mRows As Collection         ' ç”¨äºé€’å½’æ”¶é›† BOM è¡Œæ•°æ®çš„ä¸´æ—¶é›†åˆ
-' å˜é‡åŠè¾…åŠ©æ•°ç»„ (Updated for Array Storage)
+' Ë½ÓĞ±äÁ¿
+Private mProduct As Object          ' ´æ´¢µ±Ç°²úÆ·
+Private mSelection As Object        ' ´æ´¢µ±Ç°Ñ¡Ôñ¼¯
+Private mRows As Collection         ' ÓÃÓÚµİ¹éÊÕ¼¯ BOM ĞĞÊı¾İµÄÁÙÊ±¼¯ºÏ
+' ±äÁ¿¼°¸¨ÖúÊı×é (Updated for Array Storage)
 Private mItems() As Bomline       ' Dynamic array for Bomlines
 Private mItemCount As Long        ' Current count of items
 Private Const CHUNK_SIZE As Long = 150 ' Array growth chunk size
@@ -30,7 +30,7 @@ Private Const ekl2 As String = " for i while i<=lst.Size() {V=V+smartVolume(lst.
 Private Const mdlname As String = "Cls_PDM"
 Private Sub Class_Initialize()
     On Error Resume Next
-    Set g_allPN = KCL.InitDic ' ä¿æŒä¸å…¨å±€å˜é‡åŒæ­¥
+    Set g_allPN = KCL.InitDic ' ±£³ÖÓëÈ«¾Ö±äÁ¿Í¬²½
     Set mProduct = Nothing
     mItemCount = 0
     ReDim mItems(1 To CHUNK_SIZE)
@@ -53,8 +53,8 @@ Public Property Set CurrentProduct(ByVal newProduct As Object)
     RaiseEvent ProductChanged
 End Property
 
-' ç»Ÿä¸€è·å–å±æ€§/å‚æ•°çš„å€¼
-' è¿”å›ï¼šPropResult ç±»å‹ (Obj, Value, IsValid)
+' Í³Ò»»ñÈ¡ÊôĞÔ/²ÎÊıµÄÖµ
+' ·µ»Ø£ºPropResult ÀàĞÍ (Obj, Value, IsValid)
 Private Function GetPropertyValue(ByVal Collection As Object, ByVal ItemIdentifier As Variant) As PropResult
     On Error Resume Next
     Dim Result As PropResult
@@ -71,7 +71,7 @@ Private Function GetPropertyValue(ByVal Collection As Object, ByVal ItemIdentifi
     On Error GoTo 0
 End Function
 '---------------------------------------------------------------------------------------
-' BOM ç”Ÿæˆæ ¸å¿ƒé€»è¾‘ (æ€§èƒ½ä¼˜åŒ–ç‰ˆ)
+' BOM Éú³ÉºËĞÄÂß¼­ (ĞÔÄÜÓÅ»¯°æ)
 '---------------------------------------------------------------------------------------
 ' Helper to add item to array with auto-resize
 Private Sub pushBOM(item As Bomline)
@@ -81,7 +81,7 @@ Private Sub pushBOM(item As Bomline)
     End If
     mItems(mItemCount) = item
 End Sub
-' è·å–äº§å“åŸºæœ¬å±æ€§ä¿¡æ¯ (è¿”å› Bomline)
+' »ñÈ¡²úÆ·»ù±¾ÊôĞÔĞÅÏ¢ (·µ»Ø Bomline)
 Public Function getBomLine(ByVal oPrd As Object) As Bomline
     Dim item As Bomline
     Dim refPrd: Set refPrd = oPrd.ReferenceProduct
@@ -91,7 +91,7 @@ Public Function getBomLine(ByVal oPrd As Object) As Bomline
         .partNumber = refPrd.partNumber
         .Nomenclature = refPrd.Nomenclature
         .Definition = refPrd.Definition
-        .InstanceName = oPrd.name
+        .InstanceName = oPrd.Name
         .Material = GetPropertyValue(userProps, "Material").Value
         .Density = val(GetPropertyValue(userProps, "Density").Value)
         .Mass = val(GetPropertyValue(userProps, "Mass").Value)
@@ -102,7 +102,7 @@ Public Function getBomLine(ByVal oPrd As Object) As Bomline
     getBomLine = item
 End Function
 
-' é€’å½’è®¡ç®—å¹¶æ›´æ–°äº§å“åŠå…¶å­äº§å“çš„æ€»è´¨é‡ (æ¢å¤å¹¶ä¼˜åŒ–ç‰ˆ)
+' µİ¹é¼ÆËã²¢¸üĞÂ²úÆ·¼°Æä×Ó²úÆ·µÄ×ÜÖÊÁ¿ (»Ö¸´²¢ÓÅ»¯°æ)
 Public Function Assmass(ByVal oPrd As Object) As Double
     Dim children As Products: Set children = oPrd.Products
     Dim totalMass As Double: totalMass = 0
@@ -120,7 +120,7 @@ Public Function Assmass(ByVal oPrd As Object) As Double
     Assmass = totalMass
 End Function
 
-' ä¼˜åŒ–è®¡æ•°é€»è¾‘ï¼šæŒ‰éœ€ç»Ÿè®¡åŒçº§ PN
+' ÓÅ»¯¼ÆÊıÂß¼­£º°´ĞèÍ³¼ÆÍ¬¼¶ PN
 Private Function QtyinLV(ByVal oPrd As Object) As Long
     On Error Resume Next
     If Not TypeOf oPrd.Parent Is Products Then
@@ -136,12 +136,12 @@ Private Function QtyinLV(ByVal oPrd As Object) As Long
     On Error GoTo 0
 End Function
 
-' é«˜æ•ˆ BOM ç”Ÿæˆ (ä¸»å…¥å£) - è¿”å› Typed Array
+' ¸ßĞ§ BOM Éú³É (Ö÷Èë¿Ú) - ·µ»Ø Typed Array
 Public Function ProduceBOM(ByVal rootPrd As Object, Optional ByVal filterDuplicate As Boolean = True) As Bomline()
     ' Reset storage
     mItemCount = 0
     ReDim mItems(1 To CHUNK_SIZE)
-    ' å†…éƒ¨é€’å½’æ‰§è¡Œ
+    ' ÄÚ²¿µİ¹éÖ´ĞĞ
     TraverseProductTree rootPrd, 1, filterDuplicate
     If mItemCount = 0 Then Exit Function
     ' Trim array to actual size and return
@@ -154,7 +154,7 @@ Public Function ProduceBOM(ByVal rootPrd As Object, Optional ByVal filterDuplica
     ProduceBOM = Result
 End Function
 
-' é€’å½’è¾…åŠ©å‡½æ•°
+' µİ¹é¸¨Öúº¯Êı
 Private Sub TraverseProductTree(ByVal oPrd As Object, ByVal level As Long, ByVal filterDuplicate As Boolean)
     Dim item As Bomline
     item = getBomLine(oPrd)
@@ -183,7 +183,7 @@ End Sub
 
 
 Public Function attLv2Prd(oPrd) As Variant
-    ' æ­¤æ–¹æ³•ä»…å–ä¸¤å±‚ä¿¡æ¯
+    ' ´Ë·½·¨½öÈ¡Á½²ãĞÅÏ¢
     mItemCount = 0
     ReDim mItems(1 To CHUNK_SIZE)
     TraverseTwoLevels oPrd
@@ -208,7 +208,7 @@ Public Function attLv2Prd(oPrd) As Variant
     attLv2Prd = Result
 End Function
 
-' è·å–ç”¨äº RW_Revise çš„å¼ºç±»å‹æ•°æ® (æ›¿ä»£ attLv2Prd)
+' »ñÈ¡ÓÃÓÚ RW_Revise µÄÇ¿ÀàĞÍÊı¾İ (Ìæ´ú attLv2Prd)
 Public Function GetReviseItems(ByVal oPrd As Object) As Bomline()
     mItemCount = 0
     ReDim mItems(1 To CHUNK_SIZE)
@@ -226,11 +226,11 @@ Public Function GetReviseItems(ByVal oPrd As Object) As Bomline()
 End Function
 
 Private Sub TraverseTwoLevels(ByVal oPrd As Object)
-    pushBOM getBomLine(oPrd)     ' æ ¹äº§å“
+    pushBOM getBomLine(oPrd)     ' ¸ù²úÆ·
     Dim children As Products: Set children = oPrd.Products
     Dim i As Long
     For i = 1 To children.count
-        pushBOM getBomLine(children.item(i))    ' å­äº§å“
+        pushBOM getBomLine(children.item(i))    ' ×Ó²úÆ·
     Next
 End Sub
 Public Function modatt(ByVal oPrd As Object, ByVal oData As Variant)
@@ -256,7 +256,7 @@ Public Function modatt(ByVal oPrd As Object, ByVal oData As Variant)
                     Case 1: refPrd.partNumber = oData(i)
                     Case 2: refPrd.Nomenclature = oData(i)
                     Case 3: refPrd.Definition = oData(i)
-                    Case 4: oPrd.name = oData(i)
+                    Case 4: oPrd.Name = oData(i)
                     Case 5: refPrd.UserRefProperties.item("Material").Value = oData(i)
                     Case 6: refPrd.Parent.part.Parameters.RootParameterSet.ParameterSets.item("Part_info").DirectParameters.item("Density").Value = oData(i)
                 End Select
@@ -276,7 +276,7 @@ Public Sub initPrd(ByVal oPrd As Object)
     
     If Not oPart Is Nothing Then
         iniPrt oPrd
-    Else ' ä»…äº§å“ï¼šå‘å¸ƒå±æ€§
+    Else ' ½ö²úÆ·£º·¢²¼ÊôĞÔ
         EnsurePublication refPrd, "Mass", "Properties\Mass"
     End If
 End Sub
@@ -285,35 +285,35 @@ Private Sub iniPrt(ByVal oPrd As Object)
     Dim refPrd As Object: Set refPrd = oPrd.ReferenceProduct
     Dim oPart As Object: Set oPart = refPrd.Parent.part
     
-    ' 1. ç”¨æˆ·è‡ªå®šä¹‰å±æ€§
+    ' 1. ÓÃ»§×Ô¶¨ÒåÊôĞÔ
     Dim names As Variant: names = Array("Mass", "Material", "Thickness", "Density")
     Dim types As Variant: types = Array("Mass", "String", "Length", "Density")
     Dim i As Long
     For i = 0 To 3: EnsureParamExists refPrd.UserRefProperties, names(i), types(i): Next
     
-    ' 2. å‚æ•°é›†åˆ Part_info
+    ' 2. ²ÎÊı¼¯ºÏ Part_info
     Dim infoSet As Object
     On Error Resume Next
     Set infoSet = oPart.Parameters.RootParameterSet.ParameterSets.item("Part_info")
     If infoSet Is Nothing Then Set infoSet = oPart.Parameters.RootParameterSet.ParameterSets.CreateSet("Part_info")
     On Error GoTo 0
     
-    ' 3. é›¶ä»¶å‚æ•° (åŒ…å« iBodys åˆ—è¡¨)
+    ' 3. Áã¼ş²ÎÊı (°üº¬ iBodys ÁĞ±í)
     Dim infoNames As Variant: infoNames = Array("sumVol", "Thickness", "Density", "Mass")
     Dim infoTypes As Variant: infoTypes = Array("Volume", "Length", "Density", "Mass")
     For i = 0 To 3: EnsureParamExists infoSet.DirectParameters, infoNames(i), infoTypes(i): Next
     
-    ' ç‰¹åˆ«å¤„ç† iBodys åˆ—è¡¨
+    ' ÌØ±ğ´¦Àí iBodys ÁĞ±í
     Dim iBodys As Object
     On Error Resume Next
         Set iBodys = infoSet.DirectParameters.item("iBodys")
         If iBodys Is Nothing Then Set iBodys = infoSet.DirectParameters.CreateList("iBodys")
         
-        If Not oPart.MainBody Is Nothing Then  ' å°† MainBody åŒæ­¥åˆ° iBodys åˆ—è¡¨
+        If Not oPart.MainBody Is Nothing Then  ' ½« MainBody Í¬²½µ½ iBodys ÁĞ±í
             Dim bodyInList As Boolean: bodyInList = False
             Dim j As Long
             For j = 1 To iBodys.ValueList.count
-                If iBodys.ValueList.item(j).name = oPart.MainBody.name Then
+                If iBodys.ValueList.item(j).Name = oPart.MainBody.Name Then
                     bodyInList = True
                     Exit For
                 End If
@@ -322,9 +322,9 @@ Private Sub iniPrt(ByVal oPrd As Object)
         End If
         Call nosamebdy_bdylst(oPart)
     On Error GoTo 0
-    ' 4. å‘å¸ƒ
+    ' 4. ·¢²¼
     For i = 1 To 3: EnsurePublication refPrd, infoNames(i), "Parameters\Part_info\" & infoNames(i): Next
-    ' 5. å…¬å¼ä¸è§„åˆ™
+    ' 5. ¹«Ê½Óë¹æÔò
     ApplyEngineeringLogic oPart, refPrd, infoSet
 End Sub
 Sub nosamebdy_bdylst(oprt)
@@ -342,21 +342,21 @@ Sub nosamebdy_bdylst(oprt)
           End If
      Next
      For Each itm In colls
-      colls.Remove itm.name
+      colls.Remove itm.Name
         Next itm
     For Each bdy In oprt.bodies
            If keeplst.Exists(KCL.GetInternalName(bdy)) Then colls.Add bdy
     Next
 End Sub
 
-Private Sub EnsureParamExists(ByVal coll As Object, ByVal name As String, ByVal pType As String)
+Private Sub EnsureParamExists(ByVal coll As Object, ByVal Name As String, ByVal pType As String)
     On Error Resume Next
-    Dim p As Object: Set p = coll.item(name)
+    Dim p As Object: Set p = coll.item(Name)
     
     If p Is Nothing Then
         Select Case pType
-            Case "String": coll.CreateString name, ""
-            Case "Mass", "Density", "Length", "Volume": coll.CreateDimension name, pType, 0
+            Case "String": coll.CreateString Name, ""
+            Case "Mass", "Density", "Length", "Volume": coll.CreateDimension Name, pType, 0
         End Select
     End If
     On Error GoTo 0
@@ -387,14 +387,14 @@ Private Sub EnsurePublication(ByVal refPrd As Object, ByVal pubName As String, B
         pubs.SetDirect pubName, oRef
         
         If Err.Number <> 0 Then
-            Debug.Print "å‘å¸ƒå¤±è´¥ï¼š" & pubName & " â†’ SetDirectæ‰§è¡Œé”™è¯¯"
+            Debug.Print "·¢²¼Ê§°Ü£º" & pubName & " ¡ú SetDirectÖ´ĞĞ´íÎó"
             Exit Sub
         End If
     End If
     refPrd.Update
         Set oPub = pubs.item(pubName)
         If oPub Is Nothing Or oPub.Valuation Is Nothing Then
-            Debug.Print "å‘å¸ƒå¤±è´¥ï¼š" & pubName & " â†’ å‘å¸ƒä¼°å€¼æ— æ•ˆ"
+            Debug.Print "·¢²¼Ê§°Ü£º" & pubName & " ¡ú ·¢²¼¹ÀÖµÎŞĞ§"
             Exit Sub
         End If
     On Error GoTo 0
@@ -403,18 +403,18 @@ End Sub
 Private Sub ApplyEngineeringLogic(ByVal oPart As Object, ByVal refPrd As Object, ByVal infoSet As Object)
     Dim rels As Object: Set rels = oPart.Relations
     On Error Resume Next
-    ' è§„åˆ™ï¼šä½“ç§¯è®¡ç®—
+    ' ¹æÔò£ºÌå»ı¼ÆËã
     Dim rule As Object: Set rule = rels.item("sum_all_Vol")
     EKL_STR = ekl1 & ekl2
     If rule Is Nothing Then
-        Set rule = rels.CreateProgram("sum_all_Vol", "è®¡ç®—ä½“ç§¯", EKL_STR)
+        Set rule = rels.CreateProgram("sum_all_Vol", "¼ÆËãÌå»ı", EKL_STR)
     Else
          rule.Modify EKL_STR
     End If
     rule.Hidden = True
-    ' å…¬å¼ï¼šè´¨é‡è®¡ç®—
+    ' ¹«Ê½£ºÖÊÁ¿¼ÆËã
     CreateFormula rels, "cal_Mass", infoSet.DirectParameters.item("Mass"), "round(Part_info\sumVol * Part_info\Density, ""kg"", 4)"
-    CreateFormula rels, "link_Mass", refPrd.UserRefProperties.item("Mass"), "Part_info\Mass"   ' é“¾æ¥åˆ° UserRefProperties
+    CreateFormula rels, "link_Mass", refPrd.UserRefProperties.item("Mass"), "Part_info\Mass"   ' Á´½Óµ½ UserRefProperties
     CreateFormula rels, "link_Thickness", refPrd.UserRefProperties.item("Thickness"), "Part_info\Thickness"
     CreateFormula rels, "link_Density", refPrd.UserRefProperties.item("Density"), "Part_info\Density"
     On Error GoTo 0
@@ -448,7 +448,7 @@ On Error Resume Next
 On Error GoTo 0
 End Sub
 
-' è·å–æµ‹é‡å·¥å…·
+' »ñÈ¡²âÁ¿¹¤¾ß
 Public Function GetMeasurable(ByVal itm As Object) As Object
     Set GetMeasurable = Nothing
     If Not itm Is Nothing Then
@@ -459,7 +459,7 @@ Public Function GetMeasurable(ByVal itm As Object) As Object
     End If
 End Function
 
-' è·å–é•¿åº¦
+' »ñÈ¡³¤¶È
 Public Function getlength(ByVal itm As Object) As Double
     getlength = 0
     Dim meas As Object: Set meas = GetMeasurable(itm)

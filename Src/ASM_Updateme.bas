@@ -1,8 +1,8 @@
 Attribute VB_Name = "ASM_Updateme"
 '{GP:3}
 '{Ep:Upall}
-'{Caption:鏇存柊闆朵欢}
-'{ControlTipText:閬嶅巻缁撴瀯鏍戝苟鏇存柊}
+'{Caption:更新零件}
+'{ControlTipText:遍历结构树并更新}
 Private Const mdlname As String = "ASM_Updateme"
 Sub Upall()
    If Not CanExecute("ProductDocument,partdocument") Then Exit Sub

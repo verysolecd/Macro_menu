@@ -24,13 +24,13 @@ Private Const mdlname As String = "Drw_myframe"
 Sub CATDrawMain()
   If Not CATInit() Then Exit Sub
   On Error Resume Next
-    name = Texts.GetItem("Reference_" + GetMacroID()).name
+    Name = Texts.GetItem("Reference_" + GetMacroID()).Name
   If Err.Number <> 0 Then
     Err.Clear
-    name = "none"
+    Name = "none"
   End If
   On Error GoTo 0
-  If (name = "none") Then
+  If (Name = "none") Then
     CATDrw_Creation targetsheet
   Else
     CATDrw_Resizing targetsheet
@@ -46,18 +46,18 @@ Function CreateLine(iX1, iY1, iX2, iY2, iName) As Curve2D
   ' Start point  and End point are created and renamed iName&"_start", iName&"_end"
   '-------------------------------------------------------------------------------
   Set CreateLine = Fact.CreateLine(iX1, iY1, iX2, iY2)
-  CreateLine.name = iName
+  CreateLine.Name = iName
   Set Point = CreateLine.StartPoint 'Create the start point
-  Point.name = iName & "_start"
+  Point.Name = iName & "_start"
   Set Point = CreateLine.EndPoint 'Create the start point
-  Point.name = iName & "_end"
+  Point.Name = iName & "_end"
 End Function
 Function CreateText(iCaption, iX, iY, iName)
   '-------------------------------------------------------------------------------
   'How to create a text
   '-------------------------------------------------------------------------------
   Set CreateText = Texts.Add(iCaption, iX, iY)
-  CreateText.name = iName
+  CreateText.Name = iName
   CreateText.AnchorPosition = catMiddleCenter
 End Function
 Function CreateTextAF(iCaption, iX, iY, iName, iAnchorPosition, iFontSize)
@@ -65,7 +65,7 @@ Function CreateTextAF(iCaption, iX, iY, iName, iAnchorPosition, iFontSize)
   'How to create a text
   '-------------------------------------------------------------------------------
   Set CreateTextAF = Texts.Add(iCaption, iX, iY)
-  CreateTextAF.name = iName
+  CreateTextAF.Name = iName
   CreateTextAF.AnchorPosition = iAnchorPosition
   CreateTextAF.SetFontSize 0, 0, iFontSize
 End Function
@@ -91,13 +91,13 @@ End Sub
 Sub CAT2DL_ViewLayout(targetsheet)
   If Not CATInit() Then Exit Sub
   On Error Resume Next
-    name = Texts.GetItem("Reference_" + GetMacroID()).name
+    Name = Texts.GetItem("Reference_" + GetMacroID()).Name
   If Err.Number <> 0 Then
     Err.Clear
-    name = "none"
+    Name = "none"
   End If
   On Error GoTo 0
-  If (name = "none") Then
+  If (Name = "none") Then
     CATDrw_Creation (targetsheet)
   Else
     CATDrw_Resizing (targetsheet)
@@ -261,7 +261,7 @@ Sub CATCreateReference()
   'How to create a reference text
   '-------------------------------------------------------------------------------
   Set text = Texts.Add("", GetWidth() - GetOffset(), GetOffset())
-  text.name = "Reference_" + GetMacroID
+  text.Name = "Reference_" + GetMacroID
 End Sub
 Function CATCheckRef(Mode)
   '-------------------------------------------------------------------------------
@@ -273,7 +273,7 @@ Function CATCheckRef(Mode)
   While (notfound = 0 And i < nbtexts)
     i = i + 1
     Set text = Texts.item(i)
-    wholename = text.name
+    wholename = text.Name
     leftText = Left(wholename, 10)
     If (leftText = "Reference_") Then
       notfound = 1
@@ -282,7 +282,7 @@ Function CATCheckRef(Mode)
         MsgBox "Frame and Titleblock already created!"
         CATCheckRef = 1
         Exit Function
-      ElseIf (text.name <> refText) Then
+      ElseIf (text.Name <> refText) Then
         MsgBox "Frame and Titleblock created using another style:" + Chr(10) + "        " + GetMacroID()
         CATCheckRef = 1
         Exit Function
@@ -499,9 +499,9 @@ Sub CATCreateTitleBlockStandard()
     CreateLine X(3), Y(6), X(2), Y(5), "TitleBlock_Standard_Line_4"
     Dim oCircle
     Set oCircle = Fact.CreateClosedCircle(X(4), Y(1), R1)
-    oCircle.name = "TitleBlock_Standard_Circle_1"
+    oCircle.Name = "TitleBlock_Standard_Circle_1"
     Set oCircle = Fact.CreateClosedCircle(X(4), Y(1), R2)
-    oCircle.name = "TitleBlock_Standard_Circle_2"
+    oCircle.Name = "TitleBlock_Standard_Circle_2"
     If Err.Number <> 0 Then Err.Clear
   On Error GoTo 0
 End Sub
@@ -535,8 +535,8 @@ Sub CATTitleBlockText()
   ' Insert Text Attribute link on sheet's scale
   Set text = CreateTextAF("", GetOH() + 0.5 * (col(1) + col(2)) - 4, GetOV() + row(1), "TitleBlock_Text_Scale_1", catBottomCenter, 5)
   Select Case GetContext():
-    Case "LAY": text.InsertVariable 0, 0, ActiveDoc.part.GetItem("CATLayoutRoot").Parameters.item(ActiveDoc.part.GetItem("CATLayoutRoot").name + "\" + Sheet.name + "\ViewMakeUp2DL.1\Scale")
-    Case "DRW": text.InsertVariable 0, 0, ActiveDoc.DrawingRoot.Parameters.item("Drawing\" + Sheet.name + "\ViewMakeUp.1\Scale")
+    Case "LAY": text.InsertVariable 0, 0, ActiveDoc.part.GetItem("CATLayoutRoot").Parameters.item(ActiveDoc.part.GetItem("CATLayoutRoot").Name + "\" + Sheet.Name + "\ViewMakeUp2DL.1\Scale")
+    Case "DRW": text.InsertVariable 0, 0, ActiveDoc.DrawingRoot.Parameters.item("Drawing\" + Sheet.Name + "\ViewMakeUp.1\Scale")
     Case Else: text.text = "XX"
   End Select
   CreateTextAF Text_04, GetOH() + col(2) + 1, GetOV() + row(2), "TitleBlock_Text_Weight", catTopLeft, 1.5

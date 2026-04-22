@@ -1,16 +1,16 @@
 Attribute VB_Name = "MDL_pt2xl_abscoord"
-'Attribute VB_Name = "m23_pt2xl"
-' ç‚¹åæ ‡çš„å¯¼å‡º
+'Attribute VB_Name = "MDL_pt2xl_abscoord"
+' µã×ø±êµÄµ¼³ö
 '{GP:4}
 '{EP:Mpt2xl}
-'{Caption:æ‰¹é‡ç‚¹åæ ‡}
-'{ControlTipText: æç¤ºé€‰æ‹©å‡ ä½•å›¾å½¢é›†åå¯¼å‡ºä¸‹é¢çš„ç‚¹é›†}
+'{Caption:ÅúÁ¿µã×ø±ê}
+'{ControlTipText: ÌáÊ¾Ñ¡Ôñ¼¸ºÎÍ¼ĞÎ¼¯ºóµ¼³öÏÂÃæµÄµã¼¯}
 '{BackColor:}
-'----------å¼¹çª—ä¿¡æ¯=----------------------------------
-' %UI Label lbL_jpzcs  é”®ç›˜é€ è½¦æ‰‹å‡ºå“
-' %UI Button btnOK  ç›´æ¥å¯¼å‡º
-' %UI Button btnWcoord å¸¦ç›¸å¯¹åæ ‡å¯¼å‡º
-' %UI Button btncancel  å–æ¶ˆ
+'----------µ¯´°ĞÅÏ¢=----------------------------------
+' %UI Label lbL_jpzcs  ¼üÅÌÔì³µÊÖ³öÆ·
+' %UI Button btnOK  Ö±½Óµ¼³ö
+' %UI Button btnWcoord ´øÏà¶Ô×ø±êµ¼³ö
+' %UI Button btncancel  È¡Ïû
 
 Private mDoc, HSF, mHBS, msel
 Private needtrans As Boolean
@@ -25,9 +25,9 @@ Set HSF = mDoc.part.HybridShapeFactory
 Set mHBS = mDoc.part.HybridBodies
 Set msel = mDoc.Selection
 needtrans = False
-Dim oFrm: Set oFrm = KCL.newFrm(mdlname, 1) '1 æ ‡è¯†isvertical=true
-oFrm.Show
-    Select Case oFrm.BtnClicked
+Dim oEng: Set oEng = KCL.newEngine(mdlname, 1) '1 ±êÊ¶isvertical=true
+oEng.Show
+    Select Case oEng.ClickedButton
         Case "btnOK":
                 Call pt2xl(getHB())
          Case "btnWcoord":
@@ -38,7 +38,7 @@ oFrm.Show
 End Sub
 Function getHB()
     Dim imsg
-       imsg = "è¯·é€‰æ‹©ç‚¹æ‰€åœ¨çš„å‡ ä½•å›¾å½¢é›†"
+       imsg = "ÇëÑ¡ÔñµãËùÔÚµÄ¼¸ºÎÍ¼ĞÎ¼¯"
        Dim oHb
        Set oHb = KCL.SelectItem(imsg, "HybridBody")
         Set getHB = oHb
@@ -50,25 +50,25 @@ Sub pt2xl(oHb)
         Set oshapes = oHb.HybridShapes
         ct = oshapes.count
         ReDim arr(0 To ct, 0 To 4)
-        irow = 0  'è·å¾—è¡¨å¤´
-            arr(irow, 0) = "åºå·"
-            arr(irow, 1) = "åç§°"
+        irow = 0  '»ñµÃ±íÍ·
+            arr(irow, 0) = "ĞòºÅ"
+            arr(irow, 1) = "Ãû³Æ"
             arr(irow, 2) = "X"
             arr(irow, 3) = "Y"
             arr(irow, 4) = "Z"
         irow = 1
         ReDim fincoord(2)
         For i = 1 To ct
-            Set opt = oshapes.item(i)
+            Set oPt = oshapes.item(i)
             Dim str
-            str = HSF.GetGeometricalFeatureType(opt)
+            str = HSF.GetGeometricalFeatureType(oPt)
             If str = 1 Then
-               Dim fakept:  Set fakept = HSF.AddNewPointCoordWithReference(0, 0, 0, opt)
+               Dim fakept:  Set fakept = HSF.AddNewPointCoordWithReference(0, 0, 0, oPt)
                                 oHb.AppendHybridShape fakept
                                 mDoc.part.Update
                fakept.GetCoordinates fincoord
                If needtrans Then
-                    Dim oAxi: Set oAxi = KCL.SelectItem("è¯·é€‰æ‹©åæ ‡ç³»", AxisSystem)
+                    Dim oAxi: Set oAxi = KCL.SelectItem("ÇëÑ¡Ôñ×ø±êÏµ", AxisSystem)
                     If Not oAxi Is Nothing Then fincoord = TransAxi(abscoord, oAxi)
                End If
                   msel.Clear
@@ -76,7 +76,7 @@ Sub pt2xl(oHb)
                   msel.Delete
                   mDoc.part.Update
                 arr(irow, 0) = irow
-                arr(irow, 1) = opt.name
+                arr(irow, 1) = oPt.Name
                 arr(irow, 2) = fincoord(0)
                 arr(irow, 3) = fincoord(1)
                 arr(irow, 4) = fincoord(2)
@@ -85,7 +85,7 @@ Sub pt2xl(oHb)
         Next
         ArrayToxl arr
     Else
-        MsgBox "ç¼ºå°‘å¾…æ“ä½œå‡ ä½•å›¾å½¢é›†ï¼Œè¯·æ£€æŸ¥é€‰æ‹©"
+        MsgBox "È±ÉÙ´ı²Ù×÷¼¸ºÎÍ¼ĞÎ¼¯£¬Çë¼ì²éÑ¡Ôñ"
         Exit Sub
     End If
 End Sub
@@ -122,5 +122,6 @@ Function TransAxi(acoor As Variant, axi1) As Variant
     Result(2) = v(0) * zDir(0) + v(1) * zDir(1) + v(2) * zDir(2)
     TransAxi = Result
 End Function
+
 
 
