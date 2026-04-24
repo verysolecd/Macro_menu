@@ -1,10 +1,8 @@
 Attribute VB_Name = "MDL_MaterialColors"
-'Attribute VB_Name = "MDL_MaterialColors"
 '{GP:4}
 '{EP:MaterialPainter}
 '{Caption:实体上色}
 '{ControlTipText: Apply industry standard colors to selection}
-'
 '------Buttons------------------------------
 ' %UI Button btn_mild 软钢(<210)    #ADD8E6
 ' %UI Button btn_hss 高强钢(210-340)  #00BFFF
@@ -19,19 +17,16 @@ Attribute VB_Name = "MDL_MaterialColors"
 ' %UI Button btn_Fas 紧固件      #A52A2A
 ' %UI Button btn_glue 胶水 #C8A2C8
 ' %UI Label bl_steel ----------
-
-
+'颜色定义
 '≤210MPa       浅蓝色    MS=Array(173,216,230)  #ADD8E6
 '210-340MPa    深天蓝     HSS=Array(0,191,255)      #00BFFF
 '340-590MPa    黄色      AHSS=Array(255,255,0)    #FFFF00
 '590-980MPa   橙色      UHSS=Array(255,165,0)    #FFA500
-
 '980-1200MPa  橙红色   Gpa=Array(255,0,51)    #ff0033
 '1200-1600    深粉色      HF=Array(255,20,147)      #FF1493
 '＜280MPa      浅绿色    Alu=Array(144,238,144) #90EE90
 '180~240      深海洋绿    Alu2=Array(34,139,34)   #8FBC8F
 '≥280MPa       深绿色    Alu2=Array(34,139,34)  #228B22
-
 ' 紧固件       棕色      Fas=Array(165, 42, 42)     #A52A2A
 'Glue          淡紫色    Glue=Arrary(200,160,200)  #C8A2C8
 
@@ -43,9 +38,6 @@ Private mEngine As Cls_DynaUIEngine
 Private Const mdlname As String = "MDL_MaterialColors"
 ' Main Entry Point
 Sub MaterialPainter()
-
-
-
     Set mprt = Nothing
   Set mprt = KCL.get_workPartDoc.part
   If mprt Is Nothing Then
@@ -60,9 +52,9 @@ Sub MaterialPainter()
     If mprt Is Nothing Then Exit Sub
     Set mHSF = mprt.HybridShapeFactory
     Dim mapFunc: Set mapFunc = setMasterFunc(mdlname)
-    ' 3. Initialize Engine with PassButtonName ENABLED
     Set mEngine = New Cls_DynaUIEngine
     mEngine.PassButtonName = True ' <--- The Magic Switch
+    
     ' 4. Show Toolbar (Modeless) — modMap 自动构建, 仅传自定义 macMap
     mEngine.ShowToolbar mdlname, , mapFunc
 End Sub

@@ -2,7 +2,7 @@ VERSION 1.0 CLASS
 BEGIN
   MultiUse = -1  'True
 END
-Attribute VB_Name = "cls_menuCAT"
+Attribute VB_Name = "cls_MnUI"
 Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
@@ -26,7 +26,7 @@ Private Const TAG_ENTRY_DEF = "CATMain"
 Private Const TAG_PJTPATH = "pjt_path"
 Private Const TAG_MDLNAME = "mdl_name"
 ' --- Properties ---
-Private Const mdlname As String = "cls_menuCAT"
+Private Const mdlname As String = "cls_MnUI"
 Public Property Get Title() As String
     Title = mTitle
 End Property

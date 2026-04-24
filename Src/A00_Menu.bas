@@ -49,7 +49,7 @@ End Sub
 
 ' --- Core Logic: Scanning ---
 
-' Scans the project for valid macros and returns a Collection of cls_menuCAT objects
+' Scans the project for valid macros and returns a Collection of cls_MnUI objects
 Private Function GetMenuItems() As Collection
     
     Dim Apc As Object: Set Apc = KCL.GetApc()
@@ -77,7 +77,7 @@ Private Sub ProcessModule(ByVal comp As Object, ByVal pjtPath As String, ByRef c
     Dim decCode As String
     decCode = mdl.lines(1, mdl.CountOfDeclarationLines)
     ' 1. Parse Metadata using the Class
-    Dim menuItem As New cls_menuCAT
+    Dim menuItem As New cls_MnUI
     If Not menuItem.InitFromCode(decCode, mdl.Name, pjtPath) Then Exit Sub
     ' 2. Check if Group is valid in our PageMap
     Dim grpKey As Variant
@@ -91,7 +91,7 @@ Private Sub ProcessModule(ByVal comp As Object, ByVal pjtPath As String, ByRef c
     ' 3. Validate Entry Point Existence
     If Not MethodExists(mdl, menuItem.EntryPoint) Then
         ' Fallback: Try default CATMain if the specified EP was invalid or missing
-        ' cls_menuCAT defaults to CATMain if empty, but if specified and missing, we try default?
+        ' cls_MnUI defaults to CATMain if empty, but if specified and missing, we try default?
         ' Logic from m0_dataMenu: if EP specified but missing, try TAG_ENTRY_DEF.
         If MethodExists(mdl, "CATMain") Then
             menuItem.EntryPoint = "CATMain"
@@ -119,7 +119,7 @@ Private Function OrganizeForView(ByVal colls As Collection) As Object
     Dim SoLst As Object
     Set SoLst = CreateObject("System.Collections.SortedList")
     
-    Dim item As cls_menuCAT
+    Dim item As cls_MnUI
     Dim grpKey As Variant
     Dim subList As Object
     

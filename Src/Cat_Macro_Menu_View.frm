@@ -60,7 +60,7 @@ Sub Set_FormInfo(ByVal InfoLst As Object, _
     Dim BtnInfos As Object, info As Variant
     Dim Btns As Object: Set Btns = KCL.Initlst()
     Dim BTN As MSForms.CommandButton
-    Dim BtnEvt As Cls_btEVT
+    Dim BtnEvt As Cls_MnuBtnEVT
     For Each KeyStr In InfoLst
             KEY = CLng(KeyStr)
             If Not PageMap.Exists(KEY) Then GoTo Continue
@@ -69,7 +69,7 @@ Sub Set_FormInfo(ByVal InfoLst As Object, _
             Set BtnInfos = InfoLst(KeyStr)
         For Each info In BtnInfos
             Set BTN = Init_Button(Pg.Controls, KEY, info)
-            Set BtnEvt = New Cls_btEVT
+            Set BtnEvt = New Cls_MnuBtnEVT
             Call BtnEvt.set_ButtonEvent(BTN, info, Me, CloseType)
             Btns.Add BtnEvt
         Next

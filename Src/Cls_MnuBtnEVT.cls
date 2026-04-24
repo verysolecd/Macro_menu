@@ -2,7 +2,7 @@ VERSION 1.0 CLASS
 BEGIN
   MultiUse = -1  'True
 END
-Attribute VB_Name = "Cls_btEVT"
+Attribute VB_Name = "Cls_MnuBtnEVT"
 Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
@@ -29,7 +29,7 @@ Private Const TAG_ENTRYPNT = "ep"           ' 入口点标签
 Private Const TAG_PJTPATH = "pjt_path"      ' 项目路径标签
 Private Const TAG_MDLNAME = "mdl_name"      ' 模块名称标签
 Private Const TAG_PASS_BTN = "springwdBTN"  ' 传递按钮名称开关
-Private Const mdlname As String = "Cls_btEVT"
+Private Const mdlname As String = "Cls_MnuBtnEVT"
 
 ' For MLess / Script Mode
 Sub set_ButtonEvent(ByVal BTN As MSForms.CommandButton, _

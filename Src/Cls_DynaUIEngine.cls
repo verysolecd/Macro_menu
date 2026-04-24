@@ -24,36 +24,34 @@ Attribute VB_Exposed = False
 '
 ' 结果回收:
 '   Results / ClickedButton / IsCancelled
+
+'类的核心结构
+'3 种 UI 生成方式（核心）
+'按钮回调完整流程 (核心)
+'窗体显示与结果回收
+'关键内部机制
+
+'变量 作用
+
+'mWD 动态窗体实例(CAT_springWD)
+'mEventCol   事件处理器集合（防止被 GC 回收）
+'mResultDict 模态窗体结果字典(点击按钮?输入值)
+'mIsAlertMode 提示框模式开关
+
 '===========================================================================
 Option Explicit
-
-' ═══════════════════════════════════════════════════════════════
-'  Private State
-' ═══════════════════════════════════════════════════════════════
-
 ' --- 控件定义列表 (ArrayList of Dictionary) ---
 Private mCtrlDefs As Object       ' 每个元素: Dict{Type, Name, Caption, Color}
-
 ' --- 窗体标题 ---
 Private mTitle As String
-
-' --- 窗体实例 ---
 Private mWD As Object             ' CAT_springWD 窗体实例
-
-' --- 事件绑定集合 (保持引用防止GC) ---
 Private mEventCol As Collection
-
-' --- 模态结果字典 ---
 Private mResultDict As Object
-
-' --- 状态标志 ---
 Private mExecuted As Boolean
 Private mIsVertical As Variant    ' Empty=Auto, True/False=Manual
 Private mPassBtn As Boolean
 Private mIsAlertMode As Boolean
 Private mAlertMsg As String
-
-' --- 项目路径缓存 ---
 Private mPjtPath As String
 
 ' --- 剪贴板相关API (Alert复制功能) ---
@@ -116,8 +114,6 @@ End Sub
 
 ' ═══════════════════════════════════════════════════════════════
 '  Section A: 配置属性 (Configuration Properties)
-' ═══════════════════════════════════════════════════════════════
-
 ''设置/获取窗体标题
 Public Property Let Title(ByVal val As String)
     mTitle = val
@@ -125,28 +121,21 @@ End Property
 Public Property Get Title() As String
     Title = mTitle
 End Property
-
 ''设置按钮排列方向：True=竖排, False=横排, 不设置=自动
 Public Property Let isVertical(ByVal val As Boolean)
     mIsVertical = val
 End Property
-
 ''设置是否向被调用宏传递按钮名称
 Public Property Let PassButtonName(ByVal val As Boolean)
     mPassBtn = val
 End Property
-
 '  Section B: 数据加载 —— 三种入口
 '' 入口1: 从模块名称加载 (解析 %UI / %Title 注释)
 Public Sub LoadFromModuleName(ByVal modName As String)
     Dim rawCode As String
     rawCode = P_getbf1stproc(modName)
     If rawCode = "" Then Exit Sub
-    
-    ' 解析标题
     mTitle = ExtractTitle(rawCode)
-    
-    ' 解析控件定义
     Set mCtrlDefs = ExtractUIControls(rawCode)
 End Sub
 
@@ -170,7 +159,7 @@ Public Function LoadFromMenuTags(ByVal GroupMap As Object) As Object
     Dim comp As Object
     For Each comp In comps
         If comp.Type = 1 Then ' vbext_ct_StdModule
-            Dim menuItem As cls_menuCAT
+            Dim menuItem As cls_MnUI
             Set menuItem = TryParseMenuModule(comp, pjtPath, GroupMap)
             If Not menuItem Is Nothing Then
                 allItems.Add menuItem
@@ -184,7 +173,7 @@ Public Function LoadFromMenuTags(ByVal GroupMap As Object) As Object
     Dim sorted As Object
     Set sorted = CreateObject("System.Collections.SortedList")
     
-    Dim item As cls_menuCAT
+    Dim item As cls_MnUI
     Dim grpKey As Variant, subList As Object, itemDict As Object
     For Each item In allItems
         If IsNumeric(item.GroupName) Then grpKey = CLng(item.GroupName) Else grpKey = item.GroupName
@@ -231,12 +220,8 @@ Public Sub AddUIElement(ByVal CtrlType As String, _
     def.Add "Color", HexColor
     mCtrlDefs.Add def
 End Sub
-
 ' ═══════════════════════════════════════════════════════════════
 '  Section C: 显示 —— Show / ShowToolbar / Alert
-' ═══════════════════════════════════════════════════════════════
-
-''────────────────────────────────────────────────────────────────
 '' 通用显示入口 (模态 / 非模态)
 ''
 '' @param iShowMode  vbModal 或 vbModeless
@@ -312,34 +297,25 @@ Public Sub Alert(ByVal Content As String)
     mExecuted = False
     Show vbModal
 End Sub
-
 ' ═══════════════════════════════════════════════════════════════
 '  Section D: 结果回收 (Result Properties)
-' ═══════════════════════════════════════════════════════════════
-
 ''获取所有控件的值 (文本框/复选框等) + btn_clicked
 Public Property Get Results() As Object
     EnsureExecuted
     Set Results = mResultDict
 End Property
-
 ''获取被点击的按钮名称
 Public Property Get ClickedButton() As Variant
     EnsureExecuted
     ClickedButton = IIf(mResultDict.Exists("btn_clicked"), mResultDict("btn_clicked"), "")
 End Property
-
 ''用户是否取消/关闭了窗体
 Public Property Get IsCancelled() As Boolean
     EnsureExecuted
     IsCancelled = IIf(mResultDict.Exists("btn_clicked") And mResultDict("btn_clicked") <> "UserClosed", False, True)
 End Property
-
 ' ═══════════════════════════════════════════════════════════════
 '  Internal: 解耦后的 UI 解析子函数 (从 KCL.ParseUIConfig 拆出)
-' ═══════════════════════════════════════════════════════════════
-
-''────────────────────────────────────────────────────────────────
 '' 从原始代码中提取标题 (%Title 行)
 '' @param  rawCode  模块声明区原始文本
 '' @return          标题字符串, 无则返回默认值
@@ -381,39 +357,27 @@ Private Function ExtractUIControls(ByVal rawCode As String) As Object
         End If
     Next
 End Function
-
 ''────────────────────────────────────────────────────────────────
 '' 解析单行 %UI 注释
-''
 '' 格式:  ' %UI <ControlType> <ControlName> <Caption> [#HexColor]
 '' 例如:  ' %UI Button btnOK  确定 #FF6600
-''
 '' @param  sLine  单行文本
 '' @return        Dict{Type, Name, Caption, Color} 或 Nothing
 ''────────────────────────────────────────────────────────────────
 Private Function ParseSingleUILine(ByVal sLine As String) As Object
     Set ParseSingleUILine = Nothing
-    
-    ' 去掉行首尾空白和回车
-    sLine = Trim(Replace(sLine, vbCr, ""))
-    
-    ' 快速排除: 必须以 ' 开头且包含 %UI
-    If Left(sLine, 1) <> "'" Then Exit Function
+    sLine = Trim(Replace(sLine, vbCr, "")) ' 去掉行首尾空白和回车
+    If Left(sLine, 1) <> "'" Then Exit Function  ' 快速排除: 必须以 ' 开头且包含 %UI
     If InStr(1, sLine, "%UI", vbTextCompare) < 1 Then Exit Function
-    
-    ' 用正则精确匹配
-    Dim regEx As Object: Set regEx = P_getRegexp()
+    Dim regEx As Object: Set regEx = P_getRegexp() ' 用正则精确匹配
     With regEx
         .Global = False
         .MultiLine = False
         .Pattern = "^\s*'\s*%UI\s+(\w+)\s+(\w+)\s+(.+?)(?:\s+(#[0-9a-fA-F]{6}))?\s*$"
     End With
-    
     If Not regEx.Test(sLine) Then Exit Function
-    
     Dim matches As Object: Set matches = regEx.Execute(sLine)
     Dim m As Object: Set m = matches(0)
-    
     Set ParseSingleUILine = P_InitDic()
     With ParseSingleUILine
         .Add "Type", ResolveCtrlType(CStr(m.SubMatches(0)))
@@ -422,10 +386,8 @@ Private Function ParseSingleUILine(ByVal sLine As String) As Object
         .Add "Color", Trim(CStr(m.SubMatches(3)))
     End With
 End Function
-
 ''────────────────────────────────────────────────────────────────
-'' 将控件类型别名转换为 MSForms ProgID
-''
+'' 将控件类型别名转换为 MSForms ProgID''
 '' @param alias  Button/btn/cmd/Label/lbl/Text/txt/CheckBox/chk
 '' @return       "Forms.CommandButton.1" 等
 ''────────────────────────────────────────────────────────────────
@@ -441,22 +403,17 @@ End Function
 
 ' ═══════════════════════════════════════════════════════════════
 '  Internal: 菜单扫描辅助函数
-' ═══════════════════════════════════════════════════════════════
-
 ''尝试解析一个标准模块为菜单项, 失败返回 Nothing
 Private Function TryParseMenuModule(ByVal comp As Object, _
                                     ByVal pjtPath As String, _
-                                    ByVal GroupMap As Object) As cls_menuCAT
+                                    ByVal GroupMap As Object) As cls_MnUI
     Set TryParseMenuModule = Nothing
-    
     Dim mdl As Object: Set mdl = comp.CodeModule
     If mdl.CountOfDeclarationLines < 1 Then Exit Function
-    
     Dim decCode As String
     decCode = mdl.lines(1, mdl.CountOfDeclarationLines)
-    
     ' 解析标签
-    Dim menuItem As New cls_menuCAT
+    Dim menuItem As New cls_MnUI
     If Not menuItem.InitFromCode(decCode, mdl.Name, pjtPath) Then Exit Function
     
     ' 验证 Group 在 GroupMap 中存在
@@ -507,7 +464,7 @@ End Function
 ''为窗体中的所有按钮绑定事件处理
 Private Sub BindEvents(frm As Object, modMap As Object, macMap As Object)
     Dim ctl As Control, btnName As String
-    Dim handler As Cls_btEVT, mBTNinfo As Object
+    Dim handler As Cls_MnuBtnEVT, mBTNinfo As Object
     Dim isScript As Boolean
     isScript = (Not modMap Is Nothing) And (Not macMap Is Nothing)
     
@@ -515,7 +472,7 @@ Private Sub BindEvents(frm As Object, modMap As Object, macMap As Object)
     For Each ctl In frm.Controls
         If TypeName(ctl) = "CommandButton" Then
             btnName = ctl.Name
-            Set handler = New Cls_btEVT
+            Set handler = New Cls_MnuBtnEVT
             If isScript And Not modMap Is Nothing Then
                 If modMap.Exists(btnName) And macMap.Exists(btnName) Then
                     Set mBTNinfo = P_InitDic()
