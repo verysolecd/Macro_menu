@@ -1,10 +1,5 @@
 {
-  // 当前工作区默认编码：GBK（GB2312/GB18030 兼容）
-  "files.encoding": "gbk",
-  // 开启自动猜测编码（优先识别文件实际编码，减少乱码）
-  "files.autoGuessEncoding": true,
-  // 可选：仅对特定语言（如cpp、java）强制GBK，其他保持默认
-  "[VBA]": {
-    "files.encoding": "gbk"
-  }
+    "files.encoding": "gbk",  // 全局默认编码设为GBK
+    "files.autoGuessEncoding": true,  // 启用自动编码猜测
+    "files.encodingDetectionConfidence": 0.8  // 识别置信度阈值（0-1）
 }

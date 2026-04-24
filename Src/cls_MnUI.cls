@@ -76,7 +76,7 @@ Public Sub Run()
     Dim pjtPath As String
     If mModulePath = "" Then
          On Error Resume Next
-         pjtPath = KCL.GetApc().ExecutingProject.DisplayName
+         pjtPath = GetApc().ExecutingProject.DisplayName
          On Error GoTo 0
     Else
         pjtPath = mModulePath
@@ -95,6 +95,21 @@ Public Sub Run()
     End If
     On Error GoTo 0
 End Sub
+
+Private Function GetApc() As Object
+    Set GetApc = Nothing
+    Dim COMObjectName$ 
+    #If VBA7 Then
+        COMObjectName = "MSAPC.Apc.7.1"
+    #ElseIf VBA6 Then
+        COMObjectName = "MSAPC.Apc.6.2"
+    #Else
+        Exit Function
+    #End If
+    On Error Resume Next
+        Set GetApc = CreateObject(COMObjectName)
+    On Error GoTo 0
+End Function
 
 Public Function InitFromCode(ByVal decCode As String, ByVal mdlname As String, ByVal currentPjtPath As String) As Boolean
     InitFromCode = False
@@ -140,7 +155,8 @@ End Function
 
 Public Function ToDictionary() As Object
     Dim dic As Object
-    Set dic = KCL.InitDic(vbTextCompare)
+    Set dic = CreateObject("Scripting.Dictionary")
+    dic.compareMode = vbTextCompare
     Dim k
     For Each k In mExtras.keys
         dic.Add k, mExtras(k)
