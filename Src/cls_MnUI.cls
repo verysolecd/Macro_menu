@@ -7,6 +7,7 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
+
 Option Explicit
 ' --- Private Variables ---
 Private mTitle As String
@@ -98,7 +99,7 @@ End Sub
 
 Private Function GetApc() As Object
     Set GetApc = Nothing
-    Dim COMObjectName$ 
+    Dim COMObjectName$
     #If VBA7 Then
         COMObjectName = "MSAPC.Apc.7.1"
     #ElseIf VBA6 Then
@@ -167,6 +168,8 @@ Public Function ToDictionary() As Object
     If dic.Exists(TAG_ENTRYPNT) Then dic(TAG_ENTRYPNT) = Me.EntryPoint Else dic.Add TAG_ENTRYPNT, Me.EntryPoint
     Set ToDictionary = dic
 End Function
+
+
 
 
 

@@ -1,28 +1,26 @@
 Attribute VB_Name = "MDL_addgeotree"
 '{GP:4}
-'{Ep:newgeo}
+'{Ep:newgeo_Tree}
 '{Caption:创建几何集}
 '{ControlTipText:创建基于模板的几何树}
 '{BackColor: }
 
-Private oprt
 
+Private m_Doc         As Document       ' 当前激活文档
+Private m_workPrtDoc   As PartDocument   ' 当前激活的零件文档
+Private m_prt         As part           ' 当前激活的Part对象
+Private m_sel         As Selection      ' 选择集对象
 Private Const mdlname As String = "MDL_addgeotree"
-Sub newgeo()
- If Not CanExecute("PartDocument,productdocument") Then Exit Sub
-  Set oprt = KCL.get_workPartDoc.part
-If IsNothing(oprt) Then Exit Sub
-    Set colls = oprt.HybridBodies
+Sub newgeo_Tree()
+    If Not KCL.existWkPrt(m_Doc, m_workPrtDoc, m_prt, m_sel) Then Exit Sub
+    Set colls = m_prt.HybridBodies
     On Error Resume Next
     Set og = colls.item("Geo_sheet")
     On Error GoTo 0
-
-Set og = colls.Add()
+Set og = colls.Add(): og.Name = "GEO_sheet"
 crSkt og
-og.Name = "GEO_sheet"
 Set colls = og.HybridBodies
 arr = Array("01_Profile", "02_Ribs", "03_Assy", "04_trim", "05_Pierce", "06_final part")
-
 For i = 0 To UBound(arr)
     Set og = colls.Add()
     og.Name = arr(i)
@@ -44,22 +42,22 @@ End Sub
 
 
 Sub crSkt(og)
-oprt.InWorkObject = og
-Set HSF = oprt.HybridShapeFactory
+m_prt.InWorkObject = og
+Set HSF = m_prt.HybridShapeFactory
 Set oPoint = HSF.AddNewPointCoord(0#, 0#, 0#)
 og.AppendHybridShape oPoint
-oprt.InWorkObject = oPoint
-oprt.Update
+m_prt.InWorkObject = oPoint
+m_prt.Update
 Set oPln = HSF.AddNewPlaneEquation(0#, 0#, 1#, 20#)
 Set pref = oPoint
-Set oRef = oprt.CreateReferenceFromObject(pref)
+Set oRef = m_prt.CreateReferenceFromObject(pref)
 oPln.SetReferencePoint oPoint  'oref
 og.AppendHybridShape oPln
-oprt.InWorkObject = oPln
-oprt.Update
+m_prt.InWorkObject = oPln
+m_prt.Update
 Set skts = og.HybridSketches
 Set oSkt = og.HybridSketches.Add(oPln)
-oprt.InWorkObject = oSkt
+m_prt.InWorkObject = oSkt
 Set factory2D1 = oSkt.OpenEdition()
 Set geometricElements1 = oSkt.GeometricElements
 Set axis2D1 = geometricElements1.item("AbsoluteAxis")
@@ -72,8 +70,8 @@ Set point2D1 = axis2D1.GetItem("Origin")
 circle2D1.CenterPoint = point2D1
 circle2D1.ReportName = 3
 oSkt.CloseEdition
-oprt.InWorkObject = og
-oprt.Update
+m_prt.InWorkObject = og
+m_prt.Update
 ''the first 3 being the coordinates of the axis origin,
 'Dim arr(0 To 8)
 'arr(0) = 0

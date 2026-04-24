@@ -28,13 +28,9 @@ Sub CATMain()
         MsgBox "未找到可用的宏信息", vbExclamation
         Exit Sub
     End If
-
-    ' 3. Sort and Organize (Adapting to View's expected format)
     Dim SoLst As Object
     Set SoLst = OrganizeForView(MenuItems)
-    
     If SoLst Is Nothing Then Exit Sub
-
     ' 4. Show Menu
     Dim Menu As Cat_Macro_Menu_View ' Use existing View class
     Set Menu = New Cat_Macro_Menu_View

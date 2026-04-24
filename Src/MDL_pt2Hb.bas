@@ -1,15 +1,22 @@
 Attribute VB_Name = "MDL_pt2Hb"
-
 '{GP:4}
 '{EP:Copypointsfromset}
 '{Caption:复制点到图形集}
 '{ControlTipText: 选择几何图形集后导出其下所有点（含阵列）到新图形集}
 '{BackColor:12648447}
-Private Const mdlname As String = "MDL_copyallPoints"
+Private Const mdlname As String = "MDL_pt2Hb"
 
 Sub Copypointsfromset()
-    If Not CanExecute("PartDocument,ProductDocument") Then Exit Sub
-    Set oprt = KCL.get_workPartDoc.part
+    If Not CanExecute("Productdocument,PartDocument") Then Exit Sub
+    On Error Resume Next
+        Dim oDoc: Set oDoc = CATIA.ActiveDocument
+        Dim workPrtDoc: Set workPrtDoc = KCL.get_workPartDoc
+        Dim oprt: Set oprt = Nothing: Set oprt = workPrtDoc.part
+    Err.Clear
+    On Error GoTo 0
+    If IsNothing(oprt) Then: MsgBox "No activated Part": Exit Sub
+    
+    
     Set HSF = oprt.HybridShapeFactory
     '======= 选择源几何图形集
     Dim iSel: Set iSel = Nothing

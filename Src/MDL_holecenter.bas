@@ -9,9 +9,14 @@ Attribute VB_Name = "MDL_holecenter"
 
 Private Const mdlname As String = "MDL_holecenter2"
 Sub Faceholecenter()
-  If Not CanExecute("PartDocument,ProductDocument") Then Exit Sub
-
-    Set oprt = KCL.get_workPartDoc.part
+ If Not CanExecute("Productdocument,PartDocument") Then Exit Sub
+    On Error Resume Next
+        Dim oDoc: Set oDoc = CATIA.ActiveDocument
+        Dim workPrtDoc: Set workPrtDoc = KCL.get_workPartDoc
+        Dim oprt: Set oprt = Nothing: Set oprt = workPartDoc.part
+    Err.Clear
+    On Error GoTo 0
+    If IsNothing(oprt) Then: MsgBox "No activated Part": Exit Sub
     Set HSF = oprt.HybridShapeFactory
 '======= 选择要识别的面
 Dim iSel: Set iSel = Nothing

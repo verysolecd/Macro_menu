@@ -38,18 +38,17 @@ Private mEngine As Cls_DynaUIEngine
 Private Const mdlname As String = "MDL_MaterialColors"
 ' Main Entry Point
 Sub MaterialPainter()
-    Set mprt = Nothing
-  Set mprt = KCL.get_workPartDoc.part
-  If mprt Is Nothing Then
-        Dim doc
+    If Not CanExecute("Productdocument,PartDocument") Then Exit Sub
+    Dim doc
+    On Error Resume Next
+        Dim oDoc: Set oDoc = CATIA.ActiveDocument
         For Each doc In CATIA.Documents
-            If TypeName(doc) = "PartDocument" Then
-                Set mprt = doc.part
-                Exit For
-            End If
+            If TypeName(doc) = "PartDocument" Then: Set mprt = doc.part: Exit For
         Next
-    End If
-    If mprt Is Nothing Then Exit Sub
+        Err.Clear
+    On Error GoTo 0
+
+If IsNothing(mprt) Then: MsgBox "No part found": Exit Sub
     Set mHSF = mprt.HybridShapeFactory
     Dim mapFunc: Set mapFunc = setMasterFunc(mdlname)
     Set mEngine = New Cls_DynaUIEngine

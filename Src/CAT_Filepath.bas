@@ -1,5 +1,4 @@
 Attribute VB_Name = "CAT_Filepath"
-
 '{GP:7}
 '{Ep:openfilepath}
 '{Caption:当前文件夹}

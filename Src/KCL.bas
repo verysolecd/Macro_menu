@@ -151,8 +151,7 @@ End Function
 ''' @param:Filter-array(string),string 选择过滤器(默认为AnyObject)
 ''' @return:SelectedElement
 Function SelectElement(ByVal msg$, _
-                           Optional ByVal filter As Variant = Empty) ' _
-                           As SelectedElement
+                           Optional ByVal filter As Variant = Empty)
     If IsEmpty(filter) Then filter = Array("AnyObject")
     If VarType(filter) = vbString Then filter = strToAry(filter)
     If Not checkFilterType(filter) Then Exit Function
@@ -289,6 +288,34 @@ Public Function get_workPartDoc()  'in Assembly
     End If
     Set get_workPartDoc = itemp
 End Function
+
+Public Function existWkPrt(m_Doc, m_workPrtDoc, m_prt, m_sel) As Boolean
+    If Not CanExecute("Productdocument,PartDocument") Then
+        existWkPrt = False: Exit Function
+    End If
+    
+'  existWkPrt(m_Doc,m_workPrtDoc,m_prt,msel)
+'    Private m_Doc         As Document       ' 当前激活文档
+'    Private m_workPrtDoc   As PartDocument   ' 当前激活的零件文档
+'    Private m_prt         As part           ' 当前激活的Part对象
+'    Private m_Sel         As Selection      ' 选择集对象
+    On Error Resume Next
+    Set m_Doc = CATIA.ActiveDocument
+    Set m_workPrtDoc = KCL.get_workPartDoc
+    Set m_prt = m_workPrtDoc.part
+    Set m_sel = m_Doc.Selection
+    Err.Clear: On Error GoTo 0
+
+    If IsNothing(m_prt) Then
+        MsgBox "未检测到激活的零件文档，请先双击激活一个零件！", vbExclamation
+        existWkPrt = False
+    Else
+        existWkPrt = True
+    End If
+End Function
+
+
+
 
 
 Public Sub toMP()
@@ -1092,7 +1119,7 @@ End Function
 ' 模态弹窗示例:  Set oEng = KCL.newEngine("OTH_Minibox") : oEng.Show
 ' 工具栏示例:    Set oEng = KCL.newEngine("OTH_ivhideshow") : oEng.ShowToolbar mdlname, mapMdl, mapFunc
 ' 纯代码示例:    Set oEng = KCL.newEngine() : oEng.AddUIElement "Button","btn1","确定" : oEng.Show
-Function newEngine(Optional ByVal modName As String = "", Optional ByVal isVertical = False)
+Public Function newEngine(Optional ByVal modName As String = "", Optional ByVal isVertical = False)
     Dim oEng As Cls_DynaUIEngine: Set oEng = New Cls_DynaUIEngine
     If modName <> "" Then
         oEng.LoadFromModuleName modName
@@ -1100,6 +1127,7 @@ Function newEngine(Optional ByVal modName As String = "", Optional ByVal isVerti
     If isVertical Then oEng.isVertical = True
     Set newEngine = oEng
 End Function
+
 Public Function ParseHex(ByVal hexStr)
 Dim R, G, B
     hexStr = Replace(hexStr, "#", "")

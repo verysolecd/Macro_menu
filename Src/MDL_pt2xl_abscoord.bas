@@ -17,14 +17,22 @@ Private needtrans As Boolean
 
 Private Const mdlname As String = "MDL_pt2xl_abscoord"
 Sub Mpt2xl()
- If Not CanExecute("PartDocument") Then
-        Exit Sub
-    End If
-Set mDoc = CATIA.ActiveDocument
-Set HSF = mDoc.part.HybridShapeFactory
-Set mHBS = mDoc.part.HybridBodies
+    If Not CanExecute("Productdocument,PartDocument") Then Exit Sub
+    On Error Resume Next
+        Dim oDoc: Set oDoc = CATIA.ActiveDocument
+        Dim workPrtDoc: Set workPrtDoc = KCL.get_workPartDoc
+        Dim oprt: Set oprt = Nothing: Set oprt = workPrtDoc.part
+    Err.Clear
+    On Error GoTo 0
+    If IsNothing(oprt) Then: MsgBox "No Activated Part": Exit Sub
+    
+    Set mDoc = oDoc
+
+Set HSF = oprt.HybridShapeFactory
+Set mHBS = oprt.HybridBodies
 Set msel = mDoc.Selection
 needtrans = False
+
 Dim oEng: Set oEng = KCL.newEngine(mdlname, 1) '1 标识isvertical=true
 oEng.Show
     Select Case oEng.ClickedButton
@@ -37,8 +45,7 @@ oEng.Show
     End Select
 End Sub
 Function getHB()
-    Dim imsg
-       imsg = "请选择点所在的几何图形集"
+    Dim imsg: imsg = "请选择点所在的几何图形集"
        Dim oHb
        Set oHb = KCL.SelectItem(imsg, "HybridBody")
         Set getHB = oHb
