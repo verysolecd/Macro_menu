@@ -16,16 +16,14 @@ Sub Yellow_Weld()
     Dim HSF:  Set HSF = m_prt.HybridShapeFactory
     Dim sweeps: Set sweeps = KCL.Initlst
     m_sel.Clear
-    m_sel.Search "CATGMOSearch.Surface,all" ' Sweep 是曲面的子类型,或许可以使用
-    For i = 1 To m_sel.count
-        Dim shp: Set shp = m_sel.item(i).Value
-        If HSF.GetGeometricalFeatureType(shp) = TYPE_SWEEP Then sweeps.Add shp
-    Next
-    m_sel.Clear
-    For Each c In sweeps
-         m_sel.Add c
-    Next
+    CATIA.HSOSynchronized = False
+'  '  sel.Search "Type=*,scr"'
+'    'm_sel.Search "CATGMOSearch.Surface,all" ' Sweep 是曲面的子类型,
+'    sType = "CATGMOSearch.Surface,all"
+'    m_sel.Search ("CATGMOSearch.HybridShape,all")
+  Set m_sel = KCL.SelectQuery(".'Volume geometry'+ .Surface& Color!=Yellow& Type!=Plane")
     Color = Array(255, 255, 0)
     m_sel.VisProperties.SetRealColor Color(0), Color(1), Color(2), 0 '(R, G, B, Inheritance=1)
     m_sel.Clear
+        CATIA.HSOSynchronized = True
 End Sub

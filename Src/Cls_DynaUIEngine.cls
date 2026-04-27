@@ -328,7 +328,7 @@ Private Function ExtractTitle(ByVal rawCode As String) As String
         .MultiLine = True
         .Pattern = "^\s*'\s*%Title\s+(.*)$"
     End With
-    If Not regEx.Test(rawCode) Then Exit Function
+    If Not regEx.test(rawCode) Then Exit Function
     
     Dim matches As Object: Set matches = regEx.Execute(rawCode)
     Dim match As Object
@@ -375,7 +375,7 @@ Private Function ParseSingleUILine(ByVal sLine As String) As Object
         .MultiLine = False
         .Pattern = "^\s*'\s*%UI\s+(\w+)\s+(\w+)\s+(.+?)(?:\s+(#[0-9a-fA-F]{6}))?\s*$"
     End With
-    If Not regEx.Test(sLine) Then Exit Function
+    If Not regEx.test(sLine) Then Exit Function
     Dim matches As Object: Set matches = regEx.Execute(sLine)
     Dim m As Object: Set m = matches(0)
     Set ParseSingleUILine = P_InitDic()

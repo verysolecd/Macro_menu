@@ -4,13 +4,16 @@ Attribute VB_Name = "MDL_eleRename"
 '{Caption:元素重命名}
 '{ControlTipText: 提示选择后将实体或几何图形集下的元素按顺序重命名}
 '{BackColor: }
-'type definition
-' = 0 , Unknown
-' = 1 , Point
-' = 2 , Curve
-' = 3 , Line
-' = 4 , Circle
-' = 5 , Surface
+'' Type of feature
+'= 0 , Unknown
+'= 1 , Point
+'= 2 , Curve
+'= 3 , Line
+'= 4 , Circle
+'= 5 , Surface
+'= 6 , Plane
+'= 7 , Solid, Volume
+
 
 '----------弹窗信息=----------------------------------
 ' %UI Label lbL_jpzcs  键盘造车手出品

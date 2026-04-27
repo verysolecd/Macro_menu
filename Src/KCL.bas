@@ -164,7 +164,6 @@ Function SelectElement(ByVal msg$, _
     Set SelectElement = sel.item(1)
     sel.Clear
 End Function
-
 Function Selectmulti(ByVal msg$, _
                            Optional ByVal filter As Variant = Empty) ' _
                            As SelectedElement
@@ -192,7 +191,6 @@ Public Function defPrd()
     End Select
     Set defPrd = tmp
 End Function
-
 ' 获取内部名称
 ''' @param:AOj-AnyObject
 ''' @return:String
@@ -202,7 +200,6 @@ Function GetInternalName$(aoj)
     End If
     GetInternalName = aoj.GetItem("ModelElement").internalName
 End Function
-
 ' 获取obj的特定类型的父对象
 ''' @param:anyObj-AnyObject
 ''' @param:T-String
@@ -227,11 +224,9 @@ Function GetParent_Of_T( _
         Set GetParent_Of_T = GetParent_Of_T(anyObj.Parent, t)
     End If
 End Function
-
 Private Function asDisp(o As INFITF.CATBaseDispatch) As INFITF.CATBaseDispatch
     Set asDisp = o
 End Function
-
 Public Function get_aPartDoc()
     Set get_aPartDoc = Nothing
     Dim oprt, doc
@@ -242,7 +237,6 @@ Public Function get_aPartDoc()
             End If
     Next
 End Function
-
 Public Function get_workPartDoc()  'in Assembly
     Set get_workPartDoc = Nothing
     Dim oDoc: Set oDoc = CATIA.ActiveDocument
@@ -274,7 +268,6 @@ Public Function get_workPartDoc()  'in Assembly
         If msel.count > 0 Then Set itemp = msel.item(1).LeafProduct.ReferenceProduct.Parent '.part
     Err.Clear
     On Error GoTo 0
-    
     ' 3. Restore Selection
     msel.Clear
     If bRestore Then
@@ -288,12 +281,10 @@ Public Function get_workPartDoc()  'in Assembly
     End If
     Set get_workPartDoc = itemp
 End Function
-
 Public Function existWkPrt(m_Doc, m_workPrtDoc, m_prt, m_sel) As Boolean
     If Not CanExecute("Productdocument,PartDocument") Then
         existWkPrt = False: Exit Function
     End If
-    
 '  existWkPrt(m_Doc,m_workPrtDoc,m_prt,msel)
 '    Private m_Doc         As Document       ' 当前激活文档
 '    Private m_workPrtDoc   As PartDocument   ' 当前激活的零件文档
@@ -305,7 +296,6 @@ Public Function existWkPrt(m_Doc, m_workPrtDoc, m_prt, m_sel) As Boolean
     Set m_prt = m_workPrtDoc.part
     Set m_sel = m_Doc.Selection
     Err.Clear: On Error GoTo 0
-
     If IsNothing(m_prt) Then
         MsgBox "未检测到激活的零件文档，请先双击激活一个零件！", vbExclamation
         existWkPrt = False
@@ -313,10 +303,6 @@ Public Function existWkPrt(m_Doc, m_workPrtDoc, m_prt, m_sel) As Boolean
         existWkPrt = True
     End If
 End Function
-
-
-
-
 
 Public Sub toMP()
     On Error Resume Next
@@ -379,9 +365,6 @@ Private Function checkFilterType(ByVal ary As Variant) As Boolean
     End If
     checkFilterType = True
 End Function
-
-
-
 '=========================================通用函数========================================
 ' 检查对象是否为Nothing
 ''' @param:OJ-Variant(Of Object)
@@ -408,26 +391,40 @@ Public Function getItm(iName, colls)
    Set getItm = itm
     Set itm = Nothing
 End Function
-
-Public Function SelectQuery(iQuery As String, Optional ByVal iRange = Nothing)
+Public Function SelectQuery(iQuery, Optional ByVal iRange = Nothing)
     Set SelectQuery = Nothing
-  Dim msel: Set msel = CATIA.ActiveDocument.Selection
-  msel.Clear
+    Dim msel As Selection
+    Set msel = CATIA.ActiveDocument.Selection
+    msel.Clear
     If VarType(iQuery) = vbString Then
-         iQuery = VBA.LCase(iQuery)
-        iQuery = VBA.Split(iQuery, ",") '过滤器转数组
+'        iQuery = LCase(iQuery)
+        iQuery = Split(iQuery, ",")
     End If
-    If Not checkFilterType(iQuery) Then Exit Function '过滤器检查，非数组则退出
-    Dim i As Long, Qry As String
+    If Not checkFilterType(iQuery) Then Exit Function
+    Dim col As Collection
+    Set col = New Collection ' 用来保存所有结果（不会被清空）
+    Dim i, j As Long, Qry As String
+    Dim obj As Object
     For i = LBound(iQuery) To UBound(iQuery)
-        Qry = iQuery(i)
+        Qry = Trim(iQuery(i))
+        If Qry = "" Then GoTo NextQry
+        msel.Clear
         If iRange Is Nothing Then
-          msel.Search Qry & ",all"
+            msel.Search Qry & ",all"
         Else
-           msel.Add iRange
-           msel.Search Qry & ",sel"
+            msel.Add iRange
+            msel.Search Qry & ",sel"
         End If
+            For j = 1 To msel.Count2
+                Set obj = msel.Item2(j).Value
+                col.Add obj
+            Next
+NextQry:
     Next i
+    msel.Clear
+    For Each obj In col
+        msel.Add obj
+    Next
     Set SelectQuery = msel
 End Function
 
@@ -808,7 +805,7 @@ Function isPathchn(pathToCheck) As Boolean
     regEx.Pattern = "[\u4e00-\u9fa5]"   ' 设置正则表达式模式，匹配中文字符
     regEx.IgnoreCase = True
     regEx.Global = True
-    isPathchn = regEx.Test(pathToCheck)   ' 执行匹配并返回结果
+    isPathchn = regEx.test(pathToCheck)   ' 执行匹配并返回结果
     Set regEx = Nothing
 End Function
 
@@ -1177,7 +1174,7 @@ Function ParseUIConfig(ByVal code As String) As Object
         .Pattern = "^\s*'\s*%UI\s+(\w+)\s+(\w+)\s+(.+?)(?:\s+(#[0-9a-fA-F]{6}))?\s*$"
         '      "^\s*'\s*%UI\s+(\w+)\s+(\w+)\s+(.*)$"
     End With
-    If regEx.Test(code) Then
+    If regEx.test(code) Then
         Set matches = regEx.Execute(code)
         For Each match In matches
             Set CtrCfg = KCL.InitDic
@@ -1201,7 +1198,7 @@ Function ParseUITitle(ByVal code As String) As String
         .Pattern = "^\s*'\s*%Title\s+(.*)$"
     End With
     itl = "请问如何执行"
-    If regEx.Test(code) Then
+    If regEx.test(code) Then
         Set matches = regEx.Execute(code)
         For Each match In matches
             itl = match.SubMatches(0)

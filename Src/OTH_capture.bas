@@ -172,6 +172,16 @@ Private Sub HideNonBody(iDoc)
     Dim sel As Selection: Set sel = iDoc.Selection: sel.Clear
     Dim searchStr As String
     searchStr = ".Plane + .AxisSystem + .Point + .2DPoint + .Curve + .2DCurve + .Surface + .MfConstraint,all"
+    
+''    You may have noticed the ,all or ,sel. There are multiple ways to search:
+'
+'Everywhere: shortcut ¡°all¡±
+'InWorkbench: shortcut ¡°in¡±
+'FromWorkbench: shortcut ¡°from¡±
+'FromSelection: shortcut ¡°sel¡±
+'VisibleOnScreen: shortcut ¡°scr¡±
+    
+    
     On Error Resume Next
     sel.Search searchStr
     If sel.count > 0 Then
