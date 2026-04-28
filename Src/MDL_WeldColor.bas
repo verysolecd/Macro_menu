@@ -11,7 +11,8 @@ Private m_sel         As Selection      ' 选择集对象
 Private Const TYPE_SWEEP As Long = 7
 Private Const mdlname As String = "MDL_WeldColor"
 Sub Yellow_Weld()
-    If Not KCL.existWkPrt(m_Doc, m_workPrtDoc, m_prt, m_sel) Then Exit Sub
+   If Not KCL.existWkPrt(m_Doc, m_workPrtDoc, m_prt, m_sel) Then Exit Sub
+   If m_prt Is Nothing Then Exit Sub
     Dim c, Color, i
     Dim HSF:  Set HSF = m_prt.HybridShapeFactory
     Dim sweeps: Set sweeps = KCL.Initlst
@@ -19,9 +20,8 @@ Sub Yellow_Weld()
     CATIA.HSOSynchronized = False
 '  '  sel.Search "Type=*,scr"'
 '    'm_sel.Search "CATGMOSearch.Surface,all" ' Sweep 是曲面的子类型,
-'    sType = "CATGMOSearch.Surface,all"
 '    m_sel.Search ("CATGMOSearch.HybridShape,all")
-  Set m_sel = KCL.SelectQuery(".'Volume geometry'+ .Surface& Color!=Yellow& Type!=Plane")
+  Set m_sel = KCL.SelectQuery("(.'Volume geometry'+.Surface& Type!=Plane)& Color!=Yellow")
     Color = Array(255, 255, 0)
     m_sel.VisProperties.SetRealColor Color(0), Color(1), Color(2), 0 '(R, G, B, Inheritance=1)
     m_sel.Clear

@@ -367,22 +367,22 @@ Private Sub EnsurePublication(ByVal refPrd As Object, ByVal pubName As String, B
     On Error Resume Next
     Dim pubs As Object
     Dim oPub As Object:
-'    Set pubs = refPrd.Publications
-'    Set oPub = pubs.item(pubName)
-'    Dim isupdated As Boolean: isupdated = True
-'    If IsNothing(oPub) Then
-'        Set oPub = pubs.Add(pubName)
-'        isupdated = False
-'    Else
-'        Dim valObj As Object: Set valObj = Nothing
-'            Set valObj = oPub.Valuation
-'        If valObj Is Nothing Then
-'            isupdated = False
-''            pubs.Remove (pubName)
-''            Set oPub = pubs.Add(pubName)
-'        End If
-'    End If
-'    If isupdated = False Then
+    Set pubs = refPrd.Publications
+    Set oPub = pubs.item(pubName)
+    Dim isupdated As Boolean: isupdated = True
+    If IsNothing(oPub) Then
+        Set oPub = pubs.Add(pubName)
+        isupdated = False
+    Else
+        Dim valObj As Object: Set valObj = Nothing
+            Set valObj = oPub.Valuation
+        If valObj Is Nothing Then
+            isupdated = False
+'            pubs.Remove (pubName)
+'            Set oPub = pubs.Add(pubName)
+        End If
+    End If
+    If isupdated = False Then
         Dim oRef As Object: Set oRef = refPrd.CreateReferenceFromName("." & "\" & refPath)
         pubs.SetDirect pubName, oRef
         

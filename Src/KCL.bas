@@ -248,7 +248,6 @@ Public Function get_workPartDoc()  'in Assembly
         Exit Function
     End If
     Dim msel: Set msel = oDoc.Selection
-    ' 1. Cache Existing Selection
     Dim bRestore As Boolean: bRestore = False
     Dim cachedSel() As Variant
     Dim i As Integer
@@ -259,16 +258,14 @@ Public Function get_workPartDoc()  'in Assembly
            Set cachedSel(i - 1) = msel.item(i).Value
         Next
     End If
-    ' 2. Perform Search for Active Context
     msel.Clear
-    msel.Search "CATprtSearch.PartFeature,in"
+    msel.Search "CATprtSearch.PartFeature,in" '"CATprtSearch.PartFeature,in"
     Dim itemp
     Set itemp = Nothing
     On Error Resume Next
         If msel.count > 0 Then Set itemp = msel.item(1).LeafProduct.ReferenceProduct.Parent '.part
-    Err.Clear
+        Err.Clear
     On Error GoTo 0
-    ' 3. Restore Selection
     msel.Clear
     If bRestore Then
         On Error Resume Next
@@ -304,6 +301,30 @@ Public Function existWkPrt(m_Doc, m_workPrtDoc, m_prt, m_sel) As Boolean
     End If
 End Function
 
+
+'Public Function CurPart() As part
+'    Dim oDoc As Document
+'    Set oDoc = CATIA.ActiveDocument
+'    Set CurPart = Nothing
+'
+'    If TypeName(oDoc) = "PartDocument" Then
+'        Set CurPart = oDoc.part
+'    ElseIf TypeName(oDoc) = "ProductDocument" Then
+'        On Error Resume Next
+'        Dim oActObj
+'        Set oActObj = CATIA.ActiveDocument.Selection.ActiveObject
+'        If TypeName(oActObj) = "Part" Then
+'            Set CurPart = oActObj
+'        Else
+'            Set CurPart = CATIA.ActiveDocument.Selection.FindObject("CATIAPart")
+'        End If
+'        On Error GoTo 0
+'        If CurPart Is Nothing Then
+'            MsgBox "请确保已双击激活（蓝条）一个零件。"
+'            Exit Function
+'        End If
+'    End If
+'End Function
 Public Sub toMP()
     On Error Resume Next
     Dim shell As Object
