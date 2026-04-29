@@ -27,15 +27,15 @@ Sub Upall()
       If TypeName(doc) = "PartDocument" Then
           isupdated = part.isupdate(doc.part)
           ElseIf TypeName(doc) = "ProductDocument" Then
-          isupdated = part.IsUpToDate(doc.product)
+          isupdated = part.IsUpToDate(doc.Product)
       End If
 
 
     If Not isupdated Then
         On Error Resume Next
         doc.part.Update
-        doc.product.Update
-        doc.product.referenceprodcut.Parent.Update
+        doc.Product.Update
+        doc.Product.referenceprodcut.Parent.Update
     End If
     
     Next

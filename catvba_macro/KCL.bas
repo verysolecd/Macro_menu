@@ -195,23 +195,14 @@ Function GetLanguage() As String
             End Select
     End Select
 End Function
-
-' 检查字符串中是否包含指定关键字
-' 忽略大小写进行检查
-Private Function ExistsKey(ByVal txt As String, ByVal Key As String) As Boolean
-    ExistsKey = IIf(InStr(LCase(txt), LCase(Key)) > 0, True, False)
-End Function
-
 ' 检查是否为字符串数组
 Private Function IsStringAry(ByVal ary As Variant) As Boolean
     IsStringAry = False
-    
     If Not IsArray(ary) Then Exit Function
     Dim i&
     For i = 0 To UBound(ary)
         If Not VarType(ary(i)) = vbString Then Exit Function
     Next
-    
     IsStringAry = True
 End Function
 
@@ -479,24 +470,24 @@ If idx > 0 Then
         ofParentPath = opath
     End If
 End Function
-
+' 检查字符串中是否包含指定关键字
+' 忽略大小写进行检查
+Public Function ExistsKey(ByVal txt As String, ByVal Key As String) As Boolean
+    ExistsKey = IIf(InStr(LCase(txt), LCase(Key)) > 0, True, False)
+End Function
 '@@ param:ostr-时间格式
 
 Public Function timestamp(Optional ByVal ostr) As String
     Dim FT As String  ' 显式声明变量
     Select Case True
-        Case ExistsKey(ostr, "i"): FT = "yymmdd_hhnn"
-        Case ExistsKey(ostr, "h"): FT = "yymmdd_hh"
+        Case ExistsKey(ostr, "i"): FT = "yymmdd.hhnn"
+        Case ExistsKey(ostr, "h"): FT = "yymmdd.hh"
         Case ExistsKey(ostr, "d"): FT = "yymmdd"
-        Case ExistsKey(ostr, "s"): FT = "yymmdd_hhnnss"
+        Case ExistsKey(ostr, "s"): FT = "yymmdd.hhnnss"
         Case Else: FT = "yymmdd"  ' 默认格式，避免未赋值情况
     End Select
-    
     timestamp = Format(Now, FT)
 End Function
-
-
-
 Function isEngPath(ByVal path As String) As Boolean
     Dim i As Long, charCode As Long
     Dim validChars As String

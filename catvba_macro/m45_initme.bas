@@ -8,42 +8,55 @@ Attribute VB_Name = "m45_initme"
 
 Sub initme()
 
-If Not KCL.CanExecute("ProductDocument") Then Exit Sub
 
+
+ 
+ If KCL.CanExecute("ProductDocument") Then
      If pdm Is Nothing Then
-          Set pdm = New class_PDM
+       Set pdm = New class_PDM
      End If
-  
      Set allPN = KCL.InitDic(vbTextCompare)
      allPN.RemoveAll
-     
-    Dim iprd
-    
-       Set iprd = pdm.defgprd()
-      
+    Dim iprd: Set iprd = pdm.defgprd()
     If Not iprd Is Nothing Then
-     On Error Resume Next
-      Call ini_oPrd(iprd)
-        allPN.RemoveAll
-        MsgBox "零件模板已经应用"
-       
-        
-        If Error.Number <> 0 Then
-            MsgBox "至少一个参数创建错误，请检查lisence"
-        End If
+        On Error Resume Next
+           Call ini_oPrd(iprd)
+             allPN.RemoveAll
+            
+                 If Error.Number = 0 Then
+                        MsgBox "零件模板已经应用"
+                     Else
+                     MsgBox "至少一个参数创建错误，请检查lisence"
+                 End If
         On Error GoTo 0
     End If
     
+    
+Else
+ On Error Resume Next
+    If KCL.CanExecute("PartDocument") Then
+      Set oprd = CATIA.ActiveDocument.Product
+      If pdm Is Nothing Then
+                Set pdm = New class_PDM
+           End If
+      Call pdm.initPrd(oprd)
+    If Error.Number = 0 Then
+            MsgBox "零件模板已经应用"
+            Else
+            MsgBox "至少一个参数创建错误，请检查lisence"
+          End If
+      On Error GoTo 0
+End If
+End If
+
 End Sub
-
 Sub ini_oPrd(oprd)
-
         If allPN.Exists(oprd.PartNumber) = False Then
             allPN(oprd.PartNumber) = 1
             Call pdm.initPrd(oprd)
         End If
-            For Each product In oprd.Products
-                Call ini_oPrd(product)
+            For Each Product In oprd.Products
+                Call ini_oPrd(Product)
         Next
 End Sub
 

@@ -31,7 +31,9 @@ Attribute cmdOK.VB_VarHelpID = -1
 Private WithEvents cmdCancel As MSForms.CommandButton
 Attribute cmdCancel.VB_VarHelpID = -1
 Private WithEvents txt_TM As MSForms.TextBox
+Attribute txt_TM.VB_VarHelpID = -1
 Private colls As New collection
+Private class_ctrl As clsCtrls
 
 Private Sub UserForm_Initialize()
     ' 设置窗体基本属性
@@ -106,19 +108,19 @@ Private Sub chk_TM_Click()
     txt_TM.Enabled = chk_TM.Value
 End Sub
 
-'Private Sub txt_TM_gotfocus()
-'    If txt_TM.Text = usrTXT Then
-'        txt_TM.Text = " "
-'        txt_TM.ForeColor = &H80
-'    End If
-'End Sub
-'
-'Private Sub txt_TM_Lostfocus()
-'    If txt_TM.Text = "" Then
-'        txt_TM.Text = usrTXT
-'        txt_TM.ForeColor = &H808080
-'  End If
-'End Sub
+Private Sub txt_TM_gotfocus()
+    If txt_TM.Text = usrTXT Then
+        txt_TM.Text = " "
+        txt_TM.ForeColor = &H80
+    End If
+End Sub
+
+Private Sub txt_TM_Lostfocus()
+    If txt_TM.Text = "" Then
+        txt_TM.Text = usrTXT
+        txt_TM.ForeColor = &H808080
+  End If
+End Sub
 
 Private Sub cmdOK_Click()
     Dim UpdateTimestamp As Boolean
@@ -129,7 +131,6 @@ Private Sub cmdOK_Click()
         tdy(0) = 0
         tdy(2) = 0
         tdy(1) = ""
-  
     If UpdateTimestamp Then
         tdy(0) = 1
         tdy(1) = txt_TM.Text
@@ -140,11 +141,13 @@ Private Sub cmdOK_Click()
     End If
 
     dt_pth_ctrl = tdy
-Debug.Print dt_pth_ctrl(0), dt_pth_ctrl(1), dt_pth_ctrl(2)
+'                                        Debug.Print dt_pth_ctrl(0), dt_pth_ctrl(1), dt_pth_ctrl(2)
         Unload Me
 End Sub
 
 Private Sub cmdCancel_Click()
+
+    dt_pth_ctrl = Array(0, 0, "")
     Unload Me
 End Sub
 

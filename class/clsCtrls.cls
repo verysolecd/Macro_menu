@@ -14,12 +14,12 @@ Attribute txt.VB_VarHelpID = -1
 Public ohint As String
 
 
-Private Sub txt_gotfocus()
+Private Sub txt_Gotfocus()
 
 If txt.Text = ohint Then txt.Text = "": txt.ForeColor = &H0
 
 End Sub
-Private Sub txt_lostfocus()
+Private Sub txt_Lostfocus()
 
 If txt.Text = "" Then txt.Text = ohint: txt.ForeColor = &H808080
 

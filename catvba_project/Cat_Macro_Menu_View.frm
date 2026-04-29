@@ -45,7 +45,7 @@ Private Const Tab_W = 30 ' Tab固定宽度
 Private Const Tab_H = 19 ' TAB高度
 Private Const Tab_frontsize = 10
 ' 按钮尺寸
-Private Const BTN_W = 60 ' 按钮的固定宽度
+Private Const BTN_W = 70 ' 按钮的固定宽度
 Private Const BTN_H = 20 ' 单个按钮的高度
 Private Const BTN_frontsize = 8 ' 按钮字体大小
 '标签尺寸
