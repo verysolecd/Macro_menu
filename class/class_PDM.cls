@@ -34,10 +34,10 @@ Private Sub Class_Initialize()
             Err.Raise 1001, , "未检测到打开的CATIA文档"
             Exit Sub
         End If
-            Set rootPrd = CATIA.ActiveDocument.Product
+            Set rootprd = CATIA.ActiveDocument.product
         On Error GoTo 0
-        If Not rootPrd Is Nothing Then
-            rootPrd.ApplyWorkMode (3)
+        If Not rootprd Is Nothing Then
+            rootprd.ApplyWorkMode (3)
         End If
         Set osel = CATIA.ActiveDocument.Selection: osel.Clear
 ErrorHandler:
@@ -441,8 +441,8 @@ Public Function defgprd()    '获取要读取或修改的  全局变量 gPrd定义
      
         Select Case imsg
             Case 7 '===选择“否”====
-            Set rootPrd = CATIA.ActiveDocument.Product
-            Set oprd = rootPrd
+            Set rootprd = CATIA.ActiveDocument.product
+            Set oprd = rootprd
             Case 2:
             
             
