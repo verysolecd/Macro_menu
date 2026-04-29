@@ -7,13 +7,7 @@ Attribute VB_Name = "OTH_Color"
 '{BackColor: }
 Const CF_BITMAP = 2
 ' 更新按钮文字的公共函数
-Public Sub UpdateButtonText(ByVal btn As MSForms.CommandButton, ByVal isWhiteBackground As Boolean)
-    If isWhiteBackground Then
-        btn.Caption = "默认背景"
-    Else
-        btn.Caption = "白色背景"
-    End If
-End Sub
+
 
 Sub CATMain()
     On Error GoTo ErrorHandler

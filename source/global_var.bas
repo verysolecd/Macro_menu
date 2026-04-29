@@ -1,7 +1,8 @@
 Attribute VB_Name = "global_var"
 Public gPrd As Object
+Public rootDoc
 Public rootprd  As Object  '全局产品obj
-Public startrow, lastRow  '全局excel行定义
+Public startrow, lastrow  '全局excel行定义
 Public xlAPP As Object  '全局excelcom组件
 Public gwb As Object
 Public gws  As Object
@@ -12,6 +13,7 @@ Public counter As Integer
 Public Const gfn As Integer = 400
 Public ProductObserver As New ProductObserver
 Public export_CFG   ' 被定义为一个数组  Ary()  第一个元素是开
+Public gPic_Path
 
 
 Sub clearall()
@@ -28,3 +30,6 @@ End Sub
 'Case 7: Exit Sub '===选择“否”====
 'Case 6  '===选择“是”====
 'Case 2  '===选择“取消”====
+
+
+

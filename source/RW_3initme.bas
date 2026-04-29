@@ -10,13 +10,18 @@ Sub initme()
  If Not KCL.CanExecute("ProductDocument,PartDocument") Then Exit Sub
  If pdm Is Nothing Then Set pdm = New class_PDM
  Set allPN = KCL.InitDic(vbTextCompare): allPN.RemoveAll  'allPn 是全局变量，不需要传递
- 
-If KCL.checkDocType("PartDocument") Then Call pdm.initPrd(CATIA.ActiveDocument.Product)
+  Dim iprd
+ If KCL.checkDocType("PartDocument") Then
+    Set iprd = CATIA.ActiveDocument.Product
+    Call pdm.initPrd(rootprd)
+     Set pdm = Nothing
+ Exit Sub
+ End If
 
- Dim iprd: Set iprd = pdm.defgprd()
+ Set iprd = pdm.getiPrd()
  If Not iprd Is Nothing Then
      On Error Resume Next
-            Call ini_oPrd(iprd)
+            Call recurInitPrd(iprd)
             allPN.RemoveAll
        If Error.Number = 0 Then
                 MsgBox "零件模板已经应用"
@@ -28,15 +33,18 @@ If KCL.checkDocType("PartDocument") Then Call pdm.initPrd(CATIA.ActiveDocument.P
     MsgBox "没有要初始化的产品或零件，将退出"
  End If
  
+
 End Sub
-Sub ini_oPrd(oprd)
+Sub recurInitPrd(oprd)
         If allPN.Exists(oprd.PartNumber) = False Then
             allPN(oprd.PartNumber) = 1
             Call pdm.initPrd(oprd)
         End If
+    If oprd.Products.count > 0 Then
             For Each Product In oprd.Products
-                Call ini_oPrd(Product)
-        Next
+                Call recurInitPrd(Product)
+             Next
+    End If
 End Sub
 
 

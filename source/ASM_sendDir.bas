@@ -7,13 +7,13 @@ Attribute VB_Name = "ASM_sendDir"
 '{BackColor:}
 
 Sub sendDir()
+
+    If Not CanExecute("ProductDocument") Then Exit Sub
     CATIA.DisplayFileAlerts = True
     Dim odoc: Set odoc = CATIA.ActiveDocument
-    
     ipath_name = odoc.path & "\" & odoc.Name
-    
-    Dim opath
-        opath = KCL.ofParentPath(odoc.path)
+    Dim oPath
+        oPath = KCL.ofParentPath(odoc.path)
     Dim pn
         If KCL.isobjtype(odoc, "DrawingDocument") Then
             pn = strbflast(odoc.Name, ".")
@@ -24,7 +24,7 @@ Sub sendDir()
     Dim bckFolderName As String
     fname = KCL.rmchn(pn)    '将零件号所有中文字符替换为" "
     bckFolderName = KCL.strbflast(fname, "_") & "_" & KCL.timestamp("min")
-    bckpath = opath & bckFolderName
+    bckpath = oPath & bckFolderName
     
     If KCL.isExists(odoc.path) Then
     

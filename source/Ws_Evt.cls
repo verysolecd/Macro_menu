@@ -9,12 +9,14 @@ Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
 Private WithEvents pWb As Workbook
 Attribute pWb.VB_VarHelpID = -1
-Public Sub Init(wbInstance)
+Public Sub init(wbInstance)
     Set pWb = wbInstance
 End Sub
 Private Sub pWb_BeforeClose(Cancel As Boolean)
     ' 清除实例并释放对象
-    Set gwb = Nothing
     Set gws = Nothing
-    Set xlAPP = Nothing
+    Set gwb = Nothing
+     DoEvents
+   Set xlAPP = Nothing
+    Exit Sub
 End Sub

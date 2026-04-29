@@ -27,7 +27,7 @@ Private Const Tab_W = 30 ' Tab固定宽度
 Private Const Tab_H = 22 ' TAB高度
 Private Const Tab_frontsize = 10
 ' 按钮尺寸
-Private Const BTN_W = 70 ' 按钮的固定宽度
+Private Const Btn_W = 70 ' 按钮的固定宽度
 Private Const BTN_H = 20 ' 单个按钮的高度
 Private Const BTN_frontsize = 8 ' 按钮字体大小
 '标签尺寸
@@ -55,69 +55,38 @@ Sub Set_FormInfo(ByVal InfoLst As Object, _
                  ByVal formTitle As String, _
                  ByVal CloseType As Boolean)
     Set prdObserver = ProductObserver  ' 连接到全局产品观察器
+    
     FrmMargin = Array(2, 2, 2, 2) ' 上, 右, 下, 左 窗体边距调整值
     Set MPgs = Me.controls.Add("Forms.MultiPage.1", "MPgs", True) ' 创建多页控件
     Dim Pgs As Pages
-     Set Pgs = MPgs.Pages
-    Pgs.Clear
+     Set Pgs = MPgs.Pages: Pgs.Clear
     
-    Dim Key As Long, KeyStr As Variant
-    Dim Pg As Page, pName As String
+    Dim Key As Long, KeyStr As Variant, Pg As Page, pName As String
+
     Dim BtnInfos As Object, info As Variant
-    
     Dim Btns As Object: Set Btns = KCL.InitLst()
-    
     Dim btn As MSForms.CommandButton
-    
     Dim BtnEvt As Button_Evt
     
     For Each KeyStr In InfoLst
         Key = CLng(KeyStr)
-        If Not PageMap.Exists(Key) Then GoTo continue
+        If Not PageMap.Exists(Key) Then GoTo Continue
         pName = PageMap(Key)
         Set Pg = Get_Page(Pgs, pName)
         Set BtnInfos = InfoLst(KeyStr)
-        
         For Each info In BtnInfos
             Set btn = Init_Button(Pg.controls, Key, info)
             Set BtnEvt = New Button_Evt
             Call BtnEvt.set_ButtonEvent(btn, info, Me, CloseType)
             Btns.Add BtnEvt
         Next
-continue:
+Continue:
     Next
-        Set mBtns = Btns
+    Set mBtns = Btns
     Call Set_MPage(MPgs)
     Call Set_Form(MPgs, formTitle)
-    
-    Set lblProductInfo = Me.controls.Add("Forms.Label.1", "lblProductInfo", True)
-   With lblProductInfo
-        .Caption = "产品待选择"
-        .top = FrmMargin(0)
-        .Left = 2
-        .Width = MPgs.Width - 20
-        .height = lb_H
-        .Font.Size = lb_frontsize
-        .BackColor = vbGreen
-        .TextAlign = fmTextAlignCenter
-        .BorderStyle = fmBorderStyleSingle
-        .WordWrap = False              ' 不换行
-         .AutoSize = True
-    End With
-    ' 新增：创建底部的作者信息栏
-    Set lblAuthor = Me.controls.Add("Forms.Label.1", "lblAuthor", True)
-    With lblAuthor
-        .Caption = itl ' 使用常量显示作者信息
-        .top = MPgs.top + MPgs.height + FrmMargin(1) + 15 ' 放置在多页控件下方
-        .Left = lblProductInfo.Left + 5 ' 与顶部信息栏左对齐
-        .Width = lblProductInfo.Width ' 与顶部信息栏同宽
-        .height = lb_H
-        .Font.Size = lb_frontsize - 1 ' 字体可以稍小一些
-        .TextAlign = fmTextAlignCenter
-         .WordWrap = False              ' 不换行
-         .AutoSize = True
-          .BorderStyle = fmBorderStyleSingle
-    End With
+    Set lblProductInfo = getNewLbl(Me)     ' 新增：创建底部的作者信息栏
+    Set lblAuthor = getNewLbl(Me)
     ' 初始更新产品信息
     UpdateProductInfo
 End Sub
@@ -125,15 +94,15 @@ End Sub
 Private Sub Set_Form(ByVal MPgs As MultiPage, ByVal Cap As String)
     With Me
         Dim requiredInsideHeight
-        requiredInsideHeight = MPgs.top + MPgs.height + ADJUST_F_H + lb_H  '+ FrmMargin(2)
-        .height = requiredInsideHeight + (Me.height - Me.InsideHeight)
+        requiredInsideHeight = MPgs.top + MPgs.Height + ADJUST_F_H + lb_H  '+ FrmMargin(2)
+        .Height = requiredInsideHeight + (Me.Height - Me.InsideHeight)
         .Width = MPgs.Width + 2 * ADJUST_F_W + 2 * FrmMargin(2)
         .Caption = Cap
     End With
 End Sub
 ' 设置多页控件属性
 Private Sub Set_MPage(ByVal MPgs As MultiPage)
-    MPgs.Width = Tab_W + BTN_W + FrmMargin(3) + ADJUST_M_W
+    MPgs.Width = Tab_W + Btn_W + FrmMargin(3) + ADJUST_M_W
     With MPgs
         .top = lb_H + FrmMargin(1)
         .Left = FrmMargin(0)
@@ -152,7 +121,7 @@ Private Sub Set_MPage(ByVal MPgs As MultiPage)
         BtnCnt = Pg.controls.count
         MaxBtnCnt = IIf(BtnCnt > MaxBtnCnt, BtnCnt, MaxBtnCnt)
     Next
-    MPgs.height = FrmMargin(0) + (BTN_H * MaxBtnCnt * 1) + FrmMargin(2) + ADJUST_M_H
+    MPgs.Height = FrmMargin(0) + (BTN_H * MaxBtnCnt * 1) + FrmMargin(2) + ADJUST_M_H
     ' 设置多页控件背景颜色
 End Sub
 ' 初始化按钮
@@ -168,8 +137,8 @@ Private Function Init_Button(ByVal Ctls As controls, _
     With btn
         .top = (Ctls.count - 1) * BTN_H - 1 '+ (Ctls.Count - 1)+ FrmMargin(0) +
         .Left = FrmMargin(2)
-        .height = BTN_H
-        .Width = BTN_W
+        .Height = BTN_H
+        .Width = Btn_W
         ' 设置按钮字体
         .Font.Name = "Arial"
         .Font.Size = BTN_frontsize
@@ -179,17 +148,20 @@ Private Function Init_Button(ByVal Ctls As controls, _
     Set Init_Button = btn
 End Function
 ' 尝试设置控件属性
-Private Sub Try_SetProperty(ByVal Ctrl As Object, _
+Private Sub Try_SetProperty(ByVal ctrl As Object, _
                             ByVal PptyName As String, _
                             ByVal value As Variant)
     On Error Resume Next
         Err.Number = 0
         Dim tmp As Variant
-        tmp = CallByName(Ctrl, PptyName, VbGet)
+        
+        tmp = CallByName(ctrl, PptyName, VbGet)
+        
         If Not Err.Number = 0 Then
             Debug.Print PptyName & ": 获取属性失败(" & Err.Number & ")"
             Exit Sub
         End If
+        
         Select Case TypeName(tmp)
             Case "Empty"
                 Exit Sub
@@ -200,16 +172,20 @@ Private Sub Try_SetProperty(ByVal Ctrl As Object, _
             Case "Currency"
                 value = CCur(value)
         End Select
+        
         If Not Err.Number = 0 Then
             Debug.Print value & ": 类型转换失败(" & Err.Number & ")"
             Exit Sub
         End If
-        Call CallByName(Ctrl, PptyName, VbLet, value)
+        
+        Call CallByName(ctrl, PptyName, VbLet, value)
+        
         If Not Err.Number = 0 Then
             Debug.Print value & ": 设置属性失败(" & Err.Number & ")"
             Exit Sub
         End If
     On Error GoTo 0
+    
 End Sub
 ' 获取页面 - 若不存在则创建
 Private Function Get_Page(ByVal Pgs As Pages, ByVal Name As String) As Page
@@ -229,8 +205,7 @@ Private Sub prdObserver_ProductChanged()
 End Sub
 ' 更新产品信息的方法
 Private Sub UpdateProductInfo()
-    Dim msg
-    Dim mcolor
+    Dim msg, mcolor
    mcolor = vbRed
     msg = "产品待选择"
     If Not prdObserver.CurrentProduct Is Nothing Then
@@ -267,3 +242,58 @@ Private Sub MPgs_MouseDown(ByVal Index As Long, ByVal Button As Integer, ByVal S
     End If
 End Sub
 
+Private Function getNewLbl(mFrm)
+Dim mLbl
+    Set mLbl = mFrm.controls.Add("Forms.Label.1", "lblProductInfo", True)
+        With mLbl
+             .Caption = "产品待选择"
+             .top = FrmMargin(0): .Height = lb_H
+             .Left = 2: .Width = MPgs.Width - 20
+             .Font.Size = lb_frontsize
+             .BackColor = vbGreen
+             .TextAlign = fmTextAlignCenter
+             .BorderStyle = fmBorderStyleSingle
+             .WordWrap = False              ' 不换行
+             .AutoSize = True
+         End With
+   Set getNewLbl = mLbl
+End Function
+
+
+Private Function getMeinfo(mFrm)
+    Dim mLbl
+    Set mLbl = mFrm.controls.Add("Forms.Label.1", "lblAuthor", True)
+        With lblAuthor
+            .Caption = itl ' 使用常量显示作者信息
+            .top = MPgs.top + MPgs.Height + FrmMargin(1) + 15 ' 放置在多页控件下方
+            .Left = lblProductInfo.Left + 5 ' 与顶部信息栏左对齐
+            .Width = lblProductInfo.Width ' 与顶部信息栏同宽
+            .Height = lb_H
+            .Font.Size = lb_frontsize - 1 ' 字体可以稍小一些
+            .TextAlign = fmTextAlignCenter
+             .WordWrap = False              ' 不换行
+             .AutoSize = True
+              .BorderStyle = fmBorderStyleSingle
+        End With
+        
+   Set getMeinfo = mLbl
+End Function
+
+
+
+'Private Function getNewCls(mFrm, ByVal ClCfg As Dictionary)
+'Dim mCl
+'    Set mCl = mFrm.controls.Add(ClCfg(mType), ClCfg(mName), True)
+'        With mCl
+'             .Caption = ClCfg(mCaption)
+'             .top = FrmMargin(0): .Height = lb_H
+'             .Left = 2: .Width = MPgs.Width - 20
+'             .Font.Size = lb_frontsize
+'             .BackColor = vbGreen
+'             .TextAlign = fmTextAlignCenter
+'             .BorderStyle = fmBorderStyleSingle
+'             .WordWrap = False              ' 不换行
+'             .AutoSize = True
+'         End With
+'   Set getNewLbl = mLbl
+'End Function

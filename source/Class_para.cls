@@ -8,20 +8,21 @@ Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
 '我是一个对参数对象赋予属性的类
-Private pName As String
-Private pDesc As String
-Private pType As String
-Private pStr As Variant
-Private pTarget As Object
-Private pobj As Object
+Private pName As String  '参数名称
+Private pDesc As String  '参数描述
+Private pType As String '参数类型
+Private pStr As Variant '参数字符段
+Private pTarget As Object '参数目标对象
+Private pobj As Object   '参数本身
+
 
 Private Sub Class_Initialize()
-Me.Desc = ""
+    Me.Desc = ""
 End Sub
 Public Sub Reset()
     Me.Name = ""
     Me.iType = ""
-    Me.Str = ""
+    Me.str = ""
     Me.Desc = ""
     Set Me.obj = Nothing
     Set Me.Target = Nothing
@@ -44,10 +45,10 @@ End Property
 Public Property Let Desc(ByVal value As Variant)
     pDesc = value
 End Property
-Public Property Get Str() As Variant
-    Str = pStr
+Public Property Get str() As Variant
+    str = pStr
 End Property
-Public Property Let Str(ByVal value As Variant)
+Public Property Let str(ByVal value As Variant)
     pStr = value
 End Property
 Public Property Get Target()
@@ -56,7 +57,6 @@ End Property
 Public Property Set Target(value)
    Set pTarget = value
 End Property
-
 Public Property Get obj()
    Set obj = pobj
 End Property

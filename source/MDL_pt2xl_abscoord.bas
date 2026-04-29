@@ -44,9 +44,9 @@ Sub pt2xl()
         
         For i = 1 To ct
             Set opt = oshapes.item(i)
-            Dim Str
-            Str = HSF.GetGeometricalFeatureType(opt)
-            If Str = 1 Then
+            Dim str
+            str = HSF.GetGeometricalFeatureType(opt)
+            If str = 1 Then
                 Dim fakept
                 Set fakept = HSF.AddNewPointCoordWithReference(0, 0, 0, opt)
                 oHB.AppendHybridShape fakept

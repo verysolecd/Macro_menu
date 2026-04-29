@@ -18,9 +18,9 @@ Sub pt2xl()
     On Error Resume Next
         Set odoc = CATIA.ActiveDocument
     On Error GoTo 0
-    Dim Str
-    Str = TypeName(odoc)
-    If Not Str = "PartDocument" Then
+    Dim str
+    str = TypeName(odoc)
+    If Not str = "PartDocument" Then
     MsgBox "没有打开的part"
     Exit Sub
     End If
@@ -59,8 +59,8 @@ Sub pt2xl()
         For i = 1 To ct
             Set opt = oshapes.item(i)
    
-            Str = HSF.GetGeometricalFeatureType(opt)
-            If Str = 1 Then
+            str = HSF.GetGeometricalFeatureType(opt)
+            If str = 1 Then
                 Dim fakept
                 Set fakept = HSF.AddNewPointCoordWithReference(0, 0, 0, opt)
                 oHB.AppendHybridShape fakept

@@ -6,7 +6,7 @@ End Sub
 Sub rm(oprd)
     On Error Resume Next
      Set refPrd = oprd.ReferenceProduct
-     Set oprt = refPrd.Parent.part
+     Set oPrt = refPrd.Parent.part
     Set colls = refPrd.Publications
     colls.Remove ("Location")
     colls.Remove ("iMass")

@@ -1,15 +1,21 @@
 Attribute VB_Name = "KCL"
 'Attribute VB_Name = "KCL"
-'vba Kantoku_CATVBA_Library ver0.1.0
-'KCL.bas - 自定义VBA库
 Option Explicit
-
 Private mSW& ' 秒表开始时间
+
+Private Declare PtrSafe Function OpenClipboard Lib "user32" (ByVal hwnd As LongPtr) As Long
+Private Declare PtrSafe Function EmptyClipboard Lib "user32" () As Long
+Private Declare PtrSafe Function CloseClipboard Lib "user32" () As Long
+Private Declare PtrSafe Function SetClipboardData Lib "user32" (ByVal wFormat As Long, ByVal hMem As LongPtr) As LongPtr
+
+' 声明 Windows API 函数，用于将窗口置于前台，这比 Visible=False/True 的技巧更可靠
 
 #If VBA7 And Win64 Then
     Private Declare PtrSafe Function timeGetTime Lib "winmm.dll" () As Long
+    Private Declare PtrSafe Function SetForegroundWindow Lib "user32" (ByVal hwnd As LongPtr) As Long
 #Else
     Private Declare Function timeGetTime Lib "winmm.dll" () As Long
+    Private Declare  Function SetForegroundWindow Lib "user32" (ByVal hwnd As Long) As Long
 #End If
 
 ' 主程序入口 - 循环选择项目
@@ -23,7 +29,7 @@ Sub CATMain()
         Stop
     Loop
 End Sub
-'*****CATIA相关函数*****
+'*****CATIA相关函数*****=================================================================================================
 ' 检查是否可以执行操作
 ''' @param:DocTypes-array(string),string 指定可执行操作的文档类型
 ''' @return:Boolean
@@ -33,17 +39,28 @@ Function CanExecute(ByVal docTypes As Variant) As Boolean
         MsgBox "没有打开的窗口"
         Exit Function
     End If
-    If VarType(docTypes) = vbString Then docTypes = Split(docTypes, ",") '过滤器转数组
+    If VarType(docTypes) = vbString Then
+      docTypes = LCase(docTypes)
+        docTypes = Split(docTypes, ",") '过滤器转数组
+    End If
     If Not checkFilterType(docTypes) Then Exit Function '过滤器检查，非数组则退出
     Dim ErrMsg As String
     ErrMsg = "不支持当前活动文档类型。" + vbNewLine + "(" + Join(docTypes, ",") + " 类型除外)"
     CanExecute = checkDocType(docTypes)
     If Not CanExecute Then MsgBox ErrMsg, vbExclamation + vbOKOnly
+    
+    
 End Function
 Function checkDocType(ByVal docTypes As Variant)
     checkDocType = False
-    If VarType(docTypes) = vbString Then docTypes = Split(docTypes, ",") '过滤器转数组
+    
+    
+    If VarType(docTypes) = vbString Then
+         docTypes = LCase(docTypes)
+        docTypes = Split(docTypes, ",") '过滤器转数组
+    End If
     If Not checkFilterType(docTypes) Then Exit Function '过滤器检查，非数组则退出
+    
     Dim ActDoc As Document
     On Error Resume Next
         Set ActDoc = CATIA.ActiveDocument
@@ -52,7 +69,7 @@ Function checkDocType(ByVal docTypes As Variant)
         MsgBox "无打开的文档"
         Exit Function
     End If
-     If UBound(filter(docTypes, TypeName(ActDoc))) < 0 Then '此处filter函数是VBA中比较厚返回数组的函数
+     If UBound(filter(docTypes, LCase(TypeName(ActDoc)))) < 0 Then '此处filter函数是VBA中比较后返回数组的函数
         Exit Function
     End If
     checkDocType = True
@@ -91,6 +108,17 @@ Function SelectElement(ByVal msg$, _
     Set SelectElement = sel.item(1)
     sel.Clear
 End Function
+' ==  一些其他的选择方式
+'  Dim iType(0)
+'    iType(0) = "Product"
+'        MsgBox prompt
+'    If oSel.SelectElement2(iType, prompt, False) = "Normal" Then
+'        If oSel.count = 1 Then
+'            Set catSel1 = oSel.item(1).LeafProduct
+'        End If
+'    End If
+' ===================================
+
 ' 获取内部名称
 ''' @param:AOj-AnyObject
 ''' @return:String
@@ -126,18 +154,11 @@ Function GetParent_Of_T( _
         Set GetParent_Of_T = GetParent_Of_T(anyObj.Parent, t)
     End If
 End Function
+
 Private Function asDisp(o As INFITF.CATBaseDispatch) As INFITF.CATBaseDispatch
     Set asDisp = o
 End Function
-' 获取Brep名称
-''' @param:MyBRepName-String
-''' @return:String
-Function GetBrepName(MyBRepName As String) As String
-    MyBRepName = Replace(MyBRepName, "Selection_", "")
-    MyBRepName = Left(MyBRepName, InStrRev(MyBRepName, "));"))
-    MyBRepName = MyBRepName + ");WithPermanentBody;WithoutBuildError;WithSelectingFeatureSupport;MFBRepVersion_CXR15)"
-    GetBrepName = MyBRepName
-End Function
+
 ' 获取数组指定范围的元素
 ''' @param:Ary-Variant(Of Array)
 ''' @param:StartIdx-Long
@@ -194,20 +215,7 @@ End Function
 Function IsNothing(ByVal oj As Variant) As Boolean
     IsNothing = oj Is Nothing
 End Function
-' 创建Scripting.Dictionary对象
-''' @param:CompareMode-Long
-''' @return:Object(Of Dictionary)
-Function InitDic(Optional compareMode As Long = vbBinaryCompare) As Object
-    Dim Dic As Object
-    Set Dic = CreateObject("Scripting.Dictionary")
-    Dic.compareMode = compareMode
-    Set InitDic = Dic
-End Function
-' 创建ArrayList对象
-''' @return:Object(Of ArrayList)Public
-Function InitLst() As Object
-    Set InitLst = CreateObject("System.Collections.ArrayList")
-End Function
+
 ' 检查对象是否为指定类型
 ''' @param:OJ-Object
 ''' @param:T-String
@@ -286,7 +294,20 @@ End Function
 Function GetFso() As Object
     Set GetFso = CreateObject("Scripting.FileSystemObject")
 End Function
-
+' 创建Scripting.Dictionary对象
+''' @param:CompareMode-Long
+''' @return:Object(Of Dictionary)
+Function InitDic(Optional compareMode As Long = vbBinaryCompare) As Object
+    Dim Dic As Object
+    Set Dic = CreateObject("Scripting.Dictionary")
+    Dic.compareMode = compareMode
+    Set InitDic = Dic
+End Function
+' 创建ArrayList对象
+''' @return:Object(Of ArrayList)Public
+Function InitLst() As Object
+    Set InitLst = CreateObject("System.Collections.ArrayList")
+End Function
 ' 分割路径名
 ''' @param:FullPath-完整路径
 ''' @return:Variant(Of Array(Of String)) (0-路径 1-文件名 2-扩展名)
@@ -299,7 +320,6 @@ Function SplitPathName(ByVal fullpath$) As Variant
     End With
     SplitPathName = path
 End Function
-
 ' 合并路径名
 ''' @param:Path-Variant(Of Array(Of String)) (0-路径 1-文件名 2-扩展名)
 ''' @return:完整路径
@@ -308,35 +328,105 @@ Function JoinPathName$(ByVal path As Variant)
     If Not UBound(path) = 2 Then Stop ' 输入错误
     JoinPathName = path(0) + "\" + path(1) + "." + path(2)
 End Function
-
 ' 检查路径是否存在
 ''' @param:Path-路径
 ''' @return:Boolean
 Function isExists(ByVal path$) As Boolean
     isExists = False
-    Dim fso As Object: Set fso = GetFso
-    If fso.FileExists(path) Then
+    Dim FSO As Object: Set FSO = GetFso
+    If FSO.FileExists(path) Then
         isExists = True: Exit Function ' 文件
-    ElseIf fso.FolderExists(path) Then
+    ElseIf FSO.FolderExists(path) Then
         isExists = True: Exit Function ' 文件夹
     End If
-    Set fso = Nothing
+    Set FSO = Nothing
 End Function
+Function GetPath(ByVal path$)
+    GetPath = ""
+     Dim FSO As Object: Set FSO = GetFso
+     If isExists(path) Then
+         GetPath = path
+     Else
+         GetPath = FSO.CreateFolder(path)
+     End If
+     Set FSO = Nothing
+End Function
+Sub explorepath(ByVal ipath)
+ Dim thisdir, shell, cmd
+    thisdir = ""
+    Dim FSO As Object: Set FSO = GetFso
+        If FSO.FileExists(ipath) Then
+            thisdir = ipath
+        ElseIf FSO.FolderExists(ipath) Then
+          Dim Fdl, file
+            Set Fdl = FSO.GetFolder(ipath)
+            For Each file In Fdl.Files
+                thisdir = file.path
+            Exit For
+            Next
+        End If
+    If thisdir <> "" Then
+         Set shell = CreateObject("WScript.Shell")
+         cmd = "explorer.exe /select, """ & thisdir & """"
+         shell.Run (cmd)
+    End If
+    Set FSO = Nothing
+    Set shell = Nothing
+End Sub
+'获取用户选择路径
+Public Function selFdl()
+    selFdl = ""
+    Dim shellApp, Fdl
+    Set shellApp = CreateObject("Shell.Application")
+    Set Fdl = shellApp.BrowseForFolder(0, "选择文件夹", 16, 0)
+    
+    If Not Fdl Is Nothing Then
+        selFdl = Fdl.Self.path
+    End If
+End Function
+'@@param: oPath-路径
+'获取输入路径父级
+Public Function ofParentPath(ByVal oPath$)
+    Dim idx
+    idx = InStrRev(oPath, "\")
+If idx > 0 Then
+        ofParentPath = Left(oPath, idx)
+    Else
+        ofParentPath = oPath
+    End If
+End Function
+
+Sub ClearDir(folderPath As String)
+    Dim FSO As Object::  Set FSO = GetFso()
+    ' 检查目录是否存在
+    If FSO.FolderExists(folderPath) Then
+        Dim folder As Object
+        Set folder = FSO.GetFolder(folderPath)
+        ' 删除目录中的所有文件
+        Dim file As Object
+        For Each file In folder.Files
+            FSO.DeleteFile file.path, True ' True表示强制删除只读文件
+        Next
+    End If
+    Set FSO = Nothing     ' 释放对象
+End Sub
 Function DeleteMe(ByVal path$) As Boolean
-    DeleteMe = False
-    On Error Resume Next
-    Dim fso As Object: Set fso = GetFso
-    If fso.FileExists(path) Then
-        fso.DeleteFile path, True
+DeleteMe = False
+On Error Resume Next
+    Dim FSO As Object: Set FSO = GetFso
+    If FSO.FileExists(path) Then
+        FSO.DeleteFile path, True
+        DeleteMe = True
     End If
     If Error.Number = 0 Then
         DeleteMe = True
     Else
         Error.Clear
     End If
-    Set fso = Nothing
+    
+    Set FSO = Nothing
     Error.Clear
-     On Error GoTo 0
+On Error GoTo 0
 End Function
 ' 获取新文件名
 ''' @param:Path-完整路径
@@ -363,9 +453,9 @@ End Function
 ' 写入文件
 ''' @param:Path-完整路径
 ''' @param:Txt-String
-Sub WriteFile(ByVal path$, ByVal Txt) '$)
+Sub WriteFile(ByVal path$, ByVal txt) '$)
     On Error Resume Next
-        Call GetFso.OpenTextFile(path, 2, True).Write(Txt)
+        Call GetFso.OpenTextFile(path, 2, True).Write(txt)
     On Error GoTo 0
 End Sub
 ' 读取文件
@@ -384,7 +474,6 @@ End Function
 Sub SW_Start()
     mSW = timeGetTime
 End Sub
-
 ' 获取计时时间
 ''' @return:Double(Unit:s)
 Function SW_GetTime#()
@@ -401,25 +490,12 @@ Public Function GetInput(msg) As String
         GetInput = UserInput
     End If
 End Function
-
-'@@param: oPath-路径
-'获取输入路径父级
-Public Function ofParentPath(ByVal opath$)
-    Dim idx
-    idx = InStrRev(opath, "\")
-If idx > 0 Then
-        ofParentPath = Left(opath, idx)
-    Else
-        ofParentPath = opath
-    End If
-End Function
 ' 检查字符串中是否包含指定关键字
 ' 忽略大小写进行检查
-Public Function ExistsKey(ByVal Txt As String, ByVal Key As String) As Boolean
-    ExistsKey = IIf(InStr(LCase(Txt), LCase(Key)) > 0, True, False)
+Public Function ExistsKey(ByVal txt As String, ByVal Key As String) As Boolean
+    ExistsKey = IIf(InStr(LCase(txt), LCase(Key)) > 0, True, False)
 End Function
 '@@ param:ostr-时间格式
-
 Public Function timestamp(Optional ByVal ostr) As String
     Dim FT As String  ' 显式声明变量
     Select Case True
@@ -434,64 +510,61 @@ End Function
 Function isEngPath(ByVal path As String) As Boolean
     Dim i As Long, charCode As Long
     Dim validChars As String
-    ' 定义允许的英文符号（包括路径分隔符）
-    validChars = "!@#$%^&*()-_=+[]{};:'"",.<>/?\|~\/"
-    ' 遍历路径中的每个字符
-    For i = 1 To Len(path)
-        charCode = AscW(Mid(path, i, 1))
-        ' 检查是否为英文字母（A-Z, a-z）
+     validChars = "!@#$%^&*()-_=+[]{};:'"",.<>/?\|~\/"    ' 定义允许的英文符号（包括路径分隔符）
+    For i = 1 To Len(path)      ' 遍历路径中的每个字符
+        charCode = AscW(Mid(path, i, 1))  ' 检查是否为英文字母（A-Z, a-z）
         If (charCode >= 65 And charCode <= 90) Or _
            (charCode >= 97 And charCode <= 122) Then
             GoTo NextChar  ' 等同于 Continue For
         End If
-        ' 检查是否为数字（0-9）
-        If charCode >= 48 And charCode <= 57 Then
+        If charCode >= 48 And charCode <= 57 Then    ' 检查是否为数字（0-9）
             GoTo NextChar  ' 等同于 Continue For
         End If
-        ' 检查是否为允许的英文符号
-        If InStr(validChars, Mid(path, i, 1)) > 0 Then
+        If InStr(validChars, Mid(path, i, 1)) > 0 Then    ' 检查是否为允许的英文符号
             GoTo NextChar  ' 等同于 Continue For
         End If
-        ' 如果都不是，则路径包含非法字符
-        isEngPath = False
+        isEngPath = False          ' 如果都不是，则路径包含非法字符
         Exit Function
 NextChar:
     Next i
     ' 所有字符都通过检查
     isEngPath = True
 End Function
-
 ' 此函数用于检查输入的路径是否包含中文字符
-' 参数:
-'   pathToCheck - 需要检查的路径
-' 返回值:
-'   Boolean 类型，True 表示路径包含中文，False 表示不包含
+' 参数: pathToCheck - 需要检查的路径
+' 返回值: Boolean 类型，True 表示路径包含中文，False 表示不包含
 Function isPathchn(pathToCheck) As Boolean
     Dim regex As Object
-    Set regex = CreateObject("VBScript.RegExp")
-    
-    ' 设置正则表达式模式，匹配中文字符
-    regex.Pattern = "[\u4e00-\u9fa5]"
+    Set regex = getRegex
+    regex.Pattern = "[\u4e00-\u9fa5]"   ' 设置正则表达式模式，匹配中文字符
     regex.IgnoreCase = True
     regex.Global = True
-    ' 执行匹配并返回结果
-    isPathchn = regex.test(pathToCheck)
+    isPathchn = regex.TEST(pathToCheck)   ' 执行匹配并返回结果
     Set regex = Nothing
 End Function
+''替换字符串的所有中文为空格
+Function rmchn(ByVal inputString$) As String
+    Dim regex: Set regex = getRegex()
+    regex.Pattern = "[\u4e00-\u9fa5]"
+    regex.Global = True
+    rmchn = regex.Replace(inputString, " ")
+    Set regex = Nothing
+End Function
+
 '@iStr string
 '获得字符串最后一个"iext"之前的字符或返回原字符
-Function strbflast(Str, iext)
+Function strbflast(str, iext)
 Dim idx
-idx = InStrRev(Str, iext)
+idx = InStrRev(str, iext)
 If idx > 0 Then
-        strbflast = Left(Str, idx)
+        strbflast = Left(str, idx)
     Else
-        strbflast = Str
+        strbflast = str
     End If
 End Function
 
 '@iStr string
-'获得字符串第一个"_"之前的字符或返回原字符
+'获得字符串第一个"iext"之前的字符或返回原字符
 Function strbf1st(iStr, iext)
     Dim oPrefix
         Dim underscorePos As Long
@@ -503,7 +576,8 @@ Function strbf1st(iStr, iext)
         End If
         strbf1st = oPrefix
 End Function
- 
+ '@iStr string
+'获得字符串第一个"iext"之后的字符或返回原字符
 Function straf1st(iStr, iext)
 Dim idx
 idx = InStr(iStr, iext)
@@ -513,29 +587,19 @@ If idx > 0 Then
         straf1st = iStr
     End If
 End Function
-
-''替换字符串的所有中文为空格
-Function rmchn(ByVal inputString$) As String
-    Dim regex: Set regex = CreateObject("VBScript.RegExp")
-    regex.Pattern = "[\u4e00-\u9fa5]"
-    regex.Global = True
-    rmchn = regex.Replace(inputString, " ")
-    Set regex = Nothing
-End Function
-
-
 '创建md文件
 Function getmd(ByVal ipath_name As String)
-Dim fso
-    Set fso = CreateObject("Scripting.FileSystemObject")
+     Dim FSO
+    Set FSO = GetFso()
     Dim mdfile
     If Not KCL.isExists(ipath_name) Then
-        Set mdfile = fso.CreateTextFile(ipath_name, False) '不存在则创建
+        Set mdfile = FSO.CreateTextFile(ipath_name, False) '不存在则创建
     Else
-        Set mdfile = fso.OpenTextFile(ipath_name, ForAppending, TristateFalse) '存在则
+        Set mdfile = FSO.OpenTextFile(ipath_name, ForAppending, TristateFalse) '存在则
     End If
     Set getmd = mdfile
     Set mdfile = Nothing
+
 End Function
 '文本文件写入
 Sub Appendtext(ByVal tfile As Object, _
@@ -556,28 +620,220 @@ Function GetLanguage() As String
     CATIA.ActiveDocument.Selection.Clear
     Dim st As String: st = CATIA.StatusBar
     Select Case True
-        Case ExistsKey(st, "object")
-            GetLanguage = "en"
-        Case ExistsKey(st, "objet")
-            GetLanguage = "fr"
-        Case ExistsKey(st, "Objekt")
-            GetLanguage = "de"
-        Case ExistsKey(st, "oggetto")
-            GetLanguage = "it"
-        Case ExistsKey(st, "命令")
-            GetLanguage = "ja"
-        Case ExistsKey(st, "объект")
-            GetLanguage = "ru"
-        Case ExistsKey(st, "对象")
-            GetLanguage = "zh"
+        Case ExistsKey(st, "object"): GetLanguage = "en"
+        Case ExistsKey(st, "objet"):: GetLanguage = "fr"
+        Case ExistsKey(st, "Objekt"): GetLanguage = "de"
+        Case ExistsKey(st, "oggetto"): GetLanguage = "it"
+        Case ExistsKey(st, "命令"):    GetLanguage = "ja"
+        Case ExistsKey(st, "объект"):  GetLanguage = "ru"
+        Case ExistsKey(st, "对象"): GetLanguage = "zh"
         Case Else
             Select Case Len(st)
-                Case 13
-                    GetLanguage = "ko"
-                Case 23
-                    GetLanguage = "ja"
-                Case Else
-                    ' 其他情况
+                Case 13: GetLanguage = "ko"
+                Case 23: GetLanguage = "ja"
+                Case Else            ' 其他情况
             End Select
     End Select
+End Function
+
+Function getVbaDir() As String
+    Dim oApc As Object
+    Set oApc = GetApc()
+    Dim projFilePath As String
+    projFilePath = oApc.ExecutingProject.VBProject.Filename
+     getVbaDir = GetFso.GetParentFolderName(projFilePath)
+End Function
+'******* APC/VBE *********
+' 获取APC对象
+' 参数  :
+' 返回值: obj-IApc
+Public Function GetApc() As Object
+    Set GetApc = Nothing
+    Dim COMObjectName$     ' 获取VBA版本对应的COM对象名称
+    #If VBA7 Then
+        COMObjectName = "MSAPC.Apc.7.1"
+    #ElseIf VBA6 Then
+        COMObjectName = "MSAPC.Apc.6.2"
+    #Else
+        MsgBox "不支持当前VBA版本", vbExclamation + vbOKOnly
+        Exit Function
+    #End If
+    Dim Apc As Object: Set Apc = Nothing   ' 获取APC对象
+    On Error Resume Next
+        Set Apc = CreateObject(COMObjectName)
+    On Error GoTo 0
+    If Apc Is Nothing Then
+        MsgBox "无法获取MSAPC.Apc对象", vbExclamation + vbOKOnly
+        Exit Function
+    End If
+    Set GetApc = Apc
+End Function
+
+Public Function getRegex() As Object
+ Dim regex: Set regex = CreateObject("VBScript.RegExp")
+ Set getRegex = regex
+End Function
+Public Function getshell()
+    Dim shellApp As Object
+    Set shellApp = CreateObject("Shell.Application")
+    Set getshell = shellApp
+
+End Function
+
+
+' 智能打开路径（优先激活已存在窗口）
+Sub openpath(ByVal strPath As String)
+    Dim FSO As Object: Set FSO = GetFso
+    If Len(strPath) > 3 And Right(strPath, 1) = "\" Then
+        strPath = Left(strPath, Len(strPath) - 1)
+    End If
+    If Not (FSO.FileExists(strPath) Or FSO.FolderExists(strPath)) Then
+        MsgBox "路径不存在: " & strPath, vbExclamation
+        Exit Sub
+    End If
+
+    If Not ActivateExistingWindow(strPath) Then     ' 尝试激活已存在的窗口
+       
+        If FSO.FileExists(strPath) Then  ' 未找到已存在窗口，执行新打开操作
+            OpenFileLocation strPath
+        ElseIf FSO.FolderExists(strPath) Then
+            openDir strPath
+        End If
+    End If
+End Sub
+
+' 检查并激活已存在的窗口
+Function ActivateExistingWindow(ByVal strPath As String) As Boolean
+    On Error GoTo ErrorHandler
+    Dim shellApp As Object, window As Object
+    Set shellApp = getshell
+    For Each window In shellApp.Windows   ' 遍历所有资源管理器窗口
+        On Error Resume Next
+        If InStr(UCase(window.FullName), "EXPLORER.EXE") > 0 Then   ' 检查是否为资源管理器窗口
+            Dim windowPath As String
+            windowPath = window.Document.folder.Self.path      ' 获取窗口路径并比较（不区分大小写）
+            If LCase(windowPath) = LCase(strPath) Then
+'
+'            Shell("C:\WINDOWS\CALC.EXE", 1)
+                window.Visible = True    ' 激活已存在的窗口
+                AppActivate window.hwnd
+                ActivateExistingWindow = True
+                Exit Function
+            End If
+        End If
+        On Error GoTo ErrorHandler
+    Next window
+    ActivateExistingWindow = False
+    Exit Function
+ErrorHandler:
+    ActivateExistingWindow = False
+End Function
+
+' 打开文件夹
+Sub openDir(ByVal strPath As String)
+    On Error GoTo ErrorHandler
+    If InStr(strPath, " ") > 0 Then      ' 处理包含空格的路径
+        strPath = """" & strPath & """"
+    End If
+    shell "explorer.exe " & strPath, vbMaximizedFocus
+    Exit Sub
+ErrorHandler:
+    MsgBox "无法打开路径: " & strPath & vbCrLf & "错误: " & Err.Description, vbExclamation
+End Sub
+
+' 打开文件位置并选中文件
+Sub OpenFileLocation(ByVal strFilePath As String)
+    On Error GoTo ErrorHandler
+    strFilePath = """" & strFilePath & """"  ' 确保文件路径被引号包围
+    shell "explorer.exe /select," & strFilePath, vbMaximizedFocus
+    Exit Sub
+ErrorHandler:
+    MsgBox "无法打开文件位置: " & strFilePath & vbCrLf & "错误: " & Err.Description, vbExclamation
+End Sub
+
+' 批量打开多个路径
+Sub OpenMultiple(ParamArray Paths() As Variant)
+    Dim i As Long
+    For i = LBound(Paths) To UBound(Paths)
+        SmartOpen CStr(Paths(i))
+        DoEvents ' 允许系统处理其他事件
+    Next i
+End Sub
+
+
+' 从字符串中提取配置信息 - 键转换为长整型
+' 参数  : str,Opt_bool
+' 返回值: Dict
+Public Function getInfo_asDic( _
+                    ByVal txt As String, _
+                    ByVal regPtn As String, _
+                    Optional ByVal KeyToLong As Boolean = False) _
+                    As Object
+    Set getInfo_asDic = Nothing
+    Dim Reg As Object
+    Set Reg = CreateObject("VBScript.RegExp")
+    With Reg
+        .Pattern = regPtn  'TAG_S & "(.*?)" & TAG_D & "(.*?)" & TAG_E
+        .Global = True
+    End With
+    Dim matches As Object
+    Set matches = Reg.Execute(txt)
+    Set Reg = Nothing
+    If matches.count < 1 Then Exit Function
+    Dim Dic As Object: Set Dic = KCL.InitDic(vbTextCompare)
+    Dim match As Object, SubMatchs As Object
+    Dim Key As Variant, Var As Variant
+    
+    For Each match In matches
+        Set SubMatchs = match.SubMatches
+        If SubMatchs.count < 2 Then GoTo Continue
+        ' ==  获取编号
+        Key = Trim(Replace(SubMatchs(0), """", "")) 'trim 取消前后空格， replace 删除中间空格
+        
+        If Len(Key) < 1 Then GoTo Continue  '若key为空进入下一个循环
+        
+        If KeyToLong Then Key = CLng(Key)  'Clng转换为long类型
+            ' ==  获取编号对应page
+            Var = Trim(Replace(SubMatchs(1), """", ""))  'trim 取消前后空格， replace 删除中间空格
+        If Len(Var) < 1 Then GoTo Continue
+        Set Dic = Push_Dic(Dic, Key, Var)
+Continue:
+    Next
+    If Dic.count < 1 Then Exit Function
+    Set getInfo_asDic = Dic
+
+End Function
+Public Function Push_Dic(ByVal Dic As Object, _
+                          ByVal Key As Variant, _
+                          ByVal item As Variant) As Object
+    If Dic.Exists(Key) Then
+        Dic(Key) = item
+    Else
+        Dic.Add Key, item
+    End If
+    Set Push_Dic = Dic
+End Function
+
+Public Function showdict(ByVal oDic, Optional ByVal boolShowKeyIndex As Boolean = False)
+  Dim keys:   keys = oDic.keys
+  Dim i As Long
+  Dim stIndex As String
+  Dim stOutput As String
+  stOutput = vbNullString
+  
+  For i = 0 To oDic.count - 1
+    If boolShowKeyIndex Then
+      stIndex = "(" & i & ")"
+    End If
+    stOutput = stOutput & keys(i) & stIndex & "  :  "
+    If IsObject(oDic(keys(i))) Then
+      stOutput = stOutput & "[" & showdict(oDic(keys(i)), boolShowKeyIndex) & "]"
+    Else
+      stOutput = stOutput & oDic(keys(i))
+    End If
+    stOutput = stOutput & "; " & "_" & vbNewLine
+  Next i
+  showdict = stOutput
+  
+  Debug.Print showdict
 End Function

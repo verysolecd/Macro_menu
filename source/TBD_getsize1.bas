@@ -5,19 +5,19 @@ Sub getSize()
 CATIA.HSOSynchronized = False
 
 Set doc = CATIA.ActiveDocument
-Set oprt = doc.part 'Product.Products.item(1).ReferenceProduct.Parent.part
-Set MBD = oprt.bodies.item(1)
-Set HB = oprt.HybridBodies.Add
+Set oPrt = doc.part 'Product.Products.item(1).ReferenceProduct.Parent.part
+Set MBD = oPrt.bodies.item(1)
+Set HB = oPrt.HybridBodies.Add
 HB.Name = "Boundingbox"
-Set ref = oprt.CreateReferenceFromObject(MBD)
+Set ref = oPrt.CreateReferenceFromObject(MBD)
 Dim HSF 'As HybridShapeFactory
-Set HSF = oprt.HybridShapeFactory
+Set HSF = oPrt.HybridShapeFactory
 Set extract = HSF.AddNewExtract(ref)
 HB.AppendHybridShape extract
 extract.Compute
 doc.Selection.Add extract
 
-Set ref = oprt.CreateReferenceFromObject(extract)
+Set ref = oPrt.CreateReferenceFromObject(extract)
 
 Set xDir = HSF.AddNewDirectionByCoord(1, 0, 0)
 Set yDir = HSF.AddNewDirectionByCoord(0, 1, 0)
@@ -54,7 +54,7 @@ Set zmin = HSF.AddNewExtremum(ref, zDir, 0)
 HB.AppendHybridShape zmin
 doc.Selection.Add zmin
 
-oprt.Update
+oPrt.Update
 
 Set WB = doc.GetWorkbench("SPAWorkbench")
 Dim Mes(2), arr(5), DisX, DisY, DisZ
@@ -80,7 +80,7 @@ zmaxc = arr(2): zminc = arr(5)
 '    Doc.Selection.Add HB
 '    Doc.Selection.Delete
 
-Set product2 = oprt 'Doc.part
+Set product2 = oPrt 'Doc.part
 Set parameters1 = product2.Parameters 'UserRefProperties
 Dim length1 As Length, length2 As Length, length3 As Length
 Set length1 = parameters1.CreateDimension("XÏò", "LENGTH", DisX)

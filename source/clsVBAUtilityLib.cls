@@ -37,9 +37,9 @@ End Function
 'param:string
 'return:
 Sub Dump( _
-        ByVal Txt As String)
+        ByVal txt As String)
     If Not m_DebugMode Then Exit Sub
-    Debug.Print Txt
+    Debug.Print txt
 End Sub
 '变量的输出调试
 'param: v-变量
@@ -47,9 +47,9 @@ End Sub
 'return:
 Sub DumpV( _
         ByVal X As Variant, _
-        Optional ByVal Txt As String = "")
+        Optional ByVal txt As String = "")
     If Not m_DebugMode Then Exit Sub
-    Debug.Print Txt & DumpVariable(X)
+    Debug.Print txt & DumpVariable(X)
 End Sub
 ''' @param x As Variant
 ''' @return As String
@@ -603,11 +603,11 @@ Function GetUniquePath( _
     path(2) = "." & path(2)
     '替换文件名中不能使用的字符
     path(1) = ReplaceInvalidChars(path(1))
-    Dim fso As Object
-    Set fso = GetFso()
+    Dim FSO As Object
+    Set FSO = GetFso()
     Dim newPath As String
     newPath = path(0) + "\" + path(1)
-    If Not fso.FileExists(newPath + path(2)) Then
+    If Not FSO.FileExists(newPath + path(2)) Then
         GetUniquePath = newPath + path(2)
         Exit Function
     End If
@@ -617,7 +617,7 @@ Function GetUniquePath( _
     Do
         i = i + 1
         tempName = newPath + "_" + CStr(i) + path(2)
-        If Not fso.FileExists(tempName) Then
+        If Not FSO.FileExists(tempName) Then
             GetUniquePath = tempName
             Exit Function
         End If
@@ -656,13 +656,13 @@ End Function
 'param:IsAppending(opt)-追加时为True
 Sub WriteFile( _
         ByVal path As String, _
-        ByVal Txt As String, _
+        ByVal txt As String, _
         Optional ByVal IsAppending = False)
     Dim iIoMode As Integer
     iIoMode = IIf(IsAppending, 8, 2)
     With GetFso().OpenTextFile(path, iIoMode, True)
         On Error Resume Next
-        .Write Txt
+        .Write txt
         If Not Err.Number = 0 Then
             .Write "*** Write Errar ***"
         End If

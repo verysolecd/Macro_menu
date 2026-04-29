@@ -7,9 +7,8 @@ Attribute VB_Name = "ASM_Updateme"
 '{BackColor:}
 
 Sub Upall()
-
-    Dim part
-    Dim doc
+   If Not CanExecute("ProductDocument") Then Exit Sub
+    Dim part, doc
     For Each doc In CATIA.Documents
         If TypeName(doc) = "PartDocument" Then
             Set part = doc.part

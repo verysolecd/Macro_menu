@@ -8,8 +8,8 @@ Attribute VB_Name = "ASM_reorderPrd"
 Option Explicit
 Sub CATMain()
     If Not CanExecute("ProductDocument") Then Exit Sub
-    Dim ProDoc As ProductDocument: Set ProDoc = CATIA.ActiveDocument
-    Dim Pros As Products: Set Pros = ProDoc.Product.Products
+    Dim prodoc As ProductDocument: Set prodoc = CATIA.ActiveDocument
+    Dim Pros As Products: Set Pros = prodoc.Product.Products
     If Pros.count < 2 Then Exit Sub
     Dim AssyMode As AsmConstraintSettingAtt
     Set AssyMode = CATIA.SettingControllers.item("CATAsmConstraintSettingCtrl")
@@ -17,7 +17,7 @@ Sub CATMain()
     OriginalMode = AssyMode.PasteComponentMode
     AssyMode.PasteComponentMode = catPasteWithCstOnCopyAndCut
     Dim Names: Set Names = Get_SortedNames(Pros)
-    Dim sel As Selection: Set sel = ProDoc.Selection
+    Dim sel As Selection: Set sel = prodoc.Selection
     Dim itm As Variant
     CATIA.HSOSynchronized = False
     sel.Clear
@@ -33,7 +33,7 @@ Sub CATMain()
     End With
     CATIA.HSOSynchronized = True
     AssyMode.PasteComponentMode = OriginalMode
-    ProDoc.Product.Update
+    prodoc.Product.Update
 End Sub
 Private Function Get_SortedNames(ByVal Pros As Products) As Object
     Dim lst As Object

@@ -21,6 +21,7 @@ Private Const itemgap = 2
 Private Const fmargin = 6
 Private Const bmargin = 6
 Private Const txtWidth = 236
+
 ' Use WithEvents to handle events for dynamically created controls.
 Private WithEvents chk_TM As MSForms.CheckBox
 Attribute chk_TM.VB_VarHelpID = -1
@@ -30,13 +31,12 @@ Private WithEvents cmdOK As MSForms.CommandButton
 Attribute cmdOK.VB_VarHelpID = -1
 Private WithEvents cmdCancel As MSForms.CommandButton
 Attribute cmdCancel.VB_VarHelpID = -1
-Private WithEvents txt_TM As MSForms.textbox
+Private WithEvents txt_TM As MSForms.TextBox
 Attribute txt_TM.VB_VarHelpID = -1
-Private WithEvents txt_log As MSForms.textbox
+Private WithEvents txt_log As MSForms.TextBox
 Attribute txt_log.VB_VarHelpID = -1
 Private WithEvents chk_log As MSForms.CheckBox
 Attribute chk_log.VB_VarHelpID = -1
-
 
 
 Private colls As New collection
@@ -46,26 +46,25 @@ Private Sub UserForm_Initialize()
     ' 设置窗体基本属性
     Me.Caption = "零件号更新和路径选择"
     Me.Width = 280
-    Me.height = 200
+    Me.Height = 200
     Me.StartUpPosition = 1
-    Call initFrm
+    initFrm
 End Sub
 Sub initFrm()
-
 Dim thistop
     Set chk_Path = Me.controls.Add("Forms.CheckBox.1")
            With chk_Path
                .Name = "chk_Path":    .Caption = "是否导出到当前路径"
                .Left = fmargin:     .Width = 150
-               .top = fmargin:     .height = 20
-               thistop = .top + .height + itemgap
+               .top = fmargin:     .Height = 20
+               thistop = .top + .Height + itemgap
            End With
     Set chk_TM = Me.controls.Add("Forms.CheckBox.1", "chk_TM", True)
         With chk_TM
             .Name = "chk_TM":  .Caption = "是否更新CATIA零件号时间戳"
             .Left = fmargin:   .Width = 240
-            .top = thistop:   .height = 20
-             thistop = .top + .height + itemgap
+            .top = thistop:   .Height = 20
+             thistop = .top + .Height + itemgap
         End With
     Set class_ctrl = New clsCtrls
     Set txt_TM = Me.controls.Add("Forms.TextBox.1", "txt_TM", True)
@@ -73,10 +72,11 @@ Dim thistop
             .Name = "txt_TM"
             .Enabled = False
             .Left = fmargin + 12: .Width = txtWidth
-            .top = thistop: .height = 20
-              thistop = .top + .height + itemgap
+            .top = thistop: .Height = 20
+              thistop = .top + .Height + itemgap
         End With
-     Set class_ctrl.Txt = txt_TM
+        
+     Set class_ctrl.txt = txt_TM
         class_ctrl.ohint = "日=d或day，时=hour或h，分=min或i，默认日"
         txt_TM.Text = class_ctrl.ohint
         txt_TM.ForeColor = &H808080
@@ -85,34 +85,63 @@ Dim thistop
    Set chk_log = Me.controls.Add("Forms.CheckBox.1", "chk_log", True)
     With chk_log
             .Name = "chk_log": .Caption = "是否更新本次导出日志"
-            .top = thistop: .height = 20
+            .top = thistop: .Height = 20
             .Left = fmargin: .Width = 240
-            thistop = .top + .height + itemgap
+            thistop = .top + .Height + itemgap
          End With
    
    Set txt_log = Me.controls.Add("Forms.TextBox.1", "txt_log", True)
         With txt_log
             .Name = "txt_log"
             .Left = fmargin + 12: .Width = txtWidth
-            .top = thistop: .height = 40
-            thistop = .top + .height + itemgap
+            .top = thistop: .Height = 40
+            thistop = .top + .Height + itemgap
         End With
-        Debug.Print "log意境创建"
+'        Debug.Print "log已经创建"
    
     Set cmdOK = Me.controls.Add("Forms.CommandButton.1")
         With cmdOK
             .Name = "cmdOK":    .Caption = "确定"
             .Left = (Me.InsideWidth - (80 * 2) - itemgap) / 2:     .Width = 60
-            .top = thistop:     .height = 24
-            thistop = .top + .height + itemgap
+            .top = thistop:     .Height = 24
+            thistop = .top + .Height + itemgap
         End With
     Set cmdCancel = Me.controls.Add("Forms.CommandButton.1")
         With cmdCancel
             .Name = "cmdCancel": .Caption = "取消"
             .Left = cmdOK.Left + cmdOK.Width + itemgap: .Width = 60
-            .top = cmdOK.top: .height = 24
+            .top = cmdOK.top: .Height = 24
             .Cancel = True ' Allows Esc key to trigger this button
         End With
+End Sub
+
+Sub initFrmlog()
+
+Set txt_log = Me.controls.Add("Forms.TextBox.1", "txt_log", True)
+     With txt_log
+         .Name = "txt_log"
+         .Left = fmargin + 12: .Width = txtWidth
+            .top = fmargin:     .Height = 20
+            thistop = .top + .Height + itemgap
+     End With
+'        Debug.Print "log已经创建"
+
+ Set cmdOK = Me.controls.Add("Forms.CommandButton.1")
+     With cmdOK
+         .Name = "cmdOK":    .Caption = "确定"
+         .Left = (Me.InsideWidth - (80 * 2) - itemgap) / 2:     .Width = 60
+         .top = thistop:     .Height = 24
+         thistop = .top + .Height + itemgap
+     End With
+ Set cmdCancel = Me.controls.Add("Forms.CommandButton.1")
+     With cmdCancel
+         .Name = "cmdCancel": .Caption = "取消"
+         .Left = cmdOK.Left + cmdOK.Width + itemgap: .Width = 60
+         .top = cmdOK.top: .Height = 24
+         .Cancel = True ' Allows Esc key to trigger this button
+     End With
+
+
 End Sub
 Private Sub chk_TM_Click()
     txt_TM.Enabled = chk_TM.value
@@ -152,7 +181,7 @@ Private Sub cmdOK_Click()
             tdy(3) = txt_log.value
         End If
    
-    export_CFG = tdy '   Debug.Print export_CFG(0), export_CFG(1), export_CFG(2)
+    export_CFG = tdy '   Debug.Print export_CFG(0), export_CFG(1), export_CFG(2)m,export_CFG(3)
         Unload Me
 End Sub
 Private Sub cmdCancel_Click()
@@ -162,9 +191,17 @@ End Sub
 Private Sub Set_Form(ByVal MPgs As MultiPage, ByVal Cap As String)
     With Me
         Dim requiredInsideHeight
-        requiredInsideHeight = MPgs.top + MPgs.height + ADJUST_F_H + lb_H  '+ FrmMargin(2)
-        .height = requiredInsideHeight + (Me.height - Me.InsideHeight)
+        requiredInsideHeight = MPgs.top + MPgs.Height + ADJUST_F_H + lb_H  '+ FrmMargin(2)
+        .Height = requiredInsideHeight + (Me.Height - Me.InsideHeight)
         .Width = MPgs.Width + ADJUST_F_W + 2 * FrmMargin(2)
         .Caption = Cap
     End With
 End Sub
+
+
+
+
+
+
+
+

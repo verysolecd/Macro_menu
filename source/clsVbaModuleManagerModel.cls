@@ -110,7 +110,7 @@ Private Function get_fanction_names( _
     Set lst = New collection
     Dim buf As String
     Dim i As Long
-    With comp.CodeModule
+    With comp.codemodule
         For i = 1 To .CountOfLines
             If buf <> .ProcOfLine(i, 0) Then
                 buf = .ProcOfLine(i, 0)
@@ -173,17 +173,17 @@ End Function
 '获取组件除去注释部分的字符数
 'param: vbComp-目标组件
 Private Function GetValidCharacterCount( _
-        ByVal vbComp As Object) As Long
-    Dim codeMod As Object ' CodeModule
+        ByVal VBComp As Object) As Long
+    Dim CodeMod As Object ' CodeModule
     Dim totalChars As Long
     Dim i As Long
     Dim codeLine As String
     ' 获取CodeModule对象
-    Set codeMod = vbComp.CodeModule
+    Set CodeMod = VBComp.codemodule
     totalChars = 0
     ' 检查每行并排除注释
-    For i = 1 To codeMod.CountOfLines
-        codeLine = Trim(codeMod.Lines(i, 1))
+    For i = 1 To CodeMod.CountOfLines
+        codeLine = Trim(CodeMod.Lines(i, 1))
         If Left(codeLine, 1) <> "'" Then
             totalChars = totalChars + Len(codeLine)
         End If
@@ -223,10 +223,10 @@ Function get_dir_by_project_name( _
     If proj Is Nothing Then Exit Function
     Dim path As String
     path = parentDirPath & "\" & proj.Name
-    Dim fso As Object
-    Set fso = mUtil.GetFso()
-    If Not fso.FolderExists(path) Then
-        fso.CreateFolder path
+    Dim FSO As Object
+    Set FSO = mUtil.GetFso()
+    If Not FSO.FolderExists(path) Then
+        FSO.CreateFolder path
     End If
     get_dir_by_project_name = path
 End Function
@@ -262,14 +262,14 @@ Private Function get_target_file_path_list( _
     Dim lst As collection
     Set lst = New collection
     Set get_target_file_path_list = lst
-    Dim fso As Object
-    Set fso = mUtil.GetFso()
+    Dim FSO As Object
+    Set FSO = mUtil.GetFso()
     Dim dir As Object
-    Set dir = fso.GetFolder(path)
+    Set dir = FSO.GetFolder(path)
     Dim file As Object
     Dim ext As String
     For Each file In dir.Files
-        ext = fso.GetExtensionName(file.Name)
+        ext = FSO.GetExtensionName(file.Name)
         If Not UBound(filter(targetExtensions, ext)) < 0 Then
             lst.Add file.path
         End If
@@ -335,12 +335,12 @@ Sub export_project_child_folder( _
         Set proj = mProjectLst.item(projectIdx)
     On Error GoTo 0
     If proj Is Nothing Then Exit Sub
-    Dim fso As Object
-    Set fso = mUtil.GetFso()
+    Dim FSO As Object
+    Set FSO = mUtil.GetFso()
     Dim dirPath As String
-    dirPath = fso.GetParentFolderName(proj.Filename) & "\" & SOURCE_FOLDER_NAME
-    If Not fso.FolderExists(dirPath) Then
-        fso.CreateFolder (dirPath)
+    dirPath = FSO.GetParentFolderName(proj.Filename) & "\" & SOURCE_FOLDER_NAME
+    If Not FSO.FolderExists(dirPath) Then
+        FSO.CreateFolder (dirPath)
     End If
     Call export_project(projectIdx, dirPath)
 End Sub
@@ -357,10 +357,10 @@ Sub overwriting_project( _
     Key = Replace(proj.Filename, "\", SEPARATOR)
     Dim dirPath As String
     dirPath = mUserDict(Key)("path")
-    Dim fso As Object
-    Set fso = mUtil.GetFso()
+    Dim FSO As Object
+    Set FSO = mUtil.GetFso()
     '找不到的话删除就可以了吗？
-    If Not fso.FolderExists(dirPath) Then Exit Sub
+    If Not FSO.FolderExists(dirPath) Then Exit Sub
     Call remove_module_files(dirPath)
     Call export_project(projectIdx, dirPath)
 End Sub
@@ -377,10 +377,10 @@ Sub open_folder( _
     Key = Replace(proj.Filename, "\", SEPARATOR)
     Dim dirPath As String
     dirPath = mUserDict(Key)("path")
-    Dim fso As Object
-    Set fso = mUtil.GetFso()
+    Dim FSO As Object
+    Set FSO = mUtil.GetFso()
     '找不到的话删除就可以了吗？
-    If Not fso.FolderExists(dirPath) Then Exit Sub
+    If Not FSO.FolderExists(dirPath) Then Exit Sub
     Call open_folder_dy_explorer(dirPath)
 End Sub
 '更新用户数据
@@ -427,11 +427,11 @@ End Function
 '删除模块文件
 Private Sub remove_module_files( _
         ByVal dirPath As String)
-    Dim fso As Object
-    Set fso = mUtil.GetFso()
-    If Not fso.FolderExists(dirPath) Then Exit Sub
-    Dim paths As collection
-    Set paths = get_target_file_path_list( _
+    Dim FSO As Object
+    Set FSO = mUtil.GetFso()
+    If Not FSO.FolderExists(dirPath) Then Exit Sub
+    Dim Paths As collection
+    Set Paths = get_target_file_path_list( _
         dirPath, _
         Array( _
             "cls", _
@@ -441,9 +441,9 @@ Private Sub remove_module_files( _
         ) _
     )
     Dim path As Variant ' String
-    For Each path In paths
+    For Each path In Paths
         On Error Resume Next
-            fso.DeleteFile path
+            FSO.DeleteFile path
         On Error GoTo 0
     Next
     '等待
@@ -495,26 +495,26 @@ Private Function get_user_data() As Object
 End Function
 '清理用户数据
 Private Sub cleanUp_userdata()
-    Dim fso As Object
-    Set fso = mUtil.GetFso()
+    Dim FSO As Object
+    Set FSO = mUtil.GetFso()
     Dim removeLst As collection
     Set removeLst = New collection
     Dim filePath As String
     Dim dirPath As String
     Dim Key As Variant 'String
     For Each Key In mUserDict.keys()
-        If Key = "ver" Then GoTo continue
+        If Key = "ver" Then GoTo Continue
         filePath = Replace(Key, SEPARATOR, "\")
-        If Not fso.FileExists(filePath) Then
+        If Not FSO.FileExists(filePath) Then
             removeLst.Add Key
-            GoTo continue
+            GoTo Continue
         End If
         dirPath = mUserDict(Key)("path")
-        If Not fso.FolderExists(dirPath) Then
+        If Not FSO.FolderExists(dirPath) Then
             removeLst.Add Key
-            GoTo continue
+            GoTo Continue
         End If
-continue:
+Continue:
     Next
     For Each Key In removeLst
         mUserDict.Remove Key

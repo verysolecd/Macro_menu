@@ -6,14 +6,14 @@ Attribute VB_Name = "MDL_newgeotree"
 '{ControlTipText:创建基于模板的几何树}
 '{BackColor: }
 
-Private oprt
+Private oPrt
 
 Sub newgeo()
  If Not CanExecute("PartDocument") Then Exit Sub
  
 Set odoc = CATIA.ActiveDocument.Product
-Set oprt = odoc.ReferenceProduct.Parent.part
-Set colls = oprt.HybridBodies
+Set oPrt = odoc.ReferenceProduct.Parent.part
+Set colls = oPrt.HybridBodies
 On Error Resume Next
 Set og = colls.item("Geo_sheet")
 On Error GoTo 0
@@ -30,22 +30,22 @@ For i = 0 To UBound(arr)
     Next
 End Sub
 Sub crSkt(og)
-oprt.InWorkObject = og
-Set HSF = oprt.HybridShapeFactory
+oPrt.InWorkObject = og
+Set HSF = oPrt.HybridShapeFactory
 Set oPoint = HSF.AddNewPointCoord(0#, 0#, 0#)
 og.AppendHybridShape oPoint
-oprt.InWorkObject = oPoint
-oprt.Update
+oPrt.InWorkObject = oPoint
+oPrt.Update
 Set oPln = HSF.AddNewPlaneEquation(0#, 0#, 1#, 20#)
 Set pref = oPoint
-Set oref = oprt.CreateReferenceFromObject(pref)
+Set oref = oPrt.CreateReferenceFromObject(pref)
 oPln.SetReferencePoint oPoint  'oref
 og.AppendHybridShape oPln
-oprt.InWorkObject = oPln
-oprt.Update
+oPrt.InWorkObject = oPln
+oPrt.Update
 Set skts = og.HybridSketches
 Set oSkt = og.HybridSketches.Add(oPln)
-oprt.InWorkObject = oSkt
+oPrt.InWorkObject = oSkt
 Set factory2D1 = oSkt.OpenEdition()
 Set geometricElements1 = oSkt.GeometricElements
 Set axis2D1 = geometricElements1.item("AbsoluteAxis")
@@ -58,8 +58,8 @@ Set point2D1 = axis2D1.GetItem("Origin")
 circle2D1.CenterPoint = point2D1
 circle2D1.ReportName = 3
 oSkt.CloseEdition
-oprt.InWorkObject = og
-oprt.Update
+oPrt.InWorkObject = og
+oPrt.Update
 ''the first 3 being the coordinates of the axis origin,
 'Dim arr(0 To 8)
 'arr(0) = 0
