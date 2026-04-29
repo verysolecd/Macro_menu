@@ -32,7 +32,7 @@ Sub CATMain()
     oWindow.Layout = catWindowGeomOnly
     oViewer.Reframe
     
-    Dim MyViewer: Set MyViewer = CATIA.activeWindow.ActiveViewer
+    Dim MyViewer: Set MyViewer = CATIA.ActiveWindow.ActiveViewer
     Dim currentColor(2)
     MyViewer.GetBackgroundColor currentColor
     
