@@ -1,16 +1,23 @@
 Attribute VB_Name = "CAT_SWScr"
+
 '{GP:7}
 '{Ep:switchRefresh}
-'{Caption: å±å¹•æ›´æ–°}
-'{ControlTipText:ç¦æ­¢å±å¹•æ›´æ–°ä»¥é˜²æ­¢å¡é¡¿}
+'{Caption: ÆÁÄ»¸üĞÂ}
+'{ControlTipText:½ûÖ¹ÆÁÄ»¸üĞÂÒÔ·ÀÖ¹¿¨¶Ù}
 '{BackColor: }
-Private Const mdlName As String = "CAT_SWScr"
+Private Quick
+Private Const mdlname As String = "CAT_SWScr"
+
 Sub switchRefresh()
-On Error Resume Next
-    CATIA.ActiveWindow.ActiveViewer.Update
+    Dim setcls:  Set setcls = CATIA.SettingControllers
+    Dim Asmg:   Set Asmg = setcls.item("CATAsmGeneralSettingCtrl")
+    Dim Vismg:   Set Vismg = setcls.item("CATVizVisualizationSettingCtrl")
+    On Error Resume Next
+    Quick = IIf(Vismg.Viz3DFixedAccuracy = 5, True, False)
+    CATquick Not Quick, True
+        CATIA.ActiveWindow.ActiveViewer.Update
     On Error GoTo 0
+    Asmg.Commit: Vismg.Commit
 End Sub
-Sub isRefresh()
- istrue = CATIA.RefreshDisplay
- MsgBox istrue
-End Sub
+
+

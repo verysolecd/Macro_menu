@@ -2,25 +2,25 @@ Attribute VB_Name = "ASM_weldSel"
 'Attribute VB_Name = "weldSel"
 '{GP:44}
 '{Ep:createWd}
-'{Caption:äº§å“ç„Šç¼}
-'{ControlTipText:é€‰æ‹©è¢«è¿æ¥çš„äº§å“}
+'{Caption:²úÆ·º¸·ì}
+'{ControlTipText:Ñ¡Ôñ±»Á¬½ÓµÄ²úÆ·}
 '{BackColor:}
 
-Private Const mdlName As String = "ASM_weldSel"
+Private Const mdlname As String = "ASM_weldSel"
 Sub createWd()
 If Not KCL.CanExecute("ProductDocument") Then Exit Sub
-MsgBox "è¿˜æ²¡ç¼–å‘¢"
+MsgBox "»¹Ã»±àÄØ"
 '
 'Set Doc = CATIA.ActiveDocument
 'Set rPrd = Doc.Product
 'Set sPrd = rootPrd.Products
-'Set iprd = sPrd.item("ç‚¹ç„Šä¿¡æ¯")
+'Set iprd = sPrd.item("µãº¸ĞÅÏ¢")
 'Set osel = Doc.Selection
 'Dim oPn
 'Dim iType(0)
 'osel.Clear
 'iType(0) = "Product"
-'status = osel.SelectElement3(iType, "é€‰æ‹©è¢«è¿æ¥äº§å“", True, 2, False)
+'status = osel.SelectElement3(iType, "Ñ¡Ôñ±»Á¬½Ó²úÆ·", True, 2, False)
 'If status = "Normal" And osel.Count2 <= 3 Then
 'oName = ""
 'For i = 1 To osel.Count

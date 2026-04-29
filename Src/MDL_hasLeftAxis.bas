@@ -1,16 +1,16 @@
 Attribute VB_Name = "MDL_hasLeftAxis"
 'Attribute VB_Name = "MDL_hasLeftAxis"
 
-' æ£€æŸ¥é›¶ä»¶æ–‡æ¡£ä¸­æ˜¯å¦å­˜åœ¨å·¦æ‰‹åæ ‡ç³»
+' ¼ì²éÁã¼şÎÄµµÖĞÊÇ·ñ´æÔÚ×óÊÖ×ø±êÏµ
 '{Gp:999}
 '{Ep:LeftHand}
 '{Caption:LeftHandAxis}
-'{ControlTipText:æ£€æŸ¥æ˜¯å¦æœ‰å·¦æ‰‹åæ ‡ç³»}
+'{ControlTipText:¼ì²éÊÇ·ñÓĞ×óÊÖ×ø±êÏµ}
 '{BackColor:33023}
 Option Explicit
-Private Const mdlName As String = "MDL_hasLeftAxis"
+Private Const mdlname As String = "MDL_hasLeftAxis"
 Sub LeftHand()
-    ' æ£€æŸ¥æ˜¯å¦å¯ä»¥æ‰§è¡Œ
+    ' ¼ì²éÊÇ·ñ¿ÉÒÔÖ´ĞĞ
     If Not CanExecute("PartDocument") Then Exit Sub
     Dim doc As PartDocument: Set doc = CATIA.ActiveDocument
     Dim Axs As AxisSystems: Set Axs = doc.part.AxisSystems
@@ -22,26 +22,26 @@ Sub LeftHand()
         End If
     Next
     If msg = vbNullString Then
-        MsgBox "æœªæ‰¾åˆ°å·¦æ‰‹åæ ‡ç³»ã€‚"
+        MsgBox "Î´ÕÒµ½×óÊÖ×ø±êÏµ¡£"
     Else
-        MsgBox "å·²æ‰¾åˆ°å·¦æ‰‹åæ ‡ç³»ï¼š" & vbNewLine & msg
+        MsgBox "ÒÑÕÒµ½×óÊÖ×ø±êÏµ£º" & vbNewLine & msg
     End If
 End Sub
 
 Private Function IsLeft(ByVal ax As Variant) As Boolean
-    ' å®šä¹‰å‘é‡
+    ' ¶¨ÒåÏòÁ¿
     Dim vecX(2), vecY(2), VecZ(2)
     ax.GetXAxis vecX
     ax.GetYAxis vecY
     ax.GetZAxis VecZ
     
-    ' è®¡ç®— X è½´å’Œ Y è½´çš„å‰ç§¯
+    ' ¼ÆËã X ÖáºÍ Y ÖáµÄ²æ»ı
     Dim Outer(2) As Double
     Outer(0) = vecX(1) * vecY(2) - vecX(2) * vecY(1)
     Outer(1) = vecX(2) * vecY(0) - vecX(0) * vecY(2)
     Outer(2) = vecX(0) * vecY(1) - vecX(1) * vecY(0)
     
-    ' è®¡ç®—å‰ç§¯ç»“æœä¸ Z è½´çš„ç‚¹ç§¯ï¼Œå¹¶åˆ¤æ–­æ˜¯å¦å°äº 0
+    ' ¼ÆËã²æ»ı½á¹ûÓë Z ÖáµÄµã»ı£¬²¢ÅĞ¶ÏÊÇ·ñĞ¡ÓÚ 0
     IsLeft = _
         VecZ(0) * Outer(0) + VecZ(1) * Outer(1) + VecZ(2) * Outer(2) < 0
 End Function

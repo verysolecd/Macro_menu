@@ -1,33 +1,28 @@
 Attribute VB_Name = "DRW_VIewBOM"
 '{GP:5}
 '{EP:DRW_create_BomTable}
-'{Caption:å›¾çº¸BOM}
-'{ControlTipText: åœ¨å›¾çº¸ä¸­é€‰æ‹©è§†å›¾åŽæ’å…¥äº§å“BOMï¼Œå¸¦åºå·}
-'{èƒŒæ™¯é¢œè‰²: 12648447}
+'{Caption:Í¼Ö½BOM}
+'{ControlTipText: ÔÚÍ¼Ö½ÖÐÑ¡ÔñÊÓÍ¼ºó²åÈë²úÆ·BOM£¬´øÐòºÅ}
+'{±³¾°ÑÕÉ«: 12648447}
 
 Private targetsheet
 Private drwDoc, osht, shts, oViews, Fct2, iformat(0 To 7), bfile, bcgView, mainview
 Private osel
-Private Const mdlName As String = "DRW_VIewBOM"
+Private Const mdlname As String = "DRW_VIewBOM"
 Sub DRW_create_BomTable()
  CATIA.RefreshDisplay = False
     Call m_init
 On Error Resume Next
-
 If drwDoc Is Nothing Then Exit Sub
-    Set bomview = KCL.SelectItem("è¯·é€‰æ‹©bomè§†å›¾", "DrawingView")
+    Set bomview = KCL.SelectItem("ÇëÑ¡ÔñbomÊÓÍ¼", "DrawingView")
         If bomview Is Nothing Then Exit Sub
-        
-        
     Set dprd = bomview.GenerativeBehavior.Document 'DrawingViewGenerativeBehavior/DrawingViewGenerativeBehavior
         If Not IsObj_T(dprd, "Product") Then Exit Sub
-
 tempAry = getPrd_BomAry(dprd, iformat)
  tolrow = UBound(tempAry, 1)
  tolcol = UBound(tempAry, 2)
  pos_x = 50: pos_y = 50
  Set otable = Nothing
- 
  For i = 1 To bomview.Tables.count
     Set otable = bomview.Tables.item(i)
     If otbale.Name = "bbom" Then
@@ -52,14 +47,14 @@ End Sub
 Private Sub m_init()
 
 If Not CanExecute("DrawingDocument") Then Exit Sub
-iformat(0) = "Number"
-iformat(1) = "Part Number"
-iformat(2) = "Quantity"
-iformat(3) = "Nomenclature"
-iformat(4) = "Defintion"
-iformat(5) = "Mass"
-iformat(6) = "Density"
-iformat(7) = "Material"
+    iformat(0) = "Number"
+    iformat(1) = "Part Number"
+    iformat(2) = "Quantity"
+    iformat(3) = "Nomenclature"
+    iformat(4) = "Defintion"
+    iformat(5) = "Mass"
+    iformat(6) = "Density"
+    iformat(7) = "Material"
  opath = KCL.GetPath(KCL.getVbaDir & "\" & "oTemp")
  bfile = opath & "\bom_recap.txt"
  
@@ -115,7 +110,7 @@ xlm.inject_ary bomary
 End Sub
 
 Function Parse2ary(lns)
-    Parse2ary = Split("") ' åˆå§‹åŒ–ä¸ºç©ºæ•°ç»„ä»¥é˜²ä¸‡ä¸€
+    Parse2ary = Split("") ' ³õÊ¼»¯Îª¿ÕÊý×éÒÔ·ÀÍòÒ»
     If lns.count = 0 Then Exit Function
     Dim tempArr, resultArr
     tempArr = ParseLineToArray(lns(1))
@@ -127,7 +122,7 @@ Function Parse2ary(lns)
         maxCol = UBound(tempArr) - LBound(tempArr) + 1
         If maxCol > colCount Then maxCol = colCount
         For j = 1 To maxCol
-            resultArr(i, j) = tempArr(j - 1) 'tempArr æ˜¯ 0-based
+            resultArr(i, j) = tempArr(j - 1) 'tempArr ÊÇ 0-based
         Next j
         For j = maxCol + 1 To colCount
              resultArr(i, j) = ""
@@ -139,7 +134,7 @@ End Function
 Function getBomlns(BomTxTfile)
     Dim fso: Set fso = KCL.GetFso
     Dim ts: Set ts = fso.OpenTextFile(BomTxTfile, 1)
-    Dim lns: Set lns = New collection
+    Dim lns: Set lns = New Collection
     Dim startLn: startLn = False
     Do Until ts.AtEndOfStream
         lineContent = Trim(ts.ReadLine)

@@ -3,14 +3,14 @@ Private Declare PtrSafe Function OpenClipboard Lib "user32" (ByVal hwnd As LongP
 Private Declare PtrSafe Function EmptyClipboard Lib "user32" () As Long
 Private Declare PtrSafe Function CloseClipboard Lib "user32" () As Long
 Private Declare PtrSafe Function SetClipboardData Lib "user32" (ByVal wFormat As Long, ByVal hMem As LongPtr) As LongPtr
-Private Const mdlName As String = "ZZ_BCK"
-Sub remove_usrP()
-Set oprd = CATIA.ActiveDocument.Product
-rm oprd
+Private Const mdlname As String = "ZZ_BCK"
+Private Sub remove_usrP()
+    Set oPrd = CATIA.ActiveDocument.Product
+    rm oPrd
 End Sub
-Sub rm(oprd)
+Private Sub rm(oPrd)
     On Error Resume Next
-     Set refPrd = oprd.ReferenceProduct
+     Set refPrd = oPrd.ReferenceProduct
      Set oprt = refPrd.Parent.part
     Set colls = refPrd.Publications
     colls.Remove ("Location")
@@ -22,7 +22,7 @@ Sub rm(oprd)
         Set cm = colls.GetItem("cm")
         Set osel = CATIA.ActiveDocument.Selection
         osel.Clear: osel.Add cm: osel.Delete
-     Set colls = refPrd.Parent.part.relations
+     Set colls = refPrd.Parent.part.Relations
      colls.Remove ("CalM")
      colls.Remove ("CMAS")
      colls.Remove ("CTK")
@@ -30,17 +30,17 @@ Sub rm(oprd)
      colls.Remove ("iMass")
      colls.Remove ("iMaterial")
      colls.Remove ("iThickness")
-    If oprd.Products.count > 0 Then
-        For i = 1 To oprd.Products.count
-          rm (oprd.Products.item(i))
+    If oPrd.Products.count > 0 Then
+        For i = 1 To oPrd.Products.count
+          rm (oPrd.Products.item(i))
         Next
     End If
 On Error GoTo 0
 End Sub
 
 
-''==éåŽ†é€’å½’=============================
-Sub recurAyo(ayo)
+''==±éÀúµÝ¹é=============================
+Private Sub recurAyo(ayo)
     Dim colls: Set itm = ayo.Products
     For Each itm In colls
         Call recurFunc(itm)
@@ -53,10 +53,9 @@ Sub recurAyo(ayo)
     End If
 End Sub
 
-''==å›¾çº¸é¡µé¢=============================
+''==Í¼Ö½Ò³Ãæ=============================
 
-Private Const mdlName As String = "A0_pages"
-Sub main()
+Private Sub main()
 CATIA.RefreshDisplay = False
     Set shts = CATIA.ActiveDocument.sheets
       Set osht = Nothing
@@ -75,7 +74,7 @@ j = 1
        Set osht = lst(i)
        If osht.IsDetail = False Then
             osht.Activate
-                    oo = straf1st(osht.Name, " ")
+                    oo = StrAF(osht.Name, " ")
         If i > 9 Then
             osht.Name = "SH" & i & oo
         Else
@@ -88,9 +87,9 @@ j = 1
                Set oDict(itm.Name) = itm
             Next
            Set Pg1 = oDict("gongxxzhang")
-            Pg1.text = "å…±" & shts.count - 1 & "é¡µ"
+            Pg1.text = "¹²" & shts.count - 1 & "Ò³"
             Set Pg2 = oDict("dixxzhang")
-            Pg2.text = "ç¬¬" & i & "é¡µ"
+            Pg2.text = "µÚ" & i & "Ò³"
             oView.SaveEdition
         End If
     Next
@@ -98,17 +97,17 @@ j = 1
      Set oView = osht.Views.item(1)
       osht.Activate
 End Sub
-Function straf1st(istr, iext)
+Private Function StrAF(istr, iext)
 Dim idx
 idx = InStr(istr, iext)
 If idx > 0 Then
-        straf1st = Mid(istr, idx)
+        StrAF = Mid(istr, idx)
     Else
-        straf1st = istr
+        StrAF = istr
     End If
 End Function
 
-Function InitDic()
+Private Function InitDic()
     Dim dic As Object
     Set dic = CreateObject("Scripting.Dictionary")
     dic.compareMode = compareMode
@@ -116,6 +115,85 @@ Function InitDic()
 End Function
 
 
+Sub shot()
+MsgBox "Ã»±àÄØ"
+Exit Sub
+ Dim iprd, rprd, oPrd, children
+ Dim xlsht, rng, RC(0 To 1), oArry()
+ Dim i, oRowNb
+  RC(0) = 3: RC(1) = 3
+    On Error Resume Next
+    Set CATIA = GetObject(, "CATIA.Application") '»ñÈ¡catia³ÌÐò
+    Dim oDoc: Set oDoc = CATIA.ActiveDocument
+    Set rprd = CATIA.ActiveDocument.Product
+         If Err.Number <> 0 Then
+            MsgBox "Çë´ò¿ªCATIA²¢´ò¿ªÄãµÄ²úÆ·£¬ÔÙÔËÐÐ±¾³ÌÐò": Err.Clear
+            Exit Sub
+         End If
+    On Error GoTo 0
+    Set xlAPP = GetObject(, "Excel.Application") '»ñÈ¡excel³ÌÐò
+    Set xlsht = xlAPP.ActiveSheet: xlsht.Columns(2).NumberFormatLocal = "0.000"
+Dim oWindow, oViewer
+Dim file_type As String
+Set oWindow = CATIA.ActiveWindow
+oWindow.Layout = catWindowGeomOnly
+Set oViewer = oWindow.ActiveViewer
+oViewer.Reframe
+'====ÐÞ¸Ä±³¾°ÑÕÉ«=====
+Dim MyViewer, oColor(2)
+Set MyViewer = CATIA.ActiveWindow.ActiveViewer
+MyViewer.GetBackgroundColor oColor
+MyViewer.PutBackgroundColor Array(1, 1, 1) ' Change background color to WHITE
+'====ÐÞ¸Ä±³¾°ÑÕÉ«=====
+file_type = "tiff"
+Dim oname, CapturePath, oType
+  CapturePath = CATIA.FileSelectionBox("ÊäÈëÎÄ¼þÃû", file_type, CatFileSelectionModeSave)
+  oname = CapturePath & "." & file_type
+oType = catCaptureFormatTIFF 'catCaptureFormatBMP catCaptureFormatJPEG
+MyViewer.CaptureToFile oType, oname ' MAIN SENTENCE!! STORE THE PICTURE IN ANY FORMAT
+MyViewer.PutBackgroundColor oColor ' Change background original
+MsgBox ("ÒÑ¾­±£´æÍ¼Æ¬")
+oWindow.Layout = catWindowSpecsAndGeom 'catWindowSpecsOnly ' catWindowGeomOnly
+End Sub
+Function shotme()
+    Dim iprd, rprd, oPrd, children
+    Dim xlsht, rng, RC(0 To 1), oArry()
+    Dim i, oRowNb
+     RC(0) = 3: RC(1) = 3
+       On Error Resume Next
+       Set CATIA = GetObject(, "CATIA.Application") '»ñÈ¡catia³ÌÐò
+       Dim oDoc: Set oDoc = CATIA.ActiveDocument
+       Set rprd = CATIA.ActiveDocument.Product
+            If Err.Number <> 0 Then
+               MsgBox "Çë´ò¿ªCATIA²¢´ò¿ªÄãµÄ²úÆ·£¬ÔÙÔËÐÐ±¾³ÌÐò": Err.Clear
+               Exit Sub
+            End If
+    On Error GoTo 0
+    Set xlAPP = GetObject(, "Excel.Application") '»ñÈ¡excel³ÌÐò
+    Set xlsht = xlAPP.ActiveSheet: xlsht.Columns(2).NumberFormatLocal = "0.000"
+    Dim oWindow, oViewer
+    Dim file_type As String
+    Set oWindow = CATIA.ActiveWindow
+    oWindow.Layout = catWindowGeomOnly
+    Set oViewer = oWindow.ActiveViewer
+    oViewer.Reframe
+'====ÐÞ¸Ä±³¾°ÑÕÉ«=====
+    Dim MyViewer, oColor(2)
+    Set MyViewer = CATIA.ActiveWindow.ActiveViewer
+    MyViewer.GetBackgroundColor oColor
+    MyViewer.PutBackgroundColor Array(1, 1, 1) ' Change background color to WHITE
+'====ÐÞ¸Ä±³¾°ÑÕÉ«=====
+    file_type = "tiff"
+    Dim oname, CapturePath, oType
+    MyViewer.CaptureToClipboard
+      CapturePath = CATIA.FileSelectionBox("ÊäÈëÎÄ¼þÃû", file_type, CatFileSelectionModeSave)
+      oname = CapturePath & "." & file_type
+    oType = catCaptureFormatTIFF 'catCaptureFormatBMP catCaptureFormatJPEG
+    MyViewer.CaptureToFile oType, oname ' MAIN SENTENCE!! STORE THE PICTURE IN ANY FORMAT
+    MyViewer.PutBackgroundColor oColor ' Change background original
+    MsgBox ("ÒÑ¾­±£´æÍ¼Æ¬")
+    oWindow.Layout = catWindowSpecsAndGeom 'catWindowSpecsOnly ' catWindowGeomOnly
+End Function
 
 
 

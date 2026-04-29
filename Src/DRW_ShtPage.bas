@@ -1,5 +1,5 @@
 Attribute VB_Name = "DRW_ShtPage"
-Private Const mdlName As String = "DRW_ShtPage"
+Private Const mdlname As String = "DRW_ShtPage"
 Sub main()
     CATIA.RefreshDisplay = False
     Set shts = CATIA.ActiveDocument.sheets
@@ -17,7 +17,7 @@ Sub main()
        Set osht = lst(i)
        If osht.IsDetail = False Then
             osht.Activate
-                    oo = straf1st(osht.Name, " ")
+                    oo = StrAF(osht.Name, " ")
             If i > 9 Then
                     osht.Name = "SH" & i & oo
              Else
@@ -32,9 +32,9 @@ Sub main()
             Next
             
             Set Pg1 = oDict("gongxxzhang")
-            Pg1.text = "å…±" & shts.count - 1 & "é¡µ"
+            Pg1.text = "¹²" & shts.count - 1 & "Ò³"
             Set Pg2 = oDict("dixxzhang")
-            Pg2.text = "ç¬¬" & i & "é¡µ"
+            Pg2.text = "µÚ" & i & "Ò³"
             oView.SaveEdition
         End If
     Next
@@ -42,13 +42,13 @@ Sub main()
      lst(lst.count).Activate
      Set oView = osht.Views.item(1)
 End Sub
-Function straf1st(istr, iext)
+Function StrAF(istr, iext)
 Dim idx
 idx = InStr(istr, iext)
 If idx > 0 Then
-        straf1st = Mid(istr, idx)
+        StrAF = Mid(istr, idx)
     Else
-        straf1st = istr
+        StrAF = istr
     End If
 End Function
 Function InitDic()

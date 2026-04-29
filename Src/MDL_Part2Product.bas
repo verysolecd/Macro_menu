@@ -1,32 +1,30 @@
 Attribute VB_Name = "MDL_Part2Product"
-'Attribute VB_Name = "m2_Part2Product"
-'{æŽ§ä»¶æç¤ºæ–‡æœ¬: å¯å°†é›¶ä»¶è½¬æ¢ä¸ºäº§å“}
-' æ£€æŸ¥é›¶ä»¶æ–‡æ¡£ä¸­æ˜¯å¦å­˜åœ¨å·¦æ‰‹åæ ‡ç³»
+' ¼ì²éÁã¼þÎÄµµÖÐÊÇ·ñ´æÔÚ×óÊÖ×ø±êÏµ
 '{Gp:4}
 '{Ep:isLhcoord}
-'{Caption:é›¶ä»¶è½¬äº§å“}
-'{ControlTipText:æ­¤æŒ‰é’®å°†å¤šå®žä½“é›¶ä»¶è½¬åŒ–ä¸ºäº§å“}
+'{Caption:Áã¼þ×ª²úÆ·}
+'{ControlTipText:´Ë°´Å¥½«¶àÊµÌåÁã¼þ×ª»¯Îª²úÆ·}
 '{BackColor:}
 Option Explicit
 
-Private Const mdlName As String = "MDL_Part2Product"
+Private Const mdlname As String = "MDL_Part2Product"
 Sub isLhcoord()
     If Not CanExecute("PartDocument") Then Exit Sub
     Dim BaseDoc As PartDocument: Set BaseDoc = CATIA.ActiveDocument
     Dim BasePath As Variant: BasePath = Array(BaseDoc.FullName)
     Dim pt As part: Set pt = BaseDoc.part
-    Dim LeafItems As collection: Set LeafItems = Get_LeafItemLst(pt.bodies)
+    Dim LeafItems As Collection: Set LeafItems = Get_LeafItemLst(pt.bodies)
     Dim msg As String
     If LeafItems Is Nothing Then
-        msg = "æ²¡æœ‰å¯å¤åˆ¶çš„å…ƒç´ ï¼"
+        msg = "Ã»ÓÐ¿É¸´ÖÆµÄÔªËØ£¡"
         MsgBox msg, vbOKOnly + vbExclamation
         Exit Sub
     End If
-    msg = LeafItems.count & " ä¸ªå¯å¤åˆ¶çš„å…ƒç´ ã€‚" & vbNewLine & _
-          "è¯·æŒ‡å®šç²˜è´´çš„ç±»åž‹" & vbNewLine & vbNewLine & _
-          "æ˜¯ : å¸¦é“¾æŽ¥çš„ç»“æžœ(As Result With Link)" & vbNewLine & _
-          "å¦ : ä½œä¸ºç»“æžœ(As Result)" & vbNewLine & _
-          "å–æ¶ˆ : å®ä¸­æ­¢"
+    msg = LeafItems.count & " ¸ö¿É¸´ÖÆµÄÔªËØ¡£" & vbNewLine & _
+          "ÇëÖ¸¶¨Õ³ÌùµÄÀàÐÍ" & vbNewLine & vbNewLine & _
+          "ÊÇ : ´øÁ´½ÓµÄ½á¹û(As Result With Link)" & vbNewLine & _
+          "·ñ : ×÷Îª½á¹û(As Result)" & vbNewLine & _
+          "È¡Ïû : ºêÖÐÖ¹"
     Dim PasteType As String
     Select Case MsgBox(msg, vbQuestion + vbYesNoCancel)
         Case vbYes
@@ -42,12 +40,12 @@ Sub isLhcoord()
     Call ToProduct(TopDoc, LeafItems, PasteType)
     Call UpdateScene(BaseScene)
     TopDoc.Product.Update
-    'Debug.Print "æ—¶é—´:" & KCL.SW_GetTime & "s"
-    MsgBox "å®Œæˆ"
+    'Debug.Print "Ê±¼ä:" & KCL.SW_GetTime & "s"
+    MsgBox "Íê³É"
 End Sub
 
 Private Sub ToProduct(ByVal TopDoc As ProductDocument, _
-                      ByVal LeafItems As collection, _
+                      ByVal LeafItems As Collection, _
                       ByVal PasteType As String)
     Dim TopSel As Selection
     Set TopSel = TopDoc.Selection
@@ -88,7 +86,7 @@ Private Sub Preparing_Copy(ByVal sel As Selection, ByVal itm As AnyObject)
         sel.Add itm
         Exit Sub
     End If
-    Dim ShpsLst As collection: Set ShpsLst = New collection
+    Dim ShpsLst As Collection: Set ShpsLst = New Collection
     ShpsLst.Add itm.HybridShapes
     Select Case TypeName(itm)
         Case "HybridBody"
@@ -96,16 +94,16 @@ Private Sub Preparing_Copy(ByVal sel As Selection, ByVal itm As AnyObject)
         Case "OrderedGeometricalSet"
             Set ShpsLst = Get_All_OdrGeoSetShapes(itm, ShpsLst)
     End Select
-    Dim Shps As HybridShapes, shp As HybridShape
-    For Each Shps In ShpsLst
-        For Each shp In Shps
+    Dim shps As HybridShapes, shp As HybridShape
+    For Each shps In ShpsLst
+        For Each shp In shps
             sel.Add shp
         Next
     Next
 End Sub
 
 Private Function Get_All_OdrGeoSetShapes(ByVal OdrGeoSet As OrderedGeometricalSet, _
-                                         ByVal lst As collection) As collection
+                                         ByVal lst As Collection) As Collection
     Dim child As OrderedGeometricalSet
     For Each child In OdrGeoSet.OrderedGeometricalSets
         lst.Add child.HybridShapes
@@ -117,7 +115,7 @@ Private Function Get_All_OdrGeoSetShapes(ByVal OdrGeoSet As OrderedGeometricalSe
 End Function
 
 Private Function Get_All_HbShapes(ByVal Hbdy As HybridBody, _
-                                  ByVal lst As collection) As collection
+                                  ByVal lst As Collection) As Collection
     Dim child As HybridBody
     For Each child In Hbdy.HybridBodies
         lst.Add child.HybridShapes
@@ -128,10 +126,10 @@ Private Function Get_All_HbShapes(ByVal Hbdy As HybridBody, _
     Set Get_All_HbShapes = lst
 End Function
 
-Private Function Get_LeafItemLst(ByVal pt As part) As collection
+Private Function Get_LeafItemLst(ByVal pt As part) As Collection
     Set Get_LeafItemLst = Nothing
     Dim sel As Selection: Set sel = pt.Parent.Selection
-    Dim TmpLst As collection: Set TmpLst = New collection
+    Dim TmpLst As Collection: Set TmpLst = New Collection
     Dim i As Long
     Dim filter As String
     filter = "(CATPrtSearch.BodyFeature.Visibility=Shown " & _
@@ -143,7 +141,7 @@ Private Function Get_LeafItemLst(ByVal pt As part) As collection
         .Add pt
         .Search filter
         For i = 1 To .Count2
-            TmpLst.Add .item(i).value
+            TmpLst.Add .item(i).Value
         Next
         .Clear
     End With
@@ -158,7 +156,7 @@ Private Function Get_LeafItemLst(ByVal pt As part) As collection
         LeafHBdys.Add Hbdy, 0
     Next
     Dim itm As AnyObject
-    Dim lst As collection: Set lst = New collection
+    Dim lst As Collection: Set lst = New Collection
     For Each itm In TmpLst
         Select Case TypeName(itm)
             Case "Body"
@@ -193,7 +191,6 @@ Private Function Is_LeafHybridBody(ByVal Hbdy As AnyObject, _
     CATIA.HSOSynchronized = True
     If cnt > 1 Then Is_LeafHybridBody = True
 End Function
-
 Private Function Init_Part(ByVal prods As Variant, _
                            ByVal PtNum As String) As PartDocument
     Dim prod As Product

@@ -2,14 +2,14 @@ Attribute VB_Name = "OTH_Flower"
 'Attribute VB_Name = "OTH_flower"
 '{GP:4446}
 '{Ep:DF}
-'{Caption:澶╂潃鐨勫皬鑺眪
-'{ControlTipText: 鍙互鐢讳竴浜涜姳鍑烘潵}
+'{Caption:天杀的小花}
+'{ControlTipText: 可以画一些花出来}
 '{BackColor:16744703}
 
 Private X0 As Double
 Private Y0 As Double
 Private Z0 As Double
-Private Const mdlName As String = "OTH_Flower"
+Private Const mdlname As String = "OTH_Flower"
 Sub DF()
  If Not CanExecute("PartDocument") Then Exit Sub
     FrmFlower.Show
@@ -18,10 +18,10 @@ Sub iPos(Optional ByVal pp As Double)
 
     Z0 = 0
     Dim idst
-    idstx = VAL(FrmFlower.TxtDeltaX.text) * 2.3
-   idsty = VAL(FrmFlower.TxtDeltaX.text) * 2.6
+    idstx = val(FrmFlower.TxtDeltaX.text) * 2.3
+   idsty = val(FrmFlower.TxtDeltaX.text) * 2.6
     
-     If pp > 1 Then '寰幆鐢诲浘
+     If pp > 1 Then '循环画图
     
        For i = 1 To pp
           For j = 1 To pp
@@ -40,9 +40,9 @@ Sub iPos(Optional ByVal pp As Double)
     Else
        
         X0 = 100
-        X0 = VAL(FrmFlower.TxtX0.text)
+        X0 = val(FrmFlower.TxtX0.text)
         Y0 = 100
-        Y0 = VAL(FrmFlower.TxtY0.text)
+        Y0 = val(FrmFlower.TxtY0.text)
         Z0 = 0
         
         Call Flower
@@ -143,13 +143,13 @@ Sub Flower(Optional ByVal pp As Double)
     
     Dim QtyPetal As Integer
     QtyPetal = 7
-    QtyPetal = VAL(FrmFlower.TxtQtyPetal.text)
+    QtyPetal = val(FrmFlower.TxtQtyPetal.text)
     Dim AlfaPetal2 As Double
     AlfaPetal2 = 25
-    AlfaPetal2 = VAL(FrmFlower.TxtAlfaPetal2.text)
+    AlfaPetal2 = val(FrmFlower.TxtAlfaPetal2.text)
     Dim ScaleFactor As Double
     ScaleFactor = 0.75
-    ScaleFactor = VAL(FrmFlower.TxtScaleFactor.text)
+    ScaleFactor = val(FrmFlower.TxtScaleFactor.text)
 
     
     Dim R_Stem As Byte
@@ -158,9 +158,9 @@ Sub Flower(Optional ByVal pp As Double)
     R_Stem = 0
     G_Stem = 255
     B_Stem = 0
-    R_Stem = FrmFlower.ScrR1.value
-    G_Stem = FrmFlower.ScrG1.value
-    B_Stem = FrmFlower.ScrB1.value
+    R_Stem = FrmFlower.ScrR1.Value
+    G_Stem = FrmFlower.ScrG1.Value
+    B_Stem = FrmFlower.ScrB1.Value
     
     Dim R_Ovary As Byte
     Dim G_Ovary As Byte
@@ -168,9 +168,9 @@ Sub Flower(Optional ByVal pp As Double)
     R_Ovary = 255
     G_Ovary = 255
     B_Ovary = 0
-    R_Ovary = FrmFlower.ScrR2.value
-    G_Ovary = FrmFlower.ScrG2.value
-    B_Ovary = FrmFlower.ScrB2.value
+    R_Ovary = FrmFlower.ScrR2.Value
+    G_Ovary = FrmFlower.ScrG2.Value
+    B_Ovary = FrmFlower.ScrB2.Value
     
     Dim R_Petal1 As Byte
     Dim G_Petal1 As Byte
@@ -178,9 +178,9 @@ Sub Flower(Optional ByVal pp As Double)
     R_Petal1 = 105
     G_Petal1 = 0
     B_Petal1 = 105
-    R_Petal1 = FrmFlower.ScrR3.value
-    G_Petal1 = FrmFlower.ScrG3.value
-    B_Petal1 = FrmFlower.ScrB3.value
+    R_Petal1 = FrmFlower.ScrR3.Value
+    G_Petal1 = FrmFlower.ScrG3.Value
+    B_Petal1 = FrmFlower.ScrB3.Value
     
     Dim R_Petal2 As Byte
     Dim G_Petal2 As Byte
@@ -188,46 +188,46 @@ Sub Flower(Optional ByVal pp As Double)
     R_Petal2 = 255
     G_Petal2 = 0
     B_Petal2 = 255
-    R_Petal2 = FrmFlower.ScrR4.value
-    G_Petal2 = FrmFlower.ScrG4.value
-    B_Petal2 = FrmFlower.ScrB4.value
+    R_Petal2 = FrmFlower.ScrR4.Value
+    G_Petal2 = FrmFlower.ScrG4.Value
+    B_Petal2 = FrmFlower.ScrB4.Value
     
     R1 = 150    'Arc1 in Sketch.1
-    R1 = VAL(FrmFlower.TxtR1.text)
+    R1 = val(FrmFlower.TxtR1.text)
 
     R12 = 150   'Arc2 in Sketch.1
     R12 = R1
     
     H1 = 100
     H2 = 100
-    H = VAL(FrmFlower.TxtH.text)
+    H = val(FrmFlower.TxtH.text)
     H1 = H / 2
     H2 = H1
     
     SweepR = 10
-    SweepR = VAL(FrmFlower.TxtSweepR.text) / 2
+    SweepR = val(FrmFlower.TxtSweepR.text) / 2
     
     OffsetPlane = 20
-    OffsetPlane = VAL(FrmFlower.TxtOffsetPlane.text)
+    OffsetPlane = val(FrmFlower.TxtOffsetPlane.text)
 
     R2 = 20     'Full Circle in Sketch.2
-    R2 = VAL(FrmFlower.TxtR2.text)
+    R2 = val(FrmFlower.TxtR2.text)
 
     RHole = 2
-    RHole = VAL(FrmFlower.TxtRHole.text)
+    RHole = val(FrmFlower.TxtRHole.text)
 
     DistHole = 12
-    DistHole = VAL(FrmFlower.TxtDistHole.text) / 2
+    DistHole = val(FrmFlower.TxtDistHole.text) / 2
 
     QtyHole = 10
-    QtyHole = VAL(FrmFlower.TxtQtyHole.text)
+    QtyHole = val(FrmFlower.TxtQtyHole.text)
 
     RFillet = 1
     DeltaX = -143
-    DeltaX = -VAL(FrmFlower.TxtDeltaX.text)
+    DeltaX = -val(FrmFlower.TxtDeltaX.text)
 
     DeltaY = 30
-    DeltaY = VAL(FrmFlower.TxtDeltaY.text)
+    DeltaY = val(FrmFlower.TxtDeltaY.text)
 
     
     RS1 = 0.6
@@ -355,7 +355,7 @@ Sub Flower(Optional ByVal pp As Double)
     Set ArcRef = myPart.CreateReferenceFromObject(Circle1)
     Set MyConstraints = mySketch.Constraints
     Set RadiusCst = MyConstraints.AddMonoEltCst(catCstTypeRadius, ArcRef)
-    RadiusCst.Dimension.value = R1
+    RadiusCst.Dimension.Value = R1
     
     ' Create H,V constraint of Arc1 Center Point
     Set Axis2D = mySketch.GeometricElements.item("AbsoluteAxis")
@@ -373,10 +373,10 @@ Sub Flower(Optional ByVal pp As Double)
     Dim HCst1 As Constraint
     Dim VCst1 As Constraint
     Set HCst1 = MyConstraints.AddBiEltCst(catCstTypeDistance, RefH, RefCenter1)
-    HCst1.Dimension.value = Ycen1
+    HCst1.Dimension.Value = Ycen1
     
     Set VCst1 = MyConstraints.AddBiEltCst(catCstTypeDistance, RefV, RefCenter1)
-    VCst1.Dimension.value = Xcen1
+    VCst1.Dimension.Value = Xcen1
 
     'Arc2
     Dim alfaRad2 As Double
@@ -406,7 +406,7 @@ Sub Flower(Optional ByVal pp As Double)
     Dim ArcRef2 As Reference
     Set ArcRef2 = myPart.CreateReferenceFromObject(Circle2)
     Set RadiusCst2 = MyConstraints.AddMonoEltCst(catCstTypeRadius, ArcRef2)
-    RadiusCst2.Dimension.value = R12
+    RadiusCst2.Dimension.Value = R12
     
     ' Create H,V constraint of Arc2 Center Point
     Dim RefCenter2 As Reference
@@ -414,10 +414,10 @@ Sub Flower(Optional ByVal pp As Double)
     Dim HCst2 As Constraint
     Dim VCst2 As Constraint
     Set HCst2 = MyConstraints.AddBiEltCst(catCstTypeDistance, RefH, RefCenter2)
-    HCst2.Dimension.value = Ycen2
+    HCst2.Dimension.Value = Ycen2
     
     Set VCst2 = MyConstraints.AddBiEltCst(catCstTypeDistance, RefV, RefCenter2)
-    VCst2.Dimension.value = Xcen2
+    VCst2.Dimension.Value = Xcen2
     ' Close Sketch and Update MyComponent ----------------------------
     
     mySketch.CloseEdition

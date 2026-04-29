@@ -34,9 +34,9 @@ git pull; git submodule update --remote
 
   ![注册1](resources/step3.png)
 
-+ 在弹出的窗口中点击"命令"-"宏"-"m0-dataMenu"，然后自定义快捷键和图标，  并可以将"m0-dataMenu"命令拖动到菜单栏目
++ 在弹出的窗口中点击"命令"-"宏"-"A0-Menu"，然后自定义快捷键和图标，  并可以将"A0-Menu"命令拖动到菜单栏目
 
-  click "Commands" - "Macros" - "m0-dataMenu" and then customize the shortcut and icon, and you can drag "m0-dataMenu" command to the menu bar
+  click "Commands" - "Macros" - "A0-Menu" and then customize the shortcut and icon, and you can drag "A0-Menu" command to the menu bar
 
   ![注册2](resources/step4.png)
 

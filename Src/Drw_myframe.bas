@@ -20,8 +20,8 @@ Public text
 Public Fact
 Public Selection
 Public targetsheet
-Private Const mdlName As String = "Drw_myframe"
-Sub CATMain()
+Private Const mdlname As String = "Drw_myframe"
+Sub CATDrawMain()
   If Not CATInit() Then Exit Sub
   On Error Resume Next
     Name = Texts.GetItem("Reference_" + GetMacroID()).Name
@@ -446,21 +446,21 @@ Sub CATCreateTitleBlockFrame()
   'How to draw the title block geometry
   '-------------------------------------------------------------------------------
     CreateLine GetOH() + col(1), GetOV(), GetOH(), GetOV(), "TitleBlock_Line_Bottom"
-    CreateLine GetOH() + col(1), GetOV(), GetOH() + col(1), GetOV() + Row(5), "TitleBlock_Line_Left"
-    CreateLine GetOH() + col(1), GetOV() + Row(5), GetOH(), GetOV() + Row(5), "TitleBlock_Line_Top"
-    CreateLine GetOH(), GetOV() + Row(5), GetOH(), GetOV(), "TitleBlock_Line_Right"
-    CreateLine GetOH() + col(1), GetOV() + Row(1), GetOH() + col(5), GetOV() + Row(1), "TitleBlock_Line_Row_1"
-    CreateLine GetOH() + col(1), GetOV() + Row(2), GetOH() + col(5), GetOV() + Row(2), "TitleBlock_Line_Row_2"
-    CreateLine GetOH() + col(1), GetOV() + Row(3), GetOH() + col(5), GetOV() + Row(3), "TitleBlock_Line_Row_3"
-    CreateLine GetOH() + col(1), GetOV() + Row(4), GetOH() + col(3), GetOV() + Row(4), "TitleBlock_Line_Row_4"
+    CreateLine GetOH() + col(1), GetOV(), GetOH() + col(1), GetOV() + row(5), "TitleBlock_Line_Left"
+    CreateLine GetOH() + col(1), GetOV() + row(5), GetOH(), GetOV() + row(5), "TitleBlock_Line_Top"
+    CreateLine GetOH(), GetOV() + row(5), GetOH(), GetOV(), "TitleBlock_Line_Right"
+    CreateLine GetOH() + col(1), GetOV() + row(1), GetOH() + col(5), GetOV() + row(1), "TitleBlock_Line_Row_1"
+    CreateLine GetOH() + col(1), GetOV() + row(2), GetOH() + col(5), GetOV() + row(2), "TitleBlock_Line_Row_2"
+    CreateLine GetOH() + col(1), GetOV() + row(3), GetOH() + col(5), GetOV() + row(3), "TitleBlock_Line_Row_3"
+    CreateLine GetOH() + col(1), GetOV() + row(4), GetOH() + col(3), GetOV() + row(4), "TitleBlock_Line_Row_4"
     For i = 1 To GetNbOfRevision() - 1
-      CreateLine GetOH() + col(5), GetOV() + Row(5) / GetNbOfRevision() * i, GetOH(), GetOV() + Row(5) / GetNbOfRevision() * i, "TitleBlock_Line_Row_5" & i
+      CreateLine GetOH() + col(5), GetOV() + row(5) / GetNbOfRevision() * i, GetOH(), GetOV() + row(5) / GetNbOfRevision() * i, "TitleBlock_Line_Row_5" & i
     Next
-    CreateLine GetOH() + col(2), GetOV() + Row(1), GetOH() + col(2), GetOV() + Row(3), "TitleBlock_Line_Column_1"
-    CreateLine GetOH() + col(3), GetOV() + Row(1), GetOH() + col(3), GetOV() + Row(5), "TitleBlock_Line_Column_2"
-    CreateLine GetOH() + col(4), GetOV() + Row(1), GetOH() + col(4), GetOV() + Row(2), "TitleBlock_Line_Column_3"
-    CreateLine GetOH() + col(5), GetOV(), GetOH() + col(5), GetOV() + Row(5), "TitleBlock_Line_Column_4"
-    CreateLine GetOH() + col(6), GetOV(), GetOH() + col(6), GetOV() + Row(5), "TitleBlock_Line_Column_5"
+    CreateLine GetOH() + col(2), GetOV() + row(1), GetOH() + col(2), GetOV() + row(3), "TitleBlock_Line_Column_1"
+    CreateLine GetOH() + col(3), GetOV() + row(1), GetOH() + col(3), GetOV() + row(5), "TitleBlock_Line_Column_2"
+    CreateLine GetOH() + col(4), GetOV() + row(1), GetOH() + col(4), GetOV() + row(2), "TitleBlock_Line_Column_3"
+    CreateLine GetOH() + col(5), GetOV(), GetOH() + col(5), GetOV() + row(5), "TitleBlock_Line_Column_4"
+    CreateLine GetOH() + col(6), GetOV(), GetOH() + col(6), GetOV() + row(5), "TitleBlock_Line_Column_5"
 End Sub
 Sub CATCreateTitleBlockStandard()
   '-------------------------------------------------------------------------------
@@ -477,7 +477,7 @@ Sub CATCreateTitleBlockStandard()
   X(3) = X(1) + 9.5
   X(4) = X(1) + 15.5
   X(5) = X(1) + 21
-  Y(1) = GetOV() + (Row(2) + Row(3)) / 2
+  Y(1) = GetOV() + (row(2) + row(3)) / 2
   Y(2) = Y(1) + R1
   Y(3) = Y(1) + R2
   Y(4) = Y(1) + 5.5
@@ -530,39 +530,39 @@ Sub CATTitleBlockText()
     Set Net = CreateObject("WScript.Network")
     Text_15 = Net.UserName
   End If
-  CreateTextAF Text_01, GetOH() + col(1) + 1, GetOV() + 0.5 * Row(1), "TitleBlock_Text_Rights", catMiddleLeft, 1.5
-  CreateTextAF Text_02, GetOH() + col(1) + 1, GetOV() + Row(2), "TitleBlock_Text_Scale", catTopLeft, 1.5
+  CreateTextAF Text_01, GetOH() + col(1) + 1, GetOV() + 0.5 * row(1), "TitleBlock_Text_Rights", catMiddleLeft, 1.5
+  CreateTextAF Text_02, GetOH() + col(1) + 1, GetOV() + row(2), "TitleBlock_Text_Scale", catTopLeft, 1.5
   ' Insert Text Attribute link on sheet's scale
-  Set text = CreateTextAF("", GetOH() + 0.5 * (col(1) + col(2)) - 4, GetOV() + Row(1), "TitleBlock_Text_Scale_1", catBottomCenter, 5)
+  Set text = CreateTextAF("", GetOH() + 0.5 * (col(1) + col(2)) - 4, GetOV() + row(1), "TitleBlock_Text_Scale_1", catBottomCenter, 5)
   Select Case GetContext():
     Case "LAY": text.InsertVariable 0, 0, ActiveDoc.part.GetItem("CATLayoutRoot").Parameters.item(ActiveDoc.part.GetItem("CATLayoutRoot").Name + "\" + Sheet.Name + "\ViewMakeUp2DL.1\Scale")
     Case "DRW": text.InsertVariable 0, 0, ActiveDoc.DrawingRoot.Parameters.item("Drawing\" + Sheet.Name + "\ViewMakeUp.1\Scale")
     Case Else: text.text = "XX"
   End Select
-  CreateTextAF Text_04, GetOH() + col(2) + 1, GetOV() + Row(2), "TitleBlock_Text_Weight", catTopLeft, 1.5
-  CreateTextAF Text_05, GetOH() + 0.5 * (col(2) + col(3)), GetOV() + Row(1), "TitleBlock_Text_Weight_1", catBottomCenter, 5
-  CreateTextAF Text_06, GetOH() + col(3) + 1, GetOV() + Row(2), "TitleBlock_Text_Number", catTopLeft, 1.5
-  CreateTextAF Text_05, GetOH() + 0.5 * (col(3) + col(4)), GetOV() + Row(1), "TitleBlock_Text_EnoviaV5_Effectivity", catBottomCenter, 4
-  CreateTextAF Text_07, GetOH() + col(4) + 1, GetOV() + Row(2), "TitleBlock_Text_Sheet", catTopLeft, 1.5
-  CreateTextAF Text_05, GetOH() + 0.5 * (col(4) + col(5)), GetOV() + Row(1), "TitleBlock_Text_Sheet_1", catBottomCenter, 5
-  CreateTextAF Text_08, GetOH() + col(1) + 1, GetOV() + Row(3), "TitleBlock_Text_Size", catTopLeft, 1.5
+  CreateTextAF Text_04, GetOH() + col(2) + 1, GetOV() + row(2), "TitleBlock_Text_Weight", catTopLeft, 1.5
+  CreateTextAF Text_05, GetOH() + 0.5 * (col(2) + col(3)), GetOV() + row(1), "TitleBlock_Text_Weight_1", catBottomCenter, 5
+  CreateTextAF Text_06, GetOH() + col(3) + 1, GetOV() + row(2), "TitleBlock_Text_Number", catTopLeft, 1.5
+  CreateTextAF Text_05, GetOH() + 0.5 * (col(3) + col(4)), GetOV() + row(1), "TitleBlock_Text_EnoviaV5_Effectivity", catBottomCenter, 4
+  CreateTextAF Text_07, GetOH() + col(4) + 1, GetOV() + row(2), "TitleBlock_Text_Sheet", catTopLeft, 1.5
+  CreateTextAF Text_05, GetOH() + 0.5 * (col(4) + col(5)), GetOV() + row(1), "TitleBlock_Text_Sheet_1", catBottomCenter, 5
+  CreateTextAF Text_08, GetOH() + col(1) + 1, GetOV() + row(3), "TitleBlock_Text_Size", catTopLeft, 1.5
   If (Sheet.PaperSize = 13) Then
-    CreateTextAF Text_09, GetOH() + 0.5 * (col(1) + col(2)), GetOV() + Row(2) + 2, "TitleBlock_Text_Size_1", catBottomCenter, 5
+    CreateTextAF Text_09, GetOH() + 0.5 * (col(1) + col(2)), GetOV() + row(2) + 2, "TitleBlock_Text_Size_1", catBottomCenter, 5
   Else
-    CreateTextAF Text_10, GetOH() + 0.5 * (col(1) + col(2)), GetOV() + Row(2) + 2, "TitleBlock_Text_Size_1", catBottomCenter, 5
+    CreateTextAF Text_10, GetOH() + 0.5 * (col(1) + col(2)), GetOV() + row(2) + 2, "TitleBlock_Text_Size_1", catBottomCenter, 5
   End If
-  CreateTextAF Text_11, GetOH() + 0.5 * (col(3) + col(5)), GetOV() + 0.5 * (Row(2) + Row(3)), "TitleBlock_Text_Company", catMiddleCenter, 5
-  CreateTextAF Text_12, GetOH() + col(1) + 1, GetOV() + Row(4), "TitleBlock_Text_Controller", catTopLeft, 1.5
-  CreateTextAF Text_05, GetOH() + col(2) + 2.5, GetOV() + 0.5 * (Row(3) + Row(4)), "TitleBlock_Text_Controller_1", catBottomCenter, 3
-  CreateTextAF Text_13, GetOH() + col(1) + 1, GetOV() + 0.5 * (Row(3) + Row(4)), "TitleBlock_Text_CDate", catTopLeft, 1.5
-  CreateTextAF Text_05, GetOH() + col(2) + 2.5, GetOV() + Row(3), "TitleBlock_Text_CDate_1", catBottomCenter, 3
-  CreateTextAF Text_14, GetOH() + col(1) + 1, GetOV() + Row(5), "TitleBlock_Text_Designer", catTopLeft, 1.5
-  CreateTextAF Text_15, GetOH() + col(2) + 2.5, GetOV() + 0.5 * (Row(4) + Row(5)), "TitleBlock_Text_Designer_1", catBottomCenter, 3
-  CreateTextAF Text_13, GetOH() + col(1) + 1, GetOV() + 0.5 * (Row(4) + Row(5)), "TitleBlock_Text_DDate", catTopLeft, 1.5
-  CreateTextAF "" & Date, GetOH() + col(2) + 2.5, GetOV() + Row(4), "TitleBlock_Text_DDate_1", catBottomCenter, 3
-  CreateTextAF Text_05, GetOH() + 0.5 * (col(3) + col(5)), GetOV() + Row(4), "TitleBlock_Text_Title_1", catMiddleCenter, 7
+  CreateTextAF Text_11, GetOH() + 0.5 * (col(3) + col(5)), GetOV() + 0.5 * (row(2) + row(3)), "TitleBlock_Text_Company", catMiddleCenter, 5
+  CreateTextAF Text_12, GetOH() + col(1) + 1, GetOV() + row(4), "TitleBlock_Text_Controller", catTopLeft, 1.5
+  CreateTextAF Text_05, GetOH() + col(2) + 2.5, GetOV() + 0.5 * (row(3) + row(4)), "TitleBlock_Text_Controller_1", catBottomCenter, 3
+  CreateTextAF Text_13, GetOH() + col(1) + 1, GetOV() + 0.5 * (row(3) + row(4)), "TitleBlock_Text_CDate", catTopLeft, 1.5
+  CreateTextAF Text_05, GetOH() + col(2) + 2.5, GetOV() + row(3), "TitleBlock_Text_CDate_1", catBottomCenter, 3
+  CreateTextAF Text_14, GetOH() + col(1) + 1, GetOV() + row(5), "TitleBlock_Text_Designer", catTopLeft, 1.5
+  CreateTextAF Text_15, GetOH() + col(2) + 2.5, GetOV() + 0.5 * (row(4) + row(5)), "TitleBlock_Text_Designer_1", catBottomCenter, 3
+  CreateTextAF Text_13, GetOH() + col(1) + 1, GetOV() + 0.5 * (row(4) + row(5)), "TitleBlock_Text_DDate", catTopLeft, 1.5
+  CreateTextAF "" & Date, GetOH() + col(2) + 2.5, GetOV() + row(4), "TitleBlock_Text_DDate_1", catBottomCenter, 3
+  CreateTextAF Text_05, GetOH() + 0.5 * (col(3) + col(5)), GetOV() + row(4), "TitleBlock_Text_Title_1", catMiddleCenter, 7
   For ii = 1 To GetNbOfRevision()
-    iY = GetOV() + (ii - 0.5) * Row(5) / GetNbOfRevision()
+    iY = GetOV() + (ii - 0.5) * row(5) / GetNbOfRevision()
     CreateTextAF GetRevLetter(ii), GetOH() + 0.5 * (col(5) + col(6)), iY, "TitleBlock_Text_Modif_" + GetRevLetter(ii), catMiddleCenter, 2.5
     CreateTextAF "_", GetOH() + 0.5 * col(6), iY, "TitleBlock_Text_MDate_" + GetRevLetter(ii), catMiddleCenter, 2
   Next
@@ -661,7 +661,7 @@ Sub CATMoveTitleBlockText(Translation)
   SelectAll "CATDrwSearch.DrwText.Name=TitleBlock_Text_*"
   count = Selection.Count2
   For ii = 1 To count
-    Set text = Selection.Item2(ii).value
+    Set text = Selection.Item2(ii).Value
     text.X = text.X + Translation(0)
     text.Y = text.Y + Translation(1)
   Next
@@ -691,7 +691,7 @@ Sub CATMoveRevisionBlockText(Translation)
   SelectAll "CATDrwSearch.DrwText.Name=RevisionBlock_Text_*"
   count = Selection.Count2
   For ii = 1 To count
-    Set text = Selection.Item2(ii).value
+    Set text = Selection.Item2(ii).Value
     text.X = text.X + Translation(0)
     text.Y = text.Y + Translation(1)
   Next
@@ -808,8 +808,8 @@ End Sub
 Function col(idx)
   col = Array(-190, -170, -145, -45, -25, -20)(idx - 1)
 End Function
-Function Row(idx)
-  Row = Array(4, 17, 30, 45, 60)(idx - 1)
+Function row(idx)
+  row = Array(4, 17, 30, 45, 60)(idx - 1)
 End Function
 Function GetRulerLength()
   GetRulerLength = 200

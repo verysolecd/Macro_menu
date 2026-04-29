@@ -1,16 +1,16 @@
 Attribute VB_Name = "DRW_DrwLock"
 'Attribute VB_Name = "sample_Draft_View_Lock_UnLock"
-' å›¾çº¸è§†å›¾çš„é”å®šä¸è§£é”
+' Í¼Ö½ÊÓÍ¼µÄËø¶¨Óë½âËø
 '{GP:5}
 '{EP:Drwlock}
-'{Caption:é”å®š_è§£é”}
-'{ControlTipText: å¯ä»¥è¿›è¡Œå›¾çº¸è§†å›¾çš„é”å®šä¸è§£é”}
-'{èƒŒæ™¯é¢œè‰²: 12648447}
+'{Caption:Ëø¶¨_½âËø}
+'{ControlTipText: ¿ÉÒÔ½øĞĞÍ¼Ö½ÊÓÍ¼µÄËø¶¨Óë½âËø}
+'{±³¾°ÑÕÉ«: 12648447}
 
 Option Explicit
-Private Const mdlName As String = "DRW_DrwLock"
+Private Const mdlname As String = "DRW_DrwLock"
 Sub Drwlock()
-' æ£€æŸ¥æ˜¯å¦å¯ä»¥æ‰§è¡Œ
+' ¼ì²éÊÇ·ñ¿ÉÒÔÖ´ĞĞ
      If Not CanExecute("DrawingDocument") Then
           Exit Sub
      End If
@@ -30,10 +30,10 @@ Sub Drwlock()
             Dim msg As String
             
             If LockState Then
-                 msg = "è§£é”"
+                 msg = "½âËø"
                LockState = False
             Else
-                 msg = "é”å®š"
+                 msg = "Ëø¶¨"
                LockState = True
             End If
      If Views.count > 3 Then
@@ -43,5 +43,5 @@ Sub Drwlock()
                       View.LockStatus = LockState
                  Next
      End If
-     MsgBox "è§†å›¾å·²æˆåŠŸ" & msg & "ã€‚"
+     MsgBox "ÊÓÍ¼ÒÑ³É¹¦" & msg & "¡£"
 End Sub

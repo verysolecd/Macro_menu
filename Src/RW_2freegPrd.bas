@@ -1,13 +1,12 @@
 Attribute VB_Name = "RW_2freegPrd"
 '{GP:1}
 '{Ep:freegprd}
-'{Caption:閲婃斁浜у搧}
-'{ControlTipText:灏嗗緟鎿嶄綔浜у搧娓呯┖}
+'{Caption:释放产品}
+'{ControlTipText:将待操作产品清空}
 '{BackColor:16744703}
 
-Private Const mdlName As String = "RW_2freegPrd"
+Private Const mdlname As String = "RW_2freegPrd"
 Sub freegprd()
     Set pdm.CurrentProduct = Nothing
-    MsgBox "宸叉竻绌哄緟鎿嶄綔浜у搧"
-    Call clearall
+    MsgBox "已清空待操作产品"
 End Sub

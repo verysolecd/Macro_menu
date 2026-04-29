@@ -1,15 +1,16 @@
 Attribute VB_Name = "OTH_3Dmark"
 
-' ä¸ºäº§å“åˆ›å»º3Dæ ‡è¯†
+
+' Îª²úÆ·´´½¨3D±êÊ¶
 '{GP:6}
 '{EP:newlabel}
-'{Caption:åˆ›å»ºé›¶ä»¶label}
-'{ControlTipText: ç‚¹å‡»åŽä¸€æ¬¡æ€§åˆ›å»ºé›¶ä»¶3Dmakrtext}
-'{èƒŒæ™¯é¢œè‰²: 12648447}
+'{Caption:´´½¨Áã¼þlabel}
+'{ControlTipText: µã»÷ºóÒ»´ÎÐÔ´´½¨Áã¼þ3Dmakrtext}
+'{±³¾°ÑÕÉ«: 12648447}
 ' Purpose: Create a label on a product.
 
 Private rprd
-Private Const mdlName As String = "OTH_3Dmark"
+Private Const mdlname As String = "OTH_3Dmark"
 Sub newlabel()
     If Not CanExecute("ProductDocument") Then Exit Sub
     Set rprd = CATIA.ActiveDocument.Product
@@ -18,31 +19,38 @@ Sub newlabel()
     recurthisPrd rprd
 End Sub
 
-Sub recurthisPrd(oprd)
-        If g_allPN.Exists(oprd.partNumber) = False Then
-            g_allPN(oprd.partNumber) = 1
-            Call recurexcute(oprd)
+Sub recurthisPrd(oPrd)
+        If g_allPN.Exists(oPrd.partNumber) = False Then
+            g_allPN(oPrd.partNumber) = 1
+            Call recurexcute(oPrd)
             End If
-        If oprd.Products.count > 0 Then
-                For Each Product In oprd.Products
+        If oPrd.Products.count > 0 Then
+                For Each Product In oPrd.Products
                     Call recurthisPrd(Product)
                  Next
         End If
 End Sub
-Sub recurexcute(oprd)
-    Call c3Dmark(oprd)
+Sub recurexcute(oPrd)
+    Call c3Dmark(oPrd)
 End Sub
-Sub c3Dmark(oprd)
-
-If oprd.Products.count < 1 Then
+Sub c3Dmark(oPrd)
+If oPrd.Products.count < 1 Then
     If pdm Is Nothing Then Set pdm = New Cls_PDM
-     info = pdm.infoPrd(oprd)
+Dim info As Bomline
+   info = pdm.getBomLine(oPrd)
         On Error GoTo 0
         Dim pos(11), sTextString, cMarker3Ds, oMarker3D
-        oprd.Position.GetComponents pos
-        sTextString = info(3) & vbNewLine & _
-                        info(5) & vbNewLine & _
-                        info(7)
+        oPrd.Position.GetComponents pos
+        
+        ' Updated for Bomline Typed return
+        Dim def As String, mat As String, massStr As String
+        def = info.Definition
+        mat = info.Material
+        massStr = Format(info.Mass, "0.000") & " kg" ' Format mass nicely
+        
+        sTextString = def & vbNewLine & _
+                        mat & vbNewLine & _
+                        massStr
         Set cMarker3Ds = rprd.GetTechnologicalObject("Marker3Ds")
 
         Dim pos1(2), pos2(2)
@@ -53,7 +61,7 @@ If oprd.Products.count < 1 Then
         pos2(0) = pos(0) - 500
         pos2(1) = pos(1) + 200
         pos2(2) = pos(2) + 500
-        Set oMarker3D = cMarker3Ds.Add3DText(pos2, sTextString, pos1, oprd)
+        Set oMarker3D = cMarker3Ds.Add3DText(pos2, sTextString, pos1, oPrd)
         oMarker3D.TextSize = 6#
         oMarker3D.Update
     End If
@@ -61,14 +69,14 @@ End Sub
 
 Sub Pt_annotation()
 
-Set odoc = CATIA.ActiveDocument
- Set oprd = CATIA.ActiveDocument.Product
-    Set oprt = odoc.part
- Set oHb = KCL.SelectItem("è¯·é€‰æ‹©geoset", "HybridBody")
-  Set opt = oHb.HybridShapes.item(1)
+Set oDoc = CATIA.ActiveDocument
+ Set oPrd = CATIA.ActiveDocument.Product
+    Set oprt = oDoc.part
+ Set oHb = KCL.SelectItem("ÇëÑ¡Ôñgeoset", "HybridBody")
+  Set oPt = oHb.HybridShapes.item(1)
 Set anSets = oprt.AnnotationSets
 Set anset = anSets.Add("ISO_3D")
-Set ref = oprt.CreateReferenceFromObject(opt)
+Set ref = oprt.CreateReferenceFromObject(oPt)
 
 Set usfs = oprt.UserSurfaces
 Set usf = usfs.Generate(ref)
@@ -88,4 +96,6 @@ oprt.Update
 '   anote.Text = "tetx1"
     anote.FlagNote = "tetx2"
 End Sub
+
+
 

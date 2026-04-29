@@ -3,7 +3,7 @@ Attribute VB_Name = "A00_Menu"
 Option Explicit
 
 ' --- Configuration ---
-Const formTitle = "é”®ç›˜é€ è½¦æ‰‹"
+Const formTitle = "¼üÅÌÔì³µÊÖ"
 Private Const MENU_HIDE_TYPE = True
 Private Const Menu_Modeless = True
 
@@ -19,21 +19,18 @@ Private Const GroupName = _
 Private PageMap As Object
 
 ' --- Entry Point ---
-Public Sub CATMain()
+Private Const mdlname As String = "A00_Menu"
+Sub CATMain()
     Set PageMap = get_Tagcfg(GroupName, True)
     Dim MenuItems As Object
     Set MenuItems = GetMenuItems()
     If MenuItems Is Nothing Then
-        MsgBox "æœªæ‰¾åˆ°å¯ç”¨çš„å®ä¿¡æ¯", vbExclamation
+        MsgBox "Î´ÕÒµ½¿ÉÓÃµÄºêÐÅÏ¢", vbExclamation
         Exit Sub
     End If
-
-    ' 3. Sort and Organize (Adapting to View's expected format)
     Dim SoLst As Object
     Set SoLst = OrganizeForView(MenuItems)
-    
     If SoLst Is Nothing Then Exit Sub
-
     ' 4. Show Menu
     Dim Menu As Cat_Macro_Menu_View ' Use existing View class
     Set Menu = New Cat_Macro_Menu_View
@@ -48,8 +45,8 @@ End Sub
 
 ' --- Core Logic: Scanning ---
 
-' Scans the project for valid macros and returns a Collection of cls_menuCAT objects
-Private Function GetMenuItems() As collection
+' Scans the project for valid macros and returns a Collection of cls_MnUI objects
+Private Function GetMenuItems() As Collection
     
     Dim Apc As Object: Set Apc = KCL.GetApc()
     Dim ExecPjt As Object: Set ExecPjt = Apc.ExecutingProject
@@ -59,25 +56,25 @@ Private Function GetMenuItems() As collection
     Dim comps As Object: Set comps = ExecPjt.ProjectItems.VBComponents
     Dim comp As Object
     
-    Dim result As New collection
+    Dim Result As New Collection
     For Each comp In comps
         If comp.Type = 1 Then ' vbext_ct_StdModule
-            ProcessModule comp, pjtPath, result
+            ProcessModule comp, pjtPath, Result
         End If
     Next
     
-    If result.count > 0 Then Set GetMenuItems = result Else Set GetMenuItems = Nothing
+    If Result.count > 0 Then Set GetMenuItems = Result Else Set GetMenuItems = Nothing
 End Function
 
 ' Processes a single module: parses tags and checks entry point
-Private Sub ProcessModule(ByVal comp As Object, ByVal pjtPath As String, ByRef colls As collection)
+Private Sub ProcessModule(ByVal comp As Object, ByVal pjtPath As String, ByRef colls As Collection)
     Dim mdl As Object: Set mdl = comp.CodeModule
     If mdl.CountOfDeclarationLines < 1 Then Exit Sub
-    Dim DecCode As String
-    DecCode = mdl.Lines(1, mdl.CountOfDeclarationLines)
+    Dim decCode As String
+    decCode = mdl.lines(1, mdl.CountOfDeclarationLines)
     ' 1. Parse Metadata using the Class
-    Dim menuItem As New cls_menuCAT
-    If Not menuItem.InitFromCode(DecCode, mdl.Name, pjtPath) Then Exit Sub
+    Dim menuItem As New cls_MnUI
+    If Not menuItem.InitFromCode(decCode, mdl.Name, pjtPath) Then Exit Sub
     ' 2. Check if Group is valid in our PageMap
     Dim grpKey As Variant
     If IsNumeric(menuItem.GroupName) Then
@@ -90,7 +87,7 @@ Private Sub ProcessModule(ByVal comp As Object, ByVal pjtPath As String, ByRef c
     ' 3. Validate Entry Point Existence
     If Not MethodExists(mdl, menuItem.EntryPoint) Then
         ' Fallback: Try default CATMain if the specified EP was invalid or missing
-        ' cls_menuCAT defaults to CATMain if empty, but if specified and missing, we try default?
+        ' cls_MnUI defaults to CATMain if empty, but if specified and missing, we try default?
         ' Logic from m0_dataMenu: if EP specified but missing, try TAG_ENTRY_DEF.
         If MethodExists(mdl, "CATMain") Then
             menuItem.EntryPoint = "CATMain"
@@ -114,11 +111,11 @@ End Function
 
 ' --- Adapter Logic: Object Collection -> Sorted Dictionary ---
 ' This bridges the gap between our new Class-based logic and the old View expecting Dictionaries
-Private Function OrganizeForView(ByVal colls As collection) As Object
+Private Function OrganizeForView(ByVal colls As Collection) As Object
     Dim SoLst As Object
     Set SoLst = CreateObject("System.Collections.SortedList")
     
-    Dim item As cls_menuCAT
+    Dim item As cls_MnUI
     Dim grpKey As Variant
     Dim subList As Object
     
@@ -184,15 +181,15 @@ Private Function get_Tagcfg(ByVal txt As String, Optional ByVal KeyToLong As Boo
     
     Dim matches As Object: Set matches = Reg.Execute(txt)
     Dim match As Object
-    Dim KEY As Variant, VAL As Variant
+    Dim KEY As Variant, val As Variant
     
     For Each match In matches
         If match.SubMatches.count >= 2 Then
             KEY = Trim(match.SubMatches(0))
-            VAL = Trim(match.SubMatches(1))
+            val = Trim(match.SubMatches(1))
             
             If KeyToLong And IsNumeric(KEY) Then KEY = CLng(KEY)
-            If dic.Exists(KEY) Then dic(KEY) = VAL Else dic.Add KEY, VAL
+            If dic.Exists(KEY) Then dic(KEY) = val Else dic.Add KEY, val
         End If
     Next
     
