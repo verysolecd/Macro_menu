@@ -14,21 +14,21 @@ Sub pt2xl()
         Exit Sub
     End If
     
-    Dim odoc
+    Dim oDoc
     On Error Resume Next
-        Set odoc = CATIA.ActiveDocument
+        Set oDoc = CATIA.ActiveDocument
     On Error GoTo 0
     Dim str
-    str = TypeName(odoc)
+    str = TypeName(oDoc)
     If Not str = "PartDocument" Then
     MsgBox "没有打开的part"
     Exit Sub
     End If
     
     
-    Dim HSF:  Set HSF = odoc.part.HybridShapeFactory
-    Dim HBS: Set HBS = odoc.part.HybridBodies
-    Dim osel: Set osel = odoc.Selection
+    Dim HSF:  Set HSF = oDoc.part.HybridShapeFactory
+    Dim HBS: Set HBS = oDoc.part.HybridBodies
+    Dim osel: Set osel = oDoc.Selection
     osel.Clear
     
     '=======要求选择点集和坐标
@@ -36,14 +36,19 @@ Sub pt2xl()
     imsg = "请选择点所在的几何图形集"
     filter(0) = "HybridBody"
     
-    Set oHB = mysel(imsg, filter).value
-   
+'    Set oHB = mysel(imsg, filter).value
+    Set oHB = KCL.SelectItem(imsg, filter)
+    
     Dim oAxi
     imsg = "请再选择坐标系"
     filter(0) = "AxisSystem"
-    Set oAxi = mysel(imsg, filter).value
+    
+'    Set oAxi = mysel(imsg, filter).value
+     Set oAxi = KCL.SelectItem(imsg, filter)
+    
+     
      If Not oHB Is Nothing Then
-        Dim i, irow, ct
+        Dim I, irow, ct
         Set oshapes = oHB.HybridShapes
         ct = oshapes.count
         ReDim arr(0 To ct, 0 To 4)
@@ -55,22 +60,19 @@ Sub pt2xl()
         arr(irow, 4) = "Z"
         irow = 1
          ReDim fincoord(2), absCoord(2)
-        
-        For i = 1 To ct
-            Set opt = oshapes.item(i)
-   
+        For I = 1 To ct
+            Set opt = oshapes.item(I)
             str = HSF.GetGeometricalFeatureType(opt)
             If str = 1 Then
                 Dim fakept
                 Set fakept = HSF.AddNewPointCoordWithReference(0, 0, 0, opt)
                 oHB.AppendHybridShape fakept
-                odoc.part.Update
+                oDoc.part.Update
                fakept.GetCoordinates absCoord
-               
                   osel.Clear
                   osel.Add fakept
                   osel.Delete
-                  odoc.part.Update
+                  oDoc.part.Update
                 If Not oAxi Is Nothing Then
                     fincoord = TransAxi(absCoord, oAxi)
                 Else
@@ -108,14 +110,14 @@ Sub ArrayToxl(arr2D() As Variant)
 End Sub
 Function TransAxi(acoor As Variant, axi1) As Variant
     Dim origin(2), xDir(2), yDir(2), zDir(2)
-    Dim i
+    Dim I
     axi1.GetOrigin origin
     axi1.GetXAxis xDir
     axi1.GetYAxis yDir
     axi1.GetZAxis zDir
     Dim v(2) As Double
-    For i = 0 To 2
-        v(i) = acoor(i) - origin(i)
+    For I = 0 To 2
+        v(I) = acoor(I) - origin(I)
     Next
     Dim result(2)
     result(0) = v(0) * xDir(0) + v(1) * xDir(1) + v(2) * xDir(2)
@@ -124,24 +126,7 @@ Function TransAxi(acoor As Variant, axi1) As Variant
     TransAxi = result
 End Function
 
-Function mysel(prompt, filter())
-    Dim osel
-    Set osel = CATIA.ActiveDocument.Selection
-    osel.Clear
-    Dim iType(0)
-'
-'    Dim status
-'    status = osel.SelectElement2(filter, prompt, False)
 
-    If osel.SelectElement2(filter, prompt, False) = "Normal" Then
-        If osel.count = 1 Then
-            Set mysel = osel.item(1)
-        End If
-    Else
-    Set mysel = Nothing
-    End If
-    osel.Clear
-End Function
 ' = 0 , Unknown
 ' = 1 , Point
 ' = 2 , Curve

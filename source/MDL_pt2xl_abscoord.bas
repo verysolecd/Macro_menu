@@ -11,10 +11,10 @@ Sub pt2xl()
     If Not CanExecute("PartDocument") Then
         Exit Sub
     End If
-    Dim odoc: Set odoc = CATIA.ActiveDocument
-    Dim HSF:  Set HSF = odoc.part.HybridShapeFactory
-    Dim HBS: Set HBS = odoc.part.HybridBodies
-    Dim osel: Set osel = odoc.Selection
+    Dim oDoc: Set oDoc = CATIA.ActiveDocument
+    Dim HSF:  Set HSF = oDoc.part.HybridShapeFactory
+    Dim HBS: Set HBS = oDoc.part.HybridBodies
+    Dim osel: Set osel = oDoc.Selection
     '=======要求选择点集和坐标
     Dim imsg
     imsg = "请选择点所在的几何图形集"
@@ -25,7 +25,7 @@ Sub pt2xl()
     Set oAxi = KCL.SelectItem(imsg, AxisSystem)
     
     If Not oHB Is Nothing Then
-        Dim i, irow, ct
+        Dim I, irow, ct
         
         Set oshapes = oHB.HybridShapes
         ct = oshapes.count
@@ -42,21 +42,21 @@ Sub pt2xl()
         
         ReDim fincoord(2), absCoord(2)
         
-        For i = 1 To ct
-            Set opt = oshapes.item(i)
+        For I = 1 To ct
+            Set opt = oshapes.item(I)
             Dim str
             str = HSF.GetGeometricalFeatureType(opt)
             If str = 1 Then
                 Dim fakept
                 Set fakept = HSF.AddNewPointCoordWithReference(0, 0, 0, opt)
                 oHB.AppendHybridShape fakept
-                odoc.part.Update
+                oDoc.part.Update
                fakept.GetCoordinates absCoord
                
                   osel.Clear
                   osel.Add fakept
                   osel.Delete
-                  odoc.part.Update
+                  oDoc.part.Update
                 If Not oAxi Is Nothing Then
                     fincoord = TransAxi(absCoord, oAxi)
                 Else
@@ -94,14 +94,14 @@ Sub ArrayToxl(arr2D() As Variant)
 End Sub
 Function TransAxi(acoor As Variant, axi1) As Variant
     Dim origin(2), xDir(2), yDir(2), zDir(2)
-    Dim i
+    Dim I
     axi1.GetOrigin origin
     axi1.GetXAxis xDir
     axi1.GetYAxis yDir
     axi1.GetZAxis zDir
     Dim v(2) As Double
-    For i = 0 To 2
-        v(i) = acoor(i) - origin(i)
+    For I = 0 To 2
+        v(I) = acoor(I) - origin(I)
     Next
     Dim result(2)
     result(0) = v(0) * xDir(0) + v(1) * xDir(1) + v(2) * xDir(2)

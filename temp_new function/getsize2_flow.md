@@ -1,58 +1,150 @@
-graph TD
-    A[å¼€å§‹æ‰§è¡ŒGETSIZE2å®] --> B{æ£€æŸ¥æ˜¯å¦å¯ä»¥æ‰§è¡ŒProductDocument}
-    B -->|å¦| C[é€€å‡ºå®]
-    B -->|æ˜¯| D[æç¤ºç”¨æˆ·é€‰æ‹©äº§å“]
-    D --> E[ç”¨æˆ·é€‰æ‹©äº§å“]
-    E --> F{äº§å“æ˜¯å¦é€‰æ‹©æˆåŠŸ}
-    F -->|å¦| C
-    F -->|æ˜¯| G[èŽ·å–äº§å“ä¸­çš„å®žä½“Body]
-    G --> H{æ˜¯å¦æˆåŠŸèŽ·å–Body}
-    H -->|å¦| C
-    H -->|æ˜¯| I[åˆ›å»ºæ–°çš„Partæ–‡æ¡£]
-    I --> J[èŽ·å–æˆ–åˆ›å»ºåæ ‡ç³»]
-    J --> K[è®¡ç®—æ‰€æœ‰Bodyçš„åŒ…å›´ç›’å°ºå¯¸]
-    K --> L[åˆ›å»ºåä¸ºMinimumBoxçš„æ–°å®žä½“]
-    L --> M[ä¿®æ”¹å®žä½“é¢œè‰²å’Œæ ·å¼]
-    M --> N{æ˜¯å¦å­˜åœ¨åæ ‡ç³»}
-    N -->|å¦| O[ä½¿ç”¨XYåŸºå‡†å¹³é¢ä½œä¸ºè‰å›¾å¹³é¢]
-    N -->|æ˜¯| P[èŽ·å–åæ ‡ç³»çš„åŸºå‡†å¹³é¢]
-    P --> Q[åŸºäºŽé€‰æ‹©çš„å¹³é¢åˆ›å»ºè‰å›¾]
-    Q --> R[åœ¨è‰å›¾ä¸­åˆ›å»ºåŒ…å›´ç›’çš„2Dè½®å»“]
-    R --> S[åŸºäºŽè‰å›¾åˆ›å»ºæ‹‰ä¼¸ä½“]
-    S --> T[æ›´æ–°Partæ–‡æ¡£]
-    T --> U[æ˜¾ç¤ºå®Œæˆæ¶ˆæ¯]
-    U --> V[å®æ‰§è¡Œç»“æŸ]
+Option Explicit
 
-    K --> K1[è®¡ç®—6ä¸ªæ–¹å‘çš„æœ€å¤§è·ç¦»]
-    K1 --> K2[éåŽ†æ¯ä¸ªBody]
-    K2 --> K3[å¯¹æ¯ä¸ªæ–¹å‘è®¡ç®—æœ€å°è·ç¦»]
-    K3 --> K4[æ›´æ–°åŒ…å›´ç›’è¾¹ç•Œå€¼]
-    K4 --> K2
-    K2 --> K5[å®Œæˆæ‰€æœ‰Bodyçš„è®¡ç®—]
+' ==============================================================================
+' º¯ÊýÃû³Æ: CheckClashBetweenTwoProducts
+' ¹¦ÄÜ: Ð£ºËÁ½¸öÁã²¿¼þ/×é¼þÖ®¼äµÄ¸ÉÉæ»ò¼äÏ¶
+' ÊäÈë:
+'   - p1 (Product): µÚÒ»¸ö²úÆ·
+'   - p2 (Product): µÚ¶þ¸ö²úÆ·
+'   - clearanceVal (Double): °²È«¼äÏ¶Öµ(mm)¡£
+'       * ÉèÎª 0 ±íÊ¾½ö¼ì²éÓ²¸ÉÉæºÍ½Ó´¥¡£
+'       * ÉèÎª >0 (ÀýÈç 2.0) ±íÊ¾¼ì²é 2mm ÄÚµÄ¼äÏ¶£¬Ð¡ÓÚ´Ë¾àÀëÊÓÎª¸ÉÉæ¡£
+' Êä³ö:
+'   - String: ·µ»Ø "Interference" (Ó²¸ÉÉæ), "Contact" (½Ó´¥), "Clearance Violation" (¼äÏ¶Î¥¹æ) »ò "Safe" (°²È«)
+'   - CATIA½çÃæ: ÔÚ½á¹¹Ê÷ Applications -> Clash ÏÂÉú³É·ÖÎö¶ÔÏó
+' ==============================================================================
+Function CheckClashBetweenTwoProducts(p1 As Product, p2 As Product, Optional clearanceVal As Double = 0#) As String
+    
+    Dim doc As ProductDocument
+    Set doc = CATIA.ActiveDocument
+    
+    Dim rootProd As Product
+    Set rootProd = doc.Product
+    
+    ' 1. »ñÈ¡ DMU Clash ¹ÜÀí¶ÔÏó
+    ' ×¢Òâ£ºÐèÒªÓÐ SPA (Space Analysis) Ïà¹ØµÄÐí¿ÉÖ¤
+    Dim cClashes As Clashes
+    On Error Resume Next
+    Set cClashes = rootProd.GetTechnologicalObject("Clashes")
+    On Error GoTo 0
+    
+    If cClashes Is Nothing Then
+        MsgBox "ÎÞ·¨»ñÈ¡Clashes¶ÔÏó£¬Çë¼ì²éÊÇ·ñÓµÓÐ SPA/DMU Ðí¿ÉÖ¤¡£", vbCritical
+        CheckClashBetweenTwoProducts = "Error"
+        Exit Function
+    End If
+    
+    ' 2. ´´½¨Ò»¸öÐÂµÄ¸ÉÉæ·ÖÎö
+    Dim oClash As Clash
+    Set oClash = cClashes.Add()
+    
+    ' 3. ÉèÖÃ¼ÆËãÀàÐÍ£ºÁ½×éÖ®¼ä (Between two selections)
+    oClash.ComputationType = catClashComputationTypeBetweenTwo
+    
+    ' 4. ¶¨ÒåÁ½×é²úÆ·
+    oClash.FirstGroup.Add p1
+    oClash.SecondGroup.Add p2
+    
+    ' 5. ÉèÖÃ¸ÉÉæÀàÐÍºÍ¼äÏ¶Öµ
+    If clearanceVal > 0 Then
+        ' ¼ì²é¼äÏ¶Ä£Ê½
+        oClash.InterferenceType = catClashInterferenceTypeClearance
+        oClash.Clearance = clearanceVal
+    Else
+        ' ½ö½Ó´¥/¸ÉÉæÄ£Ê½
+        oClash.InterferenceType = catClashInterferenceTypeContact
+    End If
+    
+    ' 6. ÔËÐÐ¼ÆËã
+    oClash.Compute
+    
+    ' 7. ÖØÃüÃûÊ÷ÉÏµÄ½Úµã£¬·½±ãÓÃ»§Ê¶±ð
+    oClash.Name = "Check_" & p1.PartNumber & "_VS_" & p2.PartNumber
+    
+    ' 8. ·ÖÎö½á¹ûÂß¼­
+    ' ±éÀúËùÓÐ³åÍ»£¬ÅÐ¶Ï×îÑÏÖØµÄ¸ÉÉæ¼¶±ð
+    ' ÓÅÏÈ¼¶: Clash (Ó²¸ÉÉæ) > Contact (½Ó´¥) > Clearance (¼äÏ¶²»×ã) > Safe
+    
+    Dim resultStr As String
+    resultStr = "Safe"
+    
+    If oClash.Conflicts.Count > 0 Then
+        Dim i As Integer
+        Dim oConflict As Conflict
+        
+        ' Ô¤Éè×´Ì¬
+        Dim hasClash As Boolean: hasClash = False
+        Dim hasContact As Boolean: hasContact = False
+        Dim hasClearanceIssue As Boolean: hasClearanceIssue = False
+        
+        For i = 1 To oClash.Conflicts.Count
+            Set oConflict = oClash.Conflicts.Item(i)
+            
+            If oConflict.Type = catConflictTypeClash Then
+                hasClash = True
+                Exit For ' ·¢ÏÖÓ²¸ÉÉæ£¬ÕâÊÇ×îÑÏÖØµÄ£¬Ö±½ÓÍË³öÑ­»·
+            ElseIf oConflict.Type = catConflictTypeContact Then
+                hasContact = True
+            ElseIf oConflict.Type = catConflictTypeClearance Then
+                hasClearanceIssue = True
+            End If
+        Next i
+        
+        ' ¸ù¾ÝÓÅÏÈ¼¶ÅÐ¶¨×îÖÕ½á¹û
+        If hasClash Then
+            resultStr = "Interference"   ' ´æÔÚÓ²¸ÉÉæ
+        ElseIf hasContact Then
+            resultStr = "Contact"        ' ´æÔÚ½Ó´¥ (Èç¹û clearanceVal=0£¬ÕâÍ¨³£²»ËãÓ²¸ÉÉæ£¬ÊÓÐèÇó¶ø¶¨)
+        ElseIf hasClearanceIssue Then
+            resultStr = "Clearance Violation" ' ¼äÏ¶Ð¡ÓÚÉè¶¨Öµ
+        End If
+    End If
+    
+    CheckClashBetweenTwoProducts = resultStr
 
-    R --> R1[åˆ›å»ºå››ä¸ªè§’ç‚¹]
-    R1 --> R2[è¿žæŽ¥å››æ¡è¾¹]
-    R2 --> R3{æ£€æŸ¥è¾¹æ˜¯å¦åž‚ç›´æˆ–æ°´å¹³}
-    R3 -->|æ˜¯| R4[æ·»åŠ åž‚ç›´/æ°´å¹³çº¦æŸ]
-    R3 -->|å¦| R5[ä»…åˆ›å»ºå‡ ä½•çº¿]
-    R4 --> R6[æ·»åŠ è·ç¦»çº¦æŸ]
-    R5 --> R7[å®Œæˆ2Dè½®å»“åˆ›å»º]
-    R6 --> R7
+End Function
 
-    subgraph è®¡ç®—åŒ…å›´ç›’
-        K1
-        K2
-        K3
-        K4
-        K5
-    end
-
-    subgraph åˆ›å»º2Dè½®å»“
-        R1
-        R2
-        R3
-        R4
-        R5
-        R6
-        R7
-    end
+' ==============================================================================
+' ²âÊÔ¹ý³Ì£ºÔËÐÐ´Ë Sub À´²âÊÔÉÏÊöº¯Êý
+' ==============================================================================
+Sub Test_Clash_Check()
+    ' 1. »·¾³¼ì²é
+    Dim doc As Document
+    Set doc = CATIA.ActiveDocument
+    
+    If TypeName(doc) <> "ProductDocument" Then
+        MsgBox "Çë´ò¿ªÒ»¸ö Product (×°ÅäÌå) ÎÄ¼þ¡£", vbExclamation
+        Exit Sub
+    End If
+    
+    Dim root As Product
+    Set root = doc.Product
+    
+    ' 2. ¼ì²éÊÇ·ñÓÐ×ã¹»µÄ²úÆ·
+    If root.Products.Count < 2 Then
+        MsgBox "×°ÅäÌåÖÐÖÁÉÙÐèÒªÁ½¸ö×Ó×é¼þ²ÅÄÜ½øÐÐÑÝÊ¾¡£", vbExclamation
+        Exit Sub
+    End If
+    
+    ' 3. »ñÈ¡Ç°Á½¸ö×é¼þ½øÐÐ²âÊÔ (Êµ¼ÊÊ¹ÓÃÖÐÄã¿ÉÒÔÐÞ¸ÄÎª Selection »ñÈ¡)
+    Dim prod1 As Product
+    Dim prod2 As Product
+    Set prod1 = root.Products.Item(1)
+    Set prod2 = root.Products.Item(2)
+    
+    ' 4. µ÷ÓÃº¯Êý
+    ' Ê¾Àý£º¼ì²é prod1 ºÍ prod2£¬ÒªÇó×îÐ¡¼äÏ¶Îª 3.0mm
+    Dim checkResult As String
+    checkResult = CheckClashBetweenTwoProducts(prod1, prod2, 3.0)
+    
+    ' 5. Êä³ö½á¹û
+    Dim msg As String
+    msg = "Ð£ºËÍê³É£¡" & vbCrLf & vbCrLf
+    msg = msg & "×é¼þ 1: " & prod1.PartNumber & vbCrLf
+    msg = msg & "×é¼þ 2: " & prod2.PartNumber & vbCrLf
+    msg = msg & "½á¹û×´Ì¬: " & checkResult & vbCrLf & vbCrLf
+    msg = msg & "ÇëÔÚ½á¹¹Ê÷µ×²¿µÄ 'Applications -> Clash' ÖÐ²é¿´ÏêÏ¸µÄ¿ÉÊÓ»¯½á¹û¡£"
+    
+    MsgBox msg, vbInformation, "¸ÉÉæ¼ì²é½á¹û"
+    
+End Sub

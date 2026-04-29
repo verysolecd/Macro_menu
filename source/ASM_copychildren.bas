@@ -9,13 +9,10 @@ Attribute VB_Name = "ASM_copychildren"
 ' 定义模块级变量
 
 Sub cpChildren()
-If CATIA.Windows.count < 1 Then
-    MsgBox "没有打开的窗口"
-    Exit Sub
-End If
+
 If Not CanExecute("ProductDocument") Then Exit Sub
 Dim imsg, filter(0), iSel
-Set odoc = CATIA.ActiveDocument
+Set oDoc = CATIA.ActiveDocument
 Set osel = CATIA.ActiveDocument.Selection
 On Error Resume Next
     imsg = "请先点击选择源父产品，再点击选择目标父产品"

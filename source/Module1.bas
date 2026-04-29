@@ -1,34 +1,30 @@
 Attribute VB_Name = "Module1"
+Sub CATMain()
 
-Sub test22()
+Dim documents1 As Documents
+Set documents1 = CATIA.Documents
 
+Dim productDocument1 As ProductDocument
+Set productDocument1 = documents1.item("_1100.CATProduct")
 
-    Dim msg As String
-    msg = "请选择产品"
-    Dim prod As Product
+Dim product1 As Product
+Set product1 = productDocument1.Product
 
-  Set prod = KCL.SelectItem(msg, "Product")
-  
-  
-    Set oPrt = CATIA.ActiveDocument.part
+Set product1 = product1.ReferenceProduct
 
-    Set bdys = oPrt.bodies
-    Set bdy = getItem("Mini", bdys)
-    Set osel = CATIA.ActiveDocument.Selection
-    osel.Add bdy
-    osel.Delete
+Dim productDocument2 As ProductDocument
+Set productDocument2 = documents1.item("_1000.CATProduct")
+
+Dim product2 As Product
+Set product2 = productDocument2.Product
+
+Dim products1 As Products
+Set products1 = product2.Products
+
+Dim product3 As Product
+Set product3 = products1.item("Product1.1")
+
+product3.Name = "名字"
 
 End Sub
-
-Function getItem(iName, colls)
- Dim itm ' 正确声明数组
-    Set itm = Nothing
-    On Error Resume Next
-        Set itm = colls.item(iName)
-            Err.Clear
-            Err.Number = 0
-    On Error GoTo 0
-   Set getItem = itm
-    Set itm = Nothing
-End Function
 

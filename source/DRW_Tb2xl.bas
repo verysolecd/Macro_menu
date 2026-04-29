@@ -13,12 +13,12 @@ Sub Tb2xl()
           Exit Sub
      End If
 
-    Dim odoc As DrawingDocument
-    Set odoc = CATIA.ActiveDocument
+    Dim oDoc As DrawingDocument
+    Set oDoc = CATIA.ActiveDocument
     
 
     Dim oSHT As DrawingSheet
-    Set oSHT = odoc.Sheets.ActiveSheet
+    Set oSHT = oDoc.Sheets.ActiveSheet
     
     ' set drawing drwView
     Dim oView As DrawingView
@@ -39,13 +39,13 @@ Sub Tb2xl()
         colsNo = drwTable.NumberOfColumns
         
         
-        Dim i As Long, j As Long
+        Dim I As Long, j As Long
         ReDim arr(rowsNo - 1, colsNo - 1) As Variant
       
-        For i = 1 To rowsNo
+        For I = 1 To rowsNo
             For j = 1 To colsNo
                 ' write cell content to an array item
-                arr(i - 1, j - 1) = drwTable.GetCellString(i, j)
+                arr(I - 1, j - 1) = drwTable.GetCellString(I, j)
             Next
         Next
         

@@ -109,14 +109,14 @@ Private Function get_fanction_names( _
     Dim lst As collection
     Set lst = New collection
     Dim buf As String
-    Dim i As Long
+    Dim I As Long
     With comp.codemodule
-        For i = 1 To .CountOfLines
-            If buf <> .ProcOfLine(i, 0) Then
-                buf = .ProcOfLine(i, 0)
+        For I = 1 To .CountOfLines
+            If buf <> .ProcOfLine(I, 0) Then
+                buf = .ProcOfLine(I, 0)
                 lst.Add "  [" + buf + "]"
             End If
-        Next i
+        Next I
     End With
     get_fanction_names = Join( _
         mUtil.CollectionToArrayLet(lst), _
@@ -176,18 +176,18 @@ Private Function GetValidCharacterCount( _
         ByVal VBComp As Object) As Long
     Dim CodeMod As Object ' CodeModule
     Dim totalChars As Long
-    Dim i As Long
+    Dim I As Long
     Dim codeLine As String
     ' 获取CodeModule对象
     Set CodeMod = VBComp.codemodule
     totalChars = 0
     ' 检查每行并排除注释
-    For i = 1 To CodeMod.CountOfLines
-        codeLine = Trim(CodeMod.Lines(i, 1))
+    For I = 1 To CodeMod.CountOfLines
+        codeLine = Trim(CodeMod.Lines(I, 1))
         If Left(codeLine, 1) <> "'" Then
             totalChars = totalChars + Len(codeLine)
         End If
-    Next i
+    Next I
     ' 返回结果
     GetValidCharacterCount = totalChars
 End Function
@@ -200,11 +200,11 @@ Sub import_project( _
         Set proj = mProjectLst.item(projectIdx)
     On Error GoTo 0
     If proj Is Nothing Then Exit Sub
-    Dim Key As String
-    Key = Replace(proj.Filename, "\", SEPARATOR)
-    If Not mUserDict.Exists(Key) Then Exit Sub
+    Dim key As String
+    key = Replace(proj.Filename, "\", SEPARATOR)
+    If Not mUserDict.Exists(key) Then Exit Sub
     Dim path As String
-    path = mUserDict(Key)("path")
+    path = mUserDict(key)("path")
     If Not mUtil.GetFso().FolderExists(path) Then Exit Sub
     Call remove_modules(projectIdx)
     Call import_modules(proj, path)
@@ -353,10 +353,10 @@ Sub overwriting_project( _
         Set proj = mProjectLst.item(projectIdx)
     On Error GoTo 0
     If proj Is Nothing Then Exit Sub
-    Dim Key As String
-    Key = Replace(proj.Filename, "\", SEPARATOR)
+    Dim key As String
+    key = Replace(proj.Filename, "\", SEPARATOR)
     Dim dirPath As String
-    dirPath = mUserDict(Key)("path")
+    dirPath = mUserDict(key)("path")
     Dim FSO As Object
     Set FSO = mUtil.GetFso()
     '找不到的话删除就可以了吗？
@@ -373,10 +373,10 @@ Sub open_folder( _
         Set proj = mProjectLst.item(projectIdx)
     On Error GoTo 0
     If proj Is Nothing Then Exit Sub
-    Dim Key As String
-    Key = Replace(proj.Filename, "\", SEPARATOR)
+    Dim key As String
+    key = Replace(proj.Filename, "\", SEPARATOR)
     Dim dirPath As String
-    dirPath = mUserDict(Key)("path")
+    dirPath = mUserDict(key)("path")
     Dim FSO As Object
     Set FSO = mUtil.GetFso()
     '找不到的话删除就可以了吗？
@@ -390,16 +390,16 @@ End Sub
 Private Sub update_userdata( _
         ByVal proj As Object, _
         ByVal path As String)
-    Dim Key As String
-    Key = Replace(proj.Filename, "\", SEPARATOR)
-    If mUserDict.Exists(Key) Then
-        mUserDict.Remove Key
+    Dim key As String
+    key = Replace(proj.Filename, "\", SEPARATOR)
+    If mUserDict.Exists(key) Then
+        mUserDict.Remove key
     End If
     Dim info As Object
     Set info = mUtil.InitDict()
     info.Add "name", proj.Name
     info.Add "path", path
-    mUserDict.Add Key, info
+    mUserDict.Add key, info
     Call cleanUp_userdata
 End Sub
 '获取导出用的扩展名
@@ -499,25 +499,25 @@ Private Sub cleanUp_userdata()
     Set FSO = mUtil.GetFso()
     Dim removeLst As collection
     Set removeLst = New collection
-    Dim filePath As String
+    Dim filepath As String
     Dim dirPath As String
-    Dim Key As Variant 'String
-    For Each Key In mUserDict.keys()
-        If Key = "ver" Then GoTo Continue
-        filePath = Replace(Key, SEPARATOR, "\")
-        If Not FSO.FileExists(filePath) Then
-            removeLst.Add Key
+    Dim key As Variant 'String
+    For Each key In mUserDict.keys()
+        If key = "ver" Then GoTo Continue
+        filepath = Replace(key, SEPARATOR, "\")
+        If Not FSO.FileExists(filepath) Then
+            removeLst.Add key
             GoTo Continue
         End If
-        dirPath = mUserDict(Key)("path")
+        dirPath = mUserDict(key)("path")
         If Not FSO.FolderExists(dirPath) Then
-            removeLst.Add Key
+            removeLst.Add key
             GoTo Continue
         End If
 Continue:
     Next
-    For Each Key In removeLst
-        mUserDict.Remove Key
+    For Each key In removeLst
+        mUserDict.Remove key
     Next
 End Sub
 '项目是否曾被保存过

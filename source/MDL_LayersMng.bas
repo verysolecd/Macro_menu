@@ -1,59 +1,17 @@
+Attribute VB_Name = "MDL_LayersMng"
 'Attribute VB_Name = "MDL_LayersMng"
 ' 获得识别特征下的所有孔中心
 '{GP:4}
-'{EP:ctrhole}
-'{Caption:get孔中心点}
-'{ControlTipText: 提示选择实体后导出所有孔中心，必须是识别孔特征后的实体}
+'{EP:LayersMng}
+'{Caption:当前层创建YZ向图纸}
+'{ControlTipText: 设置只显示当前图层，然后创建YZ向图纸}
 '{BackColor:12648447}
-Private i
-Sub test22()
+Private I
+Sub LayersMng()
 If Not CanExecute("partDocument,productdocument") Then Exit Sub
-
-
 Set rootDoc = CATIA.ActiveDocument
 Set rootprd = rootDoc.Product
-
-Dim osel
-Set osel = CATIA.ActiveDocument.Selection
-
- Set oDoc = rootDoc
- '---显示过滤器管理管理
- ily = ""
- ly = oDoc.CurrentLayer
- If ly <> "None" Then
-     Dim btn, bTitle, bResult
-      imsg = "只显示当前图层还是您输入一个图层？" & vbCrLf & vbCrLf
-      imsg = imsg & "选择 “是”: 只显示当前图层 " & vbCrLf
-      imsg = imsg & "选择 “否”: 输入一个显示图层" & vbCrLf
-      imsg = imsg & "选择 “取消”: 退出" & vbCrLf & vbCrLf
-       btn = vbYesNo + vbExclamation
-       bResult = MsgBox(imsg, btn, "bTitle")  ' Yes(6),No(7),cancel(2)
-       Select Case bResult
-           Case 2: Exit Sub '===选择“取消”====
-           Case 7:  '===选择“否”====
-                ipt = KCL.GetInput("请输入你想显示的图层，逗号分割")
-                If VarType(ipt) = vbString Then
-                    ipt = LCase(ipt)
-                    ipt = Split(ipt, ",") '过滤器转数组
-                End If
-                fstr = ""
-                For i = LBound(ipt) To UBound(ipt)
-                    ily = "Layer= " & CLng(ipt(i)) & "+ " & ily
-                Next i
-                fstr = ""
-                fstr = Left(ily, Len(ily) - 2)
-                    If fstr <> "" Then
-                        filterdef = fstr
-                         filtername = "only_" & fstr & "_shown"
-                         
-                           oDoc.CreateFilter filtername, filterdef
-                           oDoc.CurrentFilter = filtername
-                    End If
-                
-                Case 6  '===选择“是”====
-                 oDoc.CurrentFilter = "Only current layer visible"
-       End Select
- End If
+    Call appFilterLayer(rootDoc)
     Call addDrw(rootprd)
  '---显示管理
 '    '---图层管理
@@ -81,7 +39,7 @@ Set osel = CATIA.ActiveDocument.Selection
 'Visp.SetShow 1  '' 设置为不可见
 '
 '
-''--颜色\线型
+''--颜色\线型 管理
 '
 '    Call Visp.SetRealColor(128, 64, 64, 1)
 '    Call Visp.SetRealOpacity(128, 1)
@@ -93,6 +51,45 @@ Set osel = CATIA.ActiveDocument.Selection
 '    osel.Add bdy
 '    osel.Delete
 'oDoc.CurrentFilter = "All visible"
+End Sub
+Sub appFilterLayer(oDoc)
+Dim osel
+Set osel = CATIA.ActiveDocument.Selection
+ '---显示过滤器管理管理
+ ily = ""
+ ly = oDoc.CurrentLayer
+If ly <> "None" Then
+     Dim btn, bTitle, bResult
+      imsg = "只显示当前图层还是您输入一个图层？" & vbCrLf & vbCrLf
+      imsg = imsg & "选择 “是”: 只显示当前图层 " & vbCrLf
+      imsg = imsg & "选择 “否”: 输入一个显示图层" & vbCrLf
+      imsg = imsg & "选择 “取消”: 退出" & vbCrLf & vbCrLf
+       btn = vbYesNo + vbExclamation
+       bResult = MsgBox(imsg, btn, "bTitle")  ' Yes(6),No(7),cancel(2)
+       Select Case bResult
+           Case 2: Exit Sub '===选择“取消”====
+           Case 7:  '===选择“否”====
+                ipt = KCL.GetInput("请输入你想显示的图层，逗号分割")
+                If VarType(ipt) = vbString Then
+                    ipt = LCase(ipt)
+                    ipt = Split(ipt, ",") '过滤器转数组
+                End If
+                fstr = ""
+                For I = LBound(ipt) To UBound(ipt)
+                    ily = "Layer= " & CLng(ipt(I)) & "+ " & ily
+                Next I
+                fstr = ""
+                fstr = Left(ily, Len(ily) - 2)
+                    If fstr <> "" Then
+                        filterdef = fstr
+                         filtername = "only_" & fstr & "_shown"
+                           oDoc.CreateFilter filtername, filterdef
+                           oDoc.CurrentFilter = filtername
+                    End If
+                Case 6  '===选择“是”====
+                 oDoc.CurrentFilter = "Only current layer visible"
+       End Select
+End If
 End Sub
 Function addDrw(iprd)
     Dim Docs As Documents
@@ -109,7 +106,7 @@ Function addDrw(iprd)
     Set sht = Shts.item("Sheet.1")
     Set oVs = sht.Views
  xdis = 200
- i = 1
+ I = 1
 If iprd.Products.count < 1 Then
     On Error Resume Next
      Set oprt = iprd.ReferenceProduct.Parent.part
@@ -119,12 +116,12 @@ If iprd.Products.count < 1 Then
             Set ViewGBH = oV.GenerativeBehavior
                 ViewGBH.Document = prd
                 ViewGBH.DefineFrontView 0#, 1#, 0#, 0#, 0#, 1#
-                oV.X = xdis * i
+                oV.X = xdis * I
                 oV.y = 300
                 oV.[Scale] = 1#
             ViewGBH.Update
             oV.Activate
-            i = i + 1
+            I = I + 1
         End If
     On Error Resume Next
 Else
@@ -135,12 +132,12 @@ Else
             Set ViewGBH = oV.GenerativeBehavior
                 ViewGBH.Document = prd
                 ViewGBH.DefineFrontView 0#, 1#, 0#, 0#, 0#, 1#
-                oV.X = xdis * i
+                oV.X = xdis * I
                 oV.y = 300
                 oV.[Scale] = 1#
             ViewGBH.Update
             oV.Activate
-            i = i + 1
+            I = I + 1
         Next
 End If
 End Function

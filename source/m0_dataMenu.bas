@@ -134,13 +134,7 @@ Try_TAG_ENTRY_DEF:
         ' Item 7 "mdl_name”
         
         BtnInfos.Add MdlInfo
-        
-        
-        
     Debug.Print showdict(MdlInfo)
-        
-        
-        
 Continue:
     Next
     If BtnInfos.count < 1 Then Exit Function
@@ -151,12 +145,12 @@ End Function
 ' 参数  : Dict,vri,vri
 ' 返回值: Dict
 Private Function Push_Dic(ByVal Dic As Object, _
-                          ByVal Key As Variant, _
+                          ByVal key As Variant, _
                           ByVal item As Variant) As Object
-    If Dic.Exists(Key) Then
-        Dic(Key) = item
+    If Dic.Exists(key) Then
+        Dic(key) = item
     Else
-        Dic.Add Key, item
+        Dic.Add key, item
     End If
     Set Push_Dic = Dic
 End Function
@@ -183,19 +177,19 @@ Private Function Get_KeyValue( _
     
     Dim Dic As Object: Set Dic = KCL.InitDic(vbTextCompare)
     Dim match As Object, SubMatchs As Object
-    Dim Key As Variant, Var As Variant
+    Dim key As Variant, Var As Variant
     
     For Each match In matches
         Set SubMatchs = match.SubMatches
         If SubMatchs.count < 2 Then GoTo Continue
         ' ==  获取编号
-        Key = Trim(Replace(SubMatchs(0), """", "")) 'trim 取消前后空格， replace 删除中间空格
-        If Len(Key) < 1 Then GoTo Continue  '若key为空进入下一个循环
-        If KeyToLong Then Key = CLng(Key)  'Clng转换为long类型
+        key = Trim(Replace(SubMatchs(0), """", "")) 'trim 取消前后空格， replace 删除中间空格
+        If Len(key) < 1 Then GoTo Continue  '若key为空进入下一个循环
+        If KeyToLong Then key = CLng(key)  'Clng转换为long类型
             ' ==  获取编号对应page
         Var = Trim(Replace(SubMatchs(1), """", ""))  'trim 取消前后空格， replace 删除中间空格
         If Len(Var) < 1 Then GoTo Continue
-        Set Dic = Push_Dic(Dic, Key, Var)
+        Set Dic = Push_Dic(Dic, key, Var)
 Continue:
     Next
     
@@ -228,10 +222,10 @@ Private Function To_SortedList(ByVal Infos As Object) As Object
     If SoLst.count < 1 Then Exit Function
     
     ' 按模块名称排序
-    Dim i As Long
+    Dim I As Long
     Dim InfoDic As Object: Set InfoDic = KCL.InitDic(vbTextCompare)
-    For i = 0 To SoLst.count - 1
-        InfoDic.Add SoLst.GetKey(i), Sort_by(SoLst.GetByIndex(i))
+    For I = 0 To SoLst.count - 1
+        InfoDic.Add SoLst.GetKey(I), Sort_by(SoLst.GetByIndex(I))
     Next
     
     Set To_SortedList = InfoDic
@@ -241,17 +235,17 @@ End Function
 ' 返回值: lst(Dict)
 Private Function Sort_by(ByVal lst As Object) As Object
     Dim tmp As Object
-    Dim i As Long, j As Long
+    Dim I As Long, j As Long
     Set tmp = lst(0)
-    For i = 0 To lst.count - 1
-        For j = lst.count - 1 To i Step -1
-            If lst(i)(TAG_MDLNAME) > lst(j)(TAG_MDLNAME) Then
-                Set tmp = lst(i)
-                Set lst(i) = lst(j)
+    For I = 0 To lst.count - 1
+        For j = lst.count - 1 To I Step -1
+            If lst(I)(TAG_MDLNAME) > lst(j)(TAG_MDLNAME) Then
+                Set tmp = lst(I)
+                Set lst(I) = lst(j)
                 Set lst(j) = tmp
             End If
         Next j
-    Next i
+    Next I
     Set Sort_by = lst
 End Function
 

@@ -36,9 +36,9 @@ Sub CATMain()
                LockState = True
             End If
      If Views.count > 3 Then
-            Dim i As Long
-            For i = 3 To Views.count
-                 Set View = Views.item(i)
+            Dim I As Long
+            For I = 3 To Views.count
+                 Set View = Views.item(I)
                       View.LockStatus = LockState
                  Next
      End If

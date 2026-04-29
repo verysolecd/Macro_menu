@@ -8,16 +8,16 @@ Attribute VB_Name = "RW_cGXBOM"
 Sub cgxBom()
 If Not KCL.CanExecute("ProductDocument") Then Exit Sub
      If pdm Is Nothing Then
-          Set pdm = New class_PDM
+          Set pdm = New Cls_PDM
      End If
      If gPrd Is Nothing Then
     
      Set gPrd = pdm.getiPrd()
-    Set ProductObserver.CurrentProduct = gPrd ' 这会自动触发事件
+    Set Cls_PrdOB.CurrentProduct = gPrd ' 这会自动触发事件
       End If
       
     If gws Is Nothing Then
-     Set xlm = New Class_XLM
+     Set xlm = New Cls_XLM
     End If
       Set iprd = gPrd
             counter = 1
