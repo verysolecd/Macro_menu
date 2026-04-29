@@ -1,4 +1,5 @@
 # ***CATIA V5宏菜单***
+git pull; git submodule update --remote
 ## 这是什么？
 在catia程序中创建宏时，从菜单的调用宏很麻烦。此外，如果要注册到工具栏的宏数量很多，操作也很繁琐。本程序的目的是简化此类工作
 
