@@ -8,7 +8,7 @@ Attribute VB_Name = "ASM_sendDir"
 
 Sub sendDir()
 
-    If Not CanExecute("ProductDocument") Then Exit Sub
+    If Not CanExecute("ProductDocument,DrawingDocument") Then Exit Sub
     CATIA.DisplayFileAlerts = True
     Dim odoc: Set odoc = CATIA.ActiveDocument
     ipath_name = odoc.path & "\" & odoc.Name

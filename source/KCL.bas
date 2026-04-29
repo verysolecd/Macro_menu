@@ -53,8 +53,6 @@ Function CanExecute(ByVal docTypes As Variant) As Boolean
 End Function
 Function checkDocType(ByVal docTypes As Variant)
     checkDocType = False
-    
-    
     If VarType(docTypes) = vbString Then
          docTypes = LCase(docTypes)
         docTypes = Split(docTypes, ",") '过滤器转数组
@@ -126,7 +124,7 @@ Function GetInternalName$(aoj)
     If IsNothing(aoj) Then
         GetInternalName = Empty: Exit Function
     End If
-    GetInternalName = aoj.GetItem("ModelElement").InternalName
+    GetInternalName = aoj.getItem("ModelElement").InternalName
 End Function
 
 ' 获取指定类型的父对象
@@ -539,7 +537,7 @@ Function isPathchn(pathToCheck) As Boolean
     regex.Pattern = "[\u4e00-\u9fa5]"   ' 设置正则表达式模式，匹配中文字符
     regex.IgnoreCase = True
     regex.Global = True
-    isPathchn = regex.TEST(pathToCheck)   ' 执行匹配并返回结果
+    isPathchn = regex.test(pathToCheck)   ' 执行匹配并返回结果
     Set regex = Nothing
 End Function
 ''替换字符串的所有中文为空格
@@ -679,7 +677,17 @@ Public Function getshell()
     Set getshell = shellApp
 
 End Function
-
+Public Function getItem(iName, colls)
+ Dim itm ' 正确声明数组
+    Set itm = Nothing
+    On Error Resume Next
+        Set itm = colls.item(iName)
+            Err.Clear
+            Err.Number = 0
+    On Error GoTo 0
+   Set getItem = itm
+    Set itm = Nothing
+End Function
 
 ' 智能打开路径（优先激活已存在窗口）
 Sub openpath(ByVal strPath As String)
@@ -837,3 +845,6 @@ Public Function showdict(ByVal oDic, Optional ByVal boolShowKeyIndex As Boolean 
   
   Debug.Print showdict
 End Function
+
+
+

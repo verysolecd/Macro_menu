@@ -13,10 +13,10 @@ i = 5
     Set oView = oviews.item("Background View")
    oView.Activate
     Set ots = oView.Texts
-    Set Pg = ots.GetItem("gongxxzhang")
+    Set Pg = ots.getItem("gongxxzhang")
     Pg.Text = "¹²" & k - 1 & "Ò³"
       oView.SaveEdition
-    Set Pg = ots.GetItem("dixxzhang")
+    Set Pg = ots.getItem("dixxzhang")
     Pg.Text = "µÚ" & i & "Ò³"
     oView.SaveEdition
 End Sub

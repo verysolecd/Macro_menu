@@ -475,7 +475,7 @@ Private Function count_me(oprd)  '获取兄弟字典
          QTy = 1
      On Error Resume Next
           If TypeOf oprd.Parent Is Products Then    '若有父级产品'获取兄弟字典
-                    Dim oParent: Set oParent = oprd.Parent.Parent
+                   Dim oParent: Set oParent = oprd.Parent.Parent
                    Set oDict = KCL.InitDic
                    For i = 1 To oParent.Products.count
                           pn = oParent.Products.item(i).PartNumber

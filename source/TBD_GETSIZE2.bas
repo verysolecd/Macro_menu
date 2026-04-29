@@ -334,7 +334,7 @@ Private Function getAxisPlaneBrepName( _
     As String
     
     Dim intName As String
-    intName = ax.GetItem("ModelElement").InternalName
+    intName = ax.getItem("ModelElement").InternalName
     getAxisPlaneBrepName = _
         "RSur:(Face:(Brp:(" + intName + ";" + CStr(planeNo + 1) + ");None:();Cf11:());" + _
         "WithPermanentBody;WithoutBuildError;WithSelectingFeatureSupport;MFBRepVersion_CXR15)"

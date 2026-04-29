@@ -1,5 +1,12 @@
-Attribute VB_Name = "Minibox3"
-'getSize 3
+Attribute VB_Name = "OTH_Minibox"
+
+'Attribute VB_Name = "OTH_Minibox"
+'{GP:6}
+'{Ep:CATMain}
+'{Caption:最小包络体}
+'{ControlTipText:点击即创建最小包络体}
+'{BackColor:}
+
 Option Explicit
 Private Const MINBODYNAME = "MinimumBox" 'MinimumBoxName
 Private Const DMYLNG = 1000000#
@@ -17,7 +24,6 @@ Sub CATMain()
     Dim msg As String
     msg = "请选择产品"
     Dim prod As Product
-    
       '如果是零件 直接为当前零件创建
     If KCL.checkDocType("PartDocument") Then
         Set prod = CATIA.ActiveDocument.Product
@@ -25,27 +31,27 @@ Sub CATMain()
     Else
         Set prod = KCL.SelectItem(msg, "Product")
             If prod Is Nothing Then Exit Sub
-            On Error Resume Next
-                Dim oPrt:    Set oPrt = Nothing
-                Set oPrt = prod.ReferenceProduct.Parent.part
-                If Err.Number <> 0 Then
-                    Err.Clear
-                End If
-            On Error GoTo 0
+            
+                On Error Resume Next
+                    Dim oPrt:    Set oPrt = Nothing
+                    Set oPrt = prod.ReferenceProduct.Parent.part
+                    If Err.Number <> 0 Then
+                        Err.Clear
+                    End If
+                On Error GoTo 0
             
             If Not oPrt Is Nothing Then
                 Set workDoc = prod.ReferenceProduct.Parent
             Else
                 Set workDoc = initPartDoc(prod)
-                     workPt.Parent.Product.PartNumber = "minibox" & "__" & prod.PartNumber
             End If
    End If
 
-    Dim targetBodies As collection
+    Set workPt = workDoc.part
+    
+        Dim targetBodies As collection
     Set targetBodies = getBodies(prod)
     If targetBodies Is Nothing Then Exit Sub
-    Set workPt = workDoc.part
-
     Dim ax As AxisSystem
     Set ax = getAxis(workDoc)
     
@@ -203,45 +209,18 @@ End Function
 Private Function initPartDoc( _
     ByVal prod As Product) _
     As PartDocument
-    
     Dim belongProd As Product
-
-    
-    
     If prod.Products.count < 1 Then
-        
-   
-        
-    
         Set belongProd = prod.Parent.Parent
-        
-        
-        
     Else
         Set belongProd = prod
     End If
-
-    
-    
-    
-
-'    On Error Resume Next
-'         If TypeOf prod.Parent Is Products Then    '若有父级产品'获取兄弟字典
-'            Set belongProd = prod.Parent.Parent
-'        Else
-'             Err.Clear
-'            Err.Number = 0
-'        End If
-'      On Error GoTo 0
-      
-      
-      
     Dim prods As Products
     Set prods = belongProd.Products
     Dim newProd As Product
     Set newProd = prods.AddNewComponent("Part", "")
+    newProd.PartNumber = "Mini_box_" & prod.PartNumber
     Set initPartDoc = newProd.ReferenceProduct.Parent
-'      Set initPartDoc = prod.ReferenceProduct.Parent
 End Function
 
 
