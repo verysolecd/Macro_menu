@@ -34,10 +34,10 @@ Private Sub Class_Initialize()
             Err.Raise 1001, , "未检测到打开的CATIA文档"
             Exit Sub
         End If
-        Set rootPrd = CATIA.ActiveDocument.Product
+            Set rootPrd = CATIA.ActiveDocument.Product
         On Error GoTo 0
         If Not rootPrd Is Nothing Then
-         rootPrd.ApplyWorkMode (3)
+            rootPrd.ApplyWorkMode (3)
         End If
         Set osel = CATIA.ActiveDocument.Selection: osel.Clear
 ErrorHandler:
@@ -52,13 +52,11 @@ Sub iniarr()
     Att(2) = "Material"
     Att(3) = "Thickness"
     Att(4) = "Density"
-
 End Sub
-    ' Calculate the total mass of a product and its sub-products
+' Calculate the total mass of a product and its sub-products
 Public Function Assmass(oprd)
-
-        Dim i
-        Dim total, children: total = 0
+        Dim i, total, children
+            total = 0
         Set children = oprd.Products
         If oprd.Products.Count > 0 Then
             For i = 1 To children.Count
@@ -70,27 +68,25 @@ Public Function Assmass(oprd)
             total = oprd.ReferenceProduct.UserRefProperties.item("Mass").Value
         End If
         Assmass = total
-
-        MsgBox "重量已经计算"
-    End Function
+ End Function
 ' Generate product information
     Public Function infoPrd(oprd)
-        Dim arr(1 To 9)
+        Dim Arr(1 To 9)
             With oprd.ReferenceProduct
-                arr(1) = .PartNumber
-                arr(2) = .nomenclature
-                arr(3) = .definition
-                arr(4) = oprd.Name
+                Arr(1) = .PartNumber
+                Arr(2) = .nomenclature
+                Arr(3) = .definition
+                Arr(4) = oprd.Name
             End With
         Dim colls
            Set colls = oprd.ReferenceProduct.UserRefProperties
-                arr(5) = getAtt("Material", colls)(1)
-                arr(6) = getAtt("Density", colls)(1)
-                arr(7) = getAtt("Mass", colls)(1)
-                arr(8) = getAtt("Thickness", colls)(1)
+                Arr(5) = getAtt("Material", colls)(1)
+                Arr(6) = getAtt("Density", colls)(1)
+                Arr(7) = getAtt("Mass", colls)(1)
+                Arr(8) = getAtt("Thickness", colls)(1)
         On Error GoTo 0
-                arr(9) = count_me(oprd)
-        infoPrd = arr
+                Arr(9) = count_me(oprd)
+        infoPrd = Arr
     End Function
 Public Function recurPrd(oprd, LV)
     Dim mapping As Variant
@@ -144,13 +140,10 @@ Public Function recurPrd(oprd, LV)
   
   For i = 1 To UBound(finalbom, 1)
     For j = 1 To UBound(finalbom, 2)
-    finalbom(i, j) = bigbom(i, j)
+        finalbom(i, j) = bigbom(i, j)
     Next
-    Next
-            
-            
+  Next
         recurPrd = finalbom
-
 End Function
 Public Function modatt(oprd, odata)
     Dim refPrd: Set refPrd = oprd.ReferenceProduct
@@ -170,7 +163,7 @@ Public Function modatt(oprd, odata)
                         colls.item("Material").Value = odata(i)
                     Case 6
                         On Error Resume Next
-                            Set colls = refPrd.Parent.Part.Parameters.RootParameterSet.ParameterSets.item("Part_info").DirectParameters
+                            Set colls = refPrd.Parent.part.Parameters.RootParameterSet.ParameterSets.item("Part_info").DirectParameters
                             colls.item("Density").Value = odata(i)
                             Error.Clear
                         On Error GoTo 0
@@ -203,7 +196,7 @@ Public Sub initPrd(oprd)
     Next
     On Error Resume Next
          Dim oprt
-         Set oprt = refPrd.Parent.Part
+         Set oprt = refPrd.Parent.part
         If Err.Number <> 0 Then
             Err.Clear
             Set oprt = Nothing
@@ -231,7 +224,7 @@ Private Sub iniPrt(oprd)
     Dim refPrd, colls
     Dim i
     Set refPrd = oprd.ReferenceProduct
-    Dim oprt: Set oprt = refPrd.Parent.Part
+    Dim oprt: Set oprt = refPrd.Parent.part
 '============创建usrp属性=================
     Dim NT As Variant
         NT = Array( _
@@ -298,35 +291,35 @@ Private Sub iniPrt(oprd)
                    '---创建EKL
             oRule.Reset
             oRule.SetNT "sum_all_Vol", "Program"
-            oRule.Str = eklstr
+            oRule.str = eklstr
             oRule.Desc = "汇总体积"
             checkPara oRule, colls
                     '---创建Cal_mass
             oRule.Reset
             oRule.SetNT "cal_Mass", "Formula"
             oRule.Desc = "链接重量"
-            oRule.Str = "Part_info\sumVol *Part_info\Density"
+            oRule.str = "Part_info\sumVol *Part_info\Density"
             Set oRule.Target = infoPara(3).obj
             checkPara oRule, colls
                     '---创建link_mass
             oRule.Reset
             oRule.SetNT "link_Mass", "Formula"
             oRule.Desc = "链接重量"
-            oRule.Str = "Part_info\Mass"
+            oRule.str = "Part_info\Mass"
             Set oRule.Target = refPrd.UserRefProperties.item("Mass")
             checkPara oRule, colls
                     '---创建link_thickness
             oRule.Reset
             oRule.SetNT "link_Thickness", "Formula"
             oRule.Desc = "链接厚度"
-            oRule.Str = "Part_info\Thickness"
+            oRule.str = "Part_info\Thickness"
             Set oRule.Target = refPrd.UserRefProperties.item("Thickness")
             checkPara oRule, colls
                     '---创建link_Density
             oRule.Reset
             oRule.SetNT "link_Density", "Formula"
             oRule.Desc = "链接密度"
-            oRule.Str = "Part_info\Density"
+            oRule.str = "Part_info\Density"
             Set oRule.Target = refPrd.UserRefProperties.item("Density")
             checkPara oRule, colls
             oRule.Reset
@@ -340,8 +333,8 @@ Private Function checkPara(thispara, colls)
         Set thispara.obj = getPara(thispara, colls)(0) '已有参数和公式，校验默认值'
         Select Case thispara.iType  '只有formula和rule才需要校核其内容
             Case "Program", "Formula"
-                If thispara.obj.Value <> thispara.Str Then
-                 thispara.obj.Modify thispara.Str
+                If thispara.obj.Value <> thispara.str Then
+                 thispara.obj.Modify thispara.str
 '                  Debug.Print "已经修改" & thispara.obj.Name
                 End If
                 thispara.obj.Hidden = True
@@ -349,24 +342,24 @@ Private Function checkPara(thispara, colls)
     End If
 End Function
 Private Function getPara(thispara, collection)
-    Dim arr(1) ' 正确声明数组
+    Dim Arr(1) ' 正确声明数组
     On Error Resume Next
-        Set arr(0) = collection.item(thispara.Name)
+        Set Arr(0) = collection.item(thispara.Name)
         If Err.Number = 0 Then ' 检查是否成功获取对象
-            arr(1) = arr(0).Value
-            getPara = arr
+            Arr(1) = Arr(0).Value
+            getPara = Arr
         Else
             getPara = Array(Nothing, "__")
         End If
     On Error GoTo 0
 End Function
 Private Function getAtt(iName, collection)
-    Dim arr(1) ' 正确声明数组
+    Dim Arr(1) ' 正确声明数组
     On Error Resume Next
-        Set arr(0) = collection.item(iName)
+        Set Arr(0) = collection.item(iName)
         If Err.Number = 0 Then ' 检查是否成功获取对象
-            arr(1) = arr(0).Value
-            getAtt = arr
+            Arr(1) = Arr(0).Value
+            getAtt = Arr
         Else
             getAtt = Array(Nothing, "__")
         End If
@@ -379,15 +372,15 @@ Private Function paraCreatobj(thispara, colls)
             Case "list"
                 Set thispara.obj = colls.CreateList(thispara.Name)
             Case "Mass", "Density", "Length", "Volume" '所有dimension参数
-                Set thispara.obj = colls.CreateDimension(thispara.Name, thispara.iType, thispara.Str)
+                Set thispara.obj = colls.CreateDimension(thispara.Name, thispara.iType, thispara.str)
             Case "String"
-                Set thispara.obj = colls.CreateString(thispara.Name, thispara.Str)
+                Set thispara.obj = colls.CreateString(thispara.Name, thispara.str)
             Case "Formula"
-                Set thispara.obj = colls.CreateFormula(thispara.Name, thispara.Desc, thispara.Target, thispara.Str)
+                Set thispara.obj = colls.CreateFormula(thispara.Name, thispara.Desc, thispara.Target, thispara.str)
                  thispara.obj.Hidden = True
             Case "Program"
                   On Error Resume Next
-                    Set thispara.obj = colls.CreateProgram(thispara.Name, thispara.Desc, thispara.Str)
+                    Set thispara.obj = colls.CreateProgram(thispara.Name, thispara.Desc, thispara.str)
                   If Error.Number <> 0 Then
                     Debug.Print "缺少KWA lisence, 无法创建rule单位"
                   End If
@@ -468,6 +461,7 @@ Public Function defgprd()    '获取要读取或修改的  全局变量 gPrd定义
 End Function
 Public Sub freePrd()
      Set gPrd = Nothing
+
 End Sub
 Public Function selPrd()
     osel.Clear

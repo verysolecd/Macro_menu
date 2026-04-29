@@ -1,12 +1,12 @@
 Attribute VB_Name = "m52_LV2_Mass"
 '{GP:5}
-'{Ep:Cal_Mass}
+'{Ep:L2Mass}
 '{Caption:第二级产品重量}
 '{ControlTipText:只计算第二级产品重量}
 '{BackColor:16744703}
 
-Sub Cal_Mass()
-    
+Sub L2Mass()
+    If Not KCL.CanExecute("ProductDocument") Then Exit Sub
     If pdm Is Nothing Then
         Set pdm = New class_PDM
     End If
@@ -15,19 +15,19 @@ Sub Cal_Mass()
         Call setgprd
     End If
    Set oprd = gPrd
-   Call MassLV2(oprd, 1)
+   Call cal2mass(oprd, 1)
   
     Set oprd = Nothing
 End Sub
 
 
-Function MassLV2(oprd, LV)
+Function cal2mass(oprd, LV)
 
 If LV <= 3 Then
             Set children = oprd.Products
             If children.Count > 0 Then
                 For i = 1 To children.Count
-                    Call MassLV2(children.item(i), LV + 1)
+                    Call cal2mass(children.item(i), LV + 1)
                     total = total + children.item(i).ReferenceProduct.UserRefProperties.item("Mass").Value
                 Next
                     oprd.ReferenceProduct.UserRefProperties.item("Mass").Value = total
