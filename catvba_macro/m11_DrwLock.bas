@@ -15,7 +15,7 @@ Sub CATMain()
      End If
      
      Dim Views As DrawingViews
-     Set Views = CATIA.Activedocument.Sheets.ActiveSheet.Views
+     Set Views = CATIA.ActiveDocument.Sheets.ActiveSheet.Views
      If Views.Count < 3 Then
                  Exit Sub
       End If
@@ -24,13 +24,13 @@ Sub CATMain()
                  Set View = Views.item(3)
             Dim LockState As Boolean
                  LockState = View.LockStatus
-            Dim Msg As String
+            Dim msg As String
             
             If LockState Then
-                 Msg = "解锁"
+                 msg = "解锁"
                LockState = False
             Else
-                 Msg = "锁定"
+                 msg = "锁定"
                LockState = True
             End If
      If Views.Count > 3 Then
@@ -40,5 +40,5 @@ Sub CATMain()
                       View.LockStatus = LockState
                  Next
      End If
-     MsgBox "视图已成功" & Msg & "。"
+     MsgBox "视图已成功" & msg & "。"
 End Sub

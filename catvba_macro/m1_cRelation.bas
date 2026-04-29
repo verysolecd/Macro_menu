@@ -3,7 +3,7 @@ Attribute VB_Name = "m1_cRelation"
 
 
 
-Sub CATmain()
+Sub CATMain()
 
 Dim partDocument1 As PartDocument
 Set partDocument1 = CATIA.ActiveDocument
