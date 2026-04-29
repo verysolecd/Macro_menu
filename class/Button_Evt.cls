@@ -57,3 +57,30 @@ Private Sub mBtn_Click()
                           Array())
 End Sub
 
+Private Sub mBtn_Click()
+    If Not mCloseType Then Unload mParentForm
+    
+    ' 如果是颜色切换按钮，在执行前更新按钮文字
+    If mInfo(TAG_MDLNAME) = "M60_Color" Then
+        Dim MyViewer As Object
+        Set MyViewer = CATIA.ActiveWindow.ActiveViewer
+        Dim currentColor(2)
+        MyViewer.GetBackgroundColor currentColor
+        
+        ' 根据当前背景色判断即将切换到的状态
+        Dim willBeWhite As Boolean
+        willBeWhite = (currentColor(0) <> 1 Or currentColor(1) <> 1 Or currentColor(2) <> 1)
+        
+        ' 调用M60_Color模块的函数更新按钮文字
+        Call M60_Color.UpdateButtonText(mBtn, willBeWhite)
+    End If
+    
+    Dim ary: ary = Array()
+    Dim ss: Set ss = CATIA.SystemService
+    
+    Call ss.ExecuteScript(mInfo(TAG_PJTPATH), _
+                          catScriptLibraryTypeVBAProject, _
+                          mInfo(TAG_MDLNAME), _
+                          mInfo(TAG_ENTRYPNT), _
+                          Array())
+End Sub

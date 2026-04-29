@@ -18,8 +18,8 @@ Attribute VB_Exposed = False
 ' 对于产品发布谁？  质量mass来自usrp
 ' 对于零件发布谁？ usrp.mass part_info.thickness part_info.density usrp.material
 Option Explicit
-Public bomdata As Variant
-Private oSel
+Public bigbom As Variant
+Private osel
 Private imsg
 Private Att(1 To 10)
 Private Const xx = "测试成功"
@@ -39,11 +39,11 @@ Private Sub Class_Initialize()
         If Not rootPrd Is Nothing Then
          rootPrd.ApplyWorkMode (3)
         End If
-        Set oSel = CATIA.ActiveDocument.Selection: oSel.Clear
+        Set osel = CATIA.ActiveDocument.Selection: osel.Clear
 ErrorHandler:
     If Err.Number <> 0 Then
-        MsgBox "CATIA 程序错误：" & Err.Description, vbCritical
         Err.Clear
+        MsgBox "CATIA 程序错误：" & Err.Description, vbCritical
         Exit Sub
     End If
 End Sub
@@ -52,107 +52,140 @@ Sub iniarr()
     Att(2) = "Material"
     Att(3) = "Thickness"
     Att(4) = "Density"
+
 End Sub
     ' Calculate the total mass of a product and its sub-products
-    Public Function Assmass(oPrd)
+Public Function Assmass(oprd)
+
         Dim i
         Dim total, children: total = 0
-        Set children = oPrd.Products
-        If oPrd.Products.Count > 0 Then
+        Set children = oprd.Products
+        If oprd.Products.Count > 0 Then
             For i = 1 To children.Count
-                Assmass = Assmass + Assmass(children.item(i))
-                total = total + children.item(i).ReferenceProduct.UserRefProperties.item("iMass").Value
+                Assmass (children.item(i)) 'Assmass = Assmass +
+                total = total + children.item(i).ReferenceProduct.UserRefProperties.item("Mass").Value
             Next
-            oPrd.ReferenceProduct.UserRefProperties.item("iMass").Value = total
+            oprd.ReferenceProduct.UserRefProperties.item("Mass").Value = total
         Else
-            total = oPrd.ReferenceProduct.UserRefProperties.item("iMass").Value
+            total = oprd.ReferenceProduct.UserRefProperties.item("Mass").Value
         End If
         Assmass = total
+
+        MsgBox "重量已经计算"
     End Function
-    ' Generate product information
-    Public Function infoPrd(oPrd)
+' Generate product information
+    Public Function infoPrd(oprd)
         Dim arr(1 To 9)
-            With oPrd.ReferenceProduct
+            With oprd.ReferenceProduct
                 arr(1) = .PartNumber
                 arr(2) = .nomenclature
                 arr(3) = .definition
-                arr(4) = oPrd.Name
+                arr(4) = oprd.Name
             End With
         Dim colls
-           Set colls = oPrd.ReferenceProduct.UserRefProperties
+           Set colls = oprd.ReferenceProduct.UserRefProperties
                 arr(5) = getAtt("Material", colls)(1)
                 arr(6) = getAtt("Density", colls)(1)
                 arr(7) = getAtt("Mass", colls)(1)
                 arr(8) = getAtt("Thickness", colls)(1)
         On Error GoTo 0
-                arr(9) = count_me(oPrd)
-        infoPrd = arr()
+                arr(9) = count_me(oprd)
+        infoPrd = arr
     End Function
-Public Function recurPrd(oPrd, LV)
+Public Function recurPrd(oprd, LV)
     Dim mapping As Variant
-    Dim mapsize
-    mapping = Array(0, 1, 2, 3, 4, 9, 7, 0, 5, 8, 0, 5, 6, 0, 0, 0)
-    mapsize = UBound(mapping) + 2
-    If counter = 1 Then
-          ReDim bomdata(1 To 220, 1 To mapsize) ' 扩展列：2列原有数据 + XX列产品属性
+    mapping = Array(0, 0, 0, 1, 2, 3, 4, 9, 7, 0, 5, 8, 0, 5, 6, 0, 0, 0)
+    
+    Dim bomsize
+        bomsize = UBound(mapping)
+        
+    Dim i, j
+        If counter = 1 Then
+        ReDim bigbom(1 To fn, 1 To bomsize)
+            For i = 1 To fn
+                For j = 1 To bomsize
+                    bigbom(i, j) = ""
+                Next j
+            Next i
     End If
-    Dim data
-    data = infoPrd(oPrd)
+   
+    Dim tempdata
+    tempdata = infoPrd(oprd)
+    
    '=====生成行数据 === bom行数据直接按最大列处理得到一行数据
-    bomdata(counter, 1) = counter
-    bomdata(counter, 2) = LV
-    Dim i
-          For i = 1 To UBound(bomdata, 2) - 2
-                bomdata(counter, i + 2) = ""  '默认赋值为空，当对应列需要数据，
-                If mapping(i) <= UBound(data) And mapping(i) >= LBound(data) Then
-                    bomdata(counter, i + 2) = data(mapping(i))
-                End If
-          Next
-    Dim children As Products
-    Set children = oPrd.Products
-    If children.Count > 0 Then
-            Dim bdict
-            Set bdict = CreateObject("Scripting.Dictionary")
-        For i = 1 To children.Count
-            If bdict.Exists(children.item(i).PartNumber) = False Then
-               bdict(children.item(i).PartNumber) = 1
-               counter = counter + 1
-               recurPrd children.item(i), LV + 1
+   
+        For i = 1 To UBound(bigbom, 2)
+            bigbom(counter, i) = ""  '默认赋值为空
+            Select Case i
+                Case 1: bigbom(counter, i) = counter
+                Case 2: bigbom(counter, i) = LV
+                Case Else
+                    If mapping(i) <= UBound(tempdata) And mapping(i) >= LBound(tempdata) Then '当对应列map值在tempdata元素范围内，
+                        bigbom(counter, i) = tempdata(mapping(i))
+                    End If
+            End Select
+           Next
+           
+            Dim children As Products
+            Set children = oprd.Products
+            If children.Count > 0 Then
+                    Dim bdict
+                    Set bdict = CreateObject("Scripting.Dictionary")
+                For i = 1 To children.Count
+                    If bdict.Exists(children.item(i).PartNumber) = False Then
+                       bdict(children.item(i).PartNumber) = 1
+                       counter = counter + 1
+                       recurPrd children.item(i), LV + 1
+                    End If
+                Next
             End If
-        Next
-    End If
-    recurPrd = bomdata
+            
+  ReDim finalbom(1 To counter, 1 To 17)
+  
+  For i = 1 To UBound(finalbom, 1)
+    For j = 1 To UBound(finalbom, 2)
+    finalbom(i, j) = bigbom(i, j)
+    Next
+    Next
+            
+            
+        recurPrd = finalbom
+
 End Function
-Public Function modatt(oPrd, odata)
-    Dim refPrd: Set refPrd = oPrd.ReferenceProduct
+Public Function modatt(oprd, odata)
+    Dim refPrd: Set refPrd = oprd.ReferenceProduct
     Dim colls, i
     Dim currAtt As Variant
-    Set currAtt = infoPrd(oPrd)
-    For i = 1 To 8
-        If odata(i) <> "" And odata(i) <> currAtt(i) Then
+     currAtt = infoPrd(oprd)
+    For i = 1 To 6
+        If odata(i) <> "" Then   'And odata(i) <> currAtt(i)
             On Error Resume Next
-            Select Case i
-                Case 1: refPrd.PartNumber = odata(i)
-                Case 2: refPrd.nomenclature = odata(i)
-                Case 3: refPrd.definition = odata(i)
-                Case 4: oPrd.Name = odata(i)
-                Case 5:
-                    Set colls = refPrd.UserRefProperties
-                    colls.item(Att(i - 4)).Value = odata(i)
-                Case 6
-                    On Error Resume Next
-                    Set colls = refPrd.Parent.Part.Parameters.RootParameterSet.ParameterSets.item("Part_info").DirectParameters
-                    colls.item(Att(i - 4)).Value = odata(i)
-                    Error.Clear
-                    On Error GoTo 0
-            End Select
+                Select Case i
+                    Case 1: refPrd.PartNumber = odata(i)
+                    Case 2: refPrd.nomenclature = odata(i)
+                    Case 3: refPrd.definition = odata(i)
+                    Case 4: oprd.Name = odata(i)
+                    Case 5:
+                        Set colls = refPrd.UserRefProperties
+                        colls.item("Material").Value = odata(i)
+                    Case 6
+                        On Error Resume Next
+                            Set colls = refPrd.Parent.Part.Parameters.RootParameterSet.ParameterSets.item("Part_info").DirectParameters
+                            colls.item("Density").Value = odata(i)
+                            Error.Clear
+                        On Error GoTo 0
+                End Select
+                
+'                Error.Clear
             On Error GoTo 0
+            
         End If
     Next
-End Function
-Public Sub initPrd(oPrd)
+ End Function
+ 
+Public Sub initPrd(oprd)
     Dim refPrd, colls
-    Set refPrd = oPrd.ReferenceProduct
+    Set refPrd = oprd.ReferenceProduct
     Dim NT As Variant
         NT = Array( _
             Array("Mass", "Mass"), _
@@ -169,15 +202,15 @@ Public Sub initPrd(oPrd)
         checkPara usrp(i), colls
     Next
     On Error Resume Next
-         Dim oPrt
-         Set oPrt = refPrd.Parent.Part
+         Dim oprt
+         Set oprt = refPrd.Parent.Part
         If Err.Number <> 0 Then
             Err.Clear
-            Set oPrt = Nothing
+            Set oprt = Nothing
         End If
     On Error GoTo 0
-    If Not oPrt Is Nothing Then
-            Call iniPrt(oPrd)
+    If Not oprt Is Nothing Then
+            Call iniPrt(oprd)
     Else
             Dim k
             k = 0
@@ -193,11 +226,12 @@ Public Sub initPrd(oPrd)
             End If
     End If
 End Sub
-Private Sub iniPrt(oPrd)
+
+Private Sub iniPrt(oprd)
     Dim refPrd, colls
     Dim i
-    Set refPrd = oPrd.ReferenceProduct
-    Dim oPrt: Set oPrt = refPrd.Parent.Part
+    Set refPrd = oprd.ReferenceProduct
+    Dim oprt: Set oprt = refPrd.Parent.Part
 '============创建usrp属性=================
     Dim NT As Variant
         NT = Array( _
@@ -218,7 +252,7 @@ Private Sub iniPrt(oPrd)
         Dim infoset
         Set infoset = New Class_para
         infoset.SetNT "Part_info", "ParameterSet"
-        Set colls = oPrt.Parameters.RootParameterSet.ParameterSets
+        Set colls = oprt.Parameters.RootParameterSet.ParameterSets
         checkPara infoset, colls
         Set colls = infoset.obj.DirectParameters
      '====创建part_info内参数====
@@ -226,8 +260,8 @@ Private Sub iniPrt(oPrd)
         Set iBodys = New Class_para
         iBodys.SetNT "iBodys", "list"
         checkPara iBodys, colls
-        If getPara(oPrt.mainbody, iBodys.obj.valuelist)(0) Is Nothing Then
-                iBodys.obj.valuelist.Add oPrt.mainbody
+        If getPara(oprt.mainbody, iBodys.obj.valuelist)(0) Is Nothing Then
+                iBodys.obj.valuelist.Add oprt.mainbody
         End If
         Dim infoPara(0 To 3)
         Dim PNT
@@ -258,7 +292,7 @@ Private Sub iniPrt(oPrd)
                 End If
            Next
     '创建所有relations
-            Set colls = oPrt.relations
+            Set colls = oprt.relations
             Dim oRule
             Set oRule = New Class_para
                    '---创建EKL
@@ -362,12 +396,12 @@ Private Function paraCreatobj(thispara, colls)
     End Select
     Debug.Print "已经创建" & thispara.Name
 End Function
-Private Function count_me(oPrd)  '获取兄弟字典
+Private Function count_me(oprd)  '获取兄弟字典
      Dim i, oDict, QTy, pn
          QTy = 1
      On Error Resume Next
-          If TypeOf oPrd.Parent Is Products Then    '若有父级产品'获取兄弟字典
-                    Dim oParent: Set oParent = oPrd.Parent.Parent
+          If TypeOf oprd.Parent Is Products Then    '若有父级产品'获取兄弟字典
+                    Dim oParent: Set oParent = oprd.Parent.Parent
                    Set oDict = CreateObject("Scripting.Dictionary")
                    For i = 1 To oParent.Products.Count
                           pn = oParent.Products.item(i).PartNumber
@@ -377,78 +411,82 @@ Private Function count_me(oPrd)  '获取兄弟字典
                                 oDict(pn) = 1
                             End If
                       Next
-            QTy = oDict(oPrd.PartNumber)
+            QTy = oDict(oprd.PartNumber)
           End If
     count_me = QTy
 End Function
 Public Function catSel1(prompt As String) As Object
-    oSel.Clear
+    osel.Clear
     Dim iType(0)
     iType(0) = "Product"
         MsgBox prompt
-    If oSel.SelectElement2(iType, prompt, False) = "Normal" Then
-        If oSel.Count = 1 Then
-            Set catSel1 = oSel.item(1).LeafProduct
+    If osel.SelectElement2(iType, prompt, False) = "Normal" Then
+        If osel.Count = 1 Then
+            Set catSel1 = osel.item(1).LeafProduct
         End If
     End If
-    oSel.Clear
+    osel.Clear
 End Function
 Public Function catSelx(prompt As String) As collection
     Set catSelx = New collection
-    oSel.Clear
+    osel.Clear
     Dim iType(0)
     iType(0) = "Product"
-    If oSel.SelectElement3(iType, prompt, True, 2, True) = "Normal" Then
+    If osel.SelectElement3(iType, prompt, True, 2, True) = "Normal" Then
         Dim i As Integer
-        For i = 1 To oSel.Count
-            catSelx.Add oSel.item(i).LeafProduct
+        For i = 1 To osel.Count
+            catSelx.Add osel.item(i).LeafProduct
         Next
     End If
-    oSel.Clear
+    osel.Clear
 End Function
 Public Function defgprd()    '获取要读取或修改的  全局变量 gPrd定义
      imsg = MsgBox("“是”选择产品，“否”读取根产品，“取消退出”", vbYesNoCancel + vbDefaultButton2, "请选择产品")
-     Dim oPrd
+     Dim oprd
+     
+     Set oprd = Nothing
+     
         Select Case imsg
             Case 7 '===选择“否”====
             Set rootPrd = CATIA.ActiveDocument.Product
-            Set oPrd = rootPrd
-            Case 2: Exit Function '===选择“取消”====
+            Set oprd = rootPrd
+            Case 2:
+            
+            
+           Set oprd = Nothing
             Case 6  '===选择“是”,进行产品选择====
                 On Error Resume Next
-                    Set oPrd = selPrd()
+                    Set oprd = selPrd()
                 If Err.Number <> 0 Then
                     Err.Clear
                     Exit Function
                 End If
         End Select
-        If Not oPrd Is Nothing Then
-'           imsg = "你选择的产品是" & oPrd.PartNumber & "是否继续"
-'          MsgBox imsg
-        End If
-        Set gPrd = oPrd
-        Set defgprd = oPrd
+        
+        Set defgprd = oprd
+        Set oprd = Nothing
 End Function
 Public Sub freePrd()
      Set gPrd = Nothing
 End Sub
 Public Function selPrd()
+    osel.Clear
    Dim status, iType(0)
 '   catia.ActiveWindow.WindowState = 0
-    oSel.Clear
+    osel.Clear
     iType(0) = "Product"
-    If oSel.Count2 = 0 Then
-        MsgBox "请选择要读取的产品"
-        status = oSel.SelectElement2(iType, "请选择要读取的产品", False)
+    If osel.Count2 = 0 Then
+         ' MsgBox "请在CATIA结构树选择要读取的产品"
+        status = osel.SelectElement2(iType, "请选择要读取的产品", False)
         'status = oSel.SelectElement3(iType, "请选择要读取的产品", True, 2, False)
     End If
     If status = "Cancel" Then
         Exit Function
     End If
-    If status = "Normal" And oSel.Count2 = 1 Then
-            Set selPrd = oSel.item(1).LeafProduct.ReferenceProduct
-            MsgBox "你选择的产品是" & selPrd.PartNumber
-            oSel.Clear
+    If status = "Normal" And osel.Count2 = 1 Then
+            Set selPrd = osel.item(1).LeafProduct.ReferenceProduct
+          '  MsgBox "你选择的产品是" & selPrd.PartNumber
+            osel.Clear
     Else
         MsgBox "请只选择一个产品"
         Exit Function

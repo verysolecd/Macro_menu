@@ -8,32 +8,34 @@ Attribute VB_Name = "m44_initme"
 
 Sub initme()
 
+If Not KCL.CanExecute("ProductDocument") Then Exit Sub
+
      If pdm Is Nothing Then
           Set pdm = New class_PDM
      End If
      
+ 
+     
      Set allPN = KCL.InitDic(vbTextCompare)
      allPN.RemoveAll
      
-    Dim oprd
+    Dim iprd
     
-   If gPrd Is Nothing Then
-            pdm.defgprd
-    End If
+
     
     
     
-      Set iPrd = gPrd
+       Set iprd = pdm.defgprd()
       
-    If Not iPrd Is Nothing Then
+    If Not iprd Is Nothing Then
      On Error Resume Next
-      Call ini_oPrd(iPrd)
+      Call ini_oPrd(iprd)
         allPN.RemoveAll
         MsgBox "零件模板已经应用"
        
         
         If Error.Number <> 0 Then
-        MsgBox "至少一个参数创建错误，请检查lisence"
+            MsgBox "至少一个参数创建错误，请检查lisence"
         End If
         On Error GoTo 0
     End If
