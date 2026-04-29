@@ -3,7 +3,7 @@ Attribute VB_Name = "m51_Cal_Mass"
 '{Ep:Cal_Mass}
 '{Caption:迭代重量}
 '{ControlTipText:选择要被读取或修改的产品}
-'{BackColor:16744703}
+'{BackColor:}
 
 Sub Cal_Mass()
     If Not KCL.CanExecute("ProductDocument") Then Exit Sub

@@ -9,6 +9,7 @@ Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
 Private header_bom(1 To 17)
 Private header_rv(1 To 14)
+Private hdgx(1 To 15)
 Private inject_cols
 Private extract_cols
 Private bom_cols
@@ -93,13 +94,29 @@ Private Sub iniarr()
     header_rv(12) = "更改" & Chr(10) & "密度"
     header_rv(13) = "质量" & Chr(10) & "Mass"
     header_rv(14) = "厚度" & Chr(10) & "Thickness"
+    
+    hdgx(1) = "NO."
+    hdgx(2) = "TIRE"
+    hdgx(3) = ""
+    hdgx(4) = ""
+    hdgx(5) = ""
+    hdgx(6) = "PART NO."
+    hdgx(7) = "DRAWING NO."
+    hdgx(8) = "中文名称"
+    hdgx(9) = "ITEM NAME"
+    hdgx(10) = "Ver."
+    hdgx(11) = "QTY."
+    hdgx(12) = "UNIT"
+    hdgx(13) = "UNIT WEIGHT"
+    hdgx(14) = "TOTAL WEIGHT"
+    hdgx(15) = "MATERIAL"
 End Sub
-Private Sub set_Header(header)
+Private Sub set_Header(header, idxrow)
     Dim lastCol
     lastCol = UBound(header) - LBound(header) + 1
     With ws
-    .Range(.Cells(1, 1), .Cells(1, lastCol)).Value = header
-    .Range(.Cells(1, 1), .Cells(1, lastCol)).Interior.color = RGB(190, 190, 190)
+    .Range(.Cells(idxrow, 1), .Cells(idxrow, lastCol)).Value = header
+    .Range(.Cells(idxrow, 1), .Cells(idxrow, lastCol)).Interior.color = RGB(190, 190, 190)
     End With
 End Sub
 
@@ -108,10 +125,10 @@ Public Sub clear_table()
 End Sub
 
 Public Sub inject_data(rowNb, data)
-    ws.Name = "BOM_xx"
+    ws.Name = "revise prd"
     Dim i As Long
       If ws.Cells(1, 1).Value <> "零件号" & Chr(10) & "Partnumber" Then
-        Call set_Header(header_rv)
+        Call set_Header(header_rv, 1)
     End If
     Dim mapdata, osize
     mapdata = Array(0, 1, 2, 3, 4, 5, 6, 7, 8)
@@ -129,8 +146,8 @@ End Sub
 
 Public Sub inject_bom(data)
      ws.Name = "BOM_xx"
-     Call set_Header(header_bom)
-     startrow = 2
+    startrow = 2
+     Call set_Header(header_bom, startrow - 1)
      lastRow = counter + startrow - 1
      Dim cols
      cols = UBound(data, 2)
@@ -152,6 +169,7 @@ Public Sub freesheet()
 Set ws = Nothing
 Set gws = Nothing
 Set gwb = Nothing
+Set xlAPP = Nothing
 End Sub
  
 Public Function extract_data(indRow)
@@ -223,5 +241,26 @@ Public Sub LvMg2()
     Columns("Q:Q").Select
     Range(Selection, Selection.End(xlToRight)).Select
     Selection.EntireColumn.Hidden = True
+End Sub
+
+Public Sub inject_gxbom(data)
+     ws.Name = "BOM_xx" & Format(Now, "yymmdd_hhmm")
+      startrow = 5
+     Call set_Header(hdgx, startrow - 1)
+     lastRow = counter + startrow - 1
+     Dim cols
+     cols = UBound(data, 2)
+     With ws
+          ws.Range(.Cells(startrow, 1), .Cells(lastRow, cols)).Value = data
+        If lastRow >= 5 Then
+            With ws.Range(.Cells(startrow, 14), .Cells(lastRow, 14))
+                .Formula = "=k5*m5"  ' G列=第7列，H列=第8列
+                .NumberFormat = "0.00"  ' 设置数字格式
+            End With
+        End If
+         End With
+     counter = 0
+ 
+    xlAPP.Visible = True
 End Sub
 

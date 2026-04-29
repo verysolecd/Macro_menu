@@ -92,29 +92,29 @@ Public Function Assmass(oprd)
 Public Function recurPrd(oprd, LV)
     Dim mapping As Variant
     mapping = Array(0, 0, 0, 1, 2, 3, 4, 9, 7, 0, 5, 8, 0, 5, 6, 0, 0, 0)
-    
     Dim bomsize
         bomsize = UBound(mapping)
         
     Dim i, j
         If counter = 1 Then
-        ReDim bigbom(1 To fn, 1 To bomsize)
-            For i = 1 To fn
+        ReDim bigbom(1 To gfn, 1 To bomsize)
+            For i = 1 To gfn
                 For j = 1 To bomsize
                     bigbom(i, j) = ""
                 Next j
             Next i
-    End If
+    End If   '初始化所有bigbom元素为""
    
     Dim tempdata
     tempdata = infoPrd(oprd)
     
    '=====生成行数据 === bom行数据直接按最大列处理得到一行数据
    
-        For i = 1 To UBound(bigbom, 2)
+   
+        For i = 1 To UBound(bigbom, 2)  '从1到最大列
             bigbom(counter, i) = ""  '默认赋值为空
             Select Case i
-                Case 1: bigbom(counter, i) = counter
+                Case 1: bigbom(counter, i) = counter  'counter是全局变量,遍历BOM时为1
                 Case 2: bigbom(counter, i) = LV
                 Case Else
                     If mapping(i) <= UBound(tempdata) And mapping(i) >= LBound(tempdata) Then '当对应列map值在tempdata元素范围内，
@@ -488,4 +488,62 @@ Public Function selPrd()
         Exit Function
     End If
 End Function
+Public Function gxBom(oprd, LV)
+    Dim mapping As Variant
+    mapping = Array(0, 0, 0, 0, 0, 0, 1, 0, 3, 2, 0, 9, 0, 7, 0, 5, 0)
+    Dim bomsize
+        bomsize = UBound(mapping)
+    Dim i, j
+        If counter = 1 Then
+        ReDim bigbom(1 To gfn, 1 To bomsize)
+            For i = 1 To gfn
+                For j = 1 To bomsize
+                    bigbom(i, j) = ""
+                Next j
+            Next i
+    End If   '初始化所有bigbom元素为""
+    Dim tempdata
+    tempdata = infoPrd(oprd)
+   '=====生成行数据 === bom行数据直接按最大列处理得到一行数据
+        For i = 1 To UBound(bigbom, 2)  '从1到最大列
+            bigbom(counter, i) = ""  '默认赋值为空
+            Select Case i
+                Case 1: bigbom(counter, i) = counter  'counter是全局变量,遍历BOM时为1
+                Case 2, 3, 4, 5:
+                    If LV <= 4 Then
+                        If LV = i - 1 Then
+                            bigbom(counter, i) = LV
+                        End If
+                     Else
+                     bigbom(counter, i) = "error"
+                    End If
+            
+                Case Else
+                    If mapping(i) <= UBound(tempdata) And mapping(i) >= LBound(tempdata) Then '当对应列map值在tempdata元素范围内，
+                        bigbom(counter, i) = tempdata(mapping(i))
+                    End If
+            End Select
+           Next
+            Dim children As Products
+            Set children = oprd.Products
+            If children.Count > 0 Then
+                    Dim bdict
+                    Set bdict = CreateObject("Scripting.Dictionary")
+                For i = 1 To children.Count
+                    If bdict.Exists(children.item(i).PartNumber) = False Then
+                       bdict(children.item(i).PartNumber) = 1
+                       counter = counter + 1
+                       gxBom children.item(i), LV + 1
+                    End If
+                Next
+            End If
+  ReDim finalbom(1 To counter, 1 To 16)
+  For i = 1 To UBound(finalbom, 1)
+    For j = 1 To UBound(finalbom, 2)
+        finalbom(i, j) = bigbom(i, j)
+    Next
+  Next
+        gxBom = finalbom
+End Function
+
 
