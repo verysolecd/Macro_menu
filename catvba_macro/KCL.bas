@@ -30,33 +30,69 @@ End Sub
 ''' @return:Boolean
 Function CanExecute(ByVal docTypes As Variant) As Boolean
     CanExecute = False
+    
     If CATIA.Windows.Count < 1 Then
         MsgBox "没有打开的窗口"
         Exit Function
     End If
     
-    If VarType(docTypes) = vbString Then docTypes = Split(docTypes, ",")
-    If Not IsFilterType(docTypes) Then Exit Function
+    If VarType(docTypes) = vbString Then docTypes = Split(docTypes, ",") '过滤器转数组
+    
+    If Not checkFilterType(docTypes) Then Exit Function '过滤器检查，非数组则退出
     
     Dim ErrMsg As String
     ErrMsg = "不支持当前活动文档类型。" + vbNewLine + "(" + Join(docTypes, ",") + " 类型除外)"
     
+    
+    
+'    Dim ActDoc As Document
+'
+'    On Error Resume Next
+'        Set ActDoc = CATIA.ActiveDocument
+'    On Error GoTo 0
+'
+'    If ActDoc Is Nothing Then
+'        MsgBox ErrMsg, vbExclamation + vbOKOnly
+'        Exit Function
+'    End If
+'
+'    If UBound(filter(docTypes, TypeName(ActDoc))) < 0 Then 此处filter函数是VBA中比较厚返回数组的函数
+'        MsgBox ErrMsg, vbExclamation + vbOKOnly
+'        Exit Function
+'    End If
+    
+    CanExecute = checkDocType(docTypes)
+    
+End Function
+Function checkDocType(ByVal docTypes As Variant)
+    checkDocType = False
+    
+    If VarType(docTypes) = vbString Then docTypes = Split(docTypes, ",") '过滤器转数组
+    
+    If Not checkFilterType(docTypes) Then Exit Function '过滤器检查，非数组则退出
+
+
     Dim ActDoc As Document
+    
     On Error Resume Next
         Set ActDoc = CATIA.ActiveDocument
     On Error GoTo 0
+    
     If ActDoc Is Nothing Then
-        MsgBox ErrMsg, vbExclamation + vbOKOnly
+        MsgBox "无打开的文档"
         Exit Function
     End If
-    
-    If UBound(filter(docTypes, TypeName(ActDoc))) < 0 Then
-        MsgBox ErrMsg, vbExclamation + vbOKOnly
+
+
+     If UBound(filter(docTypes, TypeName(ActDoc))) < 0 Then '此处filter函数是VBA中比较厚返回数组的函数
         Exit Function
     End If
-    
-    CanExecute = True
+ checkDocType = True
+
 End Function
+
+
+
 
 ' 选择项目
 ''' @param:Msg-提示信息
@@ -82,8 +118,10 @@ Function SelectElement(ByVal msg$, _
                            Optional ByVal filter As Variant = Empty) ' _
                            As SelectedElement
     If IsEmpty(filter) Then filter = Array("AnyObject")
-    If VarType(filter) = vbString Then filter = ToStrVriAry(filter)
-    If Not IsFilterType(filter) Then Exit Function
+    
+    If VarType(filter) = vbString Then filter = strToAry(filter)
+    
+    If Not checkFilterType(filter) Then Exit Function
     
     Dim sel As Variant: Set sel = CATIA.ActiveDocument.Selection
     sel.Clear
@@ -207,8 +245,8 @@ Private Function IsStringAry(ByVal ary As Variant) As Boolean
 End Function
 
 ' 检查过滤器类型是否有效
-Private Function IsFilterType(ByVal ary As Variant) As Boolean
-    IsFilterType = False
+Private Function checkFilterType(ByVal ary As Variant) As Boolean
+    checkFilterType = False
     Dim ErrMsg$: ErrMsg = "过滤器类型无效" + vbNewLine + _
                           "需要为Variant(String)类型的数组" + vbNewLine + _
                           "(具体请参考文档)"
@@ -216,18 +254,23 @@ Private Function IsFilterType(ByVal ary As Variant) As Boolean
         MsgBox ErrMsg
         Exit Function
     End If
-    IsFilterType = True
+    
+    checkFilterType = True
+    
 End Function
 
 ' 将字符串转换为变体数组
-Private Function ToStrVriAry(ByVal S$) As Variant
+Private Function strToAry(ByVal S$) As Variant
     Dim ary As Variant: ary = Split(S, ",")
-    Dim vriary() As Variant: ReDim vriary(UBound(ary))
+    
+    Dim oAry() As Variant: ReDim oAry(UBound(ary))
     Dim i&
     For i = 0 To UBound(ary)
-        vriary(i) = ary(i)
+        oAry(i) = ary(i)
     Next
-    ToStrVriAry = vriary
+    
+    strToAry = oAry
+    
 End Function
 
 '*****通用相关函数*****

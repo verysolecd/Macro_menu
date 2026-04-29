@@ -1,0 +1,82 @@
+'This macro extracts values from Catia tables and puts them in a Excel file
+
+'variables
+Dim Selection1 As Selection
+Dim nrOfColumns As Long
+Dim nrOfRows, movedCol As Long
+Dim cellContent As String
+
+Dim objGEXCELapp As Object
+Dim objGEXCELwkBks As Object
+Dim objGEXCELwkBk As Object
+Dim objGEXCELwkShs As Object
+Dim objGEXCELSh As Object
+
+Dim myTable As DrawingTable
+
+
+Sub catMain()
+    On Error Resume Next
+
+    Set Selection1 = CATIA.ActiveDocument.Selection
+        If Selection1.Count = 0 Then    'if selection is empty display message
+            MsgBox "Nothing selected! Please select a drawing table.", vbCritical, "Empty selection!!"
+                Exit Sub
+                
+        ElseIf Selection1.Item(1).Type <> "DrawingTable" Then   'if no drawing table is selected display message
+            MsgBox "Wrong type of object selected! Please select a drawingtable.", vbCritical, "Wrong type of object!!"
+                Exit Sub
+        End If
+        
+	'define table
+	Set myTable = Selection1.Item(1).Value
+            
+		nrOfColumns = myTable.NumberOfColumns   'get number of columns & rows
+		nrOfRows = myTable.NumberOfRows
+		
+'      	MsgBox "#Columns: " & nrOfColumns & vbNewLine & _
+'       "#Rows: " & nrOfRows
+    
+    StartEXCEL  'launch Excel
+    
+    For row = 1 To nrOfRows         'iterate every row
+        movedCol = 1    'star counting from 1
+        For col = 1 To nrOfColumns      'iterate for every column of that row
+            cellContent = myTable.GetCellString(row, col)   'copy data from cell in Catia
+                
+                If col = 1 Then     'first column position is unchanged
+                    objGEXCELSh.cells(row, col) = cellContent   'paste in Excel
+                        'objGEXCELSh.Columns(row, col).autofit
+                Else
+                    objGEXCELSh.cells(row, movedCol) = cellContent 'move every other column 3 steps to the right
+                        'MsgBox cellContent
+                        'objGEXCELSh.Columns(row, movedCol).autofit
+                End If
+                
+				movedCol = movedCol + 1
+        Next
+    Next
+	
+    objGEXCELSh.Rows.autofit    'autofit rows
+		objGEXCELSh.Columns.autofit	'autofit columns
+			objGEXCELSh.Columns.WrapText = True	'wrap text	
+				MsgBox "Table copied!"  'message of completion
+
+End Sub
+
+Sub StartEXCEL()    'function for opening excel
+    Err.Clear
+        On Error Resume Next    'error handling
+            Set objGEXCELapp = GetObject(, "EXCEL.Application")     'start Excel
+
+    If Err.Number <> 0 Then
+        Err.Clear
+            Set objGEXCELapp = CreateObject("EXCEL.Application")
+    End If
+'*****************************************************************************************************************
+    objGEXCELapp.Application.Visible = True
+        Set objGEXCELwkBks = objGEXCELapp.Application.WorkBooks     'prepare excel worksheets
+			Set objGEXCELwkBk = objGEXCELwkBks.Add
+				Set objGEXCELwkShs = objGEXCELwkBk.Worksheets(1)
+					Set objGEXCELSh = objGEXCELwkBk.Sheets(1)
+End Sub

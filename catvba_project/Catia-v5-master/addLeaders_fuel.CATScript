@@ -1,0 +1,46 @@
+'****************************************************************************
+'This macro adds leaders to selected points on drawings.
+
+'Created by Per Björk, 2014
+'****************************************************************************
+'variables
+Dim cordArray(1) As Variant
+Dim pointIndex As String
+Dim startNum As Integer 		
+
+Sub CATMain()
+on error resume next
+
+	'define active document and view
+            Set myDoc = CATIA.ActiveDocument
+                Set mySheet = myDoc.Sheets.ActiveSheet
+                    Set myView = mySheet.Views.ActiveView
+                        Set mySelection = myDoc.Selection 'define selection
+							if mySelection.count = 0 then
+								msgbox "Nothing selected! Please select at least one point."
+									exit sub
+							end if				
+
+		pointIndex= InputBox("Point index?" & vbNewLine & "(Cancel or empty input ends macro.)", "Point index")      'input the letter before each number
+			If pointIndex= "" Then
+				exit sub  
+			end if
+
+		startNum = InputBox("Starting number?" & vbNewLine & "(Cancel or empty input ends macro.)", "Start number")     'input number to start with
+			If startNum = "" Then
+				Exit Sub		
+			End If           
+	
+    	For i = 1 To mySelection.Count              'iterate through the points         
+			Set drwPoint = mySelection.Item(i).Value            
+            	drwPoint.GetCoordinates (cordArray) 'get 3D coordinates
+                	'MsgBox "X: " & cordArray(0) & vbNewLine & "Y: " & cordArray(1)     'show the coordinates
+           
+            		Set MyText = myView.Texts.Add(pointIndex & startNum, cordArray(0) + 30, cordArray(1) + 30) 'add the text
+						Set MyLeader = MyText.Leaders.Add(cordArray(0), cordArray(1))       'add the leader
+            
+            	'format the arrowheads
+            	MyLeader.HeadSymbol = catFilledArrow
+                startNum = startNum + 1 'go to next point
+    	Next
+End Sub
