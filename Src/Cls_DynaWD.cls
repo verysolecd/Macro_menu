@@ -10,22 +10,18 @@ Attribute VB_Exposed = False
 '===========================================================================
 ' Cls_DynaWD
 ' 统一的动态UI引擎 —— 集按钮生成、事件绑定、结果收集于一体
-'
 ' 三种数据加载模式:
 '   1. LoadFromModuleName  —— 解析模块头部 %UI / %Title 注释 (二级弹窗)
 '   2. LoadFromMenuTags    —— 扫描整个VBA工程的 {GP:}{EP:} 标签 (主菜单)
 '   3. AddUIElement        —— 纯代码手动追加控件定义 (扩展)
-'
 ' 两种显示模式:
 '   Show       —— 模态/非模态弹窗 (替代 cls_dynaFrm.Show)
 '   ShowToolbar—— 非模态工具栏     (替代 cls_dynaFrm.ShowToolbar)
 '   Alert      —— 信息弹窗         (替代 cls_dynaFrm.Alert)
-'
 ' 结果回收:
 '   Results / ClickedButton / IsCancelled
 '调用方式:
 '1.全手动，适合少数按钮和function
-'===
 '    Dim oWD: Set oWD = KCL.new_spWD(mdlname, 1): oWD.Show
 '    Select Case oWD.ClickedButton
 '          Case "btn_copy":    Call cpChildren
@@ -33,18 +29,11 @@ Attribute VB_Exposed = False
 '          Case Else:          Exit Sub
 '      End Select
 '2. 自动化1
-
-
-
-
-
-
 '变量 作用
 'mWD 动态窗体实例(CAT_springWD)
 'mEventCol   事件处理器集合（防止被 GC 回收）
 'mResultDict 模态窗体结果字典(点击按钮?输入值)
 'mIsAlertMode 提示框模式开关
-
 '===========================================================================
 Option Explicit
 ' --- 控件定义列表 (ArrayList of Dictionary) ---
@@ -60,7 +49,6 @@ Private mPassBtn As Boolean
 Private mIsAlertMode As Boolean
 Private mAlertMsg As String
 Private mPjtPath As String
-
 ' --- 剪贴板相关API (Alert复制功能) ---
 Private Declare PtrSafe Function OpenClipboard Lib "user32" (ByVal hwnd As LongPtr) As Long
 Private Declare PtrSafe Function EmptyClipboard Lib "user32" () As Long
@@ -70,23 +58,16 @@ Private Declare PtrSafe Function GlobalAlloc Lib "kernel32" (ByVal wFlags As Lon
 Private Declare PtrSafe Function GlobalLock Lib "kernel32" (ByVal hMem As LongPtr) As LongPtr
 Private Declare PtrSafe Function GlobalUnlock Lib "kernel32" (ByVal hMem As LongPtr) As Long
 Private Declare PtrSafe Sub CopyMemory Lib "kernel32" Alias "RtlMoveMemory" (ByVal Destination As LongPtr, ByVal Source As Any, ByVal Length As LongPtr)
-
 Private Const GMEM_MOVEABLE = &H2
 Private Const CF_TEXT = 1
-
 ' --- Alert模式的复制按钮 (需要 WithEvents) ---
 Private WithEvents mCopyBtn As MSForms.CommandButton
 Attribute mCopyBtn.VB_VarHelpID = -1
-
 ' --- 标签常量 ---
 Private Const TAG_ENTRYPNT = "ep"
 Private Const TAG_PJTPATH = "pjt_path"
 Private Const TAG_MDLNAME = "mdl_name"
 Private Const TAG_PASS_BTN = "springwdBTN"
-
-' ═══════════════════════════════════════════════════════════════
-'  Lifecycle
-' ═══════════════════════════════════════════════════════════════
 
 Private Sub Class_Initialize()
     Set mCtrlDefs = P_Initlst()
