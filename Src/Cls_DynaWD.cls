@@ -2,14 +2,13 @@ VERSION 1.0 CLASS
 BEGIN
   MultiUse = -1  'True
 END
-Attribute VB_Name = "Cls_DynaUIEngine"
+Attribute VB_Name = "Cls_DynaWD"
 Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
-
 '===========================================================================
-' Cls_DynaUIEngine
+' Cls_DynaWD
 ' 统一的动态UI引擎 —— 集按钮生成、事件绑定、结果收集于一体
 '
 ' 三种数据加载模式:
@@ -24,15 +23,23 @@ Attribute VB_Exposed = False
 '
 ' 结果回收:
 '   Results / ClickedButton / IsCancelled
+'调用方式:
+'1.全手动，适合少数按钮和function
+'===
+'    Dim oWD: Set oWD = KCL.new_spWD(mdlname, 1): oWD.Show
+'    Select Case oWD.ClickedButton
+'          Case "btn_copy":    Call cpChildren
+'          Case "btn_delete":  Call DeleteChildren
+'          Case Else:          Exit Sub
+'      End Select
+'2. 自动化1
 
-'类的核心结构
-'3 种 UI 生成方式（核心）
-'按钮回调完整流程 (核心)
-'窗体显示与结果回收
-'关键内部机制
+
+
+
+
 
 '变量 作用
-
 'mWD 动态窗体实例(CAT_springWD)
 'mEventCol   事件处理器集合（防止被 GC 回收）
 'mResultDict 模态窗体结果字典(点击按钮?输入值)
@@ -130,80 +137,17 @@ Public Property Let PassButtonName(ByVal val As Boolean)
     mPassBtn = val
 End Property
 '  Section B: 数据加载 —— 三种入口
-'' 入口1: 从模块名称加载 (解析 %UI / %Title 注释)
+'' 入口1: 从模块名称加载模块的-- %UI / %Title 注释等
 Public Sub LoadFromModuleName(ByVal modName As String)
     Dim rawCode As String
     rawCode = P_getbf1stproc(modName)
     If rawCode = "" Then Exit Sub
     mTitle = ExtractTitle(rawCode)
-    Set mCtrlDefs = ExtractUIControls(rawCode)
+    Set mCtrlDefs = parseCtrldef(rawCode)
 End Sub
-
-''────────────────────────────────────────────────────────────────
-'' 入口2: 从整个VBA工程扫描菜单标签 (解析 {GP:}{EP:} 等)
-''
-'' @param GroupMap  Dictionary {groupKey -> groupDisplayName}
-'' @return         Dictionary {groupKey -> ArrayList of Dict}
-''                 每个Dict包含: ep, mdl_name, pjt_path, Caption...
-''────────────────────────────────────────────────────────────────
-Public Function LoadFromMenuTags(ByVal GroupMap As Object) As Object
-    Dim Apc As Object: Set Apc = P_GetApc()
-    If Apc Is Nothing Then Set LoadFromMenuTags = Nothing: Exit Function
-    
-    Dim ExecPjt As Object: Set ExecPjt = Apc.ExecutingProject
-    Dim pjtPath As String: pjtPath = ExecPjt.DisplayName
-    Dim comps As Object: Set comps = ExecPjt.ProjectItems.VBComponents
-    
-    ' 1. 收集所有有效的菜单项
-    Dim allItems As New Collection
-    Dim comp As Object
-    For Each comp In comps
-        If comp.Type = 1 Then ' vbext_ct_StdModule
-            Dim menuItem As cls_MnUI
-            Set menuItem = TryParseMenuModule(comp, pjtPath, GroupMap)
-            If Not menuItem Is Nothing Then
-                allItems.Add menuItem
-            End If
-        End If
-    Next
-    
-    If allItems.count < 1 Then Set LoadFromMenuTags = Nothing: Exit Function
-    
-    ' 2. 按组分组 -> SortedList
-    Dim sorted As Object
-    Set sorted = CreateObject("System.Collections.SortedList")
-    
-    Dim item As cls_MnUI
-    Dim grpKey As Variant, subList As Object, itemDict As Object
-    For Each item In allItems
-        If IsNumeric(item.GroupName) Then grpKey = CLng(item.GroupName) Else grpKey = item.GroupName
-        Set itemDict = item.ToDictionary()
-        
-        If sorted.ContainsKey(grpKey) Then
-            sorted(grpKey).Add itemDict
-        Else
-            Set subList = P_Initlst()
-            subList.Add itemDict
-            sorted.Add grpKey, subList
-        End If
-    Next
-    
-    ' 3. 排序并输出为 Dictionary
-    Dim finalDic As Object: Set finalDic = P_InitDic(vbTextCompare)
-    Dim i As Long, k As Variant, rawList As Object
-    For i = 0 To sorted.count - 1
-        k = sorted.GetKey(i)
-        Set rawList = sorted.GetByIndex(i)
-        finalDic.Add k, SortDictListByModule(rawList)
-    Next
-    
-    Set LoadFromMenuTags = finalDic
-End Function
-
 ''────────────────────────────────────────────────────────────────
 '' 入口3: 纯代码手动追加一个控件定义
-''        适合在运行时动态扩展UI，无需任何注释标签
-''
+''        适合在运行时动态扩展UI，无需任何注释标签''
 '' @param CtrlType  控件类型别名: Button/Label/TextBox/CheckBox
 '' @param CtrlName  控件唯一名称 (事件中使用此名做回调标识)
 '' @param Caption   显示文字
@@ -223,7 +167,6 @@ End Sub
 ' ═══════════════════════════════════════════════════════════════
 '  Section C: 显示 —— Show / ShowToolbar / Alert
 '' 通用显示入口 (模态 / 非模态)
-''
 '' @param iShowMode  vbModal 或 vbModeless
 '' @param ModuleMap  非模态模式: Dict{btnName -> moduleName}
 '' @param MacroMap   非模态模式: Dict{btnName -> entryPoint}
@@ -234,31 +177,25 @@ Public Sub Show(Optional ByVal iShowMode As FormShowConstants = vbModal, _
     If mExecuted And iShowMode = vbModal Then Exit Sub
     If iShowMode = vbModal Then mExecuted = True
     If mCtrlDefs.count < 1 Then Exit Sub
-    
     ' 创建窗体
     If Not mWD Is Nothing Then Unload mWD
     Set mWD = New CAT_springWD: mWD.Tag = ""
-    
     ' 决定排列方向
-    Dim btnVert As Boolean
+    Dim isbtnVert As Boolean
     If IsEmpty(mIsVertical) Then
-        btnVert = (iShowMode = vbModeless)
+        isbtnVert = (iShowMode = vbModeless)
     Else
-        btnVert = mIsVertical
+        isbtnVert = mIsVertical
     End If
-    
-    ' 渲染控件到窗体
-    mWD.setFrm mTitle, mCtrlDefs, btnVert
+    mWD.setFrm mTitle, mCtrlDefs, isbtnVert     ' 渲染控件到窗体
     
     If mIsAlertMode Then
         SetupAlertMode
     Else
         BindEvents mWD, ModuleMap, MacroMap
     End If
-    
     ' 显示
     mWD.Show iShowMode
-    
     ' 模态窗关闭后收集结果
     If iShowMode = vbModal And mIsAlertMode = False Then
         If mWD.Tag = "" Then
@@ -272,22 +209,21 @@ Public Sub Show(Optional ByVal iShowMode As FormShowConstants = vbModal, _
 End Sub
 
 ''便捷方法: 显示为非模态工具栏 (等效于原 cls_dynaFrm.ShowToolbar)
-'' modMap/macMap 可选:
+'' modMap/FunMap 可选:
 ''   不传 → 自动按约定构建: btnName→modName, btnName→"btnName_click"
 ''   传入 → 使用自定义映射 (如全部指向 Action_ClickHandler)
 Public Sub ShowToolbar(ByVal modName As String, _
                        Optional ByVal modMap As Object = Nothing, _
-                       Optional ByVal macMap As Object = Nothing)
+                       Optional ByVal FunMap As Object = Nothing)
     LoadFromModuleName modName
     Me.isVertical = True
-    ' 未传映射时自动构建
-    If modMap Is Nothing Or macMap Is Nothing Then
+    If modMap Is Nothing Or FunMap Is Nothing Then  ' 未传映射时自动构建
         Dim autoMdl As Object, autoFunc As Object
         BuildDefaultMaps modName, autoMdl, autoFunc
         If modMap Is Nothing Then Set modMap = autoMdl
-        If macMap Is Nothing Then Set macMap = autoFunc
+        If FunMap Is Nothing Then Set FunMap = autoFunc
     End If
-    Show vbModeless, modMap, macMap
+    Show vbModeless, modMap, FunMap
 End Sub
 
 ''便捷方法: 显示信息弹窗 (等效于原 cls_dynaFrm.Alert)
@@ -342,18 +278,16 @@ End Function
 '' @param  rawCode  模块声明区原始文本
 '' @return          ArrayList, 每个元素为 Dict{Type, Name, Caption, Color}
 ''────────────────────────────────────────────────────────────────
-Private Function ExtractUIControls(ByVal rawCode As String) As Object
-    Set ExtractUIControls = P_Initlst()
-    
+Private Function parseCtrldef(ByVal rawCode As String) As Object
+    Set parseCtrldef = P_Initlst()
     Dim lines As Variant
     lines = Split(rawCode, vbLf)
-    
     Dim i As Long
     Dim def As Object
     For i = LBound(lines) To UBound(lines)
         Set def = ParseSingleUILine(CStr(lines(i)))
         If Not def Is Nothing Then
-            ExtractUIControls.Add def
+            parseCtrldef.Add def
         End If
     Next
 End Function
@@ -415,13 +349,11 @@ Private Function TryParseMenuModule(ByVal comp As Object, _
     ' 解析标签
     Dim menuItem As New cls_MnUI
     If Not menuItem.InitFromCode(decCode, mdl.Name, pjtPath) Then Exit Function
-    
     ' 验证 Group 在 GroupMap 中存在
     Dim grpKey As Variant
     If IsNumeric(menuItem.GroupName) Then grpKey = CLng(menuItem.GroupName) Else grpKey = menuItem.GroupName
     If Not GroupMap.Exists(grpKey) Then Exit Function
-    
-    ' 验证入口点存在
+   ' 验证入口点存在
     If Not ModuleMethodExists(mdl, menuItem.EntryPoint) Then
         If ModuleMethodExists(mdl, "CATMain") Then
             menuItem.EntryPoint = "CATMain"
@@ -429,10 +361,8 @@ Private Function TryParseMenuModule(ByVal comp As Object, _
             Exit Function
         End If
     End If
-    
     Set TryParseMenuModule = menuItem
 End Function
-
 ''检查模块中是否存在指定方法
 Private Function ModuleMethodExists(ByVal mdl As Object, ByVal procName As String) As Boolean
     On Error Resume Next
@@ -441,7 +371,6 @@ Private Function ModuleMethodExists(ByVal mdl As Object, ByVal procName As Strin
     ModuleMethodExists = (line > 0)
     On Error GoTo 0
 End Function
-
 ''对 ArrayList<Dict> 按模块名排序 (冒泡排序)
 Private Function SortDictListByModule(ByVal lst As Object) As Object
     Dim i As Long, j As Long, temp As Object
@@ -456,29 +385,26 @@ Private Function SortDictListByModule(ByVal lst As Object) As Object
     Next i
     Set SortDictListByModule = lst
 End Function
-
 ' ═══════════════════════════════════════════════════════════════
 '  Internal: 事件绑定
 ' ═══════════════════════════════════════════════════════════════
-
 ''为窗体中的所有按钮绑定事件处理
-Private Sub BindEvents(frm As Object, modMap As Object, macMap As Object)
+Private Sub BindEvents(frm As Object, modMap As Object, FunMap As Object)
     Dim ctl As Control, btnName As String
     Dim handler As Cls_MnuBtnEVT, mBTNinfo As Object
     Dim isScript As Boolean
-    isScript = (Not modMap Is Nothing) And (Not macMap Is Nothing)
-    
+    isScript = (Not modMap Is Nothing) And (Not FunMap Is Nothing)
     Set mEventCol = New Collection
     For Each ctl In frm.Controls
         If TypeName(ctl) = "CommandButton" Then
             btnName = ctl.Name
             Set handler = New Cls_MnuBtnEVT
             If isScript And Not modMap Is Nothing Then
-                If modMap.Exists(btnName) And macMap.Exists(btnName) Then
+                If modMap.Exists(btnName) And FunMap.Exists(btnName) Then
                     Set mBTNinfo = P_InitDic()
                     mBTNinfo.Add TAG_PJTPATH, mPjtPath
                     mBTNinfo.Add TAG_MDLNAME, modMap(btnName)
-                    mBTNinfo.Add TAG_ENTRYPNT, macMap(btnName)
+                    mBTNinfo.Add TAG_ENTRYPNT, FunMap(btnName)
                     If mPassBtn Then mBTNinfo.Add TAG_PASS_BTN, True
                     handler.set_ButtonEvent ctl, mBTNinfo, frm, True
                 End If
@@ -495,8 +421,7 @@ End Sub
 
 ' ═══════════════════════════════════════════════════════════════
 '  Internal: Alert 模式设置
-' ═══════════════════════════════════════════════════════════════
-
+' ══════════════════════════════════════════════════════════════
 ''将窗体切换为信息展示模式
 Private Sub SetupAlertMode()
     Dim ctl As Control
@@ -508,7 +433,6 @@ Private Sub SetupAlertMode()
             ctl.Value = mAlertMsg
         End If
     Next
-    
     ' 动态添加"复制并关闭"按钮
     Dim btnCopy As MSForms.CommandButton
     Set btnCopy = mWD.Controls.Add("Forms.CommandButton.1", "btn_Copy", True)
@@ -527,7 +451,6 @@ Private Sub mCopyBtn_Click()
     On Error Resume Next
     Dim hGlobal As LongPtr, lpGlobal As LongPtr
     Dim sText As String: sText = mAlertMsg & vbNullChar
-    
     hGlobal = GlobalAlloc(GMEM_MOVEABLE, LenB(sText))
     If hGlobal <> 0 Then
         lpGlobal = GlobalLock(hGlobal)
@@ -552,14 +475,11 @@ End Sub
 Private Sub EnsureExecuted()
     If Not mExecuted And mCtrlDefs.count > 0 Then Show vbModal
 End Sub
-
 ''────────────────────────────────────────────────────────────────
 '' 从已解析的 mCtrlDefs 自动构建按钮映射
-'' 等效于原 KCL.setBTNmdl + KCL.setBTNFunc，但无需重新解析
-''
-'' 默认约定:
+'' 等效于原 KCL.setBTNmdl + KCL.setBTNFunc,'' 默认约定:
 ''   modMap: {btnName → modName}       (所有按钮属于同一模块)
-''   macMap: {btnName → btnName_click}  (回调函数名 = 按钮名 + "_click")
+''   FunMap: {btnName → btnName_click}  (回调函数名 = 按钮名 + "_click")
 ''────────────────────────────────────────────────────────────────
 Private Sub BuildDefaultMaps(ByVal modName As String, _
                              ByRef outModMap As Object, _

@@ -44,7 +44,7 @@ Sub cRMinibox()
                 Exit Sub
             End If
    Dim toCbox: toCbox = False
-   Dim oEng: Set oEng = KCL.newEngine(mdlname)
+   Dim oEng: Set oEng = KCL.new_spWD(mdlname)
     oEng.Show
     Select Case oEng.ClickedButton
         Case "btnOK": '要创建minibox则

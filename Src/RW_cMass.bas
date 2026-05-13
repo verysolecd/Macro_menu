@@ -11,15 +11,12 @@ Attribute VB_Name = "RW_cMass"
 '  %UI Button btnb 更新LV2重量
 
 Private Const mdlname As String = "RW_cMass"
-
-
 Sub Cal_Mass_m()
     If Not KCL.CanExecute("ProductDocument") Then Exit Sub
     If pdm Is Nothing Then Set pdm = New Cls_PDM
     '==生成UItoolbar-===================
-    Dim oEng As New Cls_DynaUIEngine
+    Dim oEng As New Cls_DynaWD
     oEng.ShowToolbar mdlname
-
 End Sub
 Public Sub btna_click()
  On Error Resume Next
@@ -36,7 +33,6 @@ Sub btnb_click()
     L2Mass
     MsgBox "LV2重量已计算"
 End Sub
-
 Sub Cal_Mass()
    If pdm.CurrentProduct Is Nothing Then Call setgprd: Err.Clear
         If Not pdm.CurrentProduct Is Nothing Then
@@ -44,7 +40,6 @@ Sub Cal_Mass()
             pdm.Assmass oPrd
         End If
 End Sub
-
 Sub L2Mass()
    If pdm.CurrentProduct Is Nothing Then Call setgprd: Err.Clear
    Set oPrd = pdm.CurrentProduct

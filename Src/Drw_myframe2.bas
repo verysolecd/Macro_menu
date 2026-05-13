@@ -57,7 +57,7 @@ Sub drwFormat()
       Err.Clear: Name = "none"
     End If
   On Error GoTo 0
-    Dim oEng: Set oEng = KCL.newEngine(mdlname): oEng.Show
+    Dim oEng: Set oEng = KCL.new_spWD(mdlname): oEng.Show
     If oEng.IsCancelled Then Exit Sub
     Select Case oEng.ClickedButton
         Case "btn_create": If (Name = "none") Then CATDrw_Creation targetsheet

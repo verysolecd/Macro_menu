@@ -15,8 +15,6 @@ Sub Copypointsfromset()
     Err.Clear
     On Error GoTo 0
     If IsNothing(oprt) Then: MsgBox "No activated Part": Exit Sub
-    
-    
     Set HSF = oprt.HybridShapeFactory
     '======= 选择源几何图形集
     Dim iSel: Set iSel = Nothing

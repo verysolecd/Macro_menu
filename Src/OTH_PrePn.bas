@@ -26,7 +26,7 @@ Sub Pnmgr()
     Set oPrd = CATIA.ActiveDocument.Product
     If oPrd Is Nothing Then Exit Sub
     Dim oEng As Object
-    Set oEng = KCL.newEngine(mdlname)
+    Set oEng = KCL.new_spWD(mdlname)
     oEng.Show
     Dim istr As String
     Select Case oEng.ClickedButton

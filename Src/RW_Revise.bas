@@ -9,6 +9,7 @@ Attribute VB_Name = "RW_Revise"
 '  %UI Button btnWrite –¥ªÿ Ù–‘
 Option Explicit
 Private prd2rv
+Private mWD As Cls_DynaWD
 Private Const mdlname As String = "RW_Revise"
 
 Sub EditorToolbar()
@@ -20,8 +21,8 @@ Sub EditorToolbar()
     Dim funcMap As Object: Set funcMap = KCL.InitDic
     funcMap.Add "btnRead", "readPrd"
     funcMap.Add "btnWrite", "rvme"
-    Dim oEng As New Cls_DynaUIEngine
-    oEng.ShowToolbar mdlname, mdlMap, funcMap
+    Set mWD = New Cls_DynaWD
+    mWD.ShowToolbar mdlname, mdlMap, funcMap
 End Sub
 
 Sub readPrd()
