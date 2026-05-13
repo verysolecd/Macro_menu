@@ -13,8 +13,6 @@ Attribute VB_Name = "MDL_eleRename"
 '= 5 , Surface
 '= 6 , Plane
 '= 7 , Solid, Volume
-
-
 '----------弹窗信息=----------------------------------
 ' %UI Label lbL_jpzcs  键盘造车手出品
 ' %UI Button btnOK  实体重命名
@@ -22,7 +20,6 @@ Attribute VB_Name = "MDL_eleRename"
 ' %UI Button btncancel  取消
 
 Option Explicit
-
 ' ==================== 模块级变量（全局复用，避免重复定义） ====================
 Private m_Doc         As Document       ' 当前激活文档
 Private m_workPrtDoc   As PartDocument   ' 当前激活的零件文档
@@ -33,7 +30,7 @@ Private Const m_mdlname As String = "MDL_eleRename" ' UI引擎名称
 
 Sub eleRename()
     If Not KCL.existWkPrt(m_Doc, m_workPrtDoc, m_prt, m_sel) Then Exit Sub
-    Dim oEng As Object: Set oEng = KCL.newEngine(m_mdlname, 1): oEng.Show
+    Dim oEng As Object: Set oEng = KCL.new_spWD(m_mdlname, 1): oEng.Show
     Select Case oEng.ClickedButton
         Case "btnOK": Call RenameBodies       ' 实体重命名
         Case "btnHb": Call RenameHybridShapes ' 线框/几何图形集重命名

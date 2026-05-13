@@ -16,8 +16,9 @@ Attribute VB_Name = "ASM_ChildMng"
 Private Const mdlname As String = "ASM_ChildMng"
 Sub ChildMng()
    If Not KCL.CanExecute("ProductDocument") Then Exit Sub
-    Dim oEng: Set oEng = KCL.newEngine(mdlname, 1): oEng.Show
-    Select Case oEng.ClickedButton
+    Dim oWD: Set oWD = KCL.new_spWD(mdlname, 1)
+    oWD.Show
+    Select Case oWD.ClickedButton
           Case "btn_copy":    Call cpChildren
           Case "btn_delete":  Call DeleteChildren
           Case Else:          Exit Sub

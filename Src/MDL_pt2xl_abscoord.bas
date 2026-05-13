@@ -33,7 +33,7 @@ Set mHBS = oprt.HybridBodies
 Set msel = mDoc.Selection
 needtrans = False
 
-Dim oEng: Set oEng = KCL.newEngine(mdlname, 1) '1 标识isvertical=true
+Dim oEng: Set oEng = KCL.new_spWD(mdlname, 1) '1 标识isvertical=true
 oEng.Show
     Select Case oEng.ClickedButton
         Case "btnOK":

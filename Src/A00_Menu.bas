@@ -1,12 +1,9 @@
 Attribute VB_Name = "A00_Menu"
-
 Option Explicit
-
 ' --- Configuration ---
 Const formTitle = "¼üÅÌÔì³µÊÖ"
 Private Const MENU_HIDE_TYPE = True
 Private Const Menu_Modeless = True
-
 ' --- Group Definitions ---
 Private Const GroupName = _
             "{1 : R&W }" & _
@@ -15,9 +12,7 @@ Private Const GroupName = _
             "{5 : DRW }" & _
             "{7: CATIA }" & _
             "{6 : OTRS}"
-
 Private PageMap As Object
-
 ' --- Entry Point ---
 Private Const mdlname As String = "A00_Menu"
 Sub CATMain()
@@ -35,37 +30,29 @@ Sub CATMain()
     Dim Menu As Cat_Macro_Menu_View ' Use existing View class
     Set Menu = New Cat_Macro_Menu_View
     Call Menu.Set_FormInfo(SoLst, PageMap, formTitle, MENU_HIDE_TYPE)
-    
     If Menu_Modeless Then
         Menu.Show vbModeless
     Else
         Menu.Show vbModal
     End If
 End Sub
-
 ' --- Core Logic: Scanning ---
-
 ' Scans the project for valid macros and returns a Collection of cls_MnUI objects
 Private Function GetMenuItems() As Collection
-    
     Dim Apc As Object: Set Apc = KCL.GetApc()
     Dim ExecPjt As Object: Set ExecPjt = Apc.ExecutingProject
     Dim pjtPath As String: pjtPath = ExecPjt.DisplayName
-    
     ' Filter for Standard Modules only (Type=1)
     Dim comps As Object: Set comps = ExecPjt.ProjectItems.VBComponents
     Dim comp As Object
-    
     Dim Result As New Collection
     For Each comp In comps
         If comp.Type = 1 Then ' vbext_ct_StdModule
             ProcessModule comp, pjtPath, Result
         End If
     Next
-    
     If Result.count > 0 Then Set GetMenuItems = Result Else Set GetMenuItems = Nothing
 End Function
-
 ' Processes a single module: parses tags and checks entry point
 Private Sub ProcessModule(ByVal comp As Object, ByVal pjtPath As String, ByRef colls As Collection)
     Dim mdl As Object: Set mdl = comp.CodeModule

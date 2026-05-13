@@ -34,32 +34,28 @@ Attribute VB_Name = "MDL_MaterialColors"
 Option Explicit
 Private mprt
 Private mHSF
-Private mEngine As Cls_DynaUIEngine
+Private mWD As Cls_DynaWD
 Private Const mdlname As String = "MDL_MaterialColors"
 ' Main Entry Point
 Sub MaterialPainter()
     If Not CanExecute("Productdocument,PartDocument") Then Exit Sub
-    Dim doc
     On Error Resume Next
-        Dim oDoc: Set oDoc = CATIA.ActiveDocument
-        For Each doc In CATIA.Documents
-            If TypeName(doc) = "PartDocument" Then: Set mprt = doc.part: Exit For
+        Dim oDoc, adoc: Set oDoc = CATIA.ActiveDocument
+        For Each adoc In CATIA.Documents
+            If TypeName(adoc) = "PartDocument" Then: Set mprt = adoc.part: Exit For
         Next
-        Err.Clear
+     Err.Clear
     On Error GoTo 0
-
-If IsNothing(mprt) Then: MsgBox "No part found": Exit Sub
+    If IsNothing(mprt) Then: MsgBox "No part found": Exit Sub
     Set mHSF = mprt.HybridShapeFactory
+    Set mWD = New Cls_DynaWD
     Dim mapFunc: Set mapFunc = setMasterFunc(mdlname)
-    Set mEngine = New Cls_DynaUIEngine
-    mEngine.PassButtonName = True ' <--- The Magic Switch
-    
-    ' 4. Show Toolbar (Modeless) — modMap 自动构建, 仅传自定义 macMap
-    mEngine.ShowToolbar mdlname, , mapFunc
+    mWD.PassButtonName = True ' <--- The Magic Switch
+    mWD.ShowToolbar mdlname, , mapFunc   ' 4. Show Toolbar (Modeless) — modMap 自动构建, 仅传自定义 macMap
 End Sub
-Sub Action_ClickHandler(ByVal btnName As String)
+Sub Clickhandler(ByVal btnName As String)
     If btnName = "btn_cancel" Then
-        Set mEngine = Nothing
+        Set mWD = Nothing
         Exit Sub
     End If
     Dim map: Set map = btn2case(mdlname)
@@ -108,7 +104,7 @@ Function setMasterFunc(ByVal modName As String)
     For Each ctrl In ctrllst    '映射BTN名字和对应函数
         Select Case ctrl("Type")
             Case "Forms.CommandButton.1"
-                map(ctrl("Name")) = "Action_ClickHandler"
+                map(ctrl("Name")) = "Clickhandler"
         End Select
     Next
    Set setMasterFunc = map
@@ -139,8 +135,3 @@ Function btn2case(ByVal modName As String)
    Set btn2case = map
 End Function
 
-Sub threadColor()
-
-
-End Sub
-sss

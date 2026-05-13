@@ -28,7 +28,7 @@ Sub ex2stp_zip()
     Err.Number = 0: ErrorMessage = ""
     Dim oDoc: Set oDoc = CATIA.ActiveDocument
     Dim outputpath As String: outputpath = ""
-    Dim oEng: Set oEng = KCL.newEngine(mdlname)
+    Dim oEng: Set oEng = KCL.new_spWD(mdlname)
     oEng.Show
     Select Case oEng.ClickedButton
     Case "btnOK"

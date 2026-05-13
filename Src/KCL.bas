@@ -1133,17 +1133,18 @@ End Function
 '   Set newFrm = oFrm
 'End Function
 ' ═══ 新的统一UI引擎工厂函数 ═══
-' 用法与 newFrm 平行，返回 Cls_DynaUIEngine 实例
-' 模态弹窗示例:  Set oEng = KCL.newEngine("OTH_Minibox") : oEng.Show
-' 工具栏示例:    Set oEng = KCL.newEngine("OTH_ivhideshow") : oEng.ShowToolbar mdlname, mapMdl, mapFunc
-' 纯代码示例:    Set oEng = KCL.newEngine() : oEng.AddUIElement "Button","btn1","确定" : oEng.Show
-Public Function newEngine(Optional ByVal modName As String = "", Optional ByVal isVertical = False)
-    Dim oEng As Cls_DynaUIEngine: Set oEng = New Cls_DynaUIEngine
+' 用法与 newFrm 平行，返回 Cls_DynaWD 实例
+' 模态弹窗示例:  Set oEng = KCL.new_spWD("OTH_Minibox") : oEng.Show
+' 工具栏示例:    Set oEng = KCL.new_spWD("OTH_ivhideshow") : oEng.ShowToolbar mdlname, mapMdl, mapFunc
+' 纯代码示例:    Set oEng = KCL.new_spWD() : oEng.AddUIElement "Button","btn1","确定" : oEng.Show
+
+Public Function new_spWD(Optional ByVal modName As String = "", Optional ByVal isVertical = False)
+    Dim oEng As Cls_DynaWD: Set oEng = New Cls_DynaWD
     If modName <> "" Then
         oEng.LoadFromModuleName modName
     End If
     If isVertical Then oEng.isVertical = True
-    Set newEngine = oEng
+    Set new_spWD = oEng
 End Function
 
 Public Function ParseHex(ByVal hexStr)

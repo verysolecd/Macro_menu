@@ -19,7 +19,7 @@ Sub ExportPDF()
 If Not CanExecute("DrawingDocument") Then Exit Sub
 'On Error Resume Next ' 临时开启错误处理
  Err.Number = 0
- Dim oEng: Set oEng = KCL.newEngine(mdlname): oEng.Show
+ Dim oEng: Set oEng = KCL.new_spWD(mdlname): oEng.Show
  If LCase(oEng.ClickedButton) <> "btnok" Then Exit Sub
     Dim oDoc: Set oDoc = CATIA.ActiveDocument
     Dim opath As String: opath = ""

@@ -57,7 +57,6 @@ Sub CaptureTopath()
     response = MsgBox("如要截图，请等待ISO视角调整完毕后点击确认", vbYesNo + vbExclamation, "确认截图")
     If response <> vbYes Then Exit Sub
     CapPrd CATIA.ActiveDocument.Product
-    
     If m_FirstImagePath <> "" Then
         KCL.SmartOPenPath KCL.ofParentPath(m_FirstImagePath)
     End If

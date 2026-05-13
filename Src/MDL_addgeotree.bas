@@ -5,7 +5,6 @@ Attribute VB_Name = "MDL_addgeotree"
 '{ControlTipText:创建基于模板的几何树}
 '{BackColor: }
 
-
 Private m_Doc         As Document       ' 当前激活文档
 Private m_workPrtDoc   As PartDocument   ' 当前激活的零件文档
 Private m_prt         As part           ' 当前激活的Part对象
@@ -17,25 +16,25 @@ Sub newgeo_Tree()
     On Error Resume Next
     Set og = colls.item("Geo_sheet")
     On Error GoTo 0
-Set og = colls.Add(): og.Name = "GEO_sheet"
-crSkt og
-Set colls = og.HybridBodies
-arr = Array("01_Profile", "02_Ribs", "03_Assy", "04_trim", "05_Pierce", "06_final part")
-For i = 0 To UBound(arr)
-    Set og = colls.Add()
-    og.Name = arr(i)
-Next
+    Set og = colls.Add(): og.Name = "GEO_sheet"
+    crSkt og
+    Set colls = og.HybridBodies
+    arr = Array("01_Profile", "02_Ribs", "03_Assy", "04_trim", "05_Pierce", "06_final part")
+    For i = 0 To UBound(arr)
+        Set og = colls.Add()
+        og.Name = arr(i)
+    Next
     
-Set og = colls.item(arr(3))
-Set subcolls = og.HybridBodies
-For i = 1 To 3
-    Set og = subcolls.Add(): og.Name = "TR_0" & i
-Next
-Set og = colls.item(arr(4))
-Set subcolls = og.HybridBodies
-For i = 1 To 3
-    Set og = subcolls.Add(): og.Name = "PI_0" & i
-Next
+    Set og = colls.item(arr(3))
+    Set subcolls = og.HybridBodies
+    For i = 1 To 3
+        Set og = subcolls.Add(): og.Name = "TR_0" & i
+    Next
+    Set og = colls.item(arr(4))
+    Set subcolls = og.HybridBodies
+    For i = 1 To 3
+        Set og = subcolls.Add(): og.Name = "PI_0" & i
+    Next
 
 End Sub
 

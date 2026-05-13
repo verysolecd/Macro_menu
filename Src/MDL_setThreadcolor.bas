@@ -5,7 +5,6 @@ Attribute VB_Name = "MDL_setThreadcolor"
 '{Caption:螺纹孔上色}
 '{ControlTipText:此按钮将零件螺纹孔上色}
 '{BackColor:}
-
 Option Explicit
 Private Type Threadspec
     MinDia As Double                             ' 最小直径 (包含)
@@ -14,7 +13,6 @@ Private Type Threadspec
     G As Integer                                 ' 绿色通道 (0-255)
     B As Integer                                 ' 蓝色通道 (0-255)
 End Type
-
 Private oSpec() As Threadspec
 Private m_oSelection As Selection
 Private Const MODULE_NAME As String = "MDL_setThreadcolor"

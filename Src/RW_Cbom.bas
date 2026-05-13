@@ -16,7 +16,7 @@ Private Const mdlname As String = "RW_Cbom"
 Sub cBom()
     If Not KCL.CanExecute("ProductDocument,partdocument") Then Exit Sub
     CATIA.StartCommand ("* iso")
-    Dim oEng: Set oEng = KCL.newEngine(mdlname): oEng.Show
+    Dim oEng: Set oEng = KCL.new_spWD(mdlname): oEng.Show
     If oEng.ClickedButton <> "btnOK" Then Exit Sub
     If pdm Is Nothing Then Set pdm = New Cls_PDM
     If IsNothing(pdm.CurrentProduct) Then Set pdm.CurrentProduct = KCL.defPrd
