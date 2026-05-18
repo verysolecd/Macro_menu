@@ -44,9 +44,9 @@ Sub cRMinibox()
                 Exit Sub
             End If
    Dim toCbox: toCbox = False
-   Dim oEng: Set oEng = KCL.new_spWD(mdlname)
-    oEng.Show
-    Select Case oEng.ClickedButton
+   Dim oWD: Set oWD = KCL.new_spWD(mdlname)
+    oWD.Show
+    Select Case oWD.btnClicked
         Case "btnOK": '要创建minibox则
             On Error Resume Next
                 Set workDoc = prod.ReferenceProduct.Parent.part: Error.Clear
@@ -108,7 +108,7 @@ Sub cRMinibox()
             iSize.Y = .Max.Y - .Min.Y
             iSize.Z = .Max.Z - .Min.Z
         End With
-        Call oEng.Alert(Format(iSize.X, "0.00") & " x " _
+        Call oWD.Alert(Format(iSize.X, "0.00") & " x " _
                  & Format(iSize.Y, "0.00") & " x " _
                  & Format(iSize.Z, "0.00"))
     

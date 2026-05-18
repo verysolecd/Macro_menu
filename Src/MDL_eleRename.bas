@@ -30,8 +30,8 @@ Private Const m_mdlname As String = "MDL_eleRename" ' UI引擎名称
 
 Sub eleRename()
     If Not KCL.existWkPrt(m_Doc, m_workPrtDoc, m_prt, m_sel) Then Exit Sub
-    Dim oEng As Object: Set oEng = KCL.new_spWD(m_mdlname, 1): oEng.Show
-    Select Case oEng.ClickedButton
+    Dim oWD As Object: Set oWD = KCL.new_spWD(m_mdlname, 1): oWD.Show
+    Select Case oWD.btnClicked
         Case "btnOK": Call RenameBodies       ' 实体重命名
         Case "btnHb": Call RenameHybridShapes ' 线框/几何图形集重命名
         Case Else: Exit Sub
@@ -48,7 +48,6 @@ Private Sub RenameBodies()
     For i = 1 To m_sel.count
         Set itm = m_sel.item(i).Value
         Set itp = KCL.GetParent_Of_T(itm, "Body")
-        
         If Not itp Is Nothing Then
             lst.Add itp
         ElseIf LCase(TypeName(itm)) = "body" Then
@@ -58,7 +57,7 @@ Private Sub RenameBodies()
     m_sel.Clear
     Dim ct As Integer: ct = 1
     For Each itm In lst
-        If itm.InBooleanOperation = False Then
+        If itm.InBooleanOperation = False And itm.Name <> m_prt.MainBody.Name Then
             itm.Name = "Body." & ct: ct = ct + 1
         End If
     Next

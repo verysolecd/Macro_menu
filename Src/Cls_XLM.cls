@@ -91,7 +91,7 @@ Private Sub set_Header(header, Optional ByVal idxrow = 2)
     lastCol = UBound(header) - LBound(header) + 1
     With ws
     .Range(.Cells(idxrow, 1), .Cells(idxrow, lastCol)).Value = header
-    .Range(.Cells(idxrow, 1), .Cells(idxrow, lastCol)).Interior.Color = RGB(190, 190, 190)
+    .Range(.Cells(idxrow, 1), .Cells(idxrow, lastCol)).Interior.Color = rgb(190, 190, 190)
     End With
 End Sub
 Private Sub RVbackColor()
@@ -99,7 +99,7 @@ Private Sub RVbackColor()
         Dim lastrow: lastrow = ws.Cells(ws.Rows.count, 1).End(xlUp).row
         For rowNb = 2 To lastrow
             For i = 1 To UBound(mapcells)
-                ws.Cells(rowNb, mapcells(i)).Interior.Color = RGB(190, 190, 190)
+                ws.Cells(rowNb, mapcells(i)).Interior.Color = rgb(190, 190, 190)
             Next i
         Next rowNb
 End Sub

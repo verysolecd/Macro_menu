@@ -127,13 +127,13 @@ Private Function OrganizeForView(ByVal colls As Collection) As Object
     ' m0_dataMenu logic: convert SortedList values to a standard Dictionary where Key=GroupID, Value=SortedList(Dicts)
     Dim finalDic As Object: Set finalDic = KCL.InitDic(vbTextCompare)
     Dim i As Long
-    Dim KEY As Variant
+    Dim key As Variant
     Dim rawList As Object
     For i = 0 To SoLst.count - 1
-        KEY = SoLst.GetKey(i)
+        key = SoLst.GetKey(i)
         Set rawList = SoLst.GetByIndex(i)
         ' Sort the generic list
-        finalDic.Add KEY, SortDictList(rawList)
+        finalDic.Add key, SortDictList(rawList)
     Next
     Set OrganizeForView = finalDic
 End Function
@@ -168,15 +168,15 @@ Private Function get_Tagcfg(ByVal txt As String, Optional ByVal KeyToLong As Boo
     
     Dim matches As Object: Set matches = Reg.Execute(txt)
     Dim match As Object
-    Dim KEY As Variant, val As Variant
+    Dim key As Variant, val As Variant
     
     For Each match In matches
         If match.SubMatches.count >= 2 Then
-            KEY = Trim(match.SubMatches(0))
+            key = Trim(match.SubMatches(0))
             val = Trim(match.SubMatches(1))
             
-            If KeyToLong And IsNumeric(KEY) Then KEY = CLng(KEY)
-            If dic.Exists(KEY) Then dic(KEY) = val Else dic.Add KEY, val
+            If KeyToLong And IsNumeric(key) Then key = CLng(key)
+            If dic.Exists(key) Then dic(key) = val Else dic.Add key, val
         End If
     Next
     

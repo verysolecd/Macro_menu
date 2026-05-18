@@ -1,5 +1,4 @@
 Attribute VB_Name = "CAT_SWScr"
-
 '{GP:7}
 '{Ep:switchRefresh}
 '{Caption: ÆÁÄ»¸üÐÂ}

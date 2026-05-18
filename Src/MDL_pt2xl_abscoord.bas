@@ -33,9 +33,9 @@ Set mHBS = oprt.HybridBodies
 Set msel = mDoc.Selection
 needtrans = False
 
-Dim oEng: Set oEng = KCL.new_spWD(mdlname, 1) '1 标识isvertical=true
-oEng.Show
-    Select Case oEng.ClickedButton
+Dim oWD: Set oWD = KCL.new_spWD(mdlname, 1) '1 标识isvertical=true
+oWD.Show
+    Select Case oWD.btnClicked
         Case "btnOK":
                 Call pt2xl(getHB())
          Case "btnWcoord":

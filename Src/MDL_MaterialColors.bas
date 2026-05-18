@@ -2,21 +2,27 @@ Attribute VB_Name = "MDL_MaterialColors"
 '{GP:4}
 '{EP:MaterialPainter}
 '{Caption:实体上色}
-'{ControlTipText: Apply industry standard colors to selection}
+'{ControlTipText: 上色Toolbar}
+'------控件清单--------------------------------------------------
+'控件格式为 %UI <Type> <Name> <Caption/Text><Color:HEX16>
 '------Buttons------------------------------
+' %UI Button btn_weld 焊缝颜色 #FFFF00
+' %UI Button btn_thread 螺纹孔分颜色
+' %UI Label  lb_steel ----------
 ' %UI Button btn_mild 软钢(<210)    #ADD8E6
 ' %UI Button btn_hss 高强钢(210-340)  #00BFFF
 ' %UI Button btn_ahss 先进高强(340-590)  #FFFF00
 ' %UI Button btn_uhss 超高强(590-980) #FFA500
 ' %UI Button btn_Gpa Gpa钢 (980-1200) #ff0033
 ' %UI Button btn_HF 热成型 (>1200) #B22222
-' %UI Label bl_steel ----------
+' %UI Label  lb_steel ----------
 ' %UI Button btn_Alu1 铝合金(<180)  #90EE90
 ' %UI Button btn_Alu2 铝合金(180~240)  #8FBC8F
 ' %UI Button btn_Alu3 铝合金(>240) #228B22
 ' %UI Button btn_Fas 紧固件      #A52A2A
 ' %UI Button btn_glue 胶水 #C8A2C8
 ' %UI Label bl_steel ----------
+
 '颜色定义
 '≤210MPa       浅蓝色    MS=Array(173,216,230)  #ADD8E6
 '210-340MPa    深天蓝     HSS=Array(0,191,255)      #00BFFF
@@ -32,38 +38,60 @@ Attribute VB_Name = "MDL_MaterialColors"
 
 '------------------------------------------
 Option Explicit
-Private mprt
+Private m_Doc         As Document       ' 当前激活文档
+Private m_workPrtDoc   As PartDocument   ' 当前激活的零件文档
+Private m_prt         As part           ' 当前激活的Part对象
+Private a_Prt     ' 当前任意一个零件对象
+Private m_sel         As Selection      ' 选择集对象
 Private mHSF
+Private Const TYPE_SWEEP As Long = 7
+Private Type Threadspec
+    MinDia As Double                             ' 最小直径 (包含)
+    MaxDia As Double                             ' 最大直径 (包含)
+    R As Integer                                 ' 红色通道 (0-255)
+    G As Integer                                 ' 绿色通道 (0-255)
+    B As Integer                                 ' 蓝色通道 (0-255)
+End Type
+Private oSpec() As Threadspec
+Private Colormap
+
+
 Private mWD As Cls_DynaWD
+Private funcMap
 Private Const mdlname As String = "MDL_MaterialColors"
 ' Main Entry Point
 Sub MaterialPainter()
     If Not CanExecute("Productdocument,PartDocument") Then Exit Sub
     On Error Resume Next
-        Dim oDoc, adoc: Set oDoc = CATIA.ActiveDocument
+        Set m_Doc = CATIA.ActiveDocument
+        Dim adoc
         For Each adoc In CATIA.Documents
-            If TypeName(adoc) = "PartDocument" Then: Set mprt = adoc.part: Exit For
+            If TypeName(adoc) = "PartDocument" Then: Set a_Prt = adoc.part: Exit For
         Next
-     Err.Clear
+        Err.Clear
     On Error GoTo 0
-    If IsNothing(mprt) Then: MsgBox "No part found": Exit Sub
-    Set mHSF = mprt.HybridShapeFactory
+    If IsNothing(a_Prt) Then: MsgBox "No part found": Exit Sub
     Set mWD = New Cls_DynaWD
-    Dim mapFunc: Set mapFunc = setMasterFunc(mdlname)
+    initMaps mdlname  '初始化按钮和颜色map
     mWD.PassButtonName = True ' <--- The Magic Switch
-    mWD.ShowToolbar mdlname, , mapFunc   ' 4. Show Toolbar (Modeless) — modMap 自动构建, 仅传自定义 macMap
+    mWD.ShowToolbar mdlname, , funcMap   ' 4. Show Toolbar (Modeless) — modMap 自动构建, 仅传自定义 macMap
 End Sub
 Sub Clickhandler(ByVal btnName As String)
-    If btnName = "btn_cancel" Then
-        Set mWD = Nothing
-        Exit Sub
-    End If
-    Dim map: Set map = btn2case(mdlname)
-    Dim mColor As Variant
-    If map(btnName) <> "" Then mColor = KCL.ParseBDcolor(map(btnName))
-    If IsArray(mColor) Then ApplyColor mColor
+    If btnName = "btn_cancel" Then: Set mWD = Nothing: Exit Sub
+    '先检查传入按钮的名字具备对应颜色
+    Dim mcolor
+    If funcMap(btnName) <> "" Then mcolor = KCL.ParseBDcolor(Colormap(btnName))
+    Select Case btnName
+        Case "btn_weld"
+            SetWeldYellow
+        Case "btn_tsshread"
+            SetThreadColor
+        Case Else
+              If IsArray(mcolor) Then ApplyColor2Body mcolor
+    End Select
 End Sub
-Private Sub ApplyColor(ary As Variant)
+Private Sub ApplyColor2Body(ary As Variant)
+    Set mHSF = a_Prt.HybridShapeFactory
     Dim osel
     Set osel = CATIA.ActiveDocument.Selection
     Dim R, G, B, i
@@ -96,42 +124,220 @@ Next
     osel.Clear
     On Error GoTo 0
 End Sub
-Function setMasterFunc(ByVal modName As String)
-    Set setMasterFunc = Nothing
-    Dim ctrllst:    Set ctrllst = KCL.ParseUIConfig(KCL.getbf1stproc(modName))
-    Dim map: Set map = KCL.InitDic
-    Dim ctrl
-    For Each ctrl In ctrllst    '映射BTN名字和对应函数
-        Select Case ctrl("Type")
-            Case "Forms.CommandButton.1"
-                map(ctrl("Name")) = "Clickhandler"
-        End Select
-    Next
-   Set setMasterFunc = map
-End Function
+
 Sub getcolor()
-Dim R, G, B
- R = CLng(0)
- G = CLng(0)
- B = CLng(0)
- Dim ss
- Set ss = CATIA.ActiveDocument.Selection.VisProperties
- ss.GetRealColor R, G, B
- Dim ary
- ary = Array(R, G, B)
- Debug.Print R & "," & G & "," & B
- End Sub
-Function btn2case(ByVal modName As String)
-    Set btn2case = Nothing
-    Dim ctrllst:    Set ctrllst = KCL.ParseUIConfig(KCL.getbf1stproc(modName))
-    Dim map: Set map = KCL.InitDic
+    Dim R, G, B
+        R = CLng(0)
+        G = CLng(0)
+        B = CLng(0)
+ Dim ss: Set ss = CATIA.ActiveDocument.Selection.VisProperties
+    ss.GetRealColor R, G, B
+ Dim ary: ary = Array(R, G, B)
+ Debug.Print "RGB颜色" & R & "," & G & "," & B
+End Sub
+Private Sub initMaps(ByVal modName As String)
+    Set funcMap = KCL.InitDic
+    Set Colormap = KCL.InitDic
+    Dim ctrllst: Set ctrllst = KCL.ParseUIConfig(KCL.getbf1stproc(modName))
     Dim ctrl
     For Each ctrl In ctrllst
-        Select Case ctrl("Type")
-            Case "Forms.CommandButton.1"
-                map(ctrl("Name")) = ctrl("Color")
-        End Select
+        If ctrl("Type") = "Forms.CommandButton.1" Then
+            Dim n As String: n = ctrl("Name")
+            funcMap(n) = "Clickhandler"
+            Colormap(n) = ctrl("Color")
+        End If
     Next
-   Set btn2case = map
+End Sub
+Sub SetWeldYellow()
+   If Not KCL.existWkPrt(m_Doc, m_workPrtDoc, m_prt, m_sel) Then Exit Sub
+   If m_prt Is Nothing Then Exit Sub
+    Dim c, Color, i
+    Dim HSF:  Set HSF = m_prt.HybridShapeFactory
+    Dim sweeps: Set sweeps = KCL.Initlst
+        m_sel.Clear
+        CATIA.HSOSynchronized = False
+            Set m_sel = KCL.SelectQuery("(.'Volume geometry'+.Surface& Type!=Plane)& Color!=Yellow")
+            Color = Array(255, 255, 0)
+            m_sel.VisProperties.SetRealColor Color(0), Color(1), Color(2), 0 '(R, G, B, Inheritance=1)
+            m_sel.Clear
+        CATIA.HSOSynchronized = True
+End Sub
+
+Sub SetThreadColor()
+    On Error GoTo ErrorHandler
+    Dim oCatia As Object
+    Set oCatia = CATIA
+    If oCatia.Documents.count = 0 Then
+        MsgBox "请先打开一个 Part 或 Product 文档。", vbExclamation
+        Exit Sub
+    End If
+    Dim oDoc As Document
+    Set oDoc = oCatia.ActiveDocument
+    Set m_sel = oDoc.Selection
+    oCatia.DisplayFileAlerts = False
+    oCatia.RefreshDisplay = False
+    
+    Call initThreadSpec
+    Select Case TypeName(oDoc)
+    Case "PartDocument"
+        Call ProcessPart(oDoc.part)
+    Case "ProductDocument"
+        Call ProcessProduct(oDoc.Product)
+    Case Else
+        MsgBox "此宏仅能在 Part 或 Product 环境下运行。", vbExclamation
+    End Select
+Cleanup:
+    oCatia.RefreshDisplay = True
+    oCatia.DisplayFileAlerts = True
+    MsgBox "螺纹染色处理完成！", vbInformation
+    Exit Sub
+ErrorHandler:
+    MsgBox "运行期间发生意外错误: " & Err.Description, vbCritical
+    Resume Cleanup
+End Sub
+
+Private Sub initThreadSpec()
+    ReDim oSpec(3)
+    With oSpec(0) '  M4 (D=4.0, 范围 3.6 ~ 4.4) -> 黄色 (Yellow)
+        .MinDia = 3.6: .MaxDia = 4.4
+        .R = 255: .G = 255: .B = 0
+    End With
+    With oSpec(1) 'M5 (D=5.0, 范围 4.6 ~ 5.4) -> 紫色 (Purple)
+        .MinDia = 4.6: .MaxDia = 5.4
+        .R = 255: .G = 0: .B = 255
+    End With
+    With oSpec(2) 'M6 (D=6.0, 范围 5.6 ~ 6.4) -> 绿色 (Green)
+        .MinDia = 5.6: .MaxDia = 6.4
+        .R = 0: .G = 255: .B = 0
+    End With
+    With oSpec(3) 'M8及以上 (D=8.0+, 范围 7.6 ~ 100) -> 蓝色 (Blue)
+        .MinDia = 7.6: .MaxDia = 100
+        .R = 0: .G = 0: .B = 255
+    End With
+End Sub
+Private Sub ProcessProduct(ByVal oProd As Product)
+    On Error GoTo ErrorHandler
+    Dim i As Integer
+    Dim childCount As Integer
+    childCount = oProd.Products.count
+    If childCount = 0 Then
+        Dim oPart As part
+        Set oPart = TryGetPartFromProduct(oProd)
+        If Not oPart Is Nothing Then
+            On Error GoTo ErrorHandler
+            oProd.ApplyWorkMode 2  ' 2 = DESIGN_MODE (应用设计模式以加载零件完整特征)
+            Call ProcessPart(oPart)
+        End If
+    Else
+        For i = 1 To childCount
+            Call ProcessProduct(oProd.Products.item(i))
+        Next i
+    End If
+    Exit Sub
+ErrorHandler:
+    Err.Clear
+End Sub
+
+Private Sub ProcessPart(ByVal oPart As part)
+    Dim oBody As body
+    Dim oShape As Object
+    Dim i As Integer, j As Integer
+    Dim dThreadDia As Double
+    Dim bIsThread As Boolean
+    Dim R As Integer, G As Integer, B As Integer
+    ' ── 改动：按颜色分组存储特征，key = "R,G,B"
+    Dim colorGroups As Object
+    Set colorGroups = CreateObject("Scripting.Dictionary")
+    For i = 1 To oPart.bodies.count
+        Set oBody = oPart.bodies.item(i)
+        For j = 1 To oBody.Shapes.count
+            Set oShape = oBody.Shapes.item(j)
+            bIsThread = False
+            dThreadDia = 0#
+            Select Case TypeName(oShape)
+            Case "Hole"
+                If oShape.ThreadingMode = 0 Then
+                    If TryGetHoleThreadDiameter(oShape, dThreadDia) Then
+                        bIsThread = True
+                    End If
+                End If
+            Case "Thread"
+                If TryGetThreadDiameter(oShape, dThreadDia) Then
+                    bIsThread = True
+                End If
+            End Select
+            ' ── 改动：不立刻上色，按颜色 key 归组
+            If bIsThread Then
+                If GetColorByDia(dThreadDia, R, G, B) Then
+                    Dim colorKey As String
+                    colorKey = R & "," & G & "," & B
+                    If Not colorGroups.Exists(colorKey) Then
+                        Dim lst: Set lst = CreateObject("System.Collections.ArrayList")
+                      colorGroups.Add colorKey, lst
+                    End If
+                    colorGroups(colorKey).Add oShape
+                End If
+            End If
+        Next j
+    Next i
+    ' ── 改动：每种颜色只调用一次 SetRealColor（批量）
+    Dim key As Variant
+    Dim rgb() As String
+    Dim shapeList As Object
+    Dim shp As Object
+    For Each key In colorGroups.keys
+        rgb = Split(key, ",")
+        Set shapeList = colorGroups(key)
+        m_sel.Clear
+        For Each shp In shapeList
+            On Error Resume Next
+            m_sel.Add shp
+            On Error GoTo 0
+        Next
+        If m_sel.count > 0 Then
+            m_sel.VisProperties.SetRealColor CLng(rgb(0)), CLng(rgb(1)), CLng(rgb(2)), 1
+        End If
+    Next key
+    m_sel.Clear
+End Sub
+
+Private Function TryGetPartFromProduct(ByVal oProd As Product) As part
+    On Error GoTo Fail
+    Set TryGetPartFromProduct = oProd.ReferenceProduct.Parent.part
+    Exit Function
+Fail:
+    Set TryGetPartFromProduct = Nothing
+    Err.Clear
+End Function
+Private Function TryGetHoleThreadDiameter(ByVal oHole As Object, ByRef outDiameter As Double) As Boolean
+    On Error GoTo Fail
+        outDiameter = oHole.ThreadDiameter.Value
+        TryGetHoleThreadDiameter = True
+    Exit Function
+Fail:
+    TryGetHoleThreadDiameter = False
+    Err.Clear
+End Function
+Private Function TryGetThreadDiameter(ByVal oThread As Object, ByRef outDiameter As Double) As Boolean
+    On Error GoTo Fail
+    outDiameter = oThread.Diameter
+    TryGetThreadDiameter = True
+    Exit Function
+Fail:
+    TryGetThreadDiameter = False
+    Err.Clear
+End Function
+Private Function GetColorByDia(ByVal dDia As Double, ByRef outR As Integer, ByRef outG As Integer, ByRef outB As Integer) As Boolean
+    Dim k As Integer
+    GetColorByDia = False
+    For k = LBound(oSpec) To UBound(oSpec)
+        If dDia >= oSpec(k).MinDia And dDia <= oSpec(k).MaxDia Then
+            outR = oSpec(k).R
+            outG = oSpec(k).G
+            outB = oSpec(k).B
+            GetColorByDia = True
+            Exit Function
+        End If
+    Next k
 End Function
 

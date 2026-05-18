@@ -1,15 +1,10 @@
 Attribute VB_Name = "KCL"
-
 Option Explicit
-
-
 Private Declare PtrSafe Function OpenClipboard Lib "user32" (ByVal hwnd As LongPtr) As Long
 Private Declare PtrSafe Function EmptyClipboard Lib "user32" () As Long
 Private Declare PtrSafe Function CloseClipboard Lib "user32" () As Long
 Private Declare PtrSafe Function SetClipboardData Lib "user32" (ByVal wFormat As Long, ByVal hMem As LongPtr) As LongPtr
-
 #If VBA7 Then
-    ' 现有的声明
     Private Declare PtrSafe Function timeGetTime Lib "winmm.dll" () As Long
     Private Declare PtrSafe Function SetForegroundWindow Lib "user32" (ByVal hwnd As LongPtr) As Long
     Private Declare PtrSafe Function ShowWindow Lib "user32" (ByVal hwnd As LongPtr, ByVal nCmdShow As Long) As Long
@@ -22,7 +17,6 @@ Private Declare PtrSafe Function SetClipboardData Lib "user32" (ByVal wFormat As
 Private Const SW_MAXIMIZE = 3
 Private Const SW_NORMAL = 1
 Private mSW& ' 秒表开始时间
-
 Public Type Bomline
     level           As Integer        ' 层级
     partNumber      As String    ' 件号
@@ -37,7 +31,6 @@ Public Type Bomline
     UserProp1       As String
     UserProp2       As String
 End Type
-
 Public Type ParamItem
     Name            As String
     ParamType       As String
@@ -45,7 +38,6 @@ Public Type ParamItem
     target          As Object    ' 指向 CATIA Parameter 对象
     Description     As String
 End Type
-
 Public rootDoc
 Public rootPrd  As Object
 Public xlAPP As Object
@@ -56,7 +48,6 @@ Public xlm As New Cls_XLM
 Public g_allPN As Object
 Public g_Picpath
 Public g_Btn
-
 '*****计时相关函数*****
 ' 启动秒表
 Private Const mdlname As String = "KCL"
@@ -68,7 +59,6 @@ End Sub
 Function SW_GetTime#()
     SW_GetTime = IIf(mSW = 0, -1, (timeGetTime - mSW) * 0.001)
 End Function
-
 '*****CATIA相关函数*****=================================================
 ' 循环选择项目
 Sub LoopSel()
@@ -732,8 +722,8 @@ Public Function GetInput(msg) As String
 End Function
 ' 检查字符串中是否包含指定关键字
 ' 忽略大小写进行检查
-Public Function ExistsKey(ByVal txt As String, ByVal KEY As String) As Boolean
-    ExistsKey = IIf(VBA.InStr(VBA.LCase(txt), VBA.LCase(KEY)) > 0, True, False)
+Public Function ExistsKey(ByVal txt As String, ByVal key As String) As Boolean
+    ExistsKey = IIf(VBA.InStr(VBA.LCase(txt), VBA.LCase(key)) > 0, True, False)
 End Function
 '@@ param:ostr-时间格式
 Public Function timestamp(Optional ByVal ostr) As String
@@ -1007,12 +997,12 @@ End Sub
 '    Next i
 'End Sub
 Public Function Push_Dic(ByVal dic As Object, _
-                          ByVal KEY As Variant, _
+                          ByVal key As Variant, _
                           ByVal item As Variant) As Object
-    If dic.Exists(KEY) Then
-        dic(KEY) = item
+    If dic.Exists(key) Then
+        dic(key) = item
     Else
-        dic.Add KEY, item
+        dic.Add key, item
     End If
     Set Push_Dic = dic
 End Function
@@ -1098,53 +1088,20 @@ Function getmeas(itm)
         Set getmeas = spa.GetMeasurable(itm)
     End If
 End Function
-'Function setBTNmdl(ByVal modName As String)
-'    Set setBTNmdl = Nothing
-'    Dim ctrllst:    Set ctrllst = KCL.ParseUIConfig(KCL.getbf1stproc(modName))
-'    Dim map: Set map = KCL.InitDic
-'    Dim oCtrl
-'    For Each oCtrl In ctrllst    '映射BTN名字和对应模块
-'        Select Case oCtrl("Type")
-'            Case "Forms.CommandButton.1"
-'                map(oCtrl("Name")) = modName
-'        End Select
-'    Next
-'   Set setBTNmdl = map
-'End Function
-'Function setBTNFunc(ByVal modName As String)
-'    Set setBTNFunc = Nothing
-'    Dim ctrllst:    Set ctrllst = KCL.ParseUIConfig(KCL.getbf1stproc(modName))
-'    Dim map: Set map = KCL.InitDic
-'    Dim oCtrl
-'    For Each oCtrl In ctrllst    '映射BTN名字和对应函数
-'        Select Case oCtrl("Type")
-'            Case "Forms.CommandButton.1"
-'                map(oCtrl("Name")) = oCtrl("Name") & "_Click"
-'        End Select
-'    Next
-'   Set setBTNFunc = mapssss
-'End Function
-'Function newFrm(Optional ByVal modName As String = "", Optional ByVal isVertical = False)
-'    Dim oFrm: Set oFrm = New cls_dynaFrm
-'    If modName <> "" Then
-'        oFrm.Init modName
-'   End If
-'   If isVertical Then oFrm.isVertical = True
-'   Set newFrm = oFrm
-'End Function
+
 ' ═══ 新的统一UI引擎工厂函数 ═══
 ' 用法与 newFrm 平行，返回 Cls_DynaWD 实例
-' 模态弹窗示例:  Set oEng = KCL.new_spWD("OTH_Minibox") : oEng.Show
-' 工具栏示例:    Set oEng = KCL.new_spWD("OTH_ivhideshow") : oEng.ShowToolbar mdlname, mapMdl, mapFunc
-' 纯代码示例:    Set oEng = KCL.new_spWD() : oEng.AddUIElement "Button","btn1","确定" : oEng.Show
+' 模态弹窗示例:  Set oWD = KCL.new_spWD("OTH_Minibox") : oWD.Show
+' 工具栏示例:    Set oWD = KCL.new_spWD("OTH_ivhideshow") : oWD.ShowToolbar mdlname, mapMdl, mapFunc
+' 纯代码示例:    Set oWD = KCL.new_spWD() : oWD.AddUIElement "Button","btn1","确定" : oWD.Show
 
 Public Function new_spWD(Optional ByVal modName As String = "", Optional ByVal isVertical = False)
-    Dim oEng As Cls_DynaWD: Set oEng = New Cls_DynaWD
+    Dim oWD As Cls_DynaWD: Set oWD = New Cls_DynaWD
     If modName <> "" Then
-        oEng.LoadFromModuleName modName
+        oWD.getUIcfg modName
     End If
-    If isVertical Then oEng.isVertical = True
-    Set new_spWD = oEng
+    If isVertical Then oWD.isVertical = True
+    Set new_spWD = oWD
 End Function
 
 Public Function ParseHex(ByVal hexStr)
@@ -1160,7 +1117,7 @@ Dim R, G, B
     B = val("&H" & Mid(hexStr, 5, 2))
    
     On Error GoTo 0
-   ParseHex = RGB(R, G, B)
+   ParseHex = rgb(R, G, B)
 End Function
 
 Public Function ParseBDcolor(ByVal hexStr)
@@ -1245,24 +1202,25 @@ Public Function CATquick(ByVal Quick As Boolean, Optional ByVal updateCap As Boo
     Dim Vismg:   Set Vismg = setcls.item("CATVizVisualizationSettingCtrl")
     Dim btnCaption As String
     With CATIA
-    
     If Quick Then
         '.DisableNewUndoRedoTransaction
         '.EnableNewUndoRedoTransaction
          .RefreshDisplay = False
             Asmg.AutoUpdateMode = 0 '0: catManualUpdate
             Vismg.Viz3DFixedAccuracy = 5
+            .HSOSynchronized = False
             btnCaption = "屏幕更新(关)"
     Else
         '.DisableNewUndoRedoTransaction
         '.EnableNewUndoRedoTransaction
         .RefreshDisplay = True
-       Asmg.AutoUpdateMode = 1 '1: catAutomaticUpdate
-        Vismg.Viz3DFixedAccuracy = 0.02
+        .HSOSynchronized = True
+        Asmg.AutoUpdateMode = 1 '1: catAutomaticUpdate
+        Vismg.Viz3DFixedAccuracy = 0.2
         btnCaption = "屏幕更新(开)"
     End If
     End With
-     On Error Resume Next
+    On Error Resume Next
         If Not g_Btn Is Nothing Then
           If updateCap = True Then g_Btn.Caption = btnCaption
         End If

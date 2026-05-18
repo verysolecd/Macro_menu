@@ -56,21 +56,21 @@ Sub Set_FormInfo(ByVal InfoLst As Object, _
     FrmMargin = Array(2, 2, 2, 2) ' 上, 右, 下, 左 窗体边距调整值
     Set MPgs = Me.Controls.Add("Forms.MultiPage.1", "MPgs", True) ' 创建多页控件
     Dim Pgs As Pages: Set Pgs = MPgs.Pages: Pgs.Clear
-    Dim KEY As Long, KeyStr As Variant, Pg As Page, pName As String
+    Dim key As Long, KeyStr As Variant, Pg As Page, pName As String
     Dim BtnInfos As Object, info As Variant
     Dim Btns As Object: Set Btns = KCL.Initlst()
     Dim BTN As MSForms.CommandButton
-    Dim BtnEvt As Cls_MnuBtnEVT
+    Dim BtnEvt As Cls_allBTNEVT
     For Each KeyStr In InfoLst
-            KEY = CLng(KeyStr)
-            If Not PageMap.Exists(KEY) Then GoTo Continue
-            pName = PageMap(KEY)
+            key = CLng(KeyStr)
+            If Not PageMap.Exists(key) Then GoTo Continue
+            pName = PageMap(key)
             Set Pg = Get_Page(Pgs, pName)
             Set BtnInfos = InfoLst(KeyStr)
         For Each info In BtnInfos
-            Set BTN = Init_Button(Pg.Controls, KEY, info)
-            Set BtnEvt = New Cls_MnuBtnEVT
-            Call BtnEvt.set_ButtonEvent(BTN, info, Me, CloseType)
+            Set BTN = Init_Button(Pg.Controls, key, info)
+            Set BtnEvt = New Cls_allBTNEVT
+            BtnEvt.set_ButtonEvent BTN, info, Me, CloseType
             Btns.Add BtnEvt
         Next
 Continue:
@@ -207,15 +207,15 @@ End Sub
 
 ' 更新产品信息的方法
 Private Sub UpdateProductInfo()
-    Dim msg, mColor
-    mColor = vbRed
+    Dim msg, mcolor
+    mcolor = vbRed
     msg = "操作产品待选择"
     If Not prdObserver.CurrentProduct Is Nothing Then
           msg = prdObserver.CurrentProduct.partNumber & "待修改"
-          mColor = vbGreen
+          mcolor = vbGreen
     End If
         lblProductInfo.Caption = msg
-        lblProductInfo.BackColor = mColor
+        lblProductInfo.BackColor = mcolor
 End Sub
 Private Sub UserForm_Click()
       toMP

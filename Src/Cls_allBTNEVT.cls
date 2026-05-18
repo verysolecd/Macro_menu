@@ -2,22 +2,23 @@ VERSION 1.0 CLASS
 BEGIN
   MultiUse = -1  'True
 END
-Attribute VB_Name = "Cls_MnuBtnEVT"
+Attribute VB_Name = "Cls_allBTNEVT"
 Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
 Option Explicit
 ' --- Variables ---
-Private WithEvents mBTN As MSForms.CommandButton      ' For Script Mode
-Attribute mBTN.VB_VarHelpID = -1
-Private WithEvents mBTNwd As MSForms.CommandButton ' For Result Mode
-Attribute mBTNwd.VB_VarHelpID = -1
+Private WithEvents mBTN_SM As MSForms.CommandButton      ' For Script Mode
+Attribute mBTN_SM.VB_VarHelpID = -1
+Private WithEvents mBTN_RM As MSForms.CommandButton ' For Result Mode
+Attribute mBTN_RM.VB_VarHelpID = -1
+
+Private mFrm_SM As Object   ' [Script Mode] 工具栏窗体引用（用于 Unload） Private mFrm_Script As Object
+Private mFrm_RM As Object   ' [Result Mode] 模态窗体引用（用于 Hide + 收集结果） Private mFrm_Result As Object
 
 Private mInfo As Object
-Private mCloseType As Boolean
-Private mParentForm As Object   ' Used by Script Mode
-Private mParentFrm As Object    ' Used by Result Mode (Unified target)
+Private mKeepOpen As Boolean
 
 Private mControlID As String
 Private mResultDict As Object
@@ -26,15 +27,16 @@ Private Const TAG_ENTRYPNT = "ep"           ' 入口点标签
 Private Const TAG_PJTPATH = "pjt_path"      ' 项目路径标签
 Private Const TAG_MDLNAME = "mdl_name"      ' 模块名称标签
 Private Const TAG_PASS_BTN = "springwdBTN"  ' 传递按钮名称开关
-Private Const mdlname As String = "Cls_MnuBtnEVT"
+
+Private Const mdlname As String = "Cls_allBTNEVT"
 Public Property Set ParentFrm(ByVal frm As Object)
-    Set mParentFrm = frm
+    Set mFrm_RM = frm
 End Property
 Public Property Let ControlID(ByVal Value As String)
     mControlID = Value
 End Property
 Public Property Set ControlBTN(ByVal BTN As MSForms.CommandButton)
-    Set mBTNwd = BTN
+    Set mBTN_RM = BTN
 End Property
 Public Property Set ResultDict(ByVal dict As Object)
     Set mResultDict = dict
@@ -43,22 +45,21 @@ End Property
 Sub set_ButtonEvent(ByVal BTN As MSForms.CommandButton, _
                     ByVal BtnInfo As Object, _
                     ByVal ParentForm As Object, _
-                    ByVal CloseType As Boolean)
-        Set mBTN = BTN
+                    ByVal keepOpen As Boolean)
+        Set mBTN_SM = BTN
         Set mInfo = BtnInfo
-        Set mParentForm = ParentForm
-        mCloseType = CloseType
+        Set mFrm_SM = ParentForm
+        mKeepOpen = keepOpen
 End Sub
 ' For Result Mode / Frm
 
-
-'模态弹窗（结果模式）' Handler for Result Mode (mBTNwd) 模态按钮的处理
-Private Sub mBTNwd_Click()
-    If mParentFrm Is Nothing Then Exit Sub
-        mParentFrm.Tag = mControlID
+'模态弹窗（结果模式）' Handler for Result Mode (mBTN_RM) 模态按钮的处理
+Private Sub mBTN_RM_Click()
+    If mFrm_RM Is Nothing Then Exit Sub
+        mFrm_RM.Tag = mControlID
     If Not mResultDict Is Nothing Then
         Dim ctl As Control
-        For Each ctl In mParentFrm.Controls
+        For Each ctl In mFrm_RM.Controls
             On Error Resume Next
             If TypeName(ctl) = "CheckBox" Then
                  mResultDict(ctl.Name) = ctl.Value
@@ -68,13 +69,13 @@ Private Sub mBTNwd_Click()
             On Error GoTo 0
         Next
     End If
-    mParentFrm.Hide
+    mFrm_RM.Hide
 End Sub
 
 ' Handler for Script Mode (mBTN) 非模态按钮的处理
-Private Sub mBTN_click()
-    If Not mCloseType Then
-        If Not mParentForm Is Nothing Then Unload mParentForm
+Private Sub mBTN_SM_click()
+    If Not mKeepOpen Then
+        If Not mFrm_SM Is Nothing Then Unload mFrm_SM
     End If
 'Func ExecuteScript( iLibraryName,iLibraryType,iProgramName,iFunctionName,iParameters)
 '    iLibraryName: The library in which the script is contained
@@ -85,12 +86,12 @@ Private Sub mBTN_click()
     Dim ss As Object: Set ss = CATIA.SystemService
     Dim params As Variant
     If mInfo.Exists(TAG_PASS_BTN) And mInfo(TAG_PASS_BTN) = True Then
-        params = Array(mBTN.Name)
+        params = Array(mBTN_SM.Name)
     Else
         params = Array()
     End If
     On Error Resume Next
-        Set g_Btn = mBTN
+        Set g_Btn = mBTN_SM
         Call ss.ExecuteScript(mInfo(TAG_PJTPATH), _
                               catScriptLibraryTypeVBAProject, _
                               mInfo(TAG_MDLNAME), _

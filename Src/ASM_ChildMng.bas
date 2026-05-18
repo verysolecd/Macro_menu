@@ -18,7 +18,7 @@ Sub ChildMng()
    If Not KCL.CanExecute("ProductDocument") Then Exit Sub
     Dim oWD: Set oWD = KCL.new_spWD(mdlname, 1)
     oWD.Show
-    Select Case oWD.ClickedButton
+    Select Case oWD.btnClicked
           Case "btn_copy":    Call cpChildren
           Case "btn_delete":  Call DeleteChildren
           Case Else:          Exit Sub

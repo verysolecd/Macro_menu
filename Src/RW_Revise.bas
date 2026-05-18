@@ -13,19 +13,13 @@ Private mWD As Cls_DynaWD
 Private Const mdlname As String = "RW_Revise"
 
 Sub EditorToolbar()
-'    If Not CanExecute("ProductDocument") Then Exit Sub
+    If Not CanExecute("ProductDocument") Then Exit Sub
     If pdm Is Nothing Then Set pdm = New Cls_PDM
-    Dim mdlMap As Object: Set mdlMap = KCL.InitDic
-    mdlMap.Add "btnRead", mdlname
-    mdlMap.Add "btnWrite", mdlname
-    Dim funcMap As Object: Set funcMap = KCL.InitDic
-    funcMap.Add "btnRead", "readPrd"
-    funcMap.Add "btnWrite", "rvme"
     Set mWD = New Cls_DynaWD
-    mWD.ShowToolbar mdlname, mdlMap, funcMap
+    mWD.ShowToolbar mdlname
 End Sub
 
-Sub readPrd()
+Sub btnRead_click()
  '---------获取待修改产品 '---------遍历修改产品及子产品
     If pdm.CurrentProduct Is Nothing Then Set pdm.CurrentProduct = KCL.defPrd()
     Dim Prd2Read: Set Prd2Read = pdm.CurrentProduct
@@ -38,7 +32,7 @@ Sub readPrd()
         End If
         Set Prd2Read = Nothing
 End Sub
-Sub rvme()
+Sub btnWrite_click()
 On Error GoTo ErrorHandler
     If xlm Is Nothing Then Err.Description = "excel错误，请检查": Exit Sub
      If pdm.CurrentProduct Is Nothing Then Exit Sub
