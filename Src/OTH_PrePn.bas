@@ -54,7 +54,6 @@ Sub Pnmgr()
     End Select
 End Sub
 
-
 Private Sub c_pn_Prefix(oPrd As Object, istr As String)
     Dim pn As String, purePN As String, newPn As String
     Dim childProduct As Object
