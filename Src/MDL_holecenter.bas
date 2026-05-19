@@ -7,7 +7,7 @@ Attribute VB_Name = "MDL_holecenter"
 '{ControlTipText: 提示选择面后后导出面上所有孔中心}
 '{BackColor: }
 
-Private Const mdlname As String = "MDL_holecenter2"
+Private Const mdlname As String = "MDL_holecenter"
 Sub Faceholecenter()
  If Not CanExecute("Productdocument,PartDocument") Then Exit Sub
     On Error Resume Next
@@ -19,22 +19,22 @@ Sub Faceholecenter()
     If IsNothing(oprt) Then: MsgBox "No activated Part": Exit Sub
     Set HSF = oprt.HybridShapeFactory
 '======= 选择要识别的面
-Dim iSel: Set iSel = Nothing
+Dim isel: Set isel = Nothing
     Dim imsg: imsg = "选择要识别的面"
     Dim filter(0): filter(0) = "Face,HybridShape"
     On Error Resume Next
-        Set iSel = KCL.SelectItem(imsg, filter)
+        Set isel = KCL.SelectItem(imsg, filter)
     On Error GoTo 0
-    If Not iSel Is Nothing Then
-        Set oHb = oprt.HybridBodies.Add(): oHb.Name = "extracted points"
-        Set oExtact = HSF.AddNewExtract(iSel)
-            oHb.AppendHybridShape oExtact
+    If Not isel Is Nothing Then
+        Set oHB = oprt.HybridBodies.Add(): oHB.Name = "extracted points"
+        Set oExtact = HSF.AddNewExtract(isel)
+            oHB.AppendHybridShape oExtact
             oprt.Update
         Set oRef = oprt.CreateReferenceFromObject(oExtact)
         Set oFace = HSF.AddNewSurfaceDatum(oRef)
             HSF.DeleteObjectForDatum oRef
         Dim oBdry As HybridShapeBoundary: Set oBdry = HSF.AddNewBoundaryOfSurface(oFace)
-            oHb.AppendHybridShape oBdry
+            oHB.AppendHybridShape oBdry
         oprt.Update
         Dim osel: Set osel = CATIA.ActiveDocument.Selection
         osel.Clear: osel.Add oBdry
@@ -44,16 +44,16 @@ Dim iSel: Set iSel = Nothing
             CATIA.RefreshDisplay = False
         osel.Clear
         i = 1
-        For Each Hole In oHb.HybridShapes
+        For Each Hole In oHB.HybridShapes
             osel.Add Hole
             If TypeOf Hole Is HybridShapeCircleTritangent Then
                 Set oRef = oprt.CreateReferenceFromObject(Hole)
                 Set oCtr = HSF.AddNewPointCenter(oRef)
-                oHb.AppendHybridShape oCtr
+                oHB.AppendHybridShape oCtr
                 Set oRef = oprt.CreateReferenceFromObject(oCtr)
                 oprt.Update
                 Set pt = HSF.AddNewPointDatum(oRef): pt.Name = "pt_" & i
-                oHb.AppendHybridShape pt
+                oHB.AppendHybridShape pt
                 osel.Add oCtr
                 i = i + 1
               Else
@@ -67,7 +67,7 @@ Dim iSel: Set iSel = Nothing
      
      CATIA.RefreshDisplay = True
      Set osel = Nothing
-     Set iSel = Nothing
+     Set isel = Nothing
 End Sub
 
 

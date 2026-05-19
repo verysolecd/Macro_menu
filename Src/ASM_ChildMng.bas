@@ -62,16 +62,16 @@ ErrorHandler:
 End Sub
 Sub DeleteChildren()
     Dim osel: Set osel = CATIA.ActiveDocument.Selection: osel.Clear
-    Dim imsg, filter(0), iSel
+    Dim imsg, filter(0), isel
     imsg = "请选择父集": filter(0) = "Product"
-    Set iSel = KCL.SelectItem(imsg, filter)
-    If iSel Is Nothing Then Exit Sub
+    Set isel = KCL.SelectItem(imsg, filter)
+    If isel Is Nothing Then Exit Sub
     Dim prd
-    For Each prd In iSel.Products
+    For Each prd In isel.Products
       osel.Add prd
     Next
       Dim BTN, bTitle, bResult
-      imsg = "将删除" & iSel.partNumber & iSel.Name & "下的所有子产品，您确认吗"
+      imsg = "将删除" & isel.partNumber & isel.Name & "下的所有子产品，您确认吗"
       BTN = vbYesNo + vbExclamation
       bResult = MsgBox(imsg, BTN, "bTitle")  ' Yes(6),No(7),cancel(2)
            Select Case bResult

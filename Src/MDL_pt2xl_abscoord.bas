@@ -46,15 +46,15 @@ oWD.Show
 End Sub
 Function getHB()
     Dim imsg: imsg = "请选择点所在的几何图形集"
-       Dim oHb
-       Set oHb = KCL.SelectItem(imsg, "HybridBody")
-        Set getHB = oHb
+       Dim oHB
+       Set oHB = KCL.SelectItem(imsg, "HybridBody")
+        Set getHB = oHB
 End Function
 
-Sub pt2xl(oHb)
-    If Not oHb Is Nothing Then
+Sub pt2xl(oHB)
+    If Not oHB Is Nothing Then
         Dim i, irow, ct
-        Set oshapes = oHb.HybridShapes
+        Set oshapes = oHB.HybridShapes
         ct = oshapes.count
         ReDim arr(0 To ct, 0 To 4)
         irow = 0  '获得表头
@@ -71,7 +71,7 @@ Sub pt2xl(oHb)
             str = HSF.GetGeometricalFeatureType(oPt)
             If str = 1 Then
                Dim fakept:  Set fakept = HSF.AddNewPointCoordWithReference(0, 0, 0, oPt)
-                                oHb.AppendHybridShape fakept
+                                oHB.AppendHybridShape fakept
                                 mDoc.part.Update
                fakept.GetCoordinates fincoord
                If needtrans Then

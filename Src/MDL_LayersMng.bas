@@ -70,7 +70,7 @@ If ly <> "None" Then
        Select Case bResult
            Case 2: Exit Sub '===选择“取消”====
            Case 7:  '===选择“否”====
-                ipt = KCL.GetInput("请输入你想显示的图层，逗号分割")
+                ipt = KCL.getuserInput("请输入你想显示的图层，逗号分割")
                 If VarType(ipt) = vbString Then
                     ipt = VBA.LCase(ipt)
                     ipt = Split(ipt, ",") '过滤器转数组

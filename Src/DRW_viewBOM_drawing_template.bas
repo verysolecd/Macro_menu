@@ -1,6 +1,6 @@
 Attribute VB_Name = "DRW_viewBOM_drawing_template"
 Private Const mdlname As String = "DRW_viewBOM_drawing_template"
-Sub main()
+Sub Main()
     CATIA.RefreshDisplay = False
     On Error Resume Next
    fmt = Array("Number", "Part Number", "Quantity", "Nomenclature", "Definition", "Material", "Product Description")

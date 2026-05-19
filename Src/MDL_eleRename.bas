@@ -28,6 +28,7 @@ Private m_sel         As Selection      ' 选择集对象
   '  If Not KCL.existWkPrt(m_Doc, m_workPrtDoc, m_prt, m_sel) Then Exit Sub
 Private Const m_mdlname As String = "MDL_eleRename" ' UI引擎名称
 
+Private Const mdlname As String = "MDL_eleRename"
 Sub eleRename()
     If Not KCL.existWkPrt(m_Doc, m_workPrtDoc, m_prt, m_sel) Then Exit Sub
     Dim oWD As Object: Set oWD = KCL.new_spWD(m_mdlname, 1): oWD.Show
@@ -67,11 +68,11 @@ End Sub
 ' =======：线框/几何图形集（HybridBody）重命名 ====
 Private Sub RenameHybridShapes()
     Dim filter: filter = "HybridBody"
-    Dim oHb As Object: Set oHb = KCL.SelectItem("请选择需要重命名元素的几何图形集", filter)
-    If oHb Is Nothing Then Exit Sub
+    Dim oHB As Object: Set oHB = KCL.SelectItem("请选择需要重命名元素的几何图形集", filter)
+    If oHB Is Nothing Then Exit Sub
     ' 2. 按类型分类重命名
     Dim HSF As HybridShapeFactory: Set HSF = m_prt.HybridShapeFactory
-    Dim oshapes As HybridShapes: Set oshapes = oHb.HybridShapes
+    Dim oshapes As HybridShapes: Set oshapes = oHB.HybridShapes
     Dim ct As Variant: ct = Array(0, 0, 0, 0, 0, 0, 0, 0)
     Dim oWF As Object, i As Integer
     For i = 1 To oshapes.count

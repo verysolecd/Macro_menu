@@ -34,7 +34,7 @@ Attribute VB_Name = "ASM_NewBH"
 Private prj
 Private Const mdlname As String = "ASM_NewBH"
 Sub NewBH()
-    prj = KCL.GetInput("请输入项目名称"): If prj = "" Then Exit Sub
+    prj = KCL.getuserInput("请输入项目名称"): If prj = "" Then Exit Sub
     Dim Tree As Object: Set Tree = ParsePn(KCL.getDecCode("ASM_NewBH"))
     Dim PStack As Object: Set PStack = KCL.InitDic
     Dim k, oPrd As Object, ref As Object, fast As Object

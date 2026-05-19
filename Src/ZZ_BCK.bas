@@ -55,7 +55,7 @@ End Sub
 
 ''==Í¼Ö½Ò³Ãæ=============================
 
-Private Sub main()
+Private Sub Main()
 CATIA.RefreshDisplay = False
     Set shts = CATIA.ActiveDocument.sheets
       Set osht = Nothing

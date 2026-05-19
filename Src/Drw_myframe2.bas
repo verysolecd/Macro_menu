@@ -483,13 +483,13 @@ Dim Point
   Set Point = CreateLine.EndPoint 'Create the start point
   Point.Name = iName & "_end"
 End Function
-Function CreateText(iValue, iX, iY, iName)
-  Set CreateText = Texts.Add(iValue, iX, iY)
+Function CreateText(ivalue, iX, iY, iName)
+  Set CreateText = Texts.Add(ivalue, iX, iY)
   CreateText.Name = iName
   CreateText.AnchorPosition = catMiddleCenter
 End Function
-Function CreateTextAF(iValue, iX, iY, iName, iAnchorPosition, iFontSize)
-  Set CreateTextAF = Texts.Add(iValue, iX, iY)
+Function CreateTextAF(ivalue, iX, iY, iName, iAnchorPosition, iFontSize)
+  Set CreateTextAF = Texts.Add(ivalue, iX, iY)
   CreateTextAF.Name = iName
   CreateTextAF.AnchorPosition = iAnchorPosition
   CreateTextAF.SetFontSize 0, 0, iFontSize

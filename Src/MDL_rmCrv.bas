@@ -10,6 +10,7 @@ Attribute VB_Name = "MDL_rmCrv"
 Private Const TYPE_CURVE As Long = 3
 Private Const TYPE_SWEEP As Long = 7
 
+Private Const mdlname As String = "MDL_rmCrv"
 Sub rmCrv()
         If Not CanExecute("Productdocument,PartDocument") Then Exit Sub
     On Error Resume Next

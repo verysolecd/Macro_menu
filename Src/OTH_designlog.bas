@@ -16,7 +16,7 @@ Sub designlog()
     Dim tm: tm = KCL.timestamp("i")
     Dim imsg
      imsg = "请简短描述本次更新的设计内容"
-        str1 = str1 & vbCrLf & KCL.GetInput(imsg)
+        str1 = str1 & vbCrLf & KCL.getuserInput(imsg)
         rootPrd.DescriptionRef = str1
 End Sub
 

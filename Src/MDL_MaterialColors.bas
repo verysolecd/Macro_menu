@@ -11,7 +11,7 @@ Attribute VB_Name = "MDL_MaterialColors"
 ' %UI Label  lb_steel ----------
 ' %UI Button btn_mild 软钢(<210)    #ADD8E6
 ' %UI Button btn_hss 高强钢(210-340)  #00BFFF
-' %UI Button btn_ahss 先进高强(340-590)  #FFFF00
+' %UI Button btn_ahss 先进高强(340-590)  #FFFF80
 ' %UI Button btn_uhss 超高强(590-980) #FFA500
 ' %UI Button btn_Gpa Gpa钢 (980-1200) #ff0033
 ' %UI Button btn_HF 热成型 (>1200) #B22222
@@ -20,8 +20,10 @@ Attribute VB_Name = "MDL_MaterialColors"
 ' %UI Button btn_Alu2 铝合金(180~240)  #8FBC8F
 ' %UI Button btn_Alu3 铝合金(>240) #228B22
 ' %UI Button btn_Fas 紧固件      #A52A2A
-' %UI Button btn_glue 胶水 #C8A2C8
+' %UI Button btn_glue 胶水 #FF00FF
 ' %UI Label bl_steel ----------
+' %UI Button btn_blue 蓝色 #0000FF
+
 
 '颜色定义
 '≤210MPa       浅蓝色    MS=Array(173,216,230)  #ADD8E6
@@ -35,6 +37,78 @@ Attribute VB_Name = "MDL_MaterialColors"
 '≥280MPa       深绿色    Alu2=Array(34,139,34)  #228B22
 ' 紧固件       棕色      Fas=Array(165, 42, 42)     #A52A2A
 'Glue          淡紫色    Glue=Arrary(200,160,200)  #C8A2C8
+
+
+
+
+'  catia的basic颜色对应表
+
+'序号    颜色名称 (中文 + 英文)  HEX 色值    RGB 数值
+'基础标准纯色
+'1   黑色 Black  #000000 0,0,0
+'2   白色 White  #FFFFFF 255,255,255
+'3   红色 Red    #FF0000 255,0,0
+'4   黄色 Yellow #FFFF00 255,255,0
+'5   绿色 Green  #00FF00 0,255,0
+'6   蓝色 Blue   #0000FF 0,0,255
+'7   青色 Cyan   #00FFFF 0,255,255
+'8   品红色 Magenta  #FF00FF 255,0,255
+'9   橙色 Orange #FF8000 255,128,0
+'10  深绿色 Dark Green   #008000 0,128,0
+'11  深蓝色 Dark Blue    #0000A0 0,0,160
+'12  紫色 Purple #800080 128,0,128
+'13  紫罗兰色 Violet #8000FF 128,0,255
+'14  酒红色 Burgundy #800000 128,0,0
+'浅调常用色
+'15  淡黄色 Pale Yellow  #FFFF80 255,255,128
+'16  淡绿色 Pale Green   #80FF80 128,255,128
+'17  淡蓝色 Pale Blue    #8080FF 128,128,255
+'18  浅紫色 Light Purple #FF0080 255,0,128
+'19  春绿色 Spring Green #00FF80 0,255,128
+'20  黄绿色 Chartreuse   #80FF00 128,255,0
+'21  青绿色 Blue Green   #00FF40 0,255,64
+'22  碧绿色 Aquamarine   #008040 0,128,64
+'23  水鸭青 Teal #008080 0,128,128
+'24  宝蓝色 Royal Blue   #0080C0 0,128,192
+'25  道奇蓝 Dodger Blue  #0080FF 0,128,255
+'26  深岩蓝 Dark Slate Blue  #8080C0 128,128,192
+'27  深岩灰 Dark Slate Grey  #80FFFF 128,255,255
+'28  亮粉色 Hot Pink #FF80C0 255,128,192
+'29  兰花紫 Orchid   #FF80FF 255,128,255
+'30  粉橙色 Pink Orange  #FF8040 255,128,64
+'31  鲜肉色 Salmon   #FF8080 255,128,128
+'32  梅子色 Plum #800040 128,0,64
+'33  栗色 Maroon #804040 128,64,64
+'34  蓝灰色 Blue Grey    #333366 51,51,102
+'35  28% 灰色 Grey-28%   #C1C4C0 193,196,192
+'小众特殊杂色
+'36  沙黄色 Sandy Yellow #FFBE47 255,190,71
+'37  金黄色 Golden Yellow    #FABE47 250,190,71
+'38  橙肉色 Orange Salmon    #F2A257 242,162,87
+'39  粉肉色 Pink Salmon  #EA8466 234,132,102
+'40  浅淡紫色 Light Lavender #C4B3D1 196,179,209
+'41  深淡紫色 Dark Lavender  #9993BF 153,147,191
+'42  岩蓝色 Slate Blue   #83AAD6 131,170,214
+'43  天蓝色 Sky Blue #81C0E8 129,192,232
+'44  海绿色 Sea Green    #94C9BF 148,201,191
+'45  浅海绿 Light Sea Green  #AED19B 174,209,155
+'46  浅卡其绿 Light Khaki Green  #BFC990 191,205,144
+'47  深灰绿 Dark Grey Green  #7EA297 126,162,151
+'48  沙棕色 Sandy Brown  #D3B27D 211,178,125
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 '------------------------------------------
 Option Explicit

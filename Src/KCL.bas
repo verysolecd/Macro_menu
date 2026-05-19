@@ -711,13 +711,13 @@ Function ReadFile(ByVal path$) As Variant
     End With
     On Error GoTo 0
 End Function
-Public Function GetInput(msg) As String
+Public Function getuserInput(msg) As String
     Dim UserInput As String
     UserInput = InputBox(msg, "输入提示")
     If UserInput = "" Or UserInput = "0" Then
-        GetInput = ""
+        getuserInput = ""
     Else
-        GetInput = UserInput
+        getuserInput = UserInput
     End If
 End Function
 ' 检查字符串中是否包含指定关键字
@@ -1230,6 +1230,35 @@ Public Function CATquick(ByVal Quick As Boolean, Optional ByVal updateCap As Boo
     On Error GoTo 0
 End Function
 
+' 获取测量工具
+Public Function GetMeasurable(ByVal itm As Object) As Object
+    Set GetMeasurable = Nothing
+    If Not itm Is Nothing Then
+        On Error Resume Next
+        Dim spa As Object: Set spa = CATIA.ActiveDocument.GetWorkbench("SPAWorkbench")
+        Set GetMeasurable = spa.GetMeasurable(itm)
+        On Error GoTo 0
+    End If
+End Function
 
+' 获取长度
+Public Function getlength(ByVal itm As Object) As Double
+    getlength = 0
+    Dim meas As Object: Set meas = GetMeasurable(itm)
+    If Not meas Is Nothing Then getlength = meas.Length
+End Function
 
+Public Sub CatiaFreeze(Optional ByVal ison As Boolean = True)
+     If ison = True Then
+        CATIA.DisplayFileAlerts = False
+        CATIA.RefreshDisplay = False
+        CATIA.HSOSynchronized = False
+
+     Else
+        CATIA.DisplayFileAlerts = True
+        CATIA.RefreshDisplay = True
+        CATIA.HSOSynchronized = True
+        CATIA.ActiveWindow.ActiveViewer.Update
+    End If
+End Sub
 

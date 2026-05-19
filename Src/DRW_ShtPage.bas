@@ -1,6 +1,6 @@
 Attribute VB_Name = "DRW_ShtPage"
 Private Const mdlname As String = "DRW_ShtPage"
-Sub main()
+Sub Main()
     CATIA.RefreshDisplay = False
     Set shts = CATIA.ActiveDocument.sheets
     Set osht = Nothing

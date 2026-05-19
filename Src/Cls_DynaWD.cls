@@ -74,6 +74,7 @@ Private Const TAG_PJTPATH = "pjt_path"
 Private Const TAG_MDLNAME = "mdl_name"
 Private Const TAG_PASS_BTN = "springwdBTN"
 
+Private Const mdlname As String = "Cls_DynaWD"
 Private Sub Class_Initialize()
     Set mCtrlDefs = P_Initlst()
     Set mEventCol = New Collection

@@ -8,6 +8,7 @@ Private m_Doc         As Document       ' 当前激活文档
 Private m_workPrtDoc   As PartDocument   ' 当前激活的零件文档
 Private m_prt         As part           ' 当前激活的Part对象
 Private m_sel         As Selection      ' 选择集对象
+Private Const mdlname As String = "MDL_addPlnSKT"
 Sub addPlnSKT()
     If Not KCL.existWkPrt(m_Doc, m_workPrtDoc, m_prt, m_sel) Then Exit Sub
     Dim ox As Double, oy As Double, oz As Double

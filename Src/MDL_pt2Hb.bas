@@ -17,20 +17,20 @@ Sub Copypointsfromset()
     If IsNothing(oprt) Then: MsgBox "No activated Part": Exit Sub
     Set HSF = oprt.HybridShapeFactory
     '======= 选择源几何图形集
-    Dim iSel: Set iSel = Nothing
+    Dim isel: Set isel = Nothing
     Dim imsg: imsg = "请选择一个几何图形集"
     Dim filter(0): filter(0) = "HybridBody"
     On Error Resume Next
-        Set iSel = KCL.SelectItem(imsg, filter)
+        Set isel = KCL.SelectItem(imsg, filter)
     On Error GoTo 0
-    If iSel Is Nothing Then MsgBox "操作取消": Exit Sub
+    If isel Is Nothing Then MsgBox "操作取消": Exit Sub
     Dim osel As Selection
     Set osel = CATIA.ActiveDocument.Selection
     Dim oTempHb As HybridBody
     Set oTempHb = oprt.HybridBodies.Add()
     oTempHb.Name = "_temp"
     osel.Clear
-    osel.Add iSel
+    osel.Add isel
     osel.Copy                          ' 复制整个源图形集
 
     osel.Clear
@@ -83,7 +83,7 @@ Sub Copypointsfromset()
 '    End If
 '    osel.Clear
     MsgBox "完成！共复制 " & (i - 1) & " 个点到 'extracted points' 图形集，符号已设为圆圈。"
-    Set iSel = Nothing
+    Set isel = Nothing
     Set osel = Nothing
     
 End Sub

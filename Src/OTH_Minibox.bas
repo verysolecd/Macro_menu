@@ -210,10 +210,8 @@ Private Function GetMimLength( _
     
     Dim pln As HybridShapePlaneEquation
     Set pln = CreatePlane(pt, axRef, Direction.X, Direction.Y, Direction.Z)
-    
     Dim spa As AnyObject
     Set spa = pt.Parent.GetWorkbench("SPAWorkbench")
-    
     GetMimLength = spa.GetMeasurable(bdyPt.CreateReferenceFromObject(body)) _
                       .GetMinimumDistance(pt.CreateReferenceFromObject(pln))
 End Function

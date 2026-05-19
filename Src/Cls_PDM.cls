@@ -448,22 +448,5 @@ On Error Resume Next
 On Error GoTo 0
 End Sub
 
-' 获取测量工具
-Public Function GetMeasurable(ByVal itm As Object) As Object
-    Set GetMeasurable = Nothing
-    If Not itm Is Nothing Then
-        On Error Resume Next
-        Dim spa As Object: Set spa = CATIA.ActiveDocument.GetWorkbench("SPAWorkbench")
-        Set GetMeasurable = spa.GetMeasurable(itm)
-        On Error GoTo 0
-    End If
-End Function
-
-' 获取长度
-Public Function getlength(ByVal itm As Object) As Double
-    getlength = 0
-    Dim meas As Object: Set meas = GetMeasurable(itm)
-    If Not meas Is Nothing Then getlength = meas.Length
-End Function
 
 
