@@ -1,93 +1,121 @@
 Attribute VB_Name = "MDL_BdyDel"
-'%Title 现在要删除实体,那我问你?
+'Attribute VB_Name = "m20_newgeotree"
+'{GP:4}
+'{Ep:delwithBody}
+'{Caption:实体处理}
+'{ControlTipText:各种实体处理}
+'{BackColor: }
+
+'%Title 实体操作配置?
 '------控件清单--------------------------------------------------
 '控件格式为 %UI <ControlType> <ControlName> <Caption/Text>
 ' %UI Label lbL_jpzcs  键盘造车手出品
-' %UI CheckBox chk_vol  启用按体积筛选
-' %UI CheckBox  chk_area  启用按面积筛选
-' %UI TextBox   txt_value  若启用筛选，请输入值(#0.001#)
+' %UI CheckBox chk_bysel  按选择筛选(同体积)
+' %UI Button btn_copy 实体复制
 ' %UI Button btn_COG  创建重心
-' %UI Button btn_sel 选择实体
-' %UI Button btn_del  删除实体
+' %UI Button btn_delbysel  删除实体(同体积)
+' %UI Button btn_delrecur 删除实体(含子级)
 ' %UI Button btncancel  取消
 
 Private m_Doc        As Document
 Private m_workPrtDoc As PartDocument
 Private m_prt        As part
 Private m_sel        As Selection
-Private m_HSF        As HybridShapeFactory  ' 模块级共享，避免重复获取
+Private m_HSF  As HybridShapeFactory
 Private m_spa
 Private m_Bds
+Private Const m_defvol = 998877.99
 Private m_coord(2)
-Private Const iv = 99999999
 Private Const type_vol = "volume"
-Private Const type_area = "area"
-
 Private Const mdlname As String = "MDL_BdyDel"
-Sub Main()
+Sub delwithBody()
 If Not initVar Then Exit Sub
 Dim typeFilter, ifilter
-
 Set mWD = New Cls_DynaWD
-    mWD.getUIcfg mdlname
-    mWD.Show
-mv = iv
-mv = mWD.Results("txt_value")
-If mWD.Results("chk_area") Then typeFilter = type_area
-If mWD.Results("chk_vol") Then typeFilter = type_vol
-
+    mWD.getUIcfgfromModDEC mdlname
+    mWD.ShowToolbar mdlname
+   typeFilter = ""
+        If mWD.Results("chk_bysel") Then
+            typeFilter = type_vol
+            selitmValue = Round(getSelmeas.Volume * 1000000000, 4)
+        End If
 Select Case mWD.btnClicked
     Case "btn_COG"
-       Set mlst = getmainlst
-       Set picklst = getpicklst(mlst, typeFilter, mv)
-       Call CreateCOGby(picklst)
-    Case "btn_sel"
-        Delbdysel_and_sub
-    Case "btn_del"
-        Set mlst = getmainlst
-        Set picklst = getpicklst(mlst, typeFilter, mv)
-'       Call delby(mlst, typeFilter, mv)
-        
+        Set mlst = getBdyLst
+        Set picklst = getpicklst(mlst, typeFilter, selitmValue)
+        Call CreateCOGby(picklst)
+    Case "btn_copy"
+        Set mlst = getBdyLst
+        Set picklst = getpicklst(mlst, typeFilter, selitmValue)
+        m_sel.Clear
+        For Each itm In picklst
+            m_sel.Add itm
+        Next
+        m_sel.Copy
+    Case "btn_delbysel"
+        typeFilter = type_vol
+        selitmValue = Round(getSelmeas.Volume * 1000000000, 4)
+        Set mlst = getBdyLst
+        Set picklst = getpicklst(mlst, typeFilter, selitmValue)
+        delinlst picklst
+    Case "btn_delrecur"
+            Dim bdysel:  Set bdysel = Nothing
+            If m_sel.Count2 = 1 Then
+                Set bdysel = m_sel.Item2(1).Value
+            Else
+                Set bdysel = KCL.SelectItem("请选择实体", "Body")
+            End If
+            If bdysel Is Nothing Then Exit Sub
+            Dim del_lst: Set del_lst = Nothing
+            Set del_lst = recurBD2lst(bdysel)
+            delinlst del_lst
 End Select
 
 End Sub
-Function getmainlst()
-    Set getmainlst = KCL.Initlst
+Private Function getSelmeas()
+      Set getSelmeas = Nothing
+      Dim bdysel:  Set bdysel = Nothing
+        If m_sel.Count2 = 1 Then
+            Set bdysel = m_sel.Item2(1).Value
+        Else
+            Set bdysel = KCL.SelectItem("请选择实体", "Body")
+        End If
+        If bdysel Is Nothing Then Exit Function
+    Set getSelmeas = KCL.GetMeas(bdysel)
+End Function
+Function getBdyLst()
+    Set getBdyLst = KCL.Initlst
         For i = 1 To m_Bds.count
             Set itm = m_Bds.item(i)
-            If itm.Shapes.count <> 0 And itm.InBooleanOperation = False Then getmainlst.Add itm
+            If itm.Shapes.count <> 0 And itm.InBooleanOperation = False Then getBdyLst.Add itm
         Next
 End Function
-Function getpicklst(mlst, itype, ivalue)
-    Set getpicklst = Nothing
-
-    Dim pt
-    Set pt = Nothing
-    Set picklst = KCL.Initlst
+Function getpicklst(mlst, Optional ByVal itype As String, Optional ByVal flValue As Double = 0)
+        Set getpicklst = Nothing
+        Set picklst = KCL.Initlst
+    Dim omeas, itmValue, itm
     For Each itm In mlst
-                Dim oSpa, oMeas
-                Set oSpa = m_Doc.GetWorkbench("SPAWorkbench")
-                Dim ref: Set ref = m_prt.CreateReferenceFromObject(itm)
-                Set oMeas = oSpa.GetMeasurable(ref)
-                itmvalue = 0
-            Select Case itype
-                Case type_vol
-                    itmvalue = Round(oMeas.Volume * 1000000000, 3)
-                Case type_area
-                    itmvalue = Round(oMeas.Area * 1000000000, 3)
-            End Select
-                If itmvalue <> 0 Then
-                    If Abs(itmvalue - ivalue) <= 0.003 Then picklst.Add itm
-                Else
-                    picklst.Add itm
-                End If
-    Next itm
+          If itm.Shapes.count <> 0 And itm.InBooleanOperation = False Then
+                    itmValue = 0
+                 Select Case itype
+                    Case type_vol
+                        Set omeas = KCL.GetMeas(itm)
+                        itmValue = Round(omeas.Volume * 1000000000, 4)
+                    Case Else
+                        itmValue = 0
+                  End Select
+               If itmValue <> 0 Then
+                        If Abs(itmValue - flValue) <= 0.0003 Then picklst.Add itm
+               Else
+                        picklst.Add itm
+               End If
+         End If
+     Next
     Set getpicklst = picklst
 End Function
 Sub CreateCOGby(lst)
-        Set m_hB = m_prt.HybridBodies.Add()
+    Set m_hB = m_prt.HybridBodies.Add()
     m_hB.Name = "cog_bodies"
-
     For Each itm In lst
         If GetBodyCOG(itm, m_coord) Then Set pt = CreatePt(m_coord)
         If Not KCL.IsNothing(pt) Then m_hB.AppendHybridShape pt
@@ -104,15 +132,12 @@ End Sub
 Private Function GetBodyCOG(ByVal oBody As body, ByRef Arrcord()) As Boolean
     GetBodyCOG = False
     On Error GoTo ErrHandler
-    Dim oSpa, oMeasurable
-    Set oSpa = m_workPrtDoc.GetWorkbench("SPAWorkbench")
-    Set ref = m_prt.CreateReferenceFromObject(oBody)
-    Set oMeasurable = oSpa.GetMeasurable(ref)
-    oMeasurable.GetCOG Arrcord()
+    Set omeas = KCL.GetMeas(oBody)
+    omeas.GetCOG Arrcord()
     GetBodyCOG = True
     Exit Function
 ErrHandler:
-    MsgBox "GetBodyCOG失败：" & Err.Description, vbExclamation
+    MsgBox "GetBodyCOG失败：" & Err.Description, vbExclamation: Err.Clear
 End Function
 ' ════════════════════════════════════════════
 '  单元函数 2：在指定几何集中按坐标创建点
@@ -144,15 +169,7 @@ ErrHandler:
 Exit Function
 
 End Function
-Sub Delbdysel_and_sub()
-    Set m_HSF = m_prt.HybridShapeFactory
-    Set m_Bds = m_prt.bodies
-    Set itm = KCL.SelectItem("请选择要删除的body", "Body")
-    Dim del_lst
-    Set del_lst = Nothing
-    Set del_lst = recurBD2lst(itm)
-    delinlst del_lst
-End Sub
+
 Function recurBD2lst(ByVal bd As body, Optional ByRef lst = Nothing)
    If lst Is Nothing Then Set lst = KCL.Initlst
    Dim ibd: Set ibd = bd
@@ -172,10 +189,13 @@ End Function
 Sub delinlst(lst)
         Dim isel: Set isel = CATIA.ActiveDocument.Selection: isel.Clear
         KCL.CatiaFreeze
+        On Error Resume Next
             For Each itm In lst
                 isel.Add itm
             Next
             isel.Delete: isel.Clear
+          Err.Clear
+        On Error GoTo 0
     KCL.CatiaFreeze False
 End Sub
 Function initVar()

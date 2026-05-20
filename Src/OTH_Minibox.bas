@@ -204,10 +204,8 @@ Private Function GetMimLength( _
     ByVal axRef As Reference, _
     Direction As mCoord) _
     As Double
-    
     Dim bdyPt As part
     Set bdyPt = KCL.GetParent_Of_T(body, "Part")
-    
     Dim pln As HybridShapePlaneEquation
     Set pln = CreatePlane(pt, axRef, Direction.X, Direction.Y, Direction.Z)
     Dim spa As AnyObject

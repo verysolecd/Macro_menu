@@ -147,7 +147,7 @@ Sub MaterialPainter()
     If IsNothing(a_Prt) Then: MsgBox "No part found": Exit Sub
     Set mWD = New Cls_DynaWD
     initMaps mdlname  '初始化按钮和颜色map
-    mWD.PassButtonName = True ' <--- The Magic Switch
+    mWD.PassBtnName = True ' <--- The Magic Switch
     mWD.ShowToolbar mdlname, , funcMap   ' 4. Show Toolbar (Modeless) — modMap 自动构建, 仅传自定义 macMap
 End Sub
 Sub Clickhandler(ByVal btnName As String)

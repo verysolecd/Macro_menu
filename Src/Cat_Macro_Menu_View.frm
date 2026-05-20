@@ -59,7 +59,7 @@ Sub Set_FormInfo(ByVal InfoLst As Object, _
     Dim key As Long, KeyStr As Variant, Pg As Page, pName As String
     Dim BtnInfos As Object, info As Variant
     Dim Btns As Object: Set Btns = KCL.Initlst()
-    Dim BTN As MSForms.CommandButton
+    Dim btn As MSForms.CommandButton
     Dim BtnEvt As Cls_allBTNEVT
     For Each KeyStr In InfoLst
             key = CLng(KeyStr)
@@ -68,9 +68,9 @@ Sub Set_FormInfo(ByVal InfoLst As Object, _
             Set Pg = Get_Page(Pgs, pName)
             Set BtnInfos = InfoLst(KeyStr)
         For Each info In BtnInfos
-            Set BTN = Init_Button(Pg.Controls, key, info)
+            Set btn = Init_Button(Pg.Controls, key, info)
             Set BtnEvt = New Cls_allBTNEVT
-            BtnEvt.set_ButtonEvent BTN, info, Me, CloseType
+            BtnEvt.set_ButtonEvent btn, info, Me, CloseType
             Btns.Add BtnEvt
         Next
 Continue:
@@ -147,18 +147,18 @@ End Sub
 Private Function Init_Button(ByVal Ctls As Controls, _
                              ByVal idx As Long, _
                              ByVal BtnInfo As Variant) As MSForms.CommandButton
-    Dim BTN As MSForms.CommandButton:  Set BTN = Ctls.Add("Forms.CommandButton.1", idx, True)
+    Dim btn As MSForms.CommandButton:  Set btn = Ctls.Add("Forms.CommandButton.1", idx, True)
     Dim Pty As Variant
     For Each Pty In BtnInfo.keys
-        Call Try_SetProperty(BTN, Pty, BtnInfo.item(Pty))
+        Call Try_SetProperty(btn, Pty, BtnInfo.item(Pty))
     Next
-    With BTN
+    With btn
         .Top = (Ctls.count - 1) * Btn_H - 1: .Height = Btn_H
         .Left = FrmMargin(2): .Width = Btn_W
         .Font.Name = "Arial": .Font.Size = BTN_frontsize
 '        .BackColor = RGB(89, 220, 220)  ' …Ë÷√∞¥≈•±≥æ∞—’…´
     End With
-    Set Init_Button = BTN
+    Set Init_Button = btn
 End Function
 ' ≥¢ ‘…Ë÷√øÿº˛ Ù–‘
 Private Sub Try_SetProperty(ByVal ctrl As Object, _

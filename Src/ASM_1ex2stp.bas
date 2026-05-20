@@ -27,7 +27,7 @@ Sub ex2stp_zip()
     Dim oDoc: Set oDoc = CATIA.ActiveDocument
     Dim outputpath As String: outputpath = ""
     Set mWD = New Cls_DynaWD
-    mWD.getUIcfg mdlname
+    mWD.getUIcfgfromModDEC mdlname
     mWD.Show
     Select Case mWD.btnClicked
     Case "btnOK"

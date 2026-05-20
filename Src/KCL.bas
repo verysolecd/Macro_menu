@@ -1080,14 +1080,7 @@ Public Function getbf1stproc(modName)
         getbf1stproc = codemod.lines(1, startline) ' 获取到第一个函数的所有代码行
 End Function
 
-Function getmeas(itm)
-    Set getmeas = Nothing
-   If Not itm Is Nothing Then
-       Dim oDoc: Set oDoc = CATIA.ActiveDocument
-      Dim spa:  Set spa = oDoc.GetWorkbench("SPAWorkbench")
-        Set getmeas = spa.GetMeasurable(itm)
-    End If
-End Function
+
 
 ' ═══ 新的统一UI引擎工厂函数 ═══
 ' 用法与 newFrm 平行，返回 Cls_DynaWD 实例
@@ -1098,7 +1091,7 @@ End Function
 Public Function new_spWD(Optional ByVal modName As String = "", Optional ByVal isVertical = False)
     Dim oWD As Cls_DynaWD: Set oWD = New Cls_DynaWD
     If modName <> "" Then
-        oWD.getUIcfg modName
+        oWD.getUIcfgfromModDEC modName
     End If
     If isVertical Then oWD.isVertical = True
     Set new_spWD = oWD
@@ -1231,12 +1224,13 @@ Public Function CATquick(ByVal Quick As Boolean, Optional ByVal updateCap As Boo
 End Function
 
 ' 获取测量工具
-Public Function GetMeasurable(ByVal itm As Object) As Object
-    Set GetMeasurable = Nothing
+Public Function GetMeas(ByVal itm As Object) As Object
+    Set GetMeas = Nothing
     If Not itm Is Nothing Then
         On Error Resume Next
         Dim spa As Object: Set spa = CATIA.ActiveDocument.GetWorkbench("SPAWorkbench")
-        Set GetMeasurable = spa.GetMeasurable(itm)
+        Dim ref: Set ref = GetParent_Of_T(itm, "Part").CreateReferenceFromObject(itm)
+        Set GetMeas = spa.GetMeasurable(ref)
         On Error GoTo 0
     End If
 End Function
@@ -1244,7 +1238,7 @@ End Function
 ' 获取长度
 Public Function getlength(ByVal itm As Object) As Double
     getlength = 0
-    Dim meas As Object: Set meas = GetMeasurable(itm)
+    Dim meas As Object: Set meas = GetMeas(itm)
     If Not meas Is Nothing Then getlength = meas.Length
 End Function
 

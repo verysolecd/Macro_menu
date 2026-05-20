@@ -17,7 +17,7 @@ Attribute VB_Exposed = False
 '===========================================================================
 
 ' 2种数据加载模式:
-'   1. getUIcfg  —— 解析模块头部 %UI / %Title 注释 (二级弹窗)
+'   1. getUIcfgfromModDEC  —— 解析模块头部 %UI / %Title 注释 (二级弹窗)
 '   2. AddUIElement        —— 纯代码手动追加控件定义 (扩展)
 ' 3种显示模式:
 '   Show       —— 模态/非模态弹窗 (替代 cls_dynaFrm.Show)
@@ -119,26 +119,28 @@ Public Property Let isVertical(ByVal val As Boolean)
     mIsVertical = val
 End Property
 ''设置是否向被调用宏传递按钮名称
-Public Property Let PassButtonName(ByVal val As Boolean)
+Public Property Let PassBtnName(ByVal val As Boolean)
     mPassBtn = val
 End Property
+''────────────────────────────────────────────────────────────────
 '  Section B: 数据加载 —— 三种入口
-'' 入口1: 从模块名称加载模块的-- %UI / %Title 注释等
-Public Sub getUIcfg(ByVal modName As String)
+''────────────────────────────────────────────────────────────────
+
+'' 入口1: 从模块名称加载模块的-- %UI / %Title 注释等获得控件配置字典
+Public Sub getUIcfgfromModDEC(ByVal modName As String)
     Dim rawCode As String
     rawCode = P_getbf1stproc(modName)
     If rawCode = "" Then Exit Sub
     mTitle = ExtractTitle(rawCode)
     Set mCtrlDefs = parseCtrldef(rawCode)
 End Sub
-''────────────────────────────────────────────────────────────────
-'' 入口3: 纯代码手动追加一个控件定义
-''        适合在运行时动态扩展UI，无需任何注释标签''
+
+'' 入口2: 纯代码手动添加以获得控件配置字典
 '' @param CtrlType  控件类型别名: Button/Label/TextBox/CheckBox
 '' @param CtrlName  控件唯一名称 (事件中使用此名做回调标识)
 '' @param Caption   显示文字
 '' @param HexColor  可选16进制色值 如 "#FF6600"
-''────────────────────────────────────────────────────────────────
+
 Public Sub AddUIElement(ByVal CtrlType As String, _
                         ByVal CtrlName As String, _
                         ByVal Caption As String, _
@@ -160,6 +162,7 @@ End Sub
 Public Sub Show(Optional ByVal isModal As FormShowConstants = vbModal, _
                 Optional ByVal ModuleMap As Object = Nothing, _
                 Optional ByVal MacroMap As Object = Nothing)
+                
     If mExecuted And isModal = vbModal Then Exit Sub
     If isModal = vbModal Then mExecuted = True
     If mCtrlDefs.count < 1 Then Exit Sub
@@ -191,21 +194,21 @@ Public Sub Show(Optional ByVal isModal As FormShowConstants = vbModal, _
 End Sub
 
 ''便捷方法: 显示为非模态工具栏 (等效于原 cls_dynaFrm.ShowToolbar)
-'' modMap/FunMap 可选:
+'' Map_btn2moddule/map_btn2clickHandler 可选:
 ''   不传 → 自动按约定构建: btnName→modName, btnName→"btnName_click"
 ''   传入 → 使用自定义映射 (如全部指向 Action_ClickHandler)
 Public Sub ShowToolbar(ByVal modName As String, _
-                       Optional ByVal modMap As Object = Nothing, _
-                       Optional ByVal FunMap As Object = Nothing)
-    getUIcfg modName
+                       Optional ByVal Map_btn2moddule As Object = Nothing, _
+                       Optional ByVal Map_btn2clickHandler As Object = Nothing)
+    getUIcfgfromModDEC modName
     Me.isVertical = True
-    If modMap Is Nothing Or FunMap Is Nothing Then  ' 未传映射时自动构建
+    If Map_btn2moddule Is Nothing Or Map_btn2clickHandler Is Nothing Then  ' 未传映射时自动构建
         Dim autoMdl As Object, autoFunc As Object
         BuildDefaultMaps modName, autoMdl, autoFunc
-        If modMap Is Nothing Then Set modMap = autoMdl
-        If FunMap Is Nothing Then Set FunMap = autoFunc
+        If Map_btn2moddule Is Nothing Then Set Map_btn2moddule = autoMdl
+        If Map_btn2clickHandler Is Nothing Then Set Map_btn2clickHandler = autoFunc
     End If
-    Show vbModeless, modMap, FunMap
+    Show vbModeless, Map_btn2moddule, Map_btn2clickHandler
 End Sub
 
 ''便捷方法: 显示信息弹窗 (等效于原 cls_dynaFrm.Alert)
@@ -215,6 +218,7 @@ Public Sub Alert(ByVal Content As String)
     mExecuted = False
     Show vbModal
 End Sub
+
 ' ═══════════════════════════════════════════════════════════════
 '  Section D: 结果回收 (Result Properties)
 ''获取所有控件的值 (文本框/复选框等) + btn_clicked
@@ -371,22 +375,22 @@ End Function
 '  Internal: 事件绑定
 ' ═══════════════════════════════════════════════════════════════
 ''为窗体中的所有按钮绑定事件处理
-Private Sub BindEvents(frm As Object, modMap As Object, FunMap As Object)
+Private Sub BindEvents(frm As Object, Map_btn2moddule As Object, Map_btn2clickHandler As Object)
     Dim ctl As Control, btnName As String
     Dim handler As Cls_allBTNEVT, mBTNinfo As Object
     Dim isScript As Boolean
-    isScript = (Not modMap Is Nothing) And (Not FunMap Is Nothing)
+    isScript = (Not Map_btn2moddule Is Nothing) And (Not Map_btn2clickHandler Is Nothing)
     Set mEventCol = New Collection
     For Each ctl In frm.Controls
         If TypeName(ctl) = "CommandButton" Then
             btnName = ctl.Name
             Set handler = New Cls_allBTNEVT
-            If isScript And Not modMap Is Nothing Then
-                If modMap.Exists(btnName) And FunMap.Exists(btnName) Then
+            If isScript And Not Map_btn2moddule Is Nothing Then
+                If Map_btn2moddule.Exists(btnName) And Map_btn2clickHandler.Exists(btnName) Then
                     Set mBTNinfo = P_InitDic()
                     mBTNinfo.Add TAG_PJTPATH, mPjtPath
-                    mBTNinfo.Add TAG_MDLNAME, modMap(btnName)
-                    mBTNinfo.Add TAG_ENTRYPNT, FunMap(btnName)
+                    mBTNinfo.Add TAG_MDLNAME, Map_btn2moddule(btnName)
+                    mBTNinfo.Add TAG_ENTRYPNT, Map_btn2clickHandler(btnName)
                     If mPassBtn Then mBTNinfo.Add TAG_PASS_BTN, True
                     handler.set_ButtonEvent ctl, mBTNinfo, frm, True
                 End If
@@ -409,7 +413,7 @@ Private Sub SetupAlertMode()
     Dim ctl As Control
     mWD.Tag = ""
     For Each ctl In mWD.Controls
-        If TypeName(ctl) = "CommandButton" Then
+        If TypeName(ctl) <> "TextBox" Then
             ctl.Visible = False
         ElseIf TypeName(ctl) = "TextBox" Then
             ctl.Value = mAlertMsg
@@ -458,22 +462,22 @@ End Sub
 ''────────────────────────────────────────────────────────────────
 '' 从已解析的 mCtrlDefs 自动构建按钮映射
 '' 等效于原 KCL.setBTNmdl + KCL.setBTNFunc,'' 默认约定:
-''   modMap: {btnName → modName}       (所有按钮属于同一模块)
-''   FunMap: {btnName → btnName_click}  (回调函数名 = 按钮名 + "_click")
+''   Map_btn2moddule: {btnName → modName}       (所有按钮属于同一模块)
+''   Map_btn2clickHandler : {btnName → btnName_click}  (回调函数名 = 按钮名 + "_click")
 ''────────────────────────────────────────────────────────────────
 Private Sub BuildDefaultMaps(ByVal modName As String, _
-                             ByRef outModMap As Object, _
-                             ByRef outFuncMap As Object)
-    Set outModMap = P_InitDic()
-    Set outFuncMap = P_InitDic()
+                             ByRef Map_btn2moddule As Object, _
+                             ByRef Map_btn2clickHandler As Object)
+    Set Map_btn2moddule = P_InitDic()
+    Set Map_btn2clickHandler = P_InitDic()
     Dim def As Object, btnName As String
     Dim i As Long
     For i = 0 To mCtrlDefs.count - 1
         Set def = mCtrlDefs(i)
         If def("Type") = "Forms.CommandButton.1" Then
             btnName = def("Name")
-            outModMap(btnName) = modName
-            outFuncMap(btnName) = btnName & "_click"
+            Map_btn2moddule(btnName) = modName  '{btnName → modName}       (所有按钮属于同一模块)
+            Map_btn2clickHandler(btnName) = btnName & "_click"
         End If
     Next
 End Sub
@@ -572,7 +576,7 @@ End Function
 '' oWD.ShowToolbar "模块名"      ' 非阻塞纵向工具栏，自动绑定 btnXxx_click
 '' oWD.Alert "错误内容"           ' 特殊阻塞提示框，含复制按钮
 '' ' 读取结果
-'' oWD.ClickedButton             ' 被点击的按钮 Name
+'' oWD.btnClicked             ' 被点击的按钮 Name
 '' oWD.IsCancelled               ' True = 未点击按钮（X 关闭）
 '' oWD.Results("控件Name")       ' TextBox/CheckBox 的输入值
 '
@@ -597,8 +601,8 @@ End Function
 '    ' vbModal：显示后阻塞，直到用户点击按钮或关闭窗口
 '    oWD.Show vbModal
 '
-'    ' 通过 ClickedButton 判断用户操作
-'    Select Case oWD.ClickedButton
+'    ' 通过 btnClicked 判断用户操作
+'    Select Case oWD.btnClicked
 '        Case "btn_ok":     MsgBox "用户点击了 [确认]"
 '        Case "btn_cancel": MsgBox "用户点击了 [取消]"
 '        Case Else:         MsgBox "用户直接关闭了窗口（IsCancelled = " & oWD.IsCancelled & "）"
@@ -638,7 +642,7 @@ End Function
 '    Set res = oWD.Results
 '
 '    Dim info As String
-'    info = "点击按钮: " & oWD.ClickedButton & vbLf
+'    info = "点击按钮: " & oWD.btnClicked & vbLf
 '
 '    ' 读取 TextBox 的值（键 = 控件 Name）
 '    If res.Exists("txt_name") Then
@@ -713,11 +717,11 @@ End Function
 '    oWD.AddUIElement "Button", "btn_drw", "新建工程图"
 '
 '    ' ModuleMap: 每个按钮名 → 所在模块名
-'    Dim modMap As Object
-'    Set modMap = CreateObject("Scripting.Dictionary")
-'    modMap("btn_prt") = "MDL_Part2Product"
-'    modMap("btn_asm") = "ASM_NewBH"
-'    modMap("btn_drw") = "DRW_ShtPage"
+'    Dim Map_btn2moddule As Object
+'    Set Map_btn2moddule = CreateObject("Scripting.Dictionary")
+'    Map_btn2moddule("btn_prt") = "MDL_Part2Product"
+'    Map_btn2moddule("btn_asm") = "ASM_NewBH"
+'    Map_btn2moddule("btn_drw") = "DRW_ShtPage"
 '
 '    ' MacroMap: 每个按钮名 → 实际调用的过程名（入口点）
 '    Dim macMap As Object
@@ -727,7 +731,7 @@ End Function
 '    macMap("btn_drw") = "CATMain"
 '
 '    ' vbModeless + 自定义映射
-'    oWD.Show vbModeless, modMap, macMap
+'    oWD.Show vbModeless, Map_btn2moddule, macMap
 '
 '    MsgBox "跨模块工具栏已弹出（非模态）"
 '    Set oWD = Nothing
@@ -762,7 +766,7 @@ End Function
 '    End If
 '
 '    ' 根据点击的按钮分支处理
-'    Select Case oWD.ClickedButton
+'    Select Case oWD.btnClicked
 '        Case "btnOK"
 '            Dim inputVal As String
 '            If oWD.Results.Exists("txt_size") Then
@@ -822,7 +826,7 @@ End Function
 '    step1.Show vbModal
 '
 '    Dim action As String
-'    action = step1.ClickedButton
+'    action = step1.btnClicked
 '    Set step1 = Nothing
 '
 '    If action = "btn_exit" Or action = "" Then Exit Sub
@@ -838,7 +842,7 @@ End Function
 '    step2.AddUIElement "Button", "btn_back", "返回"
 '    step2.Show vbModal
 '
-'    If step2.IsCancelled Or step2.ClickedButton = "btn_back" Then
+'    If step2.IsCancelled Or step2.btnClicked = "btn_back" Then
 '        MsgBox "已返回或取消"
 '    Else
 '        Dim cnt As String: cnt = ""
@@ -863,7 +867,7 @@ End Function
 '    oWD.Show vbModal
 '
 '    If Not oWD.IsCancelled Then
-'        MsgBox "点击了: " & oWD.ClickedButton
+'        MsgBox "点击了: " & oWD.btnClicked
 '    End If
 '    Set oWD = Nothing
 '
@@ -874,7 +878,7 @@ End Function
 '    oWD2.AddUIElement "Button", "btn_yes", "是"
 '    oWD2.AddUIElement "Button", "btn_no", "否"
 '    oWD2.Show vbModal
-'    MsgBox "结果: " & oWD2.ClickedButton
+'    MsgBox "结果: " & oWD2.btnClicked
 '    Set oWD2 = Nothing
 'End Sub
 '

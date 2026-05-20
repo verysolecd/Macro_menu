@@ -35,18 +35,18 @@ End Property
 Public Property Let ControlID(ByVal Value As String)
     mControlID = Value
 End Property
-Public Property Set ControlBTN(ByVal BTN As MSForms.CommandButton)
-    Set mBTN_RM = BTN
+Public Property Set ControlBTN(ByVal btn As MSForms.CommandButton)
+    Set mBTN_RM = btn
 End Property
 Public Property Set ResultDict(ByVal dict As Object)
     Set mResultDict = dict
 End Property
 ' For MLess / Script Mode
-Sub set_ButtonEvent(ByVal BTN As MSForms.CommandButton, _
+Sub set_ButtonEvent(ByVal btn As MSForms.CommandButton, _
                     ByVal BtnInfo As Object, _
                     ByVal ParentForm As Object, _
                     ByVal keepOpen As Boolean)
-        Set mBTN_SM = BTN
+        Set mBTN_SM = btn
         Set mInfo = BtnInfo
         Set mFrm_SM = ParentForm
         mKeepOpen = keepOpen
@@ -72,7 +72,7 @@ Private Sub mBTN_RM_Click()
     mFrm_RM.Hide
 End Sub
 
-' Handler for Script Mode (mBTN) 非模态按钮的处理
+' Handler for Script Mode (mBTN_SM) 非模态按钮的处理
 Private Sub mBTN_SM_click()
     If Not mKeepOpen Then
         If Not mFrm_SM Is Nothing Then Unload mFrm_SM
