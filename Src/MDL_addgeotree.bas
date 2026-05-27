@@ -17,7 +17,8 @@ Sub newgeo_Tree()
     Set og = colls.item("Geo_sheet")
     On Error GoTo 0
     Set og = colls.Add(): og.Name = "GEO_sheet"
-    crSkt og
+'    crSkt og
+    addPlnSKT
     Set colls = og.HybridBodies
     arr = Array("01_Profile", "02_Ribs", "03_Assy", "04_trim", "05_Pierce", "06_final part")
     For i = 0 To UBound(arr)

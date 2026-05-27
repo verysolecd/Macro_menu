@@ -123,11 +123,11 @@ Function TransAxi(acoor As Variant, axi1) As Variant
     For i = 0 To 2
         v(i) = acoor(i) - origin(i)
     Next
-    Dim Result(2)
-    Result(0) = v(0) * xDir(0) + v(1) * xDir(1) + v(2) * xDir(2)
-    Result(1) = v(0) * yDir(0) + v(1) * yDir(1) + v(2) * yDir(2)
-    Result(2) = v(0) * zDir(0) + v(1) * zDir(1) + v(2) * zDir(2)
-    TransAxi = Result
+    Dim result(2)
+    result(0) = v(0) * xDir(0) + v(1) * xDir(1) + v(2) * xDir(2)
+    result(1) = v(0) * yDir(0) + v(1) * yDir(1) + v(2) * yDir(2)
+    result(2) = v(0) * zDir(0) + v(1) * zDir(1) + v(2) * zDir(2)
+    TransAxi = result
 End Function
 
 

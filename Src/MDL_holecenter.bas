@@ -3,7 +3,7 @@ Attribute VB_Name = "MDL_holecenter"
 ' 获得识别特征下的所有孔中心
 '{GP:4}
 '{EP:Faceholecenter}
-'{Caption:孔中心点}
+'{Caption:获取all孔中心}
 '{ControlTipText: 提示选择面后后导出面上所有孔中心}
 '{BackColor: }
 

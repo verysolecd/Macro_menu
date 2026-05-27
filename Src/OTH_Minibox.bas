@@ -181,21 +181,21 @@ Private Function UpdateBox(CurrentBox As Box3D, NewBox As Box3D) As Box3D
         Exit Function
     End If
     
-    Dim Result As Box3D
-    Result = CurrentBox
+    Dim result As Box3D
+    result = CurrentBox
     
     ' Simplify comparison using Min/Max helpers
-    Result.Min.X = Min(Result.Min.X, NewBox.Min.X)
-    Result.Max.X = Max(Result.Max.X, NewBox.Max.X)
+    result.Min.X = Min(result.Min.X, NewBox.Min.X)
+    result.Max.X = Max(result.Max.X, NewBox.Max.X)
     
-    Result.Min.Y = Min(Result.Min.Y, NewBox.Min.Y)
-    Result.Max.Y = Max(Result.Max.Y, NewBox.Max.Y)
+    result.Min.Y = Min(result.Min.Y, NewBox.Min.Y)
+    result.Max.Y = Max(result.Max.Y, NewBox.Max.Y)
     
-    Result.Min.Z = Min(Result.Min.Z, NewBox.Min.Z)
-    Result.Max.Z = Max(Result.Max.Z, NewBox.Max.Z)
+    result.Min.Z = Min(result.Min.Z, NewBox.Min.Z)
+    result.Max.Z = Max(result.Max.Z, NewBox.Max.Z)
     
-    Result.IsValid = True
-    UpdateBox = Result
+    result.IsValid = True
+    UpdateBox = result
 End Function
 
 Private Function GetMimLength( _

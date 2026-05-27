@@ -1,5 +1,5 @@
-Attribute VB_Name = "MDL_LayersMng"
-'Attribute VB_Name = "MDL_LayersMng"
+Attribute VB_Name = "OTH_LayersMng"
+'Attribute VB_Name = "OTH_LayersMng"
 ' 获得识别特征下的所有孔中心
 '{GP:}
 '{EP:LayersMng}
@@ -7,7 +7,7 @@ Attribute VB_Name = "MDL_LayersMng"
 '{ControlTipText: 设置只显示当前图层，然后创建YZ向图纸}
 '{BackColor:12648447}
 Private i
-Private Const mdlname As String = "MDL_LayersMng"
+Private Const mdlname As String = "OTH_LayersMng"
 Sub LayersMng()
 If Not CanExecute("partDocument,productdocument") Then Exit Sub
 Set rdoc = CATIA.ActiveDocument

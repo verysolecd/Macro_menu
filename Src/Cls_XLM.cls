@@ -109,8 +109,8 @@ Public Sub clear_table()
     ws.UsedRange.ClearContents
 End Sub
 
-Public Sub setxlHead(ByVal S$)
-Select Case S
+Public Sub setxlHead(ByVal s$)
+Select Case s
     Case "bom": Call set_Header(header_bom, 1)
     Case "rv": Call set_Header(header_rv, 1): RVbackColor
     Case "gxbom": Call set_Header(hdgx, 4)
@@ -297,7 +297,7 @@ End Sub
 
 Sub inject_pic(irow, pncol, Piccol, ipath)
         Dim i&, rng As Range
-        Dim iPic As Shape
+        Dim iPic As shape
         Dim cntrow
         ws.Rows.RowHeight = 25
         cntrow = ws.Cells(ws.Rows.count, 1).End(xlUp).row

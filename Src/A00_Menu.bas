@@ -45,13 +45,13 @@ Private Function GetMenuItems() As Collection
     ' Filter for Standard Modules only (Type=1)
     Dim comps As Object: Set comps = ExecPjt.ProjectItems.VBComponents
     Dim comp As Object
-    Dim Result As New Collection
+    Dim result As New Collection
     For Each comp In comps
         If comp.Type = 1 Then ' vbext_ct_StdModule
-            ProcessModule comp, pjtPath, Result
+            ProcessModule comp, pjtPath, result
         End If
     Next
-    If Result.count > 0 Then Set GetMenuItems = Result Else Set GetMenuItems = Nothing
+    If result.count > 0 Then Set GetMenuItems = result Else Set GetMenuItems = Nothing
 End Function
 ' Processes a single module: parses tags and checks entry point
 Private Sub ProcessModule(ByVal comp As Object, ByVal pjtPath As String, ByRef colls As Collection)

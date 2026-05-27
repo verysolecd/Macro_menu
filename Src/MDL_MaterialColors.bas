@@ -1,48 +1,32 @@
 Attribute VB_Name = "MDL_MaterialColors"
 '{GP:4}
 '{EP:MaterialPainter}
-'{Caption:实体上色}
+'{Caption:元素上色}
 '{ControlTipText: 上色Toolbar}
 '------控件清单--------------------------------------------------
 '控件格式为 %UI <Type> <Name> <Caption/Text><Color:HEX16>
 '------Buttons------------------------------
-' %UI Button btn_weld 焊缝颜色 #FFFF00
+' %UI Button btn_weld  片体焊缝变黄        #FFFF00
 ' %UI Button btn_thread 螺纹孔分颜色
-' %UI Label  lb_steel ----------
-' %UI Button btn_mild 软钢(<210)    #ADD8E6
-' %UI Button btn_hss 高强钢(210-340)  #00BFFF
-' %UI Button btn_ahss 先进高强(340-590)  #FFFF80
-' %UI Button btn_uhss 超高强(590-980) #FFA500
-' %UI Button btn_Gpa Gpa钢 (980-1200) #ff0033
-' %UI Button btn_HF 热成型 (>1200) #B22222
-' %UI Label  lb_steel ----------
-' %UI Button btn_Alu1 铝合金(<180)  #90EE90
-' %UI Button btn_Alu2 铝合金(180~240)  #8FBC8F
-' %UI Button btn_Alu3 铝合金(>240) #228B22
-' %UI Button btn_Fas 紧固件      #A52A2A
-' %UI Button btn_glue 胶水 #FF00FF
-' %UI Label bl_steel ----------
-' %UI Button btn_blue 蓝色 #0000FF
-
-
-'颜色定义
-'≤210MPa       浅蓝色    MS=Array(173,216,230)  #ADD8E6
-'210-340MPa    深天蓝     HSS=Array(0,191,255)      #00BFFF
-'340-590MPa    黄色      AHSS=Array(255,255,0)    #FFFF00
-'590-980MPa   橙色      UHSS=Array(255,165,0)    #FFA500
-'980-1200MPa  橙红色   Gpa=Array(255,0,51)    #ff0033
-'1200-1600    深粉色      HF=Array(255,20,147)      #FF1493
-'＜280MPa      浅绿色    Alu=Array(144,238,144) #90EE90
-'180~240      深海洋绿    Alu2=Array(34,139,34)   #8FBC8F
-'≥280MPa       深绿色    Alu2=Array(34,139,34)  #228B22
-' 紧固件       棕色      Fas=Array(165, 42, 42)     #A52A2A
-'Glue          淡紫色    Glue=Arrary(200,160,200)  #C8A2C8
-
-
-
+' %UI Label  lb_steel  ------------------
+' %UI Button btn_mild  软钢(<210Mpa)       #008080
+' %UI Button btn_hss   高强钢(210-340)     #00CED1
+' %UI Button btn_ahss  先进高强(340-590)   #FFFF80
+' %UI Button btn_uhss  超高强(590-980)     #FF8C00
+' %UI Button btn_Gpa   Gpa钢(980-1200)     #B22222
+' %UI Button btn_HF    热成型(>1200)       #8B008B
+' %UI Label  lb_steel  ------------------
+' %UI Button btn_Alu1  铝合金(<180)        #98FB98
+' %UI Button btn_Alu2  铝合金(180~240)     #3CB371
+' %UI Button btn_Alu3  铝合金(>240)        #006400
+' %UI Button btn_Fas   紧固件              #708090
+' %UI Button btn_glue  胶水                #FF00FF
+' %UI Label bl_steel   ------------------
+' %UI Button btn_blue CATIA蓝色 #0000FF
+' %UI Button btn_white CATIA白色 #FFFFFF
+' %UI Button btn_cyan CATIA青色 #00FFFF
 
 '  catia的basic颜色对应表
-
 '序号    颜色名称 (中文 + 英文)  HEX 色值    RGB 数值
 '基础标准纯色
 '1   黑色 Black  #000000 0,0,0
@@ -96,20 +80,6 @@ Attribute VB_Name = "MDL_MaterialColors"
 '47  深灰绿 Dark Grey Green  #7EA297 126,162,151
 '48  沙棕色 Sandy Brown  #D3B27D 211,178,125
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 '------------------------------------------
 Option Explicit
 Private m_Doc         As Document       ' 当前激活文档
@@ -128,7 +98,6 @@ Private Type Threadspec
 End Type
 Private oSpec() As Threadspec
 Private Colormap
-
 
 Private mWD As Cls_DynaWD
 Private funcMap
@@ -197,17 +166,6 @@ Next
     osel.VisProperties.SetRealColor R, G, B, 0 '(R, G, B, Inheritance=1)
     osel.Clear
     On Error GoTo 0
-End Sub
-
-Sub getcolor()
-    Dim R, G, B
-        R = CLng(0)
-        G = CLng(0)
-        B = CLng(0)
- Dim ss: Set ss = CATIA.ActiveDocument.Selection.VisProperties
-    ss.GetRealColor R, G, B
- Dim ary: ary = Array(R, G, B)
- Debug.Print "RGB颜色" & R & "," & G & "," & B
 End Sub
 Private Sub initMaps(ByVal modName As String)
     Set funcMap = KCL.InitDic
@@ -415,3 +373,14 @@ Private Function GetColorByDia(ByVal dDia As Double, ByRef outR As Integer, ByRe
     Next k
 End Function
 
+Function mycolor()
+    mycolor = Array(0, 0, 0)
+    Dim CR, CG, CB
+        CR = CLng(0)
+        CG = CLng(0)
+        CB = CLng(0)
+    Dim ss: Set ss = CATIA.ActiveDocument.Selection.VisProperties
+    ss.GetRealColor CR, CG, CB
+    mycolor = Array(CR, CG, CB)
+
+End Function

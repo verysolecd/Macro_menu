@@ -355,8 +355,8 @@ Private Function IsStringAry(ByVal ary As Variant) As Boolean
     IsStringAry = True
 End Function
 ' 将字符串转换为数组变量
-Private Function strToAry(ByVal S$) As Variant
-    Dim ary As Variant: ary = Split(S, ",")
+Private Function strToAry(ByVal s$) As Variant
+    Dim ary As Variant: ary = Split(s, ",")
     Dim oAry() As Variant: ReDim oAry(UBound(ary))
     Dim i&
     For i = 0 To UBound(ary)
@@ -761,12 +761,12 @@ NextChar:
     isEngPath = True
 End Function
 ' 检查字符串是否包含特殊符号
-Function HasSpecialChars(ByVal S As String) As Boolean
+Function HasSpecialChars(ByVal s As String) As Boolean
     Dim validChars As String
     Dim i As Long
     validChars = "!@#$%^&*()-_=+[]{};:'"",.<>/?\|~\/"
-    For i = 1 To Len(S)
-        If InStr(validChars, Mid(S, i, 1)) > 0 Then
+    For i = 1 To Len(s)
+        If InStr(validChars, Mid(s, i, 1)) > 0 Then
             HasSpecialChars = True
             Exit Function
         End If
@@ -776,13 +776,13 @@ End Function
 
 '此函数替换字符串中的特殊符号
 
-Function ReplaceSpcChar(ByVal S As String) As String
+Function ReplaceSpcChar(ByVal s As String) As String
     Dim regEx: Set regEx = getRegexp()
     ' 1. Windows系统非法: \ / : * ? " < > |
     ' 2. 用户自定义非法: ! @ # 【 】 { } ~ 《 》 ， ^ % & （ ） ( ) 、
     regEx.Pattern = "[\\/:*?""<>|!@#【】{}~《》，\^%&（）\(\)、]+"
     regEx.Global = True
-    ReplaceSpcChar = regEx.Replace(S, "_")
+    ReplaceSpcChar = regEx.Replace(s, "_")
     Set regEx = Nothing
 End Function
 
@@ -795,7 +795,7 @@ Function rmchn(ByVal inputString$) As String
     Set regEx = Nothing
 End Function
 
-Function ReplaceBadChar(ByVal S As String) As String
+Function ReplaceBadChar(ByVal s As String) As String
     Dim regEx: Set regEx = getRegexp()
     ' 组合模式：
     ' 1. [\\/:*?""<>|!@#【】{}~《》，\^%&（）\(\)、]  -> 特殊符号
@@ -803,7 +803,7 @@ Function ReplaceBadChar(ByVal S As String) As String
     ' 3. +                                      -> 连续匹配
     regEx.Pattern = "[\\/:*?""<>|!@#【】Φ{}~《》，\^%&（）\(\)、\u4e00-\u9fa5]+"
     regEx.Global = True
-    ReplaceBadChar = regEx.Replace(S, "_")
+    ReplaceBadChar = regEx.Replace(s, "_")
     Set regEx = Nothing
 End Function
 
@@ -951,13 +951,13 @@ End Sub
 
 ' 检查并激活已存在的窗口
 Function ActivateExistingWindow(ByVal strPath As String) As Boolean
-    Dim W As Object
+    Dim w As Object
     On Error Resume Next
-    For Each W In CreateObject("Shell.Application").Windows
-        If LCase(W.Document.folder.Self.path) = LCase(strPath) Then
+    For Each w In CreateObject("Shell.Application").Windows
+        If LCase(w.Document.folder.Self.path) = LCase(strPath) Then
             If Err.Number = 0 Then ' 确保路径访问没报错
-                 ShowWindow W.hwnd, 1        ' 1 = SW_SHOWNORMAL (普通模式/还原)
-                SetForegroundWindow W.hwnd  ' 激活到前台
+                 ShowWindow w.hwnd, 1        ' 1 = SW_SHOWNORMAL (普通模式/还原)
+                SetForegroundWindow w.hwnd  ' 激活到前台
                 ActivateExistingWindow = True
                 Exit Function
             End If
@@ -1079,8 +1079,6 @@ Public Function getbf1stproc(modName)
     If startline < 1 Then Exit Function
         getbf1stproc = codemod.lines(1, startline) ' 获取到第一个函数的所有代码行
 End Function
-
-
 
 ' ═══ 新的统一UI引擎工厂函数 ═══
 ' 用法与 newFrm 平行，返回 Cls_DynaWD 实例
@@ -1247,7 +1245,6 @@ Public Sub CatiaFreeze(Optional ByVal ison As Boolean = True)
         CATIA.DisplayFileAlerts = False
         CATIA.RefreshDisplay = False
         CATIA.HSOSynchronized = False
-
      Else
         CATIA.DisplayFileAlerts = True
         CATIA.RefreshDisplay = True

@@ -97,7 +97,7 @@ End Sub
 Function ex2zip(oFilepath) As Boolean
     On Error GoTo seterror
     ex2zip = False
-    Dim Result, shell, cmd, path7z
+    Dim result, shell, cmd, path7z
     '=======================
     path7z = "D:\for use\7-Zip\7z.exe"
     If KCL.isExists(path7z) Then
@@ -108,8 +108,8 @@ Function ex2zip(oFilepath) As Boolean
         cmd = "powershell -Command ""Compress-Archive -Path '""" & oFilepath & """' -DestinationPath '""" & zippath & """' -CompressionLevel Optimal -Force"""
     End If
     '=======================
-    Set shell = CreateObject("WScript.Shell"): Result = shell.Run(cmd, 0, True)
-    If Result <> 0 Then Err.Clear
+    Set shell = CreateObject("WScript.Shell"): result = shell.Run(cmd, 0, True)
+    If result <> 0 Then Err.Clear
     If KCL.isExists(zippath) Then
         ex2zip = True
         Exit Function

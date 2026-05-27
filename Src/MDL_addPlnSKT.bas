@@ -15,7 +15,6 @@ Sub addPlnSKT()
     ox = 10
     oy = 20
     oz = 30
-    catalog
     ' ==============================================
     Set oprt = m_prt
     Set HSF = oprt.HybridShapeFactory

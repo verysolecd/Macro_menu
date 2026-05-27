@@ -57,17 +57,17 @@ End Property
 ' 返回：PropResult 类型 (Obj, Value, IsValid)
 Private Function GetPropertyValue(ByVal Collection As Object, ByVal ItemIdentifier As Variant) As PropResult
     On Error Resume Next
-    Dim Result As PropResult
-    Set Result.obj = Collection.item(ItemIdentifier)
-    If Err.Number = 0 And Not Result.obj Is Nothing Then
-        Result.Value = Result.obj.Value
-        Result.IsValid = True
+    Dim result As PropResult
+    Set result.obj = Collection.item(ItemIdentifier)
+    If Err.Number = 0 And Not result.obj Is Nothing Then
+        result.Value = result.obj.Value
+        result.IsValid = True
     Else
-        Set Result.obj = Nothing
-        Result.Value = "__"
-        Result.IsValid = False
+        Set result.obj = Nothing
+        result.Value = "__"
+        result.IsValid = False
     End If
-    GetPropertyValue = Result
+    GetPropertyValue = result
     On Error GoTo 0
 End Function
 '---------------------------------------------------------------------------------------
@@ -145,13 +145,13 @@ Public Function ProduceBOM(ByVal rootPrd As Object, Optional ByVal filterDuplica
     TraverseProductTree rootPrd, 1, filterDuplicate
     If mItemCount = 0 Then Exit Function
     ' Trim array to actual size and return
-    Dim Result() As Bomline
-    ReDim Result(1 To mItemCount)
+    Dim result() As Bomline
+    ReDim result(1 To mItemCount)
     Dim i As Long
     For i = 1 To mItemCount
-        Result(i) = mItems(i)
+        result(i) = mItems(i)
     Next
-    ProduceBOM = Result
+    ProduceBOM = result
 End Function
 
 ' 递归辅助函数
@@ -188,24 +188,24 @@ Public Function attLv2Prd(oPrd) As Variant
     ReDim mItems(1 To CHUNK_SIZE)
     TraverseTwoLevels oPrd
     If mItemCount = 0 Then attLv2Prd = Empty: Exit Function
-    Dim Result() As Variant: ReDim Result(1 To mItemCount, 1 To 9)
+    Dim result() As Variant: ReDim result(1 To mItemCount, 1 To 9)
     Dim R As Long, c As Long
     ' Convert Bomline array to Variant array for legacy compatibility
     ' Note: This mapping matches the legacy expected format (approx)
     For R = 1 To mItemCount
         With mItems(R)
-            Result(R, 1) = .partNumber
-            Result(R, 2) = .Nomenclature
-            Result(R, 3) = .Definition
-            Result(R, 4) = .InstanceName
-            Result(R, 5) = .Material
-            Result(R, 6) = .Density
-            Result(R, 7) = .Mass
-            Result(R, 8) = .Thickness
-            Result(R, 9) = .Quantity
+            result(R, 1) = .partNumber
+            result(R, 2) = .Nomenclature
+            result(R, 3) = .Definition
+            result(R, 4) = .InstanceName
+            result(R, 5) = .Material
+            result(R, 6) = .Density
+            result(R, 7) = .Mass
+            result(R, 8) = .Thickness
+            result(R, 9) = .Quantity
         End With
     Next
-    attLv2Prd = Result
+    attLv2Prd = result
 End Function
 
 ' 获取用于 RW_Revise 的强类型数据 (替代 attLv2Prd)
@@ -216,13 +216,13 @@ Public Function GetReviseItems(ByVal oPrd As Object) As Bomline()
     
     If mItemCount = 0 Then Exit Function
     
-    Dim Result() As Bomline
-    ReDim Result(1 To mItemCount)
+    Dim result() As Bomline
+    ReDim result(1 To mItemCount)
     Dim i As Long
     For i = 1 To mItemCount
-        Result(i) = mItems(i)
+        result(i) = mItems(i)
     Next
-    GetReviseItems = Result
+    GetReviseItems = result
 End Function
 
 Private Sub TraverseTwoLevels(ByVal oPrd As Object)
