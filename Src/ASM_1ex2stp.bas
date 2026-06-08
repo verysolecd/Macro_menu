@@ -26,10 +26,10 @@ Sub ex2stp_zip()
     Err.Number = 0: ErrorMessage = ""
     Dim oDoc: Set oDoc = CATIA.ActiveDocument
     Dim outputpath As String: outputpath = ""
-    Set mWD = New Cls_DynaWD
-    mWD.getUIcfgfromModDEC mdlname
-    mWD.Show
-    Select Case mWD.btnClicked
+    Set mWD = New Cls_DynaWD   '创建窗口实例
+    mWD.getUIcfgfromModDEC mdlname '获取窗口控件配置
+    mWD.Show '显示窗口
+    Select Case mWD.btnClicked '窗口点击结果
     Case "btnOK"
         '===========路径设置
         If mWD.Results("chk_path") Then

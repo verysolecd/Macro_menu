@@ -52,16 +52,16 @@ Sub Copypointsfromset()
     Dim j As Integer
     For j = 1 To osel.count
         On Error Resume Next
-        Dim oRef As Reference
-        Set oRef = oprt.CreateReferenceFromObject(osel.item(j).Value)
-        If Not oRef Is Nothing Then
+        Dim oref As Reference
+        Set oref = oprt.CreateReferenceFromObject(osel.item(j).Value)
+        If Not oref Is Nothing Then
             Dim oPt As HybridShapePointExplicit
-            Set oPt = HSF.AddNewPointDatum(oRef)
+            Set oPt = HSF.AddNewPointDatum(oref)
             oPt.Name = "pt_" & i
             oTargetHb.AppendHybridShape oPt
             i = i + 1
         End If
-        Set oRef = Nothing
+        Set oref = Nothing
         On Error GoTo 0
     Next j
     osel.Clear

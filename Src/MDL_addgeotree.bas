@@ -45,8 +45,8 @@ Sub crSkt(og)
     og.AppendHybridShape oPoint
     m_prt.Update
     Set oPln = HSF.AddNewPlaneEquation(0#, 0#, 1#, 20#)
-    Set oRef = m_prt.CreateReferenceFromObject(oPoint)
-    oPln.SetReferencePoint oRef
+    Set oref = m_prt.CreateReferenceFromObject(oPoint)
+    oPln.SetReferencePoint oref
     og.AppendHybridShape oPln
     m_prt.Update
     Set skts = og.HybridSketches

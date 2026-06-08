@@ -23,6 +23,12 @@ Attribute VB_Exposed = False
 '   Show       —— 模态/非模态弹窗 (替代 cls_dynaFrm.Show)
 '   ShowToolbar—— 非模态工具栏     (替代 cls_dynaFrm.ShowToolbar)
 '   Alert      —— 信息弹窗         (替代 cls_dynaFrm.Alert)
+
+'showtoolbar可以有多种显示模式，具体参考
+'1   MDL_MaterialColors：实现统一回调函数: CLickHandler() 回传了按钮名字
+'2   不统一回调，直接回调调用对应子函数
+'两种都需要回调函数是公共的
+
 ' 结果回收:
 '   Results / btnClicked / IsCancelled
 '调用方式:
@@ -39,6 +45,11 @@ Attribute VB_Exposed = False
 'mEventCol   事件处理器集合（防止被 GC 回收）
 'mResultDict 模态窗体结果字典(点击按钮?输入值)
 'mIsAlertMode 提示框模式开关
+
+
+
+
+
 '===========================================================================
 Option Explicit
 ' --- 控件定义列表 (ArrayList of Dictionary) ---
@@ -122,6 +133,15 @@ End Property
 Public Property Let PassBtnName(ByVal val As Boolean)
     mPassBtn = val
 End Property
+
+' 在 Cls_DynaWD.cls 中新增：
+Public Function GetCtrlbyname(ByVal ctrlName As String) As Object
+    If mWD Is Nothing Then Set GetCtrlbyname = Nothing: Exit Function
+    On Error Resume Next
+        Set GetCtrlbyname = mWD.Controls(ctrlName)
+    On Error GoTo 0
+End Function
+
 ''────────────────────────────────────────────────────────────────
 '  Section B: 数据加载 —— 三种入口
 ''────────────────────────────────────────────────────────────────
@@ -142,12 +162,12 @@ End Sub
 '' @param HexColor  可选16进制色值 如 "#FF6600"
 
 Public Sub AddUIElement(ByVal CtrlType As String, _
-                        ByVal CtrlName As String, _
+                        ByVal ctrlName As String, _
                         ByVal Caption As String, _
                         Optional ByVal HexColor As String = "")
     Dim def As Object: Set def = P_InitDic()
     def.Add "Type", ResolveCtrlType(CtrlType)
-    def.Add "Name", CtrlName
+    def.Add "Name", ctrlName
     def.Add "Caption", Caption
     def.Add "Color", HexColor
     mCtrlDefs.Add def
@@ -313,43 +333,15 @@ End Function
 ''────────────────────────────────────────────────────────────────
 Private Function ResolveCtrlType(ByVal alias As String) As String
     Select Case LCase(alias)
-        Case "button", "btn", "cmd":    ResolveCtrlType = "Forms.CommandButton.1"
-        Case "label", "lbl":            ResolveCtrlType = "Forms.Label.1"
-        Case "text", "txt", "textbox":  ResolveCtrlType = "Forms.TextBox.1"
-        Case "checkbox", "chk":         ResolveCtrlType = "Forms.CheckBox.1"
-        Case Else:                      ResolveCtrlType = "Forms.Label.1"
+        Case "button", "btn", "cmd":                ResolveCtrlType = "Forms.CommandButton.1"
+        Case "label", "lbl":                        ResolveCtrlType = "Forms.Label.1"
+        Case "text", "txt", "textbox", "txtbox":    ResolveCtrlType = "Forms.TextBox.1"
+        Case "checkbox", "chk":                     ResolveCtrlType = "Forms.CheckBox.1"
+        Case Else:                                  ResolveCtrlType = "Forms.Label.1"
     End Select
 End Function
-'
-'' ═══════════════════════════════════════════════════════════════
-''  Internal: 菜单扫描辅助函数
-'''尝试解析一个标准模块为菜单项, 失败返回 Nothing
-'Private Function TryParseMenuModule(ByVal comp As Object, _
-'                                    ByVal pjtPath As String, _
-'                                    ByVal GroupMap As Object) As cls_MnUI
-'    Set TryParseMenuModule = Nothing
-'    Dim mdl As Object: Set mdl = comp.CodeModule
-'    If mdl.CountOfDeclarationLines < 1 Then Exit Function
-'    Dim decCode As String
-'    decCode = mdl.lines(1, mdl.CountOfDeclarationLines)
-'    ' 解析标签
-'    Dim menuItem As New cls_MnUI
-'    If Not menuItem.InitFromCode(decCode, mdl.Name, pjtPath) Then Exit Function
-'    ' 验证 Group 在 GroupMap 中存在
-'    Dim grpKey As Variant
-'    If IsNumeric(menuItem.GroupName) Then grpKey = CLng(menuItem.GroupName) Else grpKey = menuItem.GroupName
-'    If Not GroupMap.Exists(grpKey) Then Exit Function
-'   ' 验证入口点存在
-'    If Not ModuleMethodExists(mdl, menuItem.EntryPoint) Then
-'        If ModuleMethodExists(mdl, "CATMain") Then
-'            menuItem.EntryPoint = "CATMain"
-'        Else
-'            Exit Function
-'        End If
-'    End If
-'    Set TryParseMenuModule = menuItem
-'End Function
-''检查模块中是否存在指定方法
+
+
 Private Function ModuleMethodExists(ByVal mdl As Object, ByVal procName As String) As Boolean
     On Error Resume Next
     Dim line As Long

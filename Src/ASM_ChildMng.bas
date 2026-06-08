@@ -8,38 +8,46 @@ Attribute VB_Name = "ASM_ChildMng"
 '------控件信息------------------------------
 ' %UI Label lbL_jpzcs  键盘造车手出品
 ' %UI Label lbL_tip 点击功能后,依次选择源产品→目标产品
+' %UI Button btn_allcopy 复制所有leaf
 ' %UI Button btn_copy 复制后黏贴
 ' %UI Button btn_delete 删除子件
 ' %UI Button btn_cancel 取消
-'------其他------------------------------
 
+Option Explicit
+'------其他------------------------------
+Private mWD, msel, mdoc, mPrd
 Private Const mdlname As String = "ASM_ChildMng"
 Sub ChildMng()
    If Not KCL.CanExecute("ProductDocument") Then Exit Sub
-    Dim oWD: Set oWD = KCL.new_spWD(mdlname, 1)
-    oWD.Show
-    Select Case oWD.btnClicked
-          Case "btn_copy":    Call cpChildren
-          Case "btn_delete":  Call DeleteChildren
-          Case Else:          Exit Sub
-      End Select
+    If pdm Is Nothing Then Set pdm = New Cls_PDM
+    '==生成UItoolbar-===================
+    Set mWD = New Cls_DynaWD
+    mWD.ShowToolbar mdlname
 End Sub
-Sub cpChildren()
+Private Sub initmVar()
+   Set mdoc = CATIA.ActiveDocument
+   Set msel = mdoc.Selection
+
+End Sub
+Sub btn_copy_click()
     Dim imsg, filter(0), osel
-    Set oDoc = CATIA.ActiveDocument
-    Set osel = CATIA.ActiveDocument.Selection: osel.Clear
+    msel.Clear
     On Error GoTo ErrorHandler
         Call KCL.CATquick(False)
-        imsg = "请先点击选择源父产品，再点击选择目标父产品": MsgBox imsg
+        imsg = "请先点击选择源父产品，再点击选择目标父产品"
         filter(0) = "Product"
-        Dim sourcePrd, targetPrd As Product
-        Set sourcePrd = Nothing
-        Set targetPrd = Nothing
-            Set sourcePrd = KCL.SelectItem(imsg, filter)
+       Dim sourcePrd: Set sourcePrd = Nothing
+       Dim targetPrd: Set targetPrd = Nothing
+        Set sourcePrd = KCL.SelectItem(imsg, filter)
         If sourcePrd Is Nothing Then GoTo ErrorHandler
-            For Each prd In sourcePrd.Products
-               osel.Add prd
-            Next
+        
+        msel.Add sourcePrd
+        msel.Search "CATProductSearch.Product,sel"
+        
+
+        For Each prd In sourcePrd.Products
+           osel.Add prd
+        Next
         osel.Copy: osel.Clear
         imsg = "请点击选择目标父产品"
         Set targetPrd = KCL.SelectItem(imsg, filter)
@@ -60,7 +68,7 @@ ErrorHandler:
             Exit Sub
         End If
 End Sub
-Sub DeleteChildren()
+Sub btn_delete_click()
     Dim osel: Set osel = CATIA.ActiveDocument.Selection: osel.Clear
     Dim imsg, filter(0), isel
     imsg = "请选择父集": filter(0) = "Product"
@@ -84,5 +92,9 @@ Sub DeleteChildren()
           End Select
 End Sub
 
+Sub btn_allcopy_click()
 
+MsgBox "生词奥"
+
+End Sub
 

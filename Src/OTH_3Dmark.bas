@@ -72,8 +72,8 @@ Sub Pt_annotation()
 Set oDoc = CATIA.ActiveDocument
  Set oPrd = CATIA.ActiveDocument.Product
     Set oprt = oDoc.part
- Set oHB = KCL.SelectItem("«Î—°‘Ògeoset", "HybridBody")
-  Set oPt = oHB.HybridShapes.item(1)
+ Set OHB = KCL.SelectItem("«Î—°‘Ògeoset", "HybridBody")
+  Set oPt = OHB.HybridShapes.item(1)
 Set anSets = oprt.AnnotationSets
 Set anset = anSets.Add("ISO_3D")
 Set ref = oprt.CreateReferenceFromObject(oPt)

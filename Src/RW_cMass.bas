@@ -16,7 +16,7 @@ Sub Cal_Mass_m()
    Set mWD = New Cls_DynaWD
     mWD.ShowToolbar mdlname
 End Sub
-Public Sub btna_click()
+Sub btna_click()
  On Error Resume Next
        Cal_Mass
    If Err.Number > 0 Then

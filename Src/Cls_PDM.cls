@@ -383,8 +383,8 @@ Private Sub EnsurePublication(ByVal refPrd As Object, ByVal pubName As String, B
         End If
     End If
     If isupdated = False Then
-        Dim oRef As Object: Set oRef = refPrd.CreateReferenceFromName("." & "\" & refPath)
-        pubs.SetDirect pubName, oRef
+        Dim oref As Object: Set oref = refPrd.CreateReferenceFromName("." & "\" & refPath)
+        pubs.SetDirect pubName, oref
         
         If Err.Number <> 0 Then
             Debug.Print "·¢²¼Ê§°Ü£º" & pubName & " ¡ú SetDirectÖ´ÐÐ´íÎó"

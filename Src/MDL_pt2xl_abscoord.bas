@@ -12,7 +12,7 @@ Attribute VB_Name = "MDL_pt2xl_abscoord"
 ' %UI Button btnWcoord 带相对坐标导出
 ' %UI Button btncancel  取消
 
-Private mDoc, HSF, mHBS, msel
+Private mdoc, HSF, mHBS, msel
 Private needtrans As Boolean
 
 Private Const mdlname As String = "MDL_pt2xl_abscoord"
@@ -26,11 +26,11 @@ Sub Mpt2xl()
     On Error GoTo 0
     If IsNothing(oprt) Then: MsgBox "No Activated Part": Exit Sub
     
-    Set mDoc = oDoc
+    Set mdoc = oDoc
 
 Set HSF = oprt.HybridShapeFactory
 Set mHBS = oprt.HybridBodies
-Set msel = mDoc.Selection
+Set msel = mdoc.Selection
 needtrans = False
 
 Dim oWD: Set oWD = KCL.new_spWD(mdlname, 1) '1 标识isvertical=true
@@ -46,15 +46,15 @@ oWD.Show
 End Sub
 Function getHB()
     Dim imsg: imsg = "请选择点所在的几何图形集"
-       Dim oHB
-       Set oHB = KCL.SelectItem(imsg, "HybridBody")
-        Set getHB = oHB
+       Dim OHB
+       Set OHB = KCL.SelectItem(imsg, "HybridBody")
+        Set getHB = OHB
 End Function
 
-Sub pt2xl(oHB)
-    If Not oHB Is Nothing Then
+Sub pt2xl(OHB)
+    If Not OHB Is Nothing Then
         Dim i, irow, ct
-        Set oshapes = oHB.HybridShapes
+        Set oshapes = OHB.HybridShapes
         ct = oshapes.count
         ReDim arr(0 To ct, 0 To 4)
         irow = 0  '获得表头
@@ -71,8 +71,8 @@ Sub pt2xl(oHB)
             str = HSF.GetGeometricalFeatureType(oPt)
             If str = 1 Then
                Dim fakept:  Set fakept = HSF.AddNewPointCoordWithReference(0, 0, 0, oPt)
-                                oHB.AppendHybridShape fakept
-                                mDoc.part.Update
+                                OHB.AppendHybridShape fakept
+                                mdoc.part.Update
                fakept.GetCoordinates fincoord
                If needtrans Then
                     Dim oAxi: Set oAxi = KCL.SelectItem("请选择坐标系", AxisSystem)
@@ -81,7 +81,7 @@ Sub pt2xl(oHB)
                   msel.Clear
                   msel.Add fakept
                   msel.Delete
-                  mDoc.part.Update
+                  mdoc.part.Update
                 arr(irow, 0) = irow
                 arr(irow, 1) = oPt.Name
                 arr(irow, 2) = fincoord(0)

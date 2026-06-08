@@ -16,7 +16,7 @@ End If
         Set HSF = oDoc.part.HybridShapeFactory
         Set HBS = oDoc.part.HybridBodies
 '获取所有的shapes
-Set oHB = oprt ' HBS.item(1)
+Set OHB = oprt ' HBS.item(1)
 Call GetShapesByRecursion(oprt)
 'Call GetShapesByParameters(oprt)
 '将获取的shape增加到list

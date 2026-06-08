@@ -6,12 +6,13 @@ Attribute VB_Name = "MDL_MaterialColors"
 '------控件清单--------------------------------------------------
 '控件格式为 %UI <Type> <Name> <Caption/Text><Color:HEX16>
 '------Buttons------------------------------
-' %UI Button btn_weld  片体焊缝变黄        #FFFF00
-' %UI Button btn_thread 螺纹孔分颜色
+' %UI Button btn_weld  焊缝变黄色     #800080
+' %UI Button btn_thread 螺纹孔分颜色  #008040
+' %UI Button  ResetToDefaultColor 重置颜色
 ' %UI Label  lb_steel  ------------------
 ' %UI Button btn_mild  软钢(<210Mpa)       #008080
 ' %UI Button btn_hss   高强钢(210-340)     #00CED1
-' %UI Button btn_ahss  先进高强(340-590)   #FFFF80
+' %UI Button btn_ahss  先进高强(340-590)   #FFFF00
 ' %UI Button btn_uhss  超高强(590-980)     #FF8C00
 ' %UI Button btn_Gpa   Gpa钢(980-1200)     #B22222
 ' %UI Button btn_HF    热成型(>1200)       #8B008B
@@ -98,7 +99,6 @@ Private Type Threadspec
 End Type
 Private oSpec() As Threadspec
 Private Colormap
-
 Private mWD As Cls_DynaWD
 Private funcMap
 Private Const mdlname As String = "MDL_MaterialColors"
@@ -127,13 +127,15 @@ Sub Clickhandler(ByVal btnName As String)
     Select Case btnName
         Case "btn_weld"
             SetWeldYellow
-        Case "btn_tsshread"
+        Case "btn_thread"
             SetThreadColor
+        Case "ResetToDefaultColor"
+            ResetToDefaultColor
         Case Else
               If IsArray(mcolor) Then ApplyColor2Body mcolor
     End Select
 End Sub
-Private Sub ApplyColor2Body(ary As Variant)
+Sub ApplyColor2Body(ary As Variant)
     Set mHSF = a_Prt.HybridShapeFactory
     Dim osel
     Set osel = CATIA.ActiveDocument.Selection
@@ -167,6 +169,17 @@ Next
     osel.Clear
     On Error GoTo 0
 End Sub
+Private Sub ResetToDefaultColor()
+    Dim osel As Object
+    Set osel = CATIA.ActiveDocument.Selection
+    If osel.count = 0 Then
+        Set osel = KCL.Selectmulti("请选择要重置颜色的对象")
+    End If
+    If osel.count = 0 Then Exit Sub
+    ' Inheritance = 1 → 颜色回退到父级继承，即"默认色"
+    osel.VisProperties.SetRealColor 0, 0, 0, 1
+    osel.Clear
+End Sub
 Private Sub initMaps(ByVal modName As String)
     Set funcMap = KCL.InitDic
     Set Colormap = KCL.InitDic
@@ -195,7 +208,7 @@ Sub SetWeldYellow()
         CATIA.HSOSynchronized = True
 End Sub
 
-Sub SetThreadColor()
+Private Sub SetThreadColor()
     On Error GoTo ErrorHandler
     Dim oCatia As Object
     Set oCatia = CATIA
@@ -373,7 +386,7 @@ Private Function GetColorByDia(ByVal dDia As Double, ByRef outR As Integer, ByRe
     Next k
 End Function
 
-Function mycolor()
+Private Function mycolor()
     mycolor = Array(0, 0, 0)
     Dim CR, CG, CB
         CR = CLng(0)

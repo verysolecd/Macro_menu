@@ -13,6 +13,7 @@ Attribute VB_Name = "OTH_ivhideshow"
 ' %UI Button allshow        显示所有产品  #228B22
 ' %UI Button allhide        隐藏所有产品  #6B7280
 ' %UI Button sel_child_show 显示选定(含子树)  #1E88E5
+' %UI Button ONLYsel_child_show 仅显示选定(含子树)  #1E88E5
 ' %UI Button onlyselshow    仅显示选定  #1976D2
 ' %UI Button onlysel_hide   隐藏选定产品  #757575
 ' %UI Label lbL_4 ------
@@ -51,9 +52,9 @@ Sub sel_child_show_click()
     Next
     sel.Clear
     ' 第一步：全场大范围静默隐藏
-    sel.Search "CATProductSearch.Product,all"
-    If sel.count > 0 Then sel.VisProperties.SetShow 1
-    sel.Clear
+'    sel.Search "CATProductSearch.Product,all"
+'    If sel.count > 0 Then sel.VisProperties.SetShow 1
+'    sel.Clear
     ' 第二步：为了让这几根树苗显现，把它们的树干通道全部显示
     For i = LBound(selArray) To UBound(selArray)
         Set parentPrd = selArray(i).Parent
@@ -73,6 +74,44 @@ Sub sel_child_show_click()
     sel.Clear
     CATIA.RefreshDisplay = True
 End Sub
+
+Sub ONLYsel_child_show()
+ Dim sel As Object
+    Set sel = CATIA.ActiveDocument.Selection
+    If sel.count = 0 Then Exit Sub
+    CATIA.RefreshDisplay = False
+    On Error Resume Next
+    Dim i As Integer, parentPrd As Object
+    Dim selArray() As Object
+    ReDim selArray(sel.count - 1)
+    For i = 1 To sel.count
+        Set selArray(i - 1) = sel.item(i).Value
+    Next
+    sel.Clear
+'第一步:      全场大范围静默隐藏
+    sel.Search "CATProductSearch.Product,all"
+    If sel.count > 0 Then sel.VisProperties.SetShow 1
+    sel.Clear
+'第二步：为了让这几根树苗显现，把它们的树干通道全部显示
+    For i = LBound(selArray) To UBound(selArray)
+        Set parentPrd = selArray(i).Parent
+        Do While TypeName(parentPrd) = "Product" Or TypeName(parentPrd) = "Products"
+            If TypeName(parentPrd) = "Product" Then sel.Add parentPrd
+            Set parentPrd = parentPrd.Parent
+        Loop
+    Next
+    If sel.count > 0 Then sel.VisProperties.SetShow 0
+    sel.Clear
+    ' 第三步：利用底层Search的 ",sel" 条件过滤出其所有几千个子实体
+    For i = LBound(selArray) To UBound(selArray)
+        sel.Add selArray(i)
+    Next
+    sel.Search "CATProductSearch.Product,sel"
+    If sel.count > 0 Then sel.VisProperties.SetShow 0
+    sel.Clear
+    CATIA.RefreshDisplay = True
+End Sub
+
 Sub onlyselshow_click()
     Dim sel As Object
     Set sel = CATIA.ActiveDocument.Selection

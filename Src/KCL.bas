@@ -122,7 +122,30 @@ Function SelPrd(ByVal msg$, _
         Set SelPrd = se.LeafProduct
     End If
 End Function
-' 选择项目 /产品/零件/body/几何图形集等
+
+
+'SelectItem vs SelectElement 区别
+'两者都基于 SelectElement2 选择，区别在于返回值：
+'
+'SelectElement2  →  sel.Item(1)  →  SelectedElement 对象
+'                                        │
+'                    ┌───────────────────┼───────────────────┐
+'                    │                   │                   │
+'                  .Value              .Reference          .Type
+'                 (原始对象)          (引用对象)          (类型字符串)
+'                    │ │
+'              SelectItem 返回这个   SelectElement 返回整个 SelectedElement
+'SelectItem SelectElement
+'返回类型    原始对象（.Value）  SelectedElement 整体
+'返回内容举例    HybridShape、Face、Pad 等   包含 .Value、.Reference、.Type 等属性
+'能拿到 Reference    ? 已经解包，丢失了  ? 通过 .Reference 获取
+'适用场景    只需要操作对象本身（读属性、改名等）    需要将选择结果传给工厂方法（AddNewExtract、AddNewProject 等需要 Reference 的场景）
+'处理 BRep Face  ? 拿到裸 Face 对象，无法转 Reference    ? .Reference 自带 GenericNaming，直接可用
+'简单记忆
+'SelectItem：拿东西本身 → "这个对象是什么，叫什么名字"
+'SelectElement：拿选择凭证 → "我选了什么，在哪里，怎么引用它"' 选择项目 /产品/零件/body/几何图形集等
+
+
 ''' @param:Msg-提示信息
 ''' @param:Filter-array(string),string 选择过滤器(默认为AnyObject)
 ''' @return:AnyObject
@@ -268,15 +291,18 @@ Public Function get_workPartDoc()  'in Assembly
     End If
     Set get_workPartDoc = itemp
 End Function
-Public Function existWkPrt(m_Doc, m_workPrtDoc, m_prt, m_sel) As Boolean
-    If Not CanExecute("Productdocument,PartDocument") Then
-        existWkPrt = False: Exit Function
-    End If
+'==========================
+'Option Explicit
 '  existWkPrt(m_Doc,m_workPrtDoc,m_prt,msel)
 '    Private m_Doc         As Document       ' 当前激活文档
 '    Private m_workPrtDoc   As PartDocument   ' 当前激活的零件文档
 '    Private m_prt         As part           ' 当前激活的Part对象
 '    Private m_Sel         As Selection      ' 选择集对象
+
+Public Function existWkPrt(m_Doc, m_workPrtDoc, m_prt, m_sel) As Boolean
+    If Not CanExecute("Productdocument,PartDocument") Then
+        existWkPrt = False: Exit Function
+    End If
     On Error Resume Next
     Set m_Doc = CATIA.ActiveDocument
     Set m_workPrtDoc = KCL.get_workPartDoc
@@ -951,6 +977,7 @@ End Sub
 
 ' 检查并激活已存在的窗口
 Function ActivateExistingWindow(ByVal strPath As String) As Boolean
+    ActivateExistingWindow = False
     Dim w As Object
     On Error Resume Next
     For Each w In CreateObject("Shell.Application").Windows
@@ -981,7 +1008,13 @@ End Sub
 ' 打开文件位置并选中文件
 Private Sub OpenFileLocation(ByVal strFilePath As String)
     On Error GoTo ErrorHandler
-    strFilePath = """" & strFilePath & """"  ' 确保文件路径被引号包围
+    
+    strFilePath = Trim(strFilePath)
+    strFilePath = Replace(strFilePath, """", "")
+
+    ' 第二步：统一加上一对引号（最终一定只有一对）
+    strFilePath = """" & strFilePath & """"
+ 
     shell "explorer.exe /select," & strFilePath, vbMaximizedFocus
     Exit Sub
 ErrorHandler:

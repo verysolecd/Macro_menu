@@ -87,7 +87,7 @@ Private Function TransGoogle(text)
     xhr.setRequestHeader "User-Agent", "Mozilla/5.0"
     xhr.setRequestHeader "Accept", "application/json"
     xhr.Send
-    If xhr.Status <> 200 Then GoTo Fail
+    If xhr.status <> 200 Then GoTo Fail
     Dim res: res = xhr.ResponseText
 
     ' Google 返回格式: [[["段1","原1",...],["段2","原2",...]],...]
