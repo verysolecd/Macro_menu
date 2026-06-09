@@ -201,11 +201,11 @@ Sub import_project( _
         Set proj = mProjectLst.item(projectIdx)
     On Error GoTo 0
     If proj Is Nothing Then Exit Sub
-    Dim KEY As String
-    KEY = Replace(proj.fileName, "\", SEPARATOR)
-    If Not mUserDict.Exists(KEY) Then Exit Sub
+    Dim key As String
+    key = Replace(proj.fileName, "\", SEPARATOR)
+    If Not mUserDict.Exists(key) Then Exit Sub
     Dim path As String
-    path = mUserDict(KEY)("path")
+    path = mUserDict(key)("path")
     If Not mUtil.GetFso().FolderExists(path) Then Exit Sub
     Call remove_modules(projectIdx)
     Call import_modules(proj, path)
@@ -358,10 +358,10 @@ Sub overwriting_project( _
         Set proj = mProjectLst.item(projectIdx)
     On Error GoTo 0
     If proj Is Nothing Then Exit Sub
-    Dim KEY As String
-    KEY = Replace(proj.fileName, "\", SEPARATOR)
+    Dim key As String
+    key = Replace(proj.fileName, "\", SEPARATOR)
     Dim dirPath As String
-    dirPath = mUserDict(KEY)("path")
+    dirPath = mUserDict(key)("path")
     Dim fso As Object
     Set fso = mUtil.GetFso()
     '找不到的话删除就可以了吗？
@@ -378,10 +378,10 @@ Sub open_folder( _
         Set proj = mProjectLst.item(projectIdx)
     On Error GoTo 0
     If proj Is Nothing Then Exit Sub
-    Dim KEY As String
-    KEY = Replace(proj.fileName, "\", SEPARATOR)
+    Dim key As String
+    key = Replace(proj.fileName, "\", SEPARATOR)
     Dim dirPath As String
-    dirPath = mUserDict(KEY)("path")
+    dirPath = mUserDict(key)("path")
     Dim fso As Object
     Set fso = mUtil.GetFso()
     '找不到的话删除就可以了吗？
@@ -395,16 +395,16 @@ End Sub
 Private Sub update_userdata( _
         ByVal proj As Object, _
         ByVal path As String)
-    Dim KEY As String
-    KEY = Replace(proj.fileName, "\", SEPARATOR)
-    If mUserDict.Exists(KEY) Then
-        mUserDict.Remove KEY
+    Dim key As String
+    key = Replace(proj.fileName, "\", SEPARATOR)
+    If mUserDict.Exists(key) Then
+        mUserDict.Remove key
     End If
     Dim info As Object
     Set info = mUtil.InitDict()
     info.Add "name", proj.Name
     info.Add "path", path
-    mUserDict.Add KEY, info
+    mUserDict.Add key, info
     Call cleanUp_userdata
 End Sub
 '获取导出用的扩展名
@@ -506,23 +506,23 @@ Private Sub cleanUp_userdata()
     Set removeLst = New Collection
     Dim filePath As String
     Dim dirPath As String
-    Dim KEY As Variant 'String
-    For Each KEY In mUserDict.keys()
-        If KEY = "ver" Then GoTo Continue
-        filePath = Replace(KEY, SEPARATOR, "\")
+    Dim key As Variant 'String
+    For Each key In mUserDict.keys()
+        If key = "ver" Then GoTo Continue
+        filePath = Replace(key, SEPARATOR, "\")
         If Not fso.FileExists(filePath) Then
-            removeLst.Add KEY
+            removeLst.Add key
             GoTo Continue
         End If
-        dirPath = mUserDict(KEY)("path")
+        dirPath = mUserDict(key)("path")
         If Not fso.FolderExists(dirPath) Then
-            removeLst.Add KEY
+            removeLst.Add key
             GoTo Continue
         End If
 Continue:
     Next
-    For Each KEY In removeLst
-        mUserDict.Remove KEY
+    For Each key In removeLst
+        mUserDict.Remove key
     Next
 End Sub
 '项目是否曾被保存过

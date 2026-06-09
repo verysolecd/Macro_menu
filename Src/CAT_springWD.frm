@@ -94,11 +94,11 @@ Sub setFrm(ttl, cfgs, Optional ByVal isVert As Boolean = False)
     ' 3. 后处理：横排按钮行
     If Not isVert And Btnlst.count > 0 Then
         curTop = curTop + ItmGap
-        Dim BTN
-        For Each BTN In Btnlst
-            BTN.Top = curTop: BTN.Height = Btn_H
-            BTN.Left = BtnLeft: BTN.Width = Btn_W
-            BtnLeft = BtnLeft + BTN.Width + 1.5 * ItmGap
+        Dim btn
+        For Each btn In Btnlst
+            btn.Top = curTop: btn.Height = Btn_H
+            btn.Left = BtnLeft: btn.Width = Btn_W
+            BtnLeft = BtnLeft + btn.Width + 1.5 * ItmGap
         Next
         curTop = curTop + cls_H + ItmGap
     End If

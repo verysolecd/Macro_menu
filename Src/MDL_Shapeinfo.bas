@@ -16,13 +16,13 @@ End If
         Set HSF = oDoc.part.HybridShapeFactory
         Set HBS = oDoc.part.HybridBodies
 '获取所有的shapes
-Set oHb = oprt ' HBS.item(1)
+Set OHB = oprt ' HBS.item(1)
 Call GetShapesByRecursion(oprt)
 'Call GetShapesByParameters(oprt)
 '将获取的shape增加到list
     Set lst = Initlst
-    For Each KEY In mdict.keys
-        Set itube = mdict(KEY)
+    For Each key In mdict.keys
+        Set itube = mdict(key)
         lst.Add itube
     Next
 '对lst 产品分类处理

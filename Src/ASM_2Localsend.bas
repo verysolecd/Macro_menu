@@ -4,15 +4,13 @@ Attribute VB_Name = "ASM_2Localsend"
 '{Caption:备份到路径}
 '{ControlTipText:send当前根产品到路径}
 '{BackColor:}
-
 Private Const mdlname As String = "ASM_2Localsend"
 Sub sendDir()
     If Not CanExecute("ProductDocument,DrawingDocument,partdocument") Then Exit Sub
     CATIA.DisplayFileAlerts = True
     Dim oDoc: Set oDoc = CATIA.ActiveDocument
     ipath_name = oDoc.path & "\" & oDoc.Name
-    Dim opath
-        opath = KCL.ofParentPath(oDoc.path)
+    Dim opath: opath = KCL.ofParentPath(oDoc.path)
     Dim pn
         If KCL.IsObj_T(oDoc, "DrawingDocument") Then
             pn = KCL.strbflast(oDoc.Name, ".")
@@ -25,10 +23,10 @@ Sub sendDir()
     bckpath = opath & bckFolderName
     
     If KCL.isExists(oDoc.path) Then
-        Dim BTN, bTitle, bResult
+        Dim btn, bTitle, bResult
             imsg = "将备份到" & bckpath & "您确认吗？"
-            BTN = vbYesNo + vbExclamation
-            bResult = MsgBox(imsg, BTN, "bTitle")  ' Yes(6),No(7),cancel(2)
+            btn = vbYesNo + vbExclamation
+            bResult = MsgBox(imsg, btn, "bTitle")  ' Yes(6),No(7),cancel(2)
             Select Case bResult
                 Case 7: Exit Sub '===选择“否”====
                 Case 2: Exit Sub '===选择“取消”====

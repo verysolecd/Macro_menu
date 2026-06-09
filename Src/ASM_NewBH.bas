@@ -34,7 +34,7 @@ Attribute VB_Name = "ASM_NewBH"
 Private prj
 Private Const mdlname As String = "ASM_NewBH"
 Sub NewBH()
-    prj = KCL.GetInput("请输入项目名称"): If prj = "" Then Exit Sub
+    prj = KCL.getuserInput("请输入项目名称"): If prj = "" Then Exit Sub
     Dim Tree As Object: Set Tree = ParsePn(KCL.getDecCode("ASM_NewBH"))
     Dim PStack As Object: Set PStack = KCL.InitDic
     Dim k, oPrd As Object, ref As Object, fast As Object
@@ -76,14 +76,14 @@ Function AddNode(PStack, D)
 End Function
 
 Private Function ParsePn(c$) As Object
-    Dim RE As Object, m, lst, curL%, H(20) As Integer, curI%
+    Dim RE As Object, m, lst, curL%, h(20) As Integer, curI%
     Set RE = CreateObject("VBScript.RegExp"): Set lst = KCL.InitDic(1)
     RE.Global = True: RE.MultiLine = True: RE.Pattern = "^(\s*)'\s*%info\s+([^,]*),+([^,]*),+([^,]*),+([^,]*),+([^,\r\n]*).*$"
     If RE.test(c) Then
-        H(0) = -1: H(1) = 0
+        h(0) = -1: h(1) = 0
         For Each m In RE.Execute(c)
             curI = Len(m.SubMatches(0))
-            curL = GetLev(curI, curL, H)
+            curL = GetLev(curI, curL, h)
             Dim D: Set D = KCL.InitDic(1)
             D.Add "Level", curL: D.Add "Type", VBA.Trim(m.SubMatches(1)): D.Add "PartNumber", VBA.Trim(m.SubMatches(2))
             D.Add "Nomenclature", VBA.Trim(m.SubMatches(3)): D.Add "Definition", VBA.Trim(m.SubMatches(4)): D.Add "Name", VBA.Trim(m.SubMatches(5))
@@ -93,12 +93,12 @@ Private Function ParsePn(c$) As Object
     Set ParsePn = lst
 End Function
 
-Private Function GetLev(ByVal i As Integer, ByVal L As Integer, ByRef H() As Integer) As Integer
-    If L = 0 Or i > H(L) Then
-        L = L + 1: If L > UBound(H) Then L = UBound(H)
-        H(L) = i
+Private Function GetLev(ByVal i As Integer, ByVal L As Integer, ByRef h() As Integer) As Integer
+    If L = 0 Or i > h(L) Then
+        L = L + 1: If L > UBound(h) Then L = UBound(h)
+        h(L) = i
     Else
-        While L > 1 And H(L) > i: L = L - 1: Wend
+        While L > 1 And h(L) > i: L = L - 1: Wend
     End If
     GetLev = L
 End Function

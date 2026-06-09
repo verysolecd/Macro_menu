@@ -1,6 +1,6 @@
 Attribute VB_Name = "DRW_viewBOM_drawing_template"
 Private Const mdlname As String = "DRW_viewBOM_drawing_template"
-Sub main()
+Sub Main()
     CATIA.RefreshDisplay = False
     On Error Resume Next
    fmt = Array("Number", "Part Number", "Quantity", "Nomenclature", "Definition", "Material", "Product Description")
@@ -87,9 +87,9 @@ Function GetSortedBOM(fPath)
 End Function
 
 ' --- 辅助：行分割 ---
-Function SplitLine(S)
-    S = Mid(S, 2, Len(S) - 2) ' 去头尾 |
-    Dim arr: arr = Split(S, "|")
+Function SplitLine(s)
+    s = Mid(s, 2, Len(s) - 2) ' 去头尾 |
+    Dim arr: arr = Split(s, "|")
     Dim i: For i = 0 To UBound(arr): arr(i) = Trim(arr(i)): Next
     SplitLine = arr
 End Function

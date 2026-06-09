@@ -44,9 +44,9 @@ Sub cRMinibox()
                 Exit Sub
             End If
    Dim toCbox: toCbox = False
-   Dim oEng: Set oEng = KCL.new_spWD(mdlname)
-    oEng.Show
-    Select Case oEng.ClickedButton
+   Dim oWD: Set oWD = KCL.new_spWD(mdlname)
+    oWD.Show
+    Select Case oWD.btnClicked
         Case "btnOK": '要创建minibox则
             On Error Resume Next
                 Set workDoc = prod.ReferenceProduct.Parent.part: Error.Clear
@@ -108,7 +108,7 @@ Sub cRMinibox()
             iSize.Y = .Max.Y - .Min.Y
             iSize.Z = .Max.Z - .Min.Z
         End With
-        Call oEng.Alert(Format(iSize.X, "0.00") & " x " _
+        Call oWD.Alert(Format(iSize.X, "0.00") & " x " _
                  & Format(iSize.Y, "0.00") & " x " _
                  & Format(iSize.Z, "0.00"))
     
@@ -181,21 +181,21 @@ Private Function UpdateBox(CurrentBox As Box3D, NewBox As Box3D) As Box3D
         Exit Function
     End If
     
-    Dim Result As Box3D
-    Result = CurrentBox
+    Dim result As Box3D
+    result = CurrentBox
     
     ' Simplify comparison using Min/Max helpers
-    Result.Min.X = Min(Result.Min.X, NewBox.Min.X)
-    Result.Max.X = Max(Result.Max.X, NewBox.Max.X)
+    result.Min.X = Min(result.Min.X, NewBox.Min.X)
+    result.Max.X = Max(result.Max.X, NewBox.Max.X)
     
-    Result.Min.Y = Min(Result.Min.Y, NewBox.Min.Y)
-    Result.Max.Y = Max(Result.Max.Y, NewBox.Max.Y)
+    result.Min.Y = Min(result.Min.Y, NewBox.Min.Y)
+    result.Max.Y = Max(result.Max.Y, NewBox.Max.Y)
     
-    Result.Min.Z = Min(Result.Min.Z, NewBox.Min.Z)
-    Result.Max.Z = Max(Result.Max.Z, NewBox.Max.Z)
+    result.Min.Z = Min(result.Min.Z, NewBox.Min.Z)
+    result.Max.Z = Max(result.Max.Z, NewBox.Max.Z)
     
-    Result.IsValid = True
-    UpdateBox = Result
+    result.IsValid = True
+    UpdateBox = result
 End Function
 
 Private Function GetMimLength( _
@@ -204,16 +204,12 @@ Private Function GetMimLength( _
     ByVal axRef As Reference, _
     Direction As mCoord) _
     As Double
-    
     Dim bdyPt As part
     Set bdyPt = KCL.GetParent_Of_T(body, "Part")
-    
     Dim pln As HybridShapePlaneEquation
     Set pln = CreatePlane(pt, axRef, Direction.X, Direction.Y, Direction.Z)
-    
     Dim spa As AnyObject
     Set spa = pt.Parent.GetWorkbench("SPAWorkbench")
-    
     GetMimLength = spa.GetMeasurable(bdyPt.CreateReferenceFromObject(body)) _
                       .GetMinimumDistance(pt.CreateReferenceFromObject(pln))
 End Function

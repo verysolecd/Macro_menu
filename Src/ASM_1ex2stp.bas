@@ -1,12 +1,9 @@
 Attribute VB_Name = "ASM_1ex2stp"
-'------宏信息-----------------------------------------------------
 '{GP:3}
 '{EP:ex2stp_zip}
 '{Caption:导出stp}
 '{ControlTipText: 一键导出stp并压缩到指定路径或本身目录}
 '{BackColor:}
-'------窗体标题-------------------------------------------------
-'标题格式为 %Title <Caption/Text>
 '%Title 现在要导出stp,那我问你?
 '------控件清单--------------------------------------------------
 '控件格式为 %UI <ControlType> <ControlName> <Caption/Text>
@@ -20,6 +17,7 @@ Attribute VB_Name = "ASM_1ex2stp"
 '------------------------------------------------
 Private ErrorMessage As String
 Private zippath
+Private mWD
 Private Const mdlname As String = "ASM_1ex2stp"
 
 Sub ex2stp_zip()
@@ -28,21 +26,22 @@ Sub ex2stp_zip()
     Err.Number = 0: ErrorMessage = ""
     Dim oDoc: Set oDoc = CATIA.ActiveDocument
     Dim outputpath As String: outputpath = ""
-    Dim oEng: Set oEng = KCL.new_spWD(mdlname)
-    oEng.Show
-    Select Case oEng.ClickedButton
+    Set mWD = New Cls_DynaWD   '创建窗口实例
+    mWD.getUIcfgfromModDEC mdlname '获取窗口控件配置
+    mWD.Show '显示窗口
+    Select Case mWD.btnClicked '窗口点击结果
     Case "btnOK"
         '===========路径设置
-        If oEng.Results("chk_path") Then
+        If mWD.Results("chk_path") Then
             outputpath = IIf(oDoc.path = "", "", oDoc.path)
         Else:
             outputpath = KCL.selFdl()
         End If
         If outputpath = "" Then ErrorMessage = "缺少导出路径，操作取消！": GoTo ShowMessage
         '===========零件号时间戳处理
-        If oEng.Results("chk_tm") Then
+        If mWD.Results("chk_tm") Then
             Dim ttp: ttp = KCL.timestamp("min")
-            If oEng.Results("chk_tm") Then
+            If mWD.Results("chk_tm") Then
                 pn = KCL.strbflast(oDoc.Product.partNumber, "_")
                 If KCL.ExistsKey(pn, "_") Then
                     oDoc.Product.partNumber = pn & ttp
@@ -64,10 +63,10 @@ Sub ex2stp_zip()
         If Not ex2zip(stpfilepath) Then GoTo ShowMessage
         KCL.DeleteMe stpfilepath                 ' 删除原始 STP 文件
         '============生成导出日志
-        If oEng.Results("chk_log") Then
+        If mWD.Results("chk_log") Then
             logpath = opath(0) & "\" & "stp_export_log.md"
             loginfo = "## " & KCL.timestamp("day") & "  " & stpname & ".stp" & vbCrLf & _
-                      "  " & oEng.Results("txt_log")
+                      "  " & mWD.Results("txt_log")
             KCL.Appendtext KCL.getmd(logpath), loginfo
         End If
     Case Else:
@@ -89,7 +88,7 @@ ShowMessage:
         KCL.SmartOPenPath (zippath)
     End If
 Wexit:
-    Set oEng = Nothing
+    Set mWD = Nothing
     Set oDoc = Nothing
     On Error GoTo 0                              ' 关闭错误处理
     ErrorMessage = ""                            ' 重置错误信息
@@ -98,7 +97,7 @@ End Sub
 Function ex2zip(oFilepath) As Boolean
     On Error GoTo seterror
     ex2zip = False
-    Dim Result, shell, cmd, path7z
+    Dim result, shell, cmd, path7z
     '=======================
     path7z = "D:\for use\7-Zip\7z.exe"
     If KCL.isExists(path7z) Then
@@ -109,8 +108,8 @@ Function ex2zip(oFilepath) As Boolean
         cmd = "powershell -Command ""Compress-Archive -Path '""" & oFilepath & """' -DestinationPath '""" & zippath & """' -CompressionLevel Optimal -Force"""
     End If
     '=======================
-    Set shell = CreateObject("WScript.Shell"): Result = shell.Run(cmd, 0, True)
-    If Result <> 0 Then Err.Clear
+    Set shell = CreateObject("WScript.Shell"): result = shell.Run(cmd, 0, True)
+    If result <> 0 Then Err.Clear
     If KCL.isExists(zippath) Then
         ex2zip = True
         Exit Function

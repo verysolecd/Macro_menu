@@ -4,21 +4,19 @@ Attribute VB_Name = "RW_cMass"
 '{Caption:迭代重量}
 '{ControlTipText:选择要被读取或修改的产品}
 '{BackColor:}
-
-
 '  %UI Label  lblInfo  请选择操作：
 '  %UI Button btna  更新重量
 '  %UI Button btnb 更新LV2重量
-
+Private mWD As Cls_DynaWD
 Private Const mdlname As String = "RW_cMass"
 Sub Cal_Mass_m()
     If Not KCL.CanExecute("ProductDocument") Then Exit Sub
     If pdm Is Nothing Then Set pdm = New Cls_PDM
     '==生成UItoolbar-===================
-    Dim oEng As New Cls_DynaWD
-    oEng.ShowToolbar mdlname
+   Set mWD = New Cls_DynaWD
+    mWD.ShowToolbar mdlname
 End Sub
-Public Sub btna_click()
+Sub btna_click()
  On Error Resume Next
        Cal_Mass
    If Err.Number > 0 Then

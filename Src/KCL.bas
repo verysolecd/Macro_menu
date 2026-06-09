@@ -1,15 +1,10 @@
 Attribute VB_Name = "KCL"
-
 Option Explicit
-
-
 Private Declare PtrSafe Function OpenClipboard Lib "user32" (ByVal hwnd As LongPtr) As Long
 Private Declare PtrSafe Function EmptyClipboard Lib "user32" () As Long
 Private Declare PtrSafe Function CloseClipboard Lib "user32" () As Long
 Private Declare PtrSafe Function SetClipboardData Lib "user32" (ByVal wFormat As Long, ByVal hMem As LongPtr) As LongPtr
-
 #If VBA7 Then
-    ' 现有的声明
     Private Declare PtrSafe Function timeGetTime Lib "winmm.dll" () As Long
     Private Declare PtrSafe Function SetForegroundWindow Lib "user32" (ByVal hwnd As LongPtr) As Long
     Private Declare PtrSafe Function ShowWindow Lib "user32" (ByVal hwnd As LongPtr, ByVal nCmdShow As Long) As Long
@@ -22,7 +17,6 @@ Private Declare PtrSafe Function SetClipboardData Lib "user32" (ByVal wFormat As
 Private Const SW_MAXIMIZE = 3
 Private Const SW_NORMAL = 1
 Private mSW& ' 秒表开始时间
-
 Public Type Bomline
     level           As Integer        ' 层级
     partNumber      As String    ' 件号
@@ -37,7 +31,6 @@ Public Type Bomline
     UserProp1       As String
     UserProp2       As String
 End Type
-
 Public Type ParamItem
     Name            As String
     ParamType       As String
@@ -45,7 +38,6 @@ Public Type ParamItem
     target          As Object    ' 指向 CATIA Parameter 对象
     Description     As String
 End Type
-
 Public rootDoc
 Public rootPrd  As Object
 Public xlAPP As Object
@@ -56,7 +48,6 @@ Public xlm As New Cls_XLM
 Public g_allPN As Object
 Public g_Picpath
 Public g_Btn
-
 '*****计时相关函数*****
 ' 启动秒表
 Private Const mdlname As String = "KCL"
@@ -68,7 +59,6 @@ End Sub
 Function SW_GetTime#()
     SW_GetTime = IIf(mSW = 0, -1, (timeGetTime - mSW) * 0.001)
 End Function
-
 '*****CATIA相关函数*****=================================================
 ' 循环选择项目
 Sub LoopSel()
@@ -132,7 +122,30 @@ Function SelPrd(ByVal msg$, _
         Set SelPrd = se.LeafProduct
     End If
 End Function
-' 选择项目 /产品/零件/body/几何图形集等
+
+
+'SelectItem vs SelectElement 区别
+'两者都基于 SelectElement2 选择，区别在于返回值：
+'
+'SelectElement2  →  sel.Item(1)  →  SelectedElement 对象
+'                                        │
+'                    ┌───────────────────┼───────────────────┐
+'                    │                   │                   │
+'                  .Value              .Reference          .Type
+'                 (原始对象)          (引用对象)          (类型字符串)
+'                    │ │
+'              SelectItem 返回这个   SelectElement 返回整个 SelectedElement
+'SelectItem SelectElement
+'返回类型    原始对象（.Value）  SelectedElement 整体
+'返回内容举例    HybridShape、Face、Pad 等   包含 .Value、.Reference、.Type 等属性
+'能拿到 Reference    ? 已经解包，丢失了  ? 通过 .Reference 获取
+'适用场景    只需要操作对象本身（读属性、改名等）    需要将选择结果传给工厂方法（AddNewExtract、AddNewProject 等需要 Reference 的场景）
+'处理 BRep Face  ? 拿到裸 Face 对象，无法转 Reference    ? .Reference 自带 GenericNaming，直接可用
+'简单记忆
+'SelectItem：拿东西本身 → "这个对象是什么，叫什么名字"
+'SelectElement：拿选择凭证 → "我选了什么，在哪里，怎么引用它"' 选择项目 /产品/零件/body/几何图形集等
+
+
 ''' @param:Msg-提示信息
 ''' @param:Filter-array(string),string 选择过滤器(默认为AnyObject)
 ''' @return:AnyObject
@@ -278,15 +291,18 @@ Public Function get_workPartDoc()  'in Assembly
     End If
     Set get_workPartDoc = itemp
 End Function
-Public Function existWkPrt(m_Doc, m_workPrtDoc, m_prt, m_sel) As Boolean
-    If Not CanExecute("Productdocument,PartDocument") Then
-        existWkPrt = False: Exit Function
-    End If
+'==========================
+'Option Explicit
 '  existWkPrt(m_Doc,m_workPrtDoc,m_prt,msel)
 '    Private m_Doc         As Document       ' 当前激活文档
 '    Private m_workPrtDoc   As PartDocument   ' 当前激活的零件文档
 '    Private m_prt         As part           ' 当前激活的Part对象
 '    Private m_Sel         As Selection      ' 选择集对象
+
+Public Function existWkPrt(m_Doc, m_workPrtDoc, m_prt, m_sel) As Boolean
+    If Not CanExecute("Productdocument,PartDocument") Then
+        existWkPrt = False: Exit Function
+    End If
     On Error Resume Next
     Set m_Doc = CATIA.ActiveDocument
     Set m_workPrtDoc = KCL.get_workPartDoc
@@ -365,8 +381,8 @@ Private Function IsStringAry(ByVal ary As Variant) As Boolean
     IsStringAry = True
 End Function
 ' 将字符串转换为数组变量
-Private Function strToAry(ByVal S$) As Variant
-    Dim ary As Variant: ary = Split(S, ",")
+Private Function strToAry(ByVal s$) As Variant
+    Dim ary As Variant: ary = Split(s, ",")
     Dim oAry() As Variant: ReDim oAry(UBound(ary))
     Dim i&
     For i = 0 To UBound(ary)
@@ -721,19 +737,19 @@ Function ReadFile(ByVal path$) As Variant
     End With
     On Error GoTo 0
 End Function
-Public Function GetInput(msg) As String
+Public Function getuserInput(msg) As String
     Dim UserInput As String
     UserInput = InputBox(msg, "输入提示")
     If UserInput = "" Or UserInput = "0" Then
-        GetInput = ""
+        getuserInput = ""
     Else
-        GetInput = UserInput
+        getuserInput = UserInput
     End If
 End Function
 ' 检查字符串中是否包含指定关键字
 ' 忽略大小写进行检查
-Public Function ExistsKey(ByVal txt As String, ByVal KEY As String) As Boolean
-    ExistsKey = IIf(VBA.InStr(VBA.LCase(txt), VBA.LCase(KEY)) > 0, True, False)
+Public Function ExistsKey(ByVal txt As String, ByVal key As String) As Boolean
+    ExistsKey = IIf(VBA.InStr(VBA.LCase(txt), VBA.LCase(key)) > 0, True, False)
 End Function
 '@@ param:ostr-时间格式
 Public Function timestamp(Optional ByVal ostr) As String
@@ -771,12 +787,12 @@ NextChar:
     isEngPath = True
 End Function
 ' 检查字符串是否包含特殊符号
-Function HasSpecialChars(ByVal S As String) As Boolean
+Function HasSpecialChars(ByVal s As String) As Boolean
     Dim validChars As String
     Dim i As Long
     validChars = "!@#$%^&*()-_=+[]{};:'"",.<>/?\|~\/"
-    For i = 1 To Len(S)
-        If InStr(validChars, Mid(S, i, 1)) > 0 Then
+    For i = 1 To Len(s)
+        If InStr(validChars, Mid(s, i, 1)) > 0 Then
             HasSpecialChars = True
             Exit Function
         End If
@@ -786,13 +802,13 @@ End Function
 
 '此函数替换字符串中的特殊符号
 
-Function ReplaceSpcChar(ByVal S As String) As String
+Function ReplaceSpcChar(ByVal s As String) As String
     Dim regEx: Set regEx = getRegexp()
     ' 1. Windows系统非法: \ / : * ? " < > |
     ' 2. 用户自定义非法: ! @ # 【 】 { } ~ 《 》 ， ^ % & （ ） ( ) 、
     regEx.Pattern = "[\\/:*?""<>|!@#【】{}~《》，\^%&（）\(\)、]+"
     regEx.Global = True
-    ReplaceSpcChar = regEx.Replace(S, "_")
+    ReplaceSpcChar = regEx.Replace(s, "_")
     Set regEx = Nothing
 End Function
 
@@ -805,7 +821,7 @@ Function rmchn(ByVal inputString$) As String
     Set regEx = Nothing
 End Function
 
-Function ReplaceBadChar(ByVal S As String) As String
+Function ReplaceBadChar(ByVal s As String) As String
     Dim regEx: Set regEx = getRegexp()
     ' 组合模式：
     ' 1. [\\/:*?""<>|!@#【】{}~《》，\^%&（）\(\)、]  -> 特殊符号
@@ -813,7 +829,7 @@ Function ReplaceBadChar(ByVal S As String) As String
     ' 3. +                                      -> 连续匹配
     regEx.Pattern = "[\\/:*?""<>|!@#【】Φ{}~《》，\^%&（）\(\)、\u4e00-\u9fa5]+"
     regEx.Global = True
-    ReplaceBadChar = regEx.Replace(S, "_")
+    ReplaceBadChar = regEx.Replace(s, "_")
     Set regEx = Nothing
 End Function
 
@@ -961,13 +977,14 @@ End Sub
 
 ' 检查并激活已存在的窗口
 Function ActivateExistingWindow(ByVal strPath As String) As Boolean
-    Dim W As Object
+    ActivateExistingWindow = False
+    Dim w As Object
     On Error Resume Next
-    For Each W In CreateObject("Shell.Application").Windows
-        If LCase(W.Document.folder.Self.path) = LCase(strPath) Then
+    For Each w In CreateObject("Shell.Application").Windows
+        If LCase(w.Document.folder.Self.path) = LCase(strPath) Then
             If Err.Number = 0 Then ' 确保路径访问没报错
-                 ShowWindow W.hwnd, 1        ' 1 = SW_SHOWNORMAL (普通模式/还原)
-                SetForegroundWindow W.hwnd  ' 激活到前台
+                 ShowWindow w.hwnd, 1        ' 1 = SW_SHOWNORMAL (普通模式/还原)
+                SetForegroundWindow w.hwnd  ' 激活到前台
                 ActivateExistingWindow = True
                 Exit Function
             End If
@@ -991,7 +1008,13 @@ End Sub
 ' 打开文件位置并选中文件
 Private Sub OpenFileLocation(ByVal strFilePath As String)
     On Error GoTo ErrorHandler
-    strFilePath = """" & strFilePath & """"  ' 确保文件路径被引号包围
+    
+    strFilePath = Trim(strFilePath)
+    strFilePath = Replace(strFilePath, """", "")
+
+    ' 第二步：统一加上一对引号（最终一定只有一对）
+    strFilePath = """" & strFilePath & """"
+ 
     shell "explorer.exe /select," & strFilePath, vbMaximizedFocus
     Exit Sub
 ErrorHandler:
@@ -1007,12 +1030,12 @@ End Sub
 '    Next i
 'End Sub
 Public Function Push_Dic(ByVal dic As Object, _
-                          ByVal KEY As Variant, _
+                          ByVal key As Variant, _
                           ByVal item As Variant) As Object
-    If dic.Exists(KEY) Then
-        dic(KEY) = item
+    If dic.Exists(key) Then
+        dic(key) = item
     Else
-        dic.Add KEY, item
+        dic.Add key, item
     End If
     Set Push_Dic = dic
 End Function
@@ -1090,61 +1113,19 @@ Public Function getbf1stproc(modName)
         getbf1stproc = codemod.lines(1, startline) ' 获取到第一个函数的所有代码行
 End Function
 
-Function getmeas(itm)
-    Set getmeas = Nothing
-   If Not itm Is Nothing Then
-       Dim oDoc: Set oDoc = CATIA.ActiveDocument
-      Dim spa:  Set spa = oDoc.GetWorkbench("SPAWorkbench")
-        Set getmeas = spa.GetMeasurable(itm)
-    End If
-End Function
-'Function setBTNmdl(ByVal modName As String)
-'    Set setBTNmdl = Nothing
-'    Dim ctrllst:    Set ctrllst = KCL.ParseUIConfig(KCL.getbf1stproc(modName))
-'    Dim map: Set map = KCL.InitDic
-'    Dim oCtrl
-'    For Each oCtrl In ctrllst    '映射BTN名字和对应模块
-'        Select Case oCtrl("Type")
-'            Case "Forms.CommandButton.1"
-'                map(oCtrl("Name")) = modName
-'        End Select
-'    Next
-'   Set setBTNmdl = map
-'End Function
-'Function setBTNFunc(ByVal modName As String)
-'    Set setBTNFunc = Nothing
-'    Dim ctrllst:    Set ctrllst = KCL.ParseUIConfig(KCL.getbf1stproc(modName))
-'    Dim map: Set map = KCL.InitDic
-'    Dim oCtrl
-'    For Each oCtrl In ctrllst    '映射BTN名字和对应函数
-'        Select Case oCtrl("Type")
-'            Case "Forms.CommandButton.1"
-'                map(oCtrl("Name")) = oCtrl("Name") & "_Click"
-'        End Select
-'    Next
-'   Set setBTNFunc = mapssss
-'End Function
-'Function newFrm(Optional ByVal modName As String = "", Optional ByVal isVertical = False)
-'    Dim oFrm: Set oFrm = New cls_dynaFrm
-'    If modName <> "" Then
-'        oFrm.Init modName
-'   End If
-'   If isVertical Then oFrm.isVertical = True
-'   Set newFrm = oFrm
-'End Function
 ' ═══ 新的统一UI引擎工厂函数 ═══
 ' 用法与 newFrm 平行，返回 Cls_DynaWD 实例
-' 模态弹窗示例:  Set oEng = KCL.new_spWD("OTH_Minibox") : oEng.Show
-' 工具栏示例:    Set oEng = KCL.new_spWD("OTH_ivhideshow") : oEng.ShowToolbar mdlname, mapMdl, mapFunc
-' 纯代码示例:    Set oEng = KCL.new_spWD() : oEng.AddUIElement "Button","btn1","确定" : oEng.Show
+' 模态弹窗示例:  Set oWD = KCL.new_spWD("OTH_Minibox") : oWD.Show
+' 工具栏示例:    Set oWD = KCL.new_spWD("OTH_ivhideshow") : oWD.ShowToolbar mdlname, mapMdl, mapFunc
+' 纯代码示例:    Set oWD = KCL.new_spWD() : oWD.AddUIElement "Button","btn1","确定" : oWD.Show
 
 Public Function new_spWD(Optional ByVal modName As String = "", Optional ByVal isVertical = False)
-    Dim oEng As Cls_DynaWD: Set oEng = New Cls_DynaWD
+    Dim oWD As Cls_DynaWD: Set oWD = New Cls_DynaWD
     If modName <> "" Then
-        oEng.LoadFromModuleName modName
+        oWD.getUIcfgfromModDEC modName
     End If
-    If isVertical Then oEng.isVertical = True
-    Set new_spWD = oEng
+    If isVertical Then oWD.isVertical = True
+    Set new_spWD = oWD
 End Function
 
 Public Function ParseHex(ByVal hexStr)
@@ -1160,7 +1141,7 @@ Dim R, G, B
     B = val("&H" & Mid(hexStr, 5, 2))
    
     On Error GoTo 0
-   ParseHex = RGB(R, G, B)
+   ParseHex = rgb(R, G, B)
 End Function
 
 Public Function ParseBDcolor(ByVal hexStr)
@@ -1245,24 +1226,25 @@ Public Function CATquick(ByVal Quick As Boolean, Optional ByVal updateCap As Boo
     Dim Vismg:   Set Vismg = setcls.item("CATVizVisualizationSettingCtrl")
     Dim btnCaption As String
     With CATIA
-    
     If Quick Then
         '.DisableNewUndoRedoTransaction
         '.EnableNewUndoRedoTransaction
          .RefreshDisplay = False
             Asmg.AutoUpdateMode = 0 '0: catManualUpdate
             Vismg.Viz3DFixedAccuracy = 5
+            .HSOSynchronized = False
             btnCaption = "屏幕更新(关)"
     Else
         '.DisableNewUndoRedoTransaction
         '.EnableNewUndoRedoTransaction
         .RefreshDisplay = True
-       Asmg.AutoUpdateMode = 1 '1: catAutomaticUpdate
-        Vismg.Viz3DFixedAccuracy = 0.02
+        .HSOSynchronized = True
+        Asmg.AutoUpdateMode = 1 '1: catAutomaticUpdate
+        Vismg.Viz3DFixedAccuracy = 0.2
         btnCaption = "屏幕更新(开)"
     End If
     End With
-     On Error Resume Next
+    On Error Resume Next
         If Not g_Btn Is Nothing Then
           If updateCap = True Then g_Btn.Caption = btnCaption
         End If
@@ -1272,6 +1254,35 @@ Public Function CATquick(ByVal Quick As Boolean, Optional ByVal updateCap As Boo
     On Error GoTo 0
 End Function
 
+' 获取测量工具
+Public Function GetMeas(ByVal itm As Object) As Object
+    Set GetMeas = Nothing
+    If Not itm Is Nothing Then
+        On Error Resume Next
+        Dim spa As Object: Set spa = CATIA.ActiveDocument.GetWorkbench("SPAWorkbench")
+        Dim ref: Set ref = GetParent_Of_T(itm, "Part").CreateReferenceFromObject(itm)
+        Set GetMeas = spa.GetMeasurable(ref)
+        On Error GoTo 0
+    End If
+End Function
 
+' 获取长度
+Public Function getlength(ByVal itm As Object) As Double
+    getlength = 0
+    Dim meas As Object: Set meas = GetMeas(itm)
+    If Not meas Is Nothing Then getlength = meas.Length
+End Function
 
+Public Sub CatiaFreeze(Optional ByVal ison As Boolean = True)
+     If ison = True Then
+        CATIA.DisplayFileAlerts = False
+        CATIA.RefreshDisplay = False
+        CATIA.HSOSynchronized = False
+     Else
+        CATIA.DisplayFileAlerts = True
+        CATIA.RefreshDisplay = True
+        CATIA.HSOSynchronized = True
+        CATIA.ActiveWindow.ActiveViewer.Update
+    End If
+End Sub
 

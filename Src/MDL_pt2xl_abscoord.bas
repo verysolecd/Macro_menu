@@ -12,7 +12,7 @@ Attribute VB_Name = "MDL_pt2xl_abscoord"
 ' %UI Button btnWcoord 带相对坐标导出
 ' %UI Button btncancel  取消
 
-Private mDoc, HSF, mHBS, msel
+Private mdoc, HSF, mHBS, msel
 Private needtrans As Boolean
 
 Private Const mdlname As String = "MDL_pt2xl_abscoord"
@@ -26,16 +26,16 @@ Sub Mpt2xl()
     On Error GoTo 0
     If IsNothing(oprt) Then: MsgBox "No Activated Part": Exit Sub
     
-    Set mDoc = oDoc
+    Set mdoc = oDoc
 
 Set HSF = oprt.HybridShapeFactory
 Set mHBS = oprt.HybridBodies
-Set msel = mDoc.Selection
+Set msel = mdoc.Selection
 needtrans = False
 
-Dim oEng: Set oEng = KCL.new_spWD(mdlname, 1) '1 标识isvertical=true
-oEng.Show
-    Select Case oEng.ClickedButton
+Dim oWD: Set oWD = KCL.new_spWD(mdlname, 1) '1 标识isvertical=true
+oWD.Show
+    Select Case oWD.btnClicked
         Case "btnOK":
                 Call pt2xl(getHB())
          Case "btnWcoord":
@@ -46,15 +46,15 @@ oEng.Show
 End Sub
 Function getHB()
     Dim imsg: imsg = "请选择点所在的几何图形集"
-       Dim oHb
-       Set oHb = KCL.SelectItem(imsg, "HybridBody")
-        Set getHB = oHb
+       Dim OHB
+       Set OHB = KCL.SelectItem(imsg, "HybridBody")
+        Set getHB = OHB
 End Function
 
-Sub pt2xl(oHb)
-    If Not oHb Is Nothing Then
+Sub pt2xl(OHB)
+    If Not OHB Is Nothing Then
         Dim i, irow, ct
-        Set oshapes = oHb.HybridShapes
+        Set oshapes = OHB.HybridShapes
         ct = oshapes.count
         ReDim arr(0 To ct, 0 To 4)
         irow = 0  '获得表头
@@ -71,8 +71,8 @@ Sub pt2xl(oHb)
             str = HSF.GetGeometricalFeatureType(oPt)
             If str = 1 Then
                Dim fakept:  Set fakept = HSF.AddNewPointCoordWithReference(0, 0, 0, oPt)
-                                oHb.AppendHybridShape fakept
-                                mDoc.part.Update
+                                OHB.AppendHybridShape fakept
+                                mdoc.part.Update
                fakept.GetCoordinates fincoord
                If needtrans Then
                     Dim oAxi: Set oAxi = KCL.SelectItem("请选择坐标系", AxisSystem)
@@ -81,7 +81,7 @@ Sub pt2xl(oHb)
                   msel.Clear
                   msel.Add fakept
                   msel.Delete
-                  mDoc.part.Update
+                  mdoc.part.Update
                 arr(irow, 0) = irow
                 arr(irow, 1) = oPt.Name
                 arr(irow, 2) = fincoord(0)
@@ -123,11 +123,11 @@ Function TransAxi(acoor As Variant, axi1) As Variant
     For i = 0 To 2
         v(i) = acoor(i) - origin(i)
     Next
-    Dim Result(2)
-    Result(0) = v(0) * xDir(0) + v(1) * xDir(1) + v(2) * xDir(2)
-    Result(1) = v(0) * yDir(0) + v(1) * yDir(1) + v(2) * yDir(2)
-    Result(2) = v(0) * zDir(0) + v(1) * zDir(1) + v(2) * zDir(2)
-    TransAxi = Result
+    Dim result(2)
+    result(0) = v(0) * xDir(0) + v(1) * xDir(1) + v(2) * xDir(2)
+    result(1) = v(0) * yDir(0) + v(1) * yDir(1) + v(2) * yDir(2)
+    result(2) = v(0) * zDir(0) + v(1) * zDir(1) + v(2) * zDir(2)
+    TransAxi = result
 End Function
 
 

@@ -16,8 +16,8 @@ Private Const mdlname As String = "RW_Cbom"
 Sub cBom()
     If Not KCL.CanExecute("ProductDocument,partdocument") Then Exit Sub
     CATIA.StartCommand ("* iso")
-    Dim oEng: Set oEng = KCL.new_spWD(mdlname): oEng.Show
-    If oEng.ClickedButton <> "btnOK" Then Exit Sub
+    Dim oWD: Set oWD = KCL.new_spWD(mdlname): oWD.Show
+    If oWD.btnClicked <> "btnOK" Then Exit Sub
     If pdm Is Nothing Then Set pdm = New Cls_PDM
     If IsNothing(pdm.CurrentProduct) Then Set pdm.CurrentProduct = KCL.defPrd
     Dim iprd: Set iprd = pdm.CurrentProduct: If IsNothing(iprd) Then Exit Sub
@@ -25,7 +25,7 @@ Sub cBom()
     Call Cal_Mass
     Dim i, j, startrow, Colpn, colPic
         Dim bomlns() As Bomline: bomlns = pdm.ProduceBOM(iprd)
-    If Not oEng.Results("chk_GXfmt") Then
+    If Not oWD.Results("chk_GXfmt") Then
         startrow = 2: Colpn = 3: colPic = 6
         xlm.inject_Bom ConvertBOM_Standard(bomlns), startrow
         startrow = 2: Colpn = 3: colPic = 6
@@ -34,14 +34,14 @@ Sub cBom()
         xlm.inject_GXbom ConvertBOM_GX(bomlns), startrow
         startrow = 5: Colpn = 6: colPic = 8
     End If
-    If oEng.Results("chk_capture") Then
+    If oWD.Results("chk_capture") Then
       Call CapPrd(iprd)
       Call xlm.inject_pic(startrow, Colpn, colPic, g_Picpath)
     End If
        GoTo Cleanup
 Cleanup:
 On Error Resume Next
-    Unload oEng: Set oEng = Nothing
+    Set oWD = Nothing
     Set iprd = Nothing
     xlm.xlshow
    KCL.ClearDir (g_Picpath)

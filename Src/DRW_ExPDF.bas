@@ -19,11 +19,11 @@ Sub ExportPDF()
 If Not CanExecute("DrawingDocument") Then Exit Sub
 'On Error Resume Next ' 临时开启错误处理
  Err.Number = 0
- Dim oEng: Set oEng = KCL.new_spWD(mdlname): oEng.Show
- If LCase(oEng.ClickedButton) <> "btnok" Then Exit Sub
+ Dim oWD: Set oWD = KCL.new_spWD(mdlname): oWD.Show
+ If LCase(oWD.btnClicked) <> "btnok" Then Exit Sub
     Dim oDoc: Set oDoc = CATIA.ActiveDocument
     Dim opath As String: opath = ""
-    If oEng.Results("chk_path") Then
+    If oWD.Results("chk_path") Then
         opath = IIf(oDoc.path = "", "", oDoc.path)
     Else:
         opath = KCL.selFdl()
@@ -33,7 +33,7 @@ If Not CanExecute("DrawingDocument") Then Exit Sub
         Dim currSet: currSet = DraftMgr.GetAttr("DimDesignMode")
         DraftMgr.PutAttr "DimDesignMode", False
         DraftMgr.Commit
-   If oEng.Results("chk_save") Then oDoc.Save
+   If oWD.Results("chk_save") Then oDoc.Save
         Dim filePath(2) '0=路径，1=name，2=extname
         filePath(0) = opath
         filePath(1) = Replace(UCase(oDoc.Name), UCase(".CATDrawing"), "_") & KCL.timestamp("day") & "_"

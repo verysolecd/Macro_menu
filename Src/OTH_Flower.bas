@@ -95,7 +95,7 @@ Sub Flower(Optional ByVal pp As Double)
     Dim R12 As Double
     Dim H1 As Double
     Dim H2 As Double
-    Dim H As Double
+    Dim h As Double
     Dim SweepR As Double
     Dim OffsetPlane As Double
     Dim R2 As Double
@@ -200,8 +200,8 @@ Sub Flower(Optional ByVal pp As Double)
     
     H1 = 100
     H2 = 100
-    H = val(FrmFlower.TxtH.text)
-    H1 = H / 2
+    h = val(FrmFlower.TxtH.text)
+    H1 = h / 2
     H2 = H1
     
     SweepR = 10

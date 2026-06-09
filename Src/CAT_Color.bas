@@ -9,17 +9,14 @@ Attribute VB_Name = "CAT_Color"
 Private Const mdlname As String = "CAT_Color"
 
 Sub swbcgColor()
-    
     On Error GoTo ErrorHandler
     If CATIA.Windows.count < 1 Then
         MsgBox "没有打开的窗口"
         Exit Sub
     End If
-        
     Dim oWindow, oViewer
     Set oWindow = CATIA.ActiveWindow
     Set oViewer = oWindow.ActiveViewer
-    
     oWindow.Layout = catWindowGeomOnly
     oViewer.Reframe
     Dim MyViewer: Set MyViewer = CATIA.ActiveWindow.ActiveViewer
@@ -38,11 +35,9 @@ Sub swbcgColor()
         oWindow.Layout = catWindowGeomOnly
         btnCaption = "背景颜色(白)"
     End If
-    
     If Not g_Btn Is Nothing Then
         g_Btn.Caption = btnCaption
     End If
-    
     On Error GoTo 0
     Set g_Btn = Nothing
 ErrorHandler:

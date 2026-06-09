@@ -71,7 +71,7 @@ Private Sub Class_Initialize()
     mExtras.compareMode = vbTextCompare
 End Sub
 ' --- Methods ---
-Public Sub Run()
+Public Sub ExcuteModule()
     Dim ss As Object
     Set ss = CATIA.SystemService
     Dim pjtPath As String
@@ -88,7 +88,6 @@ Public Sub Run()
                           mModuleName, _
                           Me.EntryPoint, _
                           mParams)
-    
     If Err.Number <> 0 Then
         MsgBox "Error executing macro: " & mModuleName & "." & Me.EntryPoint & vbCrLf & _
                "Error: " & Err.Description, vbCritical
@@ -128,19 +127,19 @@ Public Function InitFromCode(ByVal decCode As String, ByVal mdlname As String, B
     Set Reg = Nothing
     If matches.count < 1 Then Exit Function
     Dim match As Object, SubMatchs As Object
-    Dim KEY As String, val As Variant ' Variant to allow Long conversion
+    Dim key As String, val As Variant ' Variant to allow Long conversion
     Dim hasGroup As Boolean
     For Each match In matches
         Set SubMatchs = match.SubMatches
         If SubMatchs.count >= 2 Then
-            KEY = Trim(Replace(SubMatchs(0), """", ""))
+            key = Trim(Replace(SubMatchs(0), """", ""))
             val = Trim(Replace(SubMatchs(1), """", ""))
             ' Try Convert to Long if it looks numeric (Strictly mimic m0_dataMenu line 87)
             If IsNumeric(val) Then val = CLng(val)
             ' 1. Store in Extras (using updated VAL type)
-            If mExtras.Exists(KEY) Then mExtras(KEY) = val Else mExtras.Add KEY, val
+            If mExtras.Exists(key) Then mExtras(key) = val Else mExtras.Add key, val
             ' 2. Map to properties
-            Select Case LCase(KEY)
+            Select Case LCase(key)
                 Case LCase(TAG_GROUP)
                     mGroupName = val
                     If IsNumeric(val) Then mTitle = CStr(val) ' Title is string

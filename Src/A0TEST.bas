@@ -1,15 +1,7 @@
 Attribute VB_Name = "A0TEST"
-Sub CATIASearchExample()
- Set oprt = CATIA.ActiveDocument.part
-Set paras = oprt.Parameters
-Set strParam1 = paras.item("String.3")
-With strParam1
-Select Case oprt.Parent.Product.ReferenceProduct.Source
-
-Case 0: .Value = "unKnown"
+Sub Demo_MultiStep_Wizard()
+    Set oprt = CATIA.ActiveDocument.part
     
-Case 1: .Value = "Make"
-Case 2: .Value = "Buy"
-
- 
+    Set gs = oprt.HybridBodies.item(1).HybridBodies.item(5).HybridBodies.item(1)
+  
 End Sub

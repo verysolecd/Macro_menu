@@ -56,21 +56,21 @@ Sub Set_FormInfo(ByVal InfoLst As Object, _
     FrmMargin = Array(2, 2, 2, 2) ' 上, 右, 下, 左 窗体边距调整值
     Set MPgs = Me.Controls.Add("Forms.MultiPage.1", "MPgs", True) ' 创建多页控件
     Dim Pgs As Pages: Set Pgs = MPgs.Pages: Pgs.Clear
-    Dim KEY As Long, KeyStr As Variant, Pg As Page, pName As String
+    Dim key As Long, KeyStr As Variant, Pg As Page, pName As String
     Dim BtnInfos As Object, info As Variant
     Dim Btns As Object: Set Btns = KCL.Initlst()
-    Dim BTN As MSForms.CommandButton
-    Dim BtnEvt As Cls_MnuBtnEVT
+    Dim btn As MSForms.CommandButton
+    Dim BtnEvt As Cls_allBTNEVT
     For Each KeyStr In InfoLst
-            KEY = CLng(KeyStr)
-            If Not PageMap.Exists(KEY) Then GoTo Continue
-            pName = PageMap(KEY)
+            key = CLng(KeyStr)
+            If Not PageMap.Exists(key) Then GoTo Continue
+            pName = PageMap(key)
             Set Pg = Get_Page(Pgs, pName)
             Set BtnInfos = InfoLst(KeyStr)
         For Each info In BtnInfos
-            Set BTN = Init_Button(Pg.Controls, KEY, info)
-            Set BtnEvt = New Cls_MnuBtnEVT
-            Call BtnEvt.set_ButtonEvent(BTN, info, Me, CloseType)
+            Set btn = Init_Button(Pg.Controls, key, info)
+            Set BtnEvt = New Cls_allBTNEVT
+            BtnEvt.set_ButtonEvent btn, info, Me, CloseType
             Btns.Add BtnEvt
         Next
 Continue:
@@ -147,18 +147,18 @@ End Sub
 Private Function Init_Button(ByVal Ctls As Controls, _
                              ByVal idx As Long, _
                              ByVal BtnInfo As Variant) As MSForms.CommandButton
-    Dim BTN As MSForms.CommandButton:  Set BTN = Ctls.Add("Forms.CommandButton.1", idx, True)
+    Dim btn As MSForms.CommandButton:  Set btn = Ctls.Add("Forms.CommandButton.1", idx, True)
     Dim Pty As Variant
     For Each Pty In BtnInfo.keys
-        Call Try_SetProperty(BTN, Pty, BtnInfo.item(Pty))
+        Call Try_SetProperty(btn, Pty, BtnInfo.item(Pty))
     Next
-    With BTN
+    With btn
         .Top = (Ctls.count - 1) * Btn_H - 1: .Height = Btn_H
         .Left = FrmMargin(2): .Width = Btn_W
         .Font.Name = "Arial": .Font.Size = BTN_frontsize
 '        .BackColor = RGB(89, 220, 220)  ' 设置按钮背景颜色
     End With
-    Set Init_Button = BTN
+    Set Init_Button = btn
 End Function
 ' 尝试设置控件属性
 Private Sub Try_SetProperty(ByVal ctrl As Object, _
@@ -207,15 +207,15 @@ End Sub
 
 ' 更新产品信息的方法
 Private Sub UpdateProductInfo()
-    Dim msg, mColor
-    mColor = vbRed
+    Dim msg, mcolor
+    mcolor = vbRed
     msg = "操作产品待选择"
     If Not prdObserver.CurrentProduct Is Nothing Then
           msg = prdObserver.CurrentProduct.partNumber & "待修改"
-          mColor = vbGreen
+          mcolor = vbGreen
     End If
         lblProductInfo.Caption = msg
-        lblProductInfo.BackColor = mColor
+        lblProductInfo.BackColor = mcolor
 End Sub
 Private Sub UserForm_Click()
       toMP

@@ -49,10 +49,10 @@ End Sub
 
 ' 按层级从深到浅保存，读取数组中的信息
 Sub SaveByLV(ByRef dict As Object, ByVal maxLvl As Integer, ByVal folder As String)
-    Dim lvl As Integer, KEY As Variant, info As Variant, suffix As String, target As Document, fullPath As String, i
+    Dim lvl As Integer, key As Variant, info As Variant, suffix As String, target As Document, fullPath As String, i
     For lvl = maxLvl To 1 Step -1
-        For Each KEY In dict.keys
-            info = dict(KEY) ' info(0)=level, info(1)=product
+        For Each key In dict.keys
+            info = dict(key) ' info(0)=level, info(1)=product
             If info(0) = lvl Then
                 Dim prod As Product: Set prod = info(1)
                 Select Case TypeName(prod.ReferenceProduct.Parent)
@@ -69,14 +69,14 @@ Sub SaveByLV(ByRef dict As Object, ByVal maxLvl As Integer, ByVal folder As Stri
                             End Select
                 End Select
                 
-            Dim fileName: fileName = KCL.ReplaceBadChar(KEY)
+            Dim fileName: fileName = KCL.ReplaceBadChar(key)
                 If suffix <> "" Then
                     fullPath = folder & "\" & fileName & suffix
                     Set target = prod.ReferenceProduct.Parent
                     If target.FullName <> fullPath Then target.SaveAs fullPath
                 End If
-                dict.Remove KEY
+                dict.Remove key
             End If
-        Next KEY
+        Next key
     Next lvl
 End Sub

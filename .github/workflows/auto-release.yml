@@ -1,4 +1,4 @@
-name: è‡ªåŠ¨å‘å¸ƒæ­£å¼ç‰ˆ
+name: ×Ô¶¯·¢²¼ÕıÊ½°æ
 on:
   push:
     tags:
@@ -10,15 +10,15 @@ permissions:
 jobs:
   release:
     runs-on: ubuntu-latest
-    # ğŸ‘‡ å…³é”®ï¼šä»…å½“æ ‡ç­¾å±äº main åˆ†æ”¯æ—¶å‘å¸ƒ
+    # ? ¹Ø¼ü£º½öµ±±êÇ©ÊôÓÚ main ·ÖÖ§Ê±·¢²¼
     if: github.event.base_ref == 'refs/heads/main'
     steps:
       - uses: actions/checkout@v4
-      - name: å‘å¸ƒRelease
+      - name: ·¢²¼Release
         uses: softprops/action-gh-release@v2
         with:
           name: ${{ github.ref_name }}
           generate_release_notes: true
-          files: "**/*menu*.catvba"
+          files: "**/*Menu*.catvba"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -5,7 +5,7 @@ Attribute VB_Name = "OTH_PrePn"
 '{ControlTipText:零件号批量管理}
 '{BackColor:}
 '控件格式为 %UI <ControlType> <ControlName> <Caption/Text>
-' %UEI Label lbL_jpzcs  键盘造车手出品
+' %UI Label lbL_jpzcs  键盘造车手出品
 ' %UI TextBox  txt_str 字符串
 ' %UI CheckBox chk_prefix  字符串增加为前缀
 ' %UI CheckBox  chk_suffix  字符串增加为后缀
@@ -16,7 +16,7 @@ Attribute VB_Name = "OTH_PrePn"
 ' 强制变量声明（核心修复）
 Option Explicit
 
-Private prj
+Private prj, mWD
 Private allPN As Object
 Private Const mdlname As String = "OTH_PrePn"
 
@@ -25,27 +25,27 @@ Sub Pnmgr()
     Dim oPrd As Object
     Set oPrd = CATIA.ActiveDocument.Product
     If oPrd Is Nothing Then Exit Sub
-    Dim oEng As Object
-    Set oEng = KCL.new_spWD(mdlname)
-    oEng.Show
+    Set mWD = New Cls_DynaWD   '创建窗口实例
+    mWD.getUIcfgfromModDEC mdlname '获取窗口控件配置
+    mWD.Show '显示窗口
     Dim istr As String
-    Select Case oEng.ClickedButton
+    Select Case mWD.btnClicked
         Case "btnOK"
             istr = ""
-            If oEng.Results("txt_str") <> "" And Not KCL.ExistsKey(oEng.Results("txt_str"), "字符") Then
-                istr = Trim(oEng.Results("txt_str"))
+            If mWD.Results("txt_str") <> "" And Not KCL.ExistsKey(mWD.Results("txt_str"), "字符") Then
+                istr = Trim(mWD.Results("txt_str"))
             End If
             If istr = "" Then
                 MsgBox "请输入有效字符串！", vbExclamation
                 Exit Sub
             End If
             Set allPN = KCL.InitDic
-            If oEng.Results("chk_prefix") Then
+            If mWD.Results("chk_prefix") Then
                 Call c_pn_Prefix(oPrd, istr)
-            ElseIf oEng.Results("chk_suffix") Then
+            ElseIf mWD.Results("chk_suffix") Then
             istr = "_Rev" & istr & "_"
                 Call c_pn_suffix(oPrd, istr)
-            ElseIf oEng.Results("chk_delete") Then
+            ElseIf mWD.Results("chk_delete") Then
                 Call del_pn_midx(oPrd, istr)
             End If
             Set allPN = Nothing
@@ -53,7 +53,6 @@ Sub Pnmgr()
         Case Else: Exit Sub
     End Select
 End Sub
-
 
 Private Sub c_pn_Prefix(oPrd As Object, istr As String)
     Dim pn As String, purePN As String, newPn As String

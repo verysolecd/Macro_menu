@@ -254,12 +254,12 @@ Function InitDictByArrayCount( _
         Optional compareMode As Long = vbBinaryCompare) As Object
     Dim dict As Object
     Set dict = InitDict(compareMode)
-    Dim KEY As Variant
-    For Each KEY In txtArray
-        If Not dict.Exists(KEY) Then
-            dict(KEY) = dict(KEY) + 1
+    Dim key As Variant
+    For Each key In txtArray
+        If Not dict.Exists(key) Then
+            dict(key) = dict(key) + 1
         Else
-            Call dict.Add(KEY, 0)
+            Call dict.Add(key, 0)
         End If
     Next
     Set InitDictByArrayCount = dict
@@ -275,23 +275,23 @@ Function IsEqualDict( _
         IsEqualDict = False
         Exit Function
     End If
-    Dim KEY As Variant
-    For Each KEY In dict1.keys
-        If Not dict2.Exists(KEY) Then
+    Dim key As Variant
+    For Each key In dict1.keys
+        If Not dict2.Exists(key) Then
             IsEqualDict = False
             Exit Function
         End If
-        If TypeName(dict1(KEY)) = "Dictionary" And TypeName(dict2(KEY)) = "Dictionary" Then
+        If TypeName(dict1(key)) = "Dictionary" And TypeName(dict2(key)) = "Dictionary" Then
             ' 如果两个值都是字典，则递归比较它们
-            If Not IsEqualDict(dict1(KEY), dict2(KEY)) Then
+            If Not IsEqualDict(dict1(key), dict2(key)) Then
                 IsEqualDict = False
                 Exit Function
             End If
-        ElseIf dict1(KEY) <> dict2(KEY) Then
+        ElseIf dict1(key) <> dict2(key) Then
             IsEqualDict = False
             Exit Function
         End If
-    Next KEY
+    Next key
     IsEqualDict = True
 End Function
 '字典的深拷贝
@@ -299,17 +299,17 @@ End Function
 'return:Object(Of Dictionary)
 Function DeepCopyDict( _
         ByVal Source As Variant) As Object
-    Dim KEY As Variant
+    Dim key As Variant
     Dim newDict As Object
     Dim Value As Variant
     Set newDict = CreateObject("Scripting.Dictionary")
-    For Each KEY In Source.keys
-        Value = Source.item(KEY)
+    For Each key In Source.keys
+        Value = Source.item(key)
         If TypeName(Value) = "Dictionary" Then
             Set Value = DeepCopyDict(Value)
         End If
-        newDict.Add KEY, Value
-    Next KEY
+        newDict.Add key, Value
+    Next key
     Set DeepCopyDict = newDict
 End Function
 '*****数组函数*****
@@ -506,21 +506,21 @@ Function ArraySlice( _
         Exit Function
     End If
     ' 设置结果数组的大小
-    Dim Result() As Variant
-    ReDim Result(0 To EndIndex - StartIndex)
+    Dim result() As Variant
+    ReDim result(0 To EndIndex - StartIndex)
     ' 数组切片
     Dim j As Long
     j = 0
     Dim i As Long
     For i = StartIndex To EndIndex
         If IsObject(arr(0)) Then
-            Set Result(j) = arr(i)
+            Set result(j) = arr(i)
         Else
-            Let Result(j) = arr(i)
+            Let result(j) = arr(i)
         End If
         j = j + 1
     Next i
-    ArraySlice = Result
+    ArraySlice = result
 End Function
 '************************************************************************
 '*  冒泡排序
