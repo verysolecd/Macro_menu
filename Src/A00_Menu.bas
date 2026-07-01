@@ -10,9 +10,11 @@ Private Const GroupName = _
             "{3 : ASM }" & _
             "{4 : MDL }" & _
             "{5 : DRW }" & _
-            "{7: CATIA }" & _
-            "{6 : OTRS}"
+            "{6 : OTRS}" & _
+            "{7: CATIA }"
 Private PageMap As Object
+
+'注意所有module的名字大小写也会影响btnevt的调用
 ' --- Entry Point ---
 Private Const mdlname As String = "A00_Menu"
 Sub CATMain()

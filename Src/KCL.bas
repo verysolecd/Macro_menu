@@ -991,6 +991,7 @@ Function ActivateExistingWindow(ByVal strPath As String) As Boolean
             Err.Clear
         End If
     Next
+    On Error GoTo 0
 End Function
 
 ' 打开文件夹
@@ -1009,13 +1010,15 @@ End Sub
 Private Sub OpenFileLocation(ByVal strFilePath As String)
     On Error GoTo ErrorHandler
     
+    ' 清理首尾空格和多余引号
     strFilePath = Trim(strFilePath)
     strFilePath = Replace(strFilePath, """", "")
-
-    ' 第二步：统一加上一对引号（最终一定只有一对）
-    strFilePath = """" & strFilePath & """"
- 
-    shell "explorer.exe /select," & strFilePath, vbMaximizedFocus
+    
+    ' 用 WScript.Shell 执行，避免 Shell() 自动添加额外引号
+    Dim oShell As Object
+    Set oShell = CreateObject("WScript.Shell")
+    oShell.Run "explorer.exe /select,""" & strFilePath & """", 1, False
+    Set oShell = Nothing
     Exit Sub
 ErrorHandler:
     MsgBox "无法打开文件位置: " & strFilePath & vbCrLf & "错误: " & Err.Description, vbExclamation

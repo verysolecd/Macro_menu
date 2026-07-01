@@ -51,8 +51,6 @@ Sub set_ButtonEvent(ByVal btn As MSForms.CommandButton, _
         Set mFrm_SM = ParentForm
         mKeepOpen = keepOpen
 End Sub
-' For Result Mode / Frm
-
 '模态弹窗（结果模式）' Handler for Result Mode (mBTN_RM) 模态按钮的处理
 Private Sub mBTN_RM_Click()
     If mFrm_RM Is Nothing Then Exit Sub
@@ -71,7 +69,6 @@ Private Sub mBTN_RM_Click()
     End If
     mFrm_RM.Hide
 End Sub
-
 ' Handler for Script Mode (mBTN_SM) 非模态按钮的处理
 Private Sub mBTN_SM_click()
     If Not mKeepOpen Then
@@ -90,7 +87,9 @@ Private Sub mBTN_SM_click()
     Else
         params = Array()
     End If
-    On Error Resume Next
+   On Error Resume Next
+   
+   '注意所有module的名字大小写也会影响btnevt的调用
         Set g_Btn = mBTN_SM
         Call ss.ExecuteScript(mInfo(TAG_PJTPATH), _
                               catScriptLibraryTypeVBAProject, _
@@ -98,5 +97,6 @@ Private Sub mBTN_SM_click()
                               mInfo(TAG_ENTRYPNT), _
                               params)
          Err.Clear
+    '注意所有module的名字大小写也会影响btnevt的调用
     On Error GoTo 0
 End Sub
