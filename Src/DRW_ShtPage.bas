@@ -26,14 +26,14 @@ Sub Main()
             Set oView = osht.Views.item("Background View")
 '            oView.Activate
             Set ots = oView.Texts
-            Set oDict = InitDic()
+            Set odict = InitDic()
             For Each itm In ots
-               Set oDict(itm.Name) = itm
+               Set odict(itm.Name) = itm
             Next
             
-            Set Pg1 = oDict("gongxxzhang")
+            Set Pg1 = odict("gongxxzhang")
             Pg1.text = "¹²" & shts.count - 1 & "Ò³"
-            Set Pg2 = oDict("dixxzhang")
+            Set Pg2 = odict("dixxzhang")
             Pg2.text = "µÚ" & i & "Ò³"
             oView.SaveEdition
         End If

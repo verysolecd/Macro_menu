@@ -5,12 +5,12 @@ Private Declare PtrSafe Function CloseClipboard Lib "user32" () As Long
 Private Declare PtrSafe Function SetClipboardData Lib "user32" (ByVal wFormat As Long, ByVal hMem As LongPtr) As LongPtr
 Private Const mdlname As String = "ZZ_BCK"
 Private Sub remove_usrP()
-    Set oPrd = CATIA.ActiveDocument.Product
-    rm oPrd
+    Set oprd = CATIA.ActiveDocument.Product
+    rm oprd
 End Sub
-Private Sub rm(oPrd)
+Private Sub rm(oprd)
     On Error Resume Next
-     Set refPrd = oPrd.ReferenceProduct
+     Set refPrd = oprd.ReferenceProduct
      Set oprt = refPrd.Parent.part
     Set colls = refPrd.Publications
     colls.Remove ("Location")
@@ -30,9 +30,9 @@ Private Sub rm(oPrd)
      colls.Remove ("iMass")
      colls.Remove ("iMaterial")
      colls.Remove ("iThickness")
-    If oPrd.Products.count > 0 Then
-        For i = 1 To oPrd.Products.count
-          rm (oPrd.Products.item(i))
+    If oprd.Products.count > 0 Then
+        For i = 1 To oprd.Products.count
+          rm (oprd.Products.item(i))
         Next
     End If
 On Error GoTo 0
@@ -82,13 +82,13 @@ j = 1
         End If
             Set oView = osht.Views.item("Background View")
             Set ots = oView.Texts
-            Set oDict = InitDic()
+            Set odict = InitDic()
             For Each itm In ots
-               Set oDict(itm.Name) = itm
+               Set odict(itm.Name) = itm
             Next
-           Set Pg1 = oDict("gongxxzhang")
+           Set Pg1 = odict("gongxxzhang")
             Pg1.text = "共" & shts.count - 1 & "页"
-            Set Pg2 = oDict("dixxzhang")
+            Set Pg2 = odict("dixxzhang")
             Pg2.text = "第" & i & "页"
             oView.SaveEdition
         End If
@@ -118,7 +118,7 @@ End Function
 Sub shot()
 MsgBox "没编呢"
 Exit Sub
- Dim iprd, rprd, oPrd, children
+ Dim iprd, rprd, oprd, children
  Dim xlsht, rng, RC(0 To 1), oArry()
  Dim i, oRowNb
   RC(0) = 3: RC(1) = 3
@@ -156,7 +156,7 @@ MsgBox ("已经保存图片")
 oWindow.Layout = catWindowSpecsAndGeom 'catWindowSpecsOnly ' catWindowGeomOnly
 End Sub
 Function shotme()
-    Dim iprd, rprd, oPrd, children
+    Dim iprd, rprd, oprd, children
     Dim xlsht, rng, RC(0 To 1), oArry()
     Dim i, oRowNb
      RC(0) = 3: RC(1) = 3

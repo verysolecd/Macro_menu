@@ -117,8 +117,8 @@ CATIA.RefreshDisplay = False
       Set shps = iHB.HybridShapes
         If Not shps Is Nothing Then
             For Each shp In shps
-               itype = HSF.GetGeometricalFeatureType(shp)
-                If itype = 7 Then
+               iType = HSF.GetGeometricalFeatureType(shp)
+                If iType = 7 Then
                     internalName = GetInternalName(shp)
                     If Not mdict.Exists(internalName) Then
                         osel.Clear: osel.Add shp

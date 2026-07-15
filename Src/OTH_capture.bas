@@ -64,22 +64,22 @@ End Sub
 ' ==============================================================================
 ' Core Execution Logic
 ' ==============================================================================
-Sub CapPrd(oPrd)
+Sub CapPrd(oprd)
 '    On Error GoTo ErrorHandler
     If Not KCL.CanExecute("ProductDocument,PartDocument") Then Exit Sub
-    If oPrd Is Nothing Then Exit Sub
+    If oprd Is Nothing Then Exit Sub
     ' Setup Environment
      InitializeSettings
     CATIA.StartCommand ("Compass") ' Toggle Compass (Hide)
     CATIA.RefreshDisplay = False
-    oPrd.ApplyWorkMode 3 ' DESIGN_MODE
+    oprd.ApplyWorkMode 3 ' DESIGN_MODE
     HideNonBody CATIA.ActiveDocument
     SetCAPDisplay
     Set m_ProcessedPN = KCL.InitDic
     Dim tempPath As String    ' Prepare Output Folder
     tempPath = KCL.GetPath(KCL.getVbaDir & "\oTemp"): KCL.ClearDir tempPath
     g_Picpath = tempPath
-    CaptureRecursive oPrd, tempPath     ' Start Recursive Capture
+    CaptureRecursive oprd, tempPath     ' Start Recursive Capture
     Set m_ProcessedPN = Nothing
     RecoverDisplay
     CATIA.StartCommand ("Compass") ' Toggle Compass (Restore)

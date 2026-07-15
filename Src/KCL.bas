@@ -865,7 +865,14 @@ End Function
 Function StrBF(istr, ikey)
     Dim pos As Long
     pos = InStr(istr, ikey)
-    StrBF = IIf(pos > 0, Left(istr, pos - 1), istr)
+    'StrBF = IIf(pos > 0, Left(istr, pos - 1), istr)
+    
+    If pos > 0 Then
+        StrBF = Left(istr, pos - 1)
+    Else
+        StrBF = istr
+    End If
+     
 End Function
  '@iStr string
 '获得字符串第一个"ikey"之后的内容，若无则原内容
@@ -1043,22 +1050,22 @@ Public Function Push_Dic(ByVal dic As Object, _
     Set Push_Dic = dic
 End Function
 
-Public Function showdict(ByVal oDic, Optional ByVal boolShowKeyIndex As Boolean = False)
-  Dim keys:   keys = oDic.keys
+Public Function showdict(ByVal odic, Optional ByVal boolShowKeyIndex As Boolean = False)
+  Dim keys:   keys = odic.keys
   Dim i As Long
   Dim stIndex As String
   Dim stOutput As String
   stOutput = vbNullString
   
-  For i = 0 To oDic.count - 1
+  For i = 0 To odic.count - 1
     If boolShowKeyIndex Then
       stIndex = "(" & i & ")"
     End If
     stOutput = stOutput & keys(i) & stIndex & "  :  "
-    If IsObject(oDic(keys(i))) Then
-      stOutput = stOutput & "[" & showdict(oDic(keys(i)), boolShowKeyIndex) & "]"
+    If IsObject(odic(keys(i))) Then
+      stOutput = stOutput & "[" & showdict(odic(keys(i)), boolShowKeyIndex) & "]"
     Else
-      stOutput = stOutput & oDic(keys(i))
+      stOutput = stOutput & odic(keys(i))
     End If
         stOutput = stOutput & "; " & "_" & vbNewLine
   Next i
