@@ -154,11 +154,11 @@ Sub ApplyColor2Body(ary As Variant)
             lst.Add itp
          Else
             On Error Resume Next
-                Dim itype:  itype = mHSF.GetGeometricalFeatureType(itm)
+                Dim iType:  iType = mHSF.GetGeometricalFeatureType(itm)
                 Error.Clear
             On Error GoTo 0
          End If
-        If itype = 7 Then lst.Add itm
+        If iType = 7 Then lst.Add itm
     Next i
 osel.Clear
 Set itm = Nothing

@@ -865,7 +865,14 @@ End Function
 Function StrBF(istr, ikey)
     Dim pos As Long
     pos = InStr(istr, ikey)
-    StrBF = IIf(pos > 0, Left(istr, pos - 1), istr)
+    'StrBF = IIf(pos > 0, Left(istr, pos - 1), istr)
+    
+    If pos > 0 Then
+        StrBF = Left(istr, pos - 1)
+    Else
+        StrBF = istr
+    End If
+     
 End Function
  '@iStr string
 '获得字符串第一个"ikey"之后的内容，若无则原内容
@@ -991,6 +998,7 @@ Function ActivateExistingWindow(ByVal strPath As String) As Boolean
             Err.Clear
         End If
     Next
+    On Error GoTo 0
 End Function
 
 ' 打开文件夹
@@ -1009,13 +1017,15 @@ End Sub
 Private Sub OpenFileLocation(ByVal strFilePath As String)
     On Error GoTo ErrorHandler
     
+    ' 清理首尾空格和多余引号
     strFilePath = Trim(strFilePath)
     strFilePath = Replace(strFilePath, """", "")
-
-    ' 第二步：统一加上一对引号（最终一定只有一对）
-    strFilePath = """" & strFilePath & """"
- 
-    shell "explorer.exe /select," & strFilePath, vbMaximizedFocus
+    
+    ' 用 WScript.Shell 执行，避免 Shell() 自动添加额外引号
+    Dim oShell As Object
+    Set oShell = CreateObject("WScript.Shell")
+    oShell.Run "explorer.exe /select,""" & strFilePath & """", 1, False
+    Set oShell = Nothing
     Exit Sub
 ErrorHandler:
     MsgBox "无法打开文件位置: " & strFilePath & vbCrLf & "错误: " & Err.Description, vbExclamation
@@ -1040,22 +1050,22 @@ Public Function Push_Dic(ByVal dic As Object, _
     Set Push_Dic = dic
 End Function
 
-Public Function showdict(ByVal oDic, Optional ByVal boolShowKeyIndex As Boolean = False)
-  Dim keys:   keys = oDic.keys
+Public Function showdict(ByVal odic, Optional ByVal boolShowKeyIndex As Boolean = False)
+  Dim keys:   keys = odic.keys
   Dim i As Long
   Dim stIndex As String
   Dim stOutput As String
   stOutput = vbNullString
   
-  For i = 0 To oDic.count - 1
+  For i = 0 To odic.count - 1
     If boolShowKeyIndex Then
       stIndex = "(" & i & ")"
     End If
     stOutput = stOutput & keys(i) & stIndex & "  :  "
-    If IsObject(oDic(keys(i))) Then
-      stOutput = stOutput & "[" & showdict(oDic(keys(i)), boolShowKeyIndex) & "]"
+    If IsObject(odic(keys(i))) Then
+      stOutput = stOutput & "[" & showdict(odic(keys(i)), boolShowKeyIndex) & "]"
     Else
-      stOutput = stOutput & oDic(keys(i))
+      stOutput = stOutput & odic(keys(i))
     End If
         stOutput = stOutput & "; " & "_" & vbNewLine
   Next i

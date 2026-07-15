@@ -35,22 +35,22 @@ If pdm.CurrentProduct Is Nothing Then Set pdm.CurrentProduct = KCL.defPrd
  End If
  g_allPN.RemoveAll
 End Sub
-Sub nosamebdy_prds(oPrd)
+Sub nosamebdy_prds(oprd)
     Dim Product
-        If g_allPN.Exists(oPrd.partNumber) = False Then
-            g_allPN(oPrd.partNumber) = 1
-            Call nosamebdy_prd(oPrd)
+        If g_allPN.Exists(oprd.partNumber) = False Then
+            g_allPN(oprd.partNumber) = 1
+            Call nosamebdy_prd(oprd)
         End If
-    If oPrd.Products.count > 0 Then
-            For Each Product In oPrd.Products
+    If oprd.Products.count > 0 Then
+            For Each Product In oprd.Products
                 Call nosamebdy_prds(Product)
              Next
     End If
 End Sub
-Public Sub nosamebdy_prd(oPrd)
+Public Sub nosamebdy_prd(oprd)
     Dim colls, oprt
     On Error Resume Next
-         Set oprt = oPrd.ReferenceProduct.Parent.part
+         Set oprt = oprd.ReferenceProduct.Parent.part
         If Err.Number <> 0 Then
             Err.Clear
             Set oprt = Nothing
@@ -64,16 +64,16 @@ Public Sub nosamebdy_prd(oPrd)
     End If
 End Sub
 Sub nosamebdy_bdylst(oprt)
-    Dim lstPara, lstbdys, colls, oDic, keeplst, currobj, objkey, itm, bdy
+    Dim lstPara, lstbdys, colls, odic, keeplst, currobj, objkey, itm, bdy
     Set lstPara = oprt.Parameters.RootParameterSet.ParameterSets.item("Part_info")
     Set lstbdys = lstPara.DirectParameters.item("iBodys")
   Set colls = lstbdys.ValueList
-    Set oDic = KCL.InitDic
+    Set odic = KCL.InitDic
     Set keeplst = KCL.InitDic
     For Each currobj In colls
         objkey = KCL.GetInternalName(currobj)
-        If Not oDic.Exists(objkey) Then
-          oDic(objkey) = 1
+        If Not odic.Exists(objkey) Then
+          odic(objkey) = 1
           keeplst(objkey) = 1
           End If
      Next

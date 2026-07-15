@@ -18,8 +18,8 @@ Sub addsubgeo()
     If IsNothing(oprt) Then: MsgBox "No activated Part": Exit Sub
     Set igeo = Nothing
     Set colls = oprt.HybridBodies
-    itype = TypeName(oprt.InWorkObject)
-    If LCase(itype) = LCase("hybridbody") Then
+    iType = TypeName(oprt.InWorkObject)
+    If LCase(iType) = LCase("hybridbody") Then
         Set igeo = oprt.InWorkObject
         Set colls = igeo.HybridBodies
     End If

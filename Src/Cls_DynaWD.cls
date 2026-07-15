@@ -46,10 +46,6 @@ Attribute VB_Exposed = False
 'mResultDict 模态窗体结果字典(点击按钮?输入值)
 'mIsAlertMode 提示框模式开关
 
-
-
-
-
 '===========================================================================
 Option Explicit
 ' --- 控件定义列表 (ArrayList of Dictionary) ---

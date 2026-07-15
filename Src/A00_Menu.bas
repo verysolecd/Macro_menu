@@ -10,9 +10,11 @@ Private Const GroupName = _
             "{3 : ASM }" & _
             "{4 : MDL }" & _
             "{5 : DRW }" & _
-            "{7: CATIA }" & _
-            "{6 : OTRS}"
+            "{6 : OTRS}" & _
+            "{7: CATIA }"
 Private PageMap As Object
+
+'注意所有module的名字大小写也会影响btnevt的调用
 ' --- Entry Point ---
 Private Const mdlname As String = "A00_Menu"
 Sub CATMain()
@@ -169,12 +171,10 @@ Private Function get_Tagcfg(ByVal txt As String, Optional ByVal KeyToLong As Boo
     Dim matches As Object: Set matches = Reg.Execute(txt)
     Dim match As Object
     Dim key As Variant, val As Variant
-    
     For Each match In matches
         If match.SubMatches.count >= 2 Then
             key = Trim(match.SubMatches(0))
             val = Trim(match.SubMatches(1))
-            
             If KeyToLong And IsNumeric(key) Then key = CLng(key)
             If dic.Exists(key) Then dic(key) = val Else dic.Add key, val
         End If

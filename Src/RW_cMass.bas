@@ -34,27 +34,27 @@ End Sub
 Sub Cal_Mass()
    If pdm.CurrentProduct Is Nothing Then Call setgprd: Err.Clear
         If Not pdm.CurrentProduct Is Nothing Then
-        Set oPrd = pdm.CurrentProduct
-            pdm.Assmass oPrd
+        Set oprd = pdm.CurrentProduct
+            pdm.Assmass oprd
         End If
 End Sub
 Sub L2Mass()
    If pdm.CurrentProduct Is Nothing Then Call setgprd: Err.Clear
-   Set oPrd = pdm.CurrentProduct
-   Call LV2_Mass(oPrd, 1)
-    Set oPrd = Nothing
+   Set oprd = pdm.CurrentProduct
+   Call LV2_Mass(oprd, 1)
+    Set oprd = Nothing
 End Sub
-Function LV2_Mass(oPrd, Lv)
+Function LV2_Mass(oprd, Lv)
         If Lv <= 3 Then
-                Set children = oPrd.Products
+                Set children = oprd.Products
                 If children.count > 0 Then
                     For i = 1 To children.count
                         Call LV2_Mass(children.item(i), Lv + 1)
                         total = total + children.item(i).ReferenceProduct.UserRefProperties.item("Mass").Value
                     Next
-                        oPrd.ReferenceProduct.UserRefProperties.item("Mass").Value = total
+                        oprd.ReferenceProduct.UserRefProperties.item("Mass").Value = total
                 Else
-                        total = oPrd.ReferenceProduct.UserRefProperties.item("Mass").Value
+                        total = oprd.ReferenceProduct.UserRefProperties.item("Mass").Value
                 End If
         End If
 End Function

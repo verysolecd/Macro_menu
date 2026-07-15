@@ -82,29 +82,29 @@ Private Sub pushBOM(item As Bomline)
     mItems(mItemCount) = item
 End Sub
 ' 获取产品基本属性信息 (返回 Bomline)
-Public Function getBomLine(ByVal oPrd As Object) As Bomline
+Public Function getBomLine(ByVal oprd As Object) As Bomline
     Dim item As Bomline
-    Dim refPrd: Set refPrd = oPrd.ReferenceProduct
+    Dim refPrd: Set refPrd = oprd.ReferenceProduct
     Dim userProps As Object: Set userProps = refPrd.UserRefProperties
     
     With item
         .partNumber = refPrd.partNumber
         .Nomenclature = refPrd.Nomenclature
         .Definition = refPrd.Definition
-        .InstanceName = oPrd.Name
+        .InstanceName = oprd.Name
         .Material = GetPropertyValue(userProps, "Material").Value
         .Density = val(GetPropertyValue(userProps, "Density").Value)
         .Mass = val(GetPropertyValue(userProps, "Mass").Value)
         .Thickness = val(GetPropertyValue(userProps, "Thickness").Value)
-        .Quantity = QtyinLV(oPrd)
+        .Quantity = QtyinLV(oprd)
     End With
     
     getBomLine = item
 End Function
 
 ' 递归计算并更新产品及其子产品的总质量 (恢复并优化版)
-Public Function Assmass(ByVal oPrd As Object) As Double
-    Dim children As Products: Set children = oPrd.Products
+Public Function Assmass(ByVal oprd As Object) As Double
+    Dim children As Products: Set children = oprd.Products
     Dim totalMass As Double: totalMass = 0
     Dim i As Long
     On Error Resume Next
@@ -112,22 +112,22 @@ Public Function Assmass(ByVal oPrd As Object) As Double
         For i = 1 To children.count
             totalMass = totalMass + Assmass(children.item(i))
         Next
-        oPrd.ReferenceProduct.UserRefProperties.item("Mass").Value = totalMass
+        oprd.ReferenceProduct.UserRefProperties.item("Mass").Value = totalMass
     Else
-        totalMass = oPrd.ReferenceProduct.UserRefProperties.item("Mass").Value
+        totalMass = oprd.ReferenceProduct.UserRefProperties.item("Mass").Value
     End If
     On Error GoTo 0
     Assmass = totalMass
 End Function
 
 ' 优化计数逻辑：按需统计同级 PN
-Private Function QtyinLV(ByVal oPrd As Object) As Long
+Private Function QtyinLV(ByVal oprd As Object) As Long
     On Error Resume Next
-    If Not TypeOf oPrd.Parent Is Products Then
+    If Not TypeOf oprd.Parent Is Products Then
         QtyinLV = 1: Exit Function
     End If
-    Dim productsColl As Products: Set productsColl = oPrd.Parent
-    Dim targetPN As String: targetPN = oPrd.ReferenceProduct.partNumber
+    Dim productsColl As Products: Set productsColl = oprd.Parent
+    Dim targetPN As String: targetPN = oprd.ReferenceProduct.partNumber
     Dim i As Long, cnt As Long: cnt = 0
     For i = 1 To productsColl.count
         If productsColl.item(i).ReferenceProduct.partNumber = targetPN Then cnt = cnt + 1
@@ -155,15 +155,15 @@ Public Function ProduceBOM(ByVal rootPrd As Object, Optional ByVal filterDuplica
 End Function
 
 ' 递归辅助函数
-Private Sub TraverseProductTree(ByVal oPrd As Object, ByVal level As Long, ByVal filterDuplicate As Boolean)
+Private Sub TraverseProductTree(ByVal oprd As Object, ByVal level As Long, ByVal filterDuplicate As Boolean)
     Dim item As Bomline
-    item = getBomLine(oPrd)
+    item = getBomLine(oprd)
     item.level = level
     
     ' Use Array instead of Collection
     pushBOM item
     
-    Dim children As Products: Set children = oPrd.Products
+    Dim children As Products: Set children = oprd.Products
     If children.count > 0 Then
         Dim dict As Object: Set dict = KCL.InitDic
         Dim i As Long
@@ -182,11 +182,11 @@ Private Sub TraverseProductTree(ByVal oPrd As Object, ByVal level As Long, ByVal
 End Sub
 
 
-Public Function attLv2Prd(oPrd) As Variant
+Public Function attLv2Prd(oprd) As Variant
     ' 此方法仅取两层信息
     mItemCount = 0
     ReDim mItems(1 To CHUNK_SIZE)
-    TraverseTwoLevels oPrd
+    TraverseTwoLevels oprd
     If mItemCount = 0 Then attLv2Prd = Empty: Exit Function
     Dim result() As Variant: ReDim result(1 To mItemCount, 1 To 9)
     Dim R As Long, c As Long
@@ -209,10 +209,10 @@ Public Function attLv2Prd(oPrd) As Variant
 End Function
 
 ' 获取用于 RW_Revise 的强类型数据 (替代 attLv2Prd)
-Public Function GetReviseItems(ByVal oPrd As Object) As Bomline()
+Public Function GetReviseItems(ByVal oprd As Object) As Bomline()
     mItemCount = 0
     ReDim mItems(1 To CHUNK_SIZE)
-    TraverseTwoLevels oPrd
+    TraverseTwoLevels oprd
     
     If mItemCount = 0 Then Exit Function
     
@@ -225,17 +225,17 @@ Public Function GetReviseItems(ByVal oPrd As Object) As Bomline()
     GetReviseItems = result
 End Function
 
-Private Sub TraverseTwoLevels(ByVal oPrd As Object)
-    pushBOM getBomLine(oPrd)     ' 根产品
-    Dim children As Products: Set children = oPrd.Products
+Private Sub TraverseTwoLevels(ByVal oprd As Object)
+    pushBOM getBomLine(oprd)     ' 根产品
+    Dim children As Products: Set children = oprd.Products
     Dim i As Long
     For i = 1 To children.count
         pushBOM getBomLine(children.item(i))    ' 子产品
     Next
 End Sub
-Public Function modatt(ByVal oPrd As Object, ByVal oData As Variant)
-    Dim refPrd As Object: Set refPrd = oPrd.ReferenceProduct
-    Dim currAtt As Bomline: currAtt = getBomLine(oPrd)
+Public Function modatt(ByVal oprd As Object, ByVal oData As Variant)
+    Dim refPrd As Object: Set refPrd = oprd.ReferenceProduct
+    Dim currAtt As Bomline: currAtt = getBomLine(oprd)
     Dim i As Long
     On Error Resume Next
     For i = 1 To 6
@@ -256,7 +256,7 @@ Public Function modatt(ByVal oPrd As Object, ByVal oData As Variant)
                     Case 1: refPrd.partNumber = oData(i)
                     Case 2: refPrd.Nomenclature = oData(i)
                     Case 3: refPrd.Definition = oData(i)
-                    Case 4: oPrd.Name = oData(i)
+                    Case 4: oprd.Name = oData(i)
                     Case 5: refPrd.UserRefProperties.item("Material").Value = oData(i)
                     Case 6: refPrd.Parent.part.Parameters.RootParameterSet.ParameterSets.item("Part_info").DirectParameters.item("Density").Value = oData(i)
                 End Select
@@ -266,8 +266,8 @@ Public Function modatt(ByVal oPrd As Object, ByVal oData As Variant)
     On Error GoTo 0
 End Function
 
-Public Sub initPrd(ByVal oPrd As Object)
-    Dim refPrd As Object: Set refPrd = oPrd.ReferenceProduct
+Public Sub initPrd(ByVal oprd As Object)
+    Dim refPrd As Object: Set refPrd = oprd.ReferenceProduct
     EnsureParamExists refPrd.UserRefProperties, "Mass", "Mass"
     Dim oPart As Object
     On Error Resume Next
@@ -275,14 +275,14 @@ Public Sub initPrd(ByVal oPrd As Object)
     On Error GoTo 0
     
     If Not oPart Is Nothing Then
-        iniPrt oPrd
+        iniPrt oprd
     Else ' 仅产品：发布属性
         EnsurePublication refPrd, "Mass", "Properties\Mass"
     End If
 End Sub
 
-Private Sub iniPrt(ByVal oPrd As Object)
-    Dim refPrd As Object: Set refPrd = oPrd.ReferenceProduct
+Private Sub iniPrt(ByVal oprd As Object)
+    Dim refPrd As Object: Set refPrd = oprd.ReferenceProduct
     Dim oPart As Object: Set oPart = refPrd.Parent.part
     
     ' 1. 用户自定义属性
@@ -328,16 +328,16 @@ Private Sub iniPrt(ByVal oPrd As Object)
     ApplyEngineeringLogic oPart, refPrd, infoSet
 End Sub
 Sub nosamebdy_bdylst(oprt)
-    Dim lstPara, lstbdys, colls, oDic, keeplst, currobj, objkey, itm, bdy
+    Dim lstPara, lstbdys, colls, odic, keeplst, currobj, objkey, itm, bdy
     Set lstPara = oprt.Parameters.RootParameterSet.ParameterSets.item("Part_info")
     Set lstbdys = lstPara.DirectParameters.item("iBodys")
   Set colls = lstbdys.ValueList
-    Set oDic = KCL.InitDic
+    Set odic = KCL.InitDic
     Set keeplst = KCL.InitDic
     For Each currobj In colls
         objkey = KCL.GetInternalName(currobj)
-        If Not oDic.Exists(objkey) Then
-          oDic(objkey) = 1
+        If Not odic.Exists(objkey) Then
+          odic(objkey) = 1
           keeplst(objkey) = 1
           End If
      Next

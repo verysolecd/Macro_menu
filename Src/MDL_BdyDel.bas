@@ -90,14 +90,14 @@ Function getBdyLst()
             If itm.Shapes.count <> 0 And itm.InBooleanOperation = False Then getBdyLst.Add itm
         Next
 End Function
-Function getpicklst(mlst, Optional ByVal itype As String, Optional ByVal flValue As Double = 0)
+Function getpicklst(mlst, Optional ByVal iType As String, Optional ByVal flValue As Double = 0)
         Set getpicklst = Nothing
         Set picklst = KCL.Initlst
     Dim omeas, itmValue, itm
     For Each itm In mlst
           If itm.Shapes.count <> 0 And itm.InBooleanOperation = False Then
                     itmValue = 0
-                 Select Case itype
+                 Select Case iType
                     Case type_vol
                         Set omeas = KCL.GetMeas(itm)
                         itmValue = Round(omeas.Volume * 1000000000, 4)

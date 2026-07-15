@@ -8,7 +8,7 @@ Attribute VB_Name = "ASM_ChildMng"
 '------控件信息------------------------------
 ' %UI Label lbL_jpzcs  键盘造车手出品
 ' %UI Label lbL_tip 点击功能后,依次选择源产品→目标产品
-' %UI Button btn_allcopy 复制所有leaf
+' %UI Button btn_leafcopy 复制所有leaf
 ' %UI Button btn_copy 复制后黏贴
 ' %UI Button btn_delete 删除子件
 ' %UI Button btn_cancel 取消
@@ -20,6 +20,7 @@ Private Const mdlname As String = "ASM_ChildMng"
 Sub ChildMng()
    If Not KCL.CanExecute("ProductDocument") Then Exit Sub
     If pdm Is Nothing Then Set pdm = New Cls_PDM
+    initmVar
     '==生成UItoolbar-===================
     Set mWD = New Cls_DynaWD
     mWD.ShowToolbar mdlname
@@ -27,7 +28,6 @@ End Sub
 Private Sub initmVar()
    Set mdoc = CATIA.ActiveDocument
    Set msel = mdoc.Selection
-
 End Sub
 Sub btn_copy_click()
     Dim imsg, filter(0), osel
@@ -40,11 +40,9 @@ Sub btn_copy_click()
        Dim targetPrd: Set targetPrd = Nothing
         Set sourcePrd = KCL.SelectItem(imsg, filter)
         If sourcePrd Is Nothing Then GoTo ErrorHandler
-        
         msel.Add sourcePrd
         msel.Search "CATProductSearch.Product,sel"
-        
-
+        Dim prd
         For Each prd In sourcePrd.Products
            osel.Add prd
         Next
@@ -92,9 +90,42 @@ Sub btn_delete_click()
           End Select
 End Sub
 
-Sub btn_allcopy_click()
-
-MsgBox "生词奥"
-
+Sub btn_leafcopy_click()
+initmVar
+    Dim imsg, filter(0), osel
+    msel.Clear
+    On Error GoTo ErrorHandler
+        Call KCL.CATquick(False)
+        imsg = "请先点击选择源父产品，再点击选择目标父产品"
+        filter(0) = "Product"
+       Dim sourcePrd: Set sourcePrd = Nothing
+       Dim targetPrd: Set targetPrd = Nothing
+       
+        Set sourcePrd = KCL.SelectItem(imsg, filter)
+        If sourcePrd Is Nothing Then GoTo ErrorHandler
+        msel.Add sourcePrd
+        msel.Search "CATProductSearch.Part,sel"
+        Dim itm
+        
+        msel.Copy: msel.Clear
+        imsg = "请点击选择目标父产品"
+        Set targetPrd = KCL.SelectItem(imsg, filter)
+        If targetPrd Is Nothing Then
+          GoTo ErrorHandler
+        Else
+            msel.Add targetPrd: msel.Paste
+        End If
+            msel.Clear
+            Set targetPrd = Nothing
+            Set sourcePrd = Nothing
+           Call KCL.CATquick(True)
+    On Error GoTo 0
+ErrorHandler:
+        If Err.Number <> 0 Then
+            Call KCL.CATquick(True)
+                MsgBox "CATIA 程序错误：" & Err.Description, vbCritical
+            Exit Sub
+        End If
 End Sub
+
 
