@@ -1,11 +1,11 @@
-Attribute VB_Name = "OTH_capture"
+ï»¿Attribute VB_Name = "OTH_capture"
 'Attribute VB_Name = "mCaptureClipboard"
 '{GP:6}
 '{Ep:CaptureTopath}
-'{Caption:½ØÍ¼µ½ÎÄ¼þ¼Ð}
-'{ControlTipText:±éÀú²úÆ·²¢½ØÍ¼µ½ÎÄ¼þ¼Ð}
+'{Caption:ï¿½ï¿½Í¼ï¿½ï¿½ï¿½Ä¼ï¿½ï¿½ï¿½}
+'{ControlTipText:ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ·ï¿½ï¿½ï¿½ï¿½Í¼ï¿½ï¿½ï¿½Ä¼ï¿½ï¿½ï¿½}
 '{BackColor:16744703}
-' ÐèÒªÉùÃ÷Windows APIº¯Êý
+' ï¿½ï¿½Òªï¿½ï¿½ï¿½ï¿½Windows APIï¿½ï¿½ï¿½ï¿½
 '#If VBA7 Then
 '    Private Declare PtrSafe Function OpenClipboard Lib "user32" (ByVal hwnd As LongPtr) As LongPtr
 '    Private Declare PtrSafe Function EmptyClipboard Lib "user32" () As LongPtr
@@ -39,7 +39,7 @@ Private Type CaptureSettings
 End Type
 
 ' --- Constants ---
-Private Const DEFAULT_FOCUS_FACTOR = 0.9
+Private Const DEFAULT_FOCUS_FACTOR = 0.95
 Private Const MDL_NAME As String = "OTH_capture"
 ' --- State Variables ---
 Private m_Settings As CaptureSettings
@@ -54,7 +54,7 @@ Sub CaptureTopath()
     If Not KCL.CanExecute("ProductDocument,PartDocument") Then Exit Sub
     CATIA.StartCommand ("* iso")
     Dim response As VbMsgBoxResult
-    response = MsgBox("ÈçÒª½ØÍ¼£¬ÇëµÈ´ýISOÊÓ½Çµ÷ÕûÍê±Ïºóµã»÷È·ÈÏ", vbYesNo + vbExclamation, "È·ÈÏ½ØÍ¼")
+    response = MsgBox("ï¿½ï¿½Òªï¿½ï¿½Í¼ï¿½ï¿½ï¿½ï¿½È´ï¿½ISOï¿½Ó½Çµï¿½ï¿½ï¿½ï¿½ï¿½Ïºï¿½ï¿½ï¿½È·ï¿½ï¿½", vbYesNo + vbExclamation, "È·ï¿½Ï½ï¿½Í¼")
     If response <> vbYes Then Exit Sub
     CapPrd CATIA.ActiveDocument.Product
     If m_FirstImagePath <> "" Then
@@ -96,6 +96,12 @@ Private Sub CaptureRecursive(targetPrd, ByVal folderPath As String)
     If Not m_ProcessedPN.Exists(partNumber) Then
         Dim imgFile As String
         imgFile = folderPath & "\" & partNumber & ".jpg"
+        ' === Reframe before every capture to fill the image ===
+        viewer.Reframe
+        viewer.Update
+        viewer.Viewpoint3D.FocusDistance = viewer.Viewpoint3D.FocusDistance * m_Settings.FocusFactor
+        viewer.Update
+        ' === End Reframe ===
         viewer.CaptureToFile 5, imgFile ' 5 = catCaptureFormatJPEG
         If m_FirstImagePath = "" Then m_FirstImagePath = imgFile
         m_ProcessedPN.Add partNumber, 1
@@ -138,8 +144,8 @@ Private Sub InitializeSettings()
         .FocusFactor = DEFAULT_FOCUS_FACTOR
         .ViewDirection = Array(-1, -1, -1) ' Isometric
         .RenderingMode = 1 ' Shading with Edges
-        .AspectHeightRatio = 0.618
-        .ResolutionWidth = 1080
+        .AspectHeightRatio = 0.5625
+        .ResolutionWidth = 1920
     End With
     m_FirstImagePath = ""
 End Sub
@@ -174,17 +180,17 @@ Private Sub HideNonBody(iDoc)
     
 ''    You may have noticed the ,all or ,sel. There are multiple ways to search:
 '
-'Everywhere: shortcut ¡°all¡±
-'InWorkbench: shortcut ¡°in¡±
-'FromWorkbench: shortcut ¡°from¡±
-'FromSelection: shortcut ¡°sel¡±
-'VisibleOnScreen: shortcut ¡°scr¡±
+'Everywhere: shortcut ï¿½ï¿½allï¿½ï¿½
+'InWorkbench: shortcut ï¿½ï¿½inï¿½ï¿½
+'FromWorkbench: shortcut ï¿½ï¿½fromï¿½ï¿½
+'FromSelection: shortcut ï¿½ï¿½selï¿½ï¿½
+'VisibleOnScreen: shortcut ï¿½ï¿½scrï¿½ï¿½
     
     
     On Error Resume Next
     sel.Search searchStr
     If sel.count > 0 Then
-        sel.VisProperties.SetShow 1 ' Òþ²Ø (catVisPropertyNoShow)
+        sel.VisProperties.SetShow 1 ' ï¿½ï¿½ï¿½ï¿½ (catVisPropertyNoShow)
         sel.Clear
     End If
     On Error GoTo 0
