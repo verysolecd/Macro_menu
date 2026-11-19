@@ -1,11 +1,11 @@
-Attribute VB_Name = "OTH_capture"
+ï»¿Attribute VB_Name = "OTH_capture"
 'Attribute VB_Name = "mCaptureClipboard"
 '{GP:6}
 '{Ep:CaptureTopath}
-'{Caption:½ØÍ¼µ½ÎÄ¼ş¼Ğ}
-'{ControlTipText:±éÀú²úÆ·²¢½ØÍ¼µ½ÎÄ¼ş¼Ğ}
+'{Caption:ï¿½ï¿½Í¼ï¿½ï¿½ï¿½Ä¼ï¿½ï¿½ï¿½}
+'{ControlTipText:ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ·ï¿½ï¿½ï¿½ï¿½Í¼ï¿½ï¿½ï¿½Ä¼ï¿½ï¿½ï¿½}
 '{BackColor:16744703}
-' ĞèÒªÉùÃ÷Windows APIº¯Êı
+' ï¿½ï¿½Òªï¿½ï¿½ï¿½ï¿½Windows APIï¿½ï¿½ï¿½ï¿½
 '#If VBA7 Then
 '    Private Declare PtrSafe Function OpenClipboard Lib "user32" (ByVal hwnd As LongPtr) As LongPtr
 '    Private Declare PtrSafe Function EmptyClipboard Lib "user32" () As LongPtr
@@ -54,7 +54,7 @@ Sub CaptureTopath()
     If Not KCL.CanExecute("ProductDocument,PartDocument") Then Exit Sub
     CATIA.StartCommand ("* iso")
     Dim response As VbMsgBoxResult
-    response = MsgBox("ÈçÒª½ØÍ¼£¬ÇëµÈ´ıISOÊÓ½Çµ÷ÕûÍê±Ïºóµã»÷È·ÈÏ", vbYesNo + vbExclamation, "È·ÈÏ½ØÍ¼")
+    response = MsgBox("ï¿½ï¿½Òªï¿½ï¿½Í¼ï¿½ï¿½ï¿½ï¿½È´ï¿½ISOï¿½Ó½Çµï¿½ï¿½ï¿½ï¿½ï¿½Ïºï¿½ï¿½ï¿½È·ï¿½ï¿½", vbYesNo + vbExclamation, "È·ï¿½Ï½ï¿½Í¼")
     If response <> vbYes Then Exit Sub
     CapPrd CATIA.ActiveDocument.Product
     If m_FirstImagePath <> "" Then
@@ -74,7 +74,7 @@ Sub CapPrd(oprd)
     CATIA.RefreshDisplay = False
     oprd.ApplyWorkMode 3 ' DESIGN_MODE
     
-    'ÎªÁË²»Òş²Øº¸µã£¬ĞèÒª×¢ÊÍµôÏÂÒ»ĞĞ
+    'ä¸ºäº†ä¸éšè—ç„Šç‚¹ï¼Œéœ€è¦æ³¨é‡Šæ‰ä¸‹ä¸€è¡Œ
      'HideNonBody CATIA.ActiveDocument
     SetCAPDisplay
     Set m_ProcessedPN = KCL.InitDic
@@ -98,6 +98,12 @@ Private Sub CaptureRecursive(targetPrd, ByVal folderPath As String)
     If Not m_ProcessedPN.Exists(partNumber) Then
         Dim imgFile As String
         imgFile = folderPath & "\" & partNumber & ".jpg"
+        ' === Reframe before every capture to fill the image ===
+        viewer.Reframe
+        viewer.Update
+        viewer.Viewpoint3D.FocusDistance = viewer.Viewpoint3D.FocusDistance * m_Settings.FocusFactor
+        viewer.Update
+        ' === End Reframe ===
         ' === Reframe before every capture to fill the image ===
         viewer.Reframe
         viewer.Update
@@ -146,6 +152,8 @@ Private Sub InitializeSettings()
         .FocusFactor = DEFAULT_FOCUS_FACTOR
         .ViewDirection = Array(-1, -1, -1) ' Isometric
         .RenderingMode = 1 ' Shading with Edges
+        .AspectHeightRatio = 0.5625
+        .ResolutionWidth = 1920
         .AspectHeightRatio = 0.5625
         .ResolutionWidth = 1920
     End With
