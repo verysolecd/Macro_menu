@@ -2,14 +2,14 @@ Attribute VB_Name = "RW_write"
 
 '{GP:1}
 '{Ep:btnWrite_click}
-'{Caption:修改属性}
+'{Caption:修改属性1}
 '{ControlTipText:打开属性管理悬浮工具条}
 '  %UI Label  lblInfo  请选择操作：
 '  %UI Button btnRead  读取属性
 '  %UI Button btnWrite 写回属性
 Option Explicit
 Private mWD As Cls_DynaWD
-Private Const mdlname As String = "RW_read"
+Private Const mdlname As String = "RW_write"
 
 Sub btnWrite_click()
 On Error GoTo ErrorHandler
@@ -24,8 +24,8 @@ On Error GoTo ErrorHandler
  
         Dim oData As Variant: oData = xlm.extract_ary
 '--------map 修改ary------
-    Dim iCols: iCols = Array(0, 2, 4, 6, 8, 10, 12)
-    Dim outputArr As Variant, tempArr(1 To 6)
+    Dim iCols: iCols = Array(0, 2, 4, 6, 8, 10)
+    Dim outputArr As Variant, tempArr(1 To 5)
     ReDim outputArr(1 To UBound(oData, 1), 1 To UBound(iCols))
     Dim i, j
     For i = 1 To UBound(outputArr, 1) '-------遍历行
@@ -50,4 +50,3 @@ ErrorHandler:
     If Err.Number <> 0 Then:  MsgBox Err.Description, vbCritical: Err.Clear
         Exit Sub
 End Sub
-

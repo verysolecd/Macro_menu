@@ -30,10 +30,12 @@ Sub cBom()
         xlm.inject_Bom ConvertBOM_Standard(bomlns), startrow
         startrow = 2: Colpn = 3: colPic = 6
     Else
-        startrow = 5: Colpn = 6: colPic = 8
+        startrow = 5: Colpn = 6: colPic = 9
         xlm.inject_GXbom ConvertBOM_GX(bomlns), startrow
-        startrow = 5: Colpn = 6: colPic = 8
+        startrow = 5: Colpn = 6: colPic = 9
     End If
+    
+    
     If oWD.Results("chk_capture") Then
       Call CapPrd(iprd)
       Call xlm.inject_pic(startrow, Colpn, colPic, g_Picpath)
@@ -80,7 +82,7 @@ End Function
 Private Function ConvertBOM_GX(data() As Bomline) As Variant
  '   Dim arr2D As Variant: arr2D = ConvertBOM_GX(data)
     Dim rowCount As Long: rowCount = UBound(data)
-    Dim colCount As Long: colCount = 16
+    Dim colCount As Long: colCount = 19
     Dim arr2D As Variant: ReDim arr2D(1 To rowCount, 1 To colCount)
     Dim i As Long
     For i = 1 To rowCount
@@ -91,17 +93,20 @@ Private Function ConvertBOM_GX(data() As Bomline) As Variant
             arr2D(i, 3) = IIf(.level = 2, 2, "")
             arr2D(i, 4) = IIf(.level = 3, 3, "")
             arr2D(i, 5) = IIf(.level = 4, 4, "")
-            arr2D(i, 6) = .partNumber                            ' PART NO.
-            arr2D(i, 7) = ""                                     ' DRAWING NO.
-            arr2D(i, 8) = .Definition                            ' 中文名称
-            arr2D(i, 9) = .Nomenclature                          ' ITEM NAME
-            arr2D(i, 10) = ""                                    ' Ver.
-            arr2D(i, 11) = .Quantity                             ' QTY.
-            arr2D(i, 12) = ""                                    ' UNIT
-            arr2D(i, 13) = .Mass                                 ' UNIT WEIGHT
-            arr2D(i, 14) = ""                                       ' TOTAL WEIGHT
-            arr2D(i, 15) = .Material                             ' MATERIAL
-            arr2D(i, 16) = ""                                    ' 备用列
+            arr2D(i, 6) = .partNumber             ' PART NO.
+            arr2D(i, 7) = .Nomenclature            ' DRAWING NO.
+            arr2D(i, 8) = .Definition              ' 中文名称
+            arr2D(i, 9) = ""                        ' DRAWING NO.
+            arr2D(i, 10) = ""                       ' Ver.
+            arr2D(i, 11) = ""                       '
+            arr2D(i, 12) = ""                        '
+            arr2D(i, 13) = .Material                  'MATERIAL
+            arr2D(i, 14) = ""                       ' 图片
+            arr2D(i, 15) = .Quantity                 ' 数量
+            arr2D(i, 16) = "PCS"                     ' UNIT
+            arr2D(i, 17) = .Mass * 1000              ' 质量换算为g
+            arr2D(i, 18) = "Calculated"
+            arr2D(i, 19) = ""
         End With
     Next i
     ConvertBOM_GX = arr2D

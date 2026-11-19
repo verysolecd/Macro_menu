@@ -39,7 +39,7 @@ Private Type CaptureSettings
 End Type
 
 ' --- Constants ---
-Private Const DEFAULT_FOCUS_FACTOR = 0.9
+Private Const DEFAULT_FOCUS_FACTOR = 0.75
 Private Const MDL_NAME As String = "OTH_capture"
 ' --- State Variables ---
 Private m_Settings As CaptureSettings
@@ -73,7 +73,9 @@ Sub CapPrd(oprd)
     CATIA.StartCommand ("Compass") ' Toggle Compass (Hide)
     CATIA.RefreshDisplay = False
     oprd.ApplyWorkMode 3 ' DESIGN_MODE
-    HideNonBody CATIA.ActiveDocument
+    
+    '为了不隐藏焊点，需要注释掉下一行
+     'HideNonBody CATIA.ActiveDocument
     SetCAPDisplay
     Set m_ProcessedPN = KCL.InitDic
     Dim tempPath As String    ' Prepare Output Folder
@@ -96,6 +98,12 @@ Private Sub CaptureRecursive(targetPrd, ByVal folderPath As String)
     If Not m_ProcessedPN.Exists(partNumber) Then
         Dim imgFile As String
         imgFile = folderPath & "\" & partNumber & ".jpg"
+        ' === Reframe before every capture to fill the image ===
+        viewer.Reframe
+        viewer.Update
+        viewer.Viewpoint3D.FocusDistance = viewer.Viewpoint3D.FocusDistance * m_Settings.FocusFactor
+        viewer.Update
+        ' === End Reframe ===
         viewer.CaptureToFile 5, imgFile ' 5 = catCaptureFormatJPEG
         If m_FirstImagePath = "" Then m_FirstImagePath = imgFile
         m_ProcessedPN.Add partNumber, 1
@@ -138,8 +146,8 @@ Private Sub InitializeSettings()
         .FocusFactor = DEFAULT_FOCUS_FACTOR
         .ViewDirection = Array(-1, -1, -1) ' Isometric
         .RenderingMode = 1 ' Shading with Edges
-        .AspectHeightRatio = 0.618
-        .ResolutionWidth = 1080
+        .AspectHeightRatio = 0.5625
+        .ResolutionWidth = 1920
     End With
     m_FirstImagePath = ""
 End Sub
@@ -172,23 +180,22 @@ Private Sub HideNonBody(iDoc)
     Dim searchStr As String
     searchStr = ".Plane + .AxisSystem + .Point + .2DPoint + .Curve + .2DCurve + .Surface + .MfConstraint,all"
     
-''    You may have noticed the ,all or ,sel. There are multiple ways to search:
-'
-'Everywhere: shortcut “all”
-'InWorkbench: shortcut “in”
-'FromWorkbench: shortcut “from”
-'FromSelection: shortcut “sel”
-'VisibleOnScreen: shortcut “scr”
-    
+''    You may have noticed the ,all or ,sel. There are multiple ways to search:'
+'Everywhere: shortcut ??all??
+'InWorkbench: shortcut ??in??
+'FromWorkbench: shortcut ??from??
+'FromSelection: shortcut ??sel??
+'VisibleOnScreen: shortcut ??scr??
     
     On Error Resume Next
     sel.Search searchStr
     If sel.count > 0 Then
-        sel.VisProperties.SetShow 1 ' 隐藏 (catVisPropertyNoShow)
+        sel.VisProperties.SetShow 1 ' ???? (catVisPropertyNoShow)
         sel.Clear
     End If
     On Error GoTo 0
 End Sub
+
 
 
 

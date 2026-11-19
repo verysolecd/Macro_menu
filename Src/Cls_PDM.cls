@@ -238,7 +238,7 @@ Public Function modatt(ByVal oprd As Object, ByVal oData As Variant)
     Dim currAtt As Bomline: currAtt = getBomLine(oprd)
     Dim i As Long
     On Error Resume Next
-    For i = 1 To 6
+    For i = 1 To 5
         ' Check if data is present and different from current attribute
         If oData(i) <> "" Then
             Dim isChanged As Boolean: isChanged = False
@@ -247,18 +247,16 @@ Public Function modatt(ByVal oprd As Object, ByVal oData As Variant)
                 Case 1: If oData(1) <> currAtt.partNumber Then isChanged = True
                 Case 2: If oData(2) <> currAtt.Nomenclature Then isChanged = True
                 Case 3: If oData(3) <> currAtt.Definition Then isChanged = True
-                Case 4: If oData(4) <> currAtt.InstanceName Then isChanged = True
-                Case 5: If oData(5) <> currAtt.Material Then isChanged = True
-                Case 6: If val(oData(6)) <> currAtt.Density Then isChanged = True
+                Case 4: If oData(4) <> currAtt.Material Then isChanged = True
+                Case 5: If val(oData(5)) <> currAtt.Density Then isChanged = True
             End Select
             If isChanged Then
                 Select Case i
                     Case 1: refPrd.partNumber = oData(i)
                     Case 2: refPrd.Nomenclature = oData(i)
                     Case 3: refPrd.Definition = oData(i)
-                    Case 4: oprd.Name = oData(i)
-                    Case 5: refPrd.UserRefProperties.item("Material").Value = oData(i)
-                    Case 6: refPrd.Parent.part.Parameters.RootParameterSet.ParameterSets.item("Part_info").DirectParameters.item("Density").Value = oData(i)
+                    Case 4: refPrd.UserRefProperties.item("Material").Value = oData(i)
+                    Case 5: refPrd.Parent.part.Parameters.RootParameterSet.ParameterSets.item("Part_info").DirectParameters.item("Density").Value = oData(i)
                 End Select
             End If
         End If
@@ -447,6 +445,3 @@ On Error Resume Next
     Error.Clear
 On Error GoTo 0
 End Sub
-
-
-

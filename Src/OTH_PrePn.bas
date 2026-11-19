@@ -8,10 +8,12 @@ Attribute VB_Name = "OTH_PrePn"
 ' %UI Label lbL_jpzcs  键盘造车手出品
 ' %UI TextBox  txt_oldstr 输入被替换字符串或留空
 ' %UI TextBox  txt_str 字符串
+' %UI CheckBox chk_delete_CN 删除零件号中文
 ' %UI CheckBox chk_prefix  字符串增加为前缀
 ' %UI CheckBox  chk_suffix  字符串增加为后缀
 ' %UI CheckBox  chk_rep  替换零件号内字符串
 ' %UI CheckBox chk_delete  删除零件号内字符串
+
 ' %UI Button btnOK  确定
 ' %UI Button btncancel  取消
 ' 强制变量声明（核心修复）
@@ -55,6 +57,8 @@ Sub Pnmgr()
                 Call del_pn_midx(oprd, istr)
             ElseIf mWD.Results("chk_rep") Then
                 Call rep_pn_midx(oprd, oldstr, istr)
+            ElseIf mWD.Results("chk_delete_CN") Then
+                Call recur_del_CN_in_PN(oprd)
             End If
             Set allPN = Nothing
             MsgBox "零件号批量修改完成！", vbInformation
@@ -131,6 +135,24 @@ Private Sub rep_pn_midx(oprd, oldstr, istr)
     If oprd.Products.count > 0 Then
         For Each childProduct In oprd.Products
             Call rep_pn_midx(childProduct, oldstr, istr)
+        Next
+    End If
+End Sub
+Private Sub recur_del_CN_in_PN(oprd)
+    Dim pn As String, newPn As String
+    Dim childProduct As Object
+    pn = oprd.ReferenceProduct.partNumber
+    If Not allPN.Exists(pn) Then
+        allPN(pn) = 1
+        newPn = KCL.rmchn(pn)
+        If newPn <> "" Then
+            oprd.partNumber = newPn
+        End If
+        allPN(newPn) = 1
+    End If
+    If oprd.Products.count > 0 Then
+        For Each childProduct In oprd.Products
+            Call recur_del_CN_in_PN(childProduct)
         Next
     End If
 End Sub

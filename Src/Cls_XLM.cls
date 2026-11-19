@@ -8,8 +8,8 @@ Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
 Private header_bom(1 To 17)
-Private header_rv(1 To 14)
-Private hdgx(1 To 15)
+Private header_rv(1 To 12)
+Private hdgx(1 To 19)
 Private wsEVT As Cls_WsEvt
 Private wb As Object
 Private ws As Object
@@ -53,7 +53,6 @@ Private Sub iniarr()
     header_bom(15) = "UTS" & Chr(10) & "抗拉(Mpa)"
     header_bom(16) = "YS" & Chr(10) & "屈服(Mpa)"
     header_bom(17) = "EL" & Chr(10) & "延伸率(%)"
-   
 
     header_rv(1) = "零件号" & Chr(10) & "Partnumber"
     header_rv(2) = "更改" & Chr(10) & "件号"
@@ -61,14 +60,12 @@ Private Sub iniarr()
     header_rv(4) = "更改" & Chr(10) & "英文名"
     header_rv(5) = "中文名称" & Chr(10) & "Definition"
     header_rv(6) = "更改" & Chr(10) & "中文名"
-    header_rv(7) = "实例名" & Chr(10) & "InstanceName"
-    header_rv(8) = "更改" & Chr(10) & "实例名"
-    header_rv(9) = "材料" & Chr(10) & "material"
-    header_rv(10) = "定义" & Chr(10) & "材料"
-    header_rv(11) = "密度" & Chr(10) & "Density"
-    header_rv(12) = "更改" & Chr(10) & "密度"
-    header_rv(13) = "质量" & Chr(10) & "Mass"
-    header_rv(14) = "厚度" & Chr(10) & "Thickness"
+    header_rv(7) = "材料" & Chr(10) & "material"
+    header_rv(8) = "定义" & Chr(10) & "材料"
+    header_rv(9) = "密度" & Chr(10) & "Density"
+    header_rv(10) = "更改" & Chr(10) & "密度"
+    header_rv(11) = "质量" & Chr(10) & "Mass"
+    header_rv(12) = "厚度" & Chr(10) & "Thickness"
     
     hdgx(1) = "NO."
     hdgx(2) = "TIRE"
@@ -76,15 +73,20 @@ Private Sub iniarr()
     hdgx(4) = ""
     hdgx(5) = ""
     hdgx(6) = "PART NO."
-    hdgx(7) = "DRAWING NO."
+    hdgx(7) = "PART NAME"
     hdgx(8) = "中文名称"
-    hdgx(9) = "ITEM NAME"
+    hdgx(9) = "Drawing No"
     hdgx(10) = "Ver."
-    hdgx(11) = "QTY."
-    hdgx(12) = "UNIT"
-    hdgx(13) = "UNIT WEIGHT"
-    hdgx(14) = "TOTAL WEIGHT"
-    hdgx(15) = "MATERIAL"
+    hdgx(11) = ""
+    hdgx(12) = ""
+    hdgx(13) = "MATERIAL"
+    hdgx(14) = "图片"
+    hdgx(15) = "QTY."
+    hdgx(16) = "UNIT"
+    hdgx(17) = "UNIT WEIGHT"
+    hdgx(18) = "重量来源"
+    hdgx(19) = "MASS TOTAL"
+    
 End Sub
 Private Sub set_Header(header, Optional ByVal idxrow = 2)
     Dim lastCol
@@ -95,7 +97,7 @@ Private Sub set_Header(header, Optional ByVal idxrow = 2)
     End With
 End Sub
 Private Sub RVbackColor()
-        Dim mapcells: mapcells = Array(0, 1, 3, 5, 7, 9, 11, 13, 14)
+        Dim mapcells: mapcells = Array(0, 1, 3, 5, 7, 9, 11, 12)
         Dim lastrow: lastrow = ws.Cells(ws.Rows.count, 1).End(xlUp).row
         For rowNb = 2 To lastrow
             For i = 1 To UBound(mapcells)
@@ -128,7 +130,7 @@ Public Function extract_ary()
  Dim resultAry As Variant
  Dim cntx, cnty
     cntx = ws.Cells(ws.Rows.count, 1).End(xlUp).row
-    cnty = 14
+    cnty = 12
  ReDim resultAry(1 To cntx, 1 To cnty)
   For idrow = 2 To cntx
          Dim tempArr As Variant
@@ -262,6 +264,16 @@ Public Sub inject_GXbom(arr2D As Variant, Optional ByVal startrow As Long = 5)
     Call set_Header(hdgx, startrow - 1)
     With ws
         .Range(.Cells(startrow, 1), .Cells(lastrow, colCount)).Value = arr2D
+        
+       '这段代码实现了重量的计算公式
+        If lastrow >= 6 Then
+            With .Range(.Cells(startrow, 19), .Cells(lastrow, 19))
+                .Formula = "=RC[-2]*RC[-4]"
+                .NumberFormat = "0.000"
+            End With
+        End If
+       '这段代码实现了重量的计算公式
+    
     End With
     ws.Name = "GX_" & Format(Now, "yymmdd_hhmm")
 End Sub
@@ -269,7 +281,7 @@ End Sub
 Public Sub inject_RvData(data() As Bomline, Optional ByVal startrow As Long = 2)
     xlhide
     Dim cnt As Long: cnt = UBound(data)
-    Dim targetCols: targetCols = Array(1, 3, 5, 7, 9, 11, 13, 14)
+    Dim targetCols: targetCols = Array(1, 3, 5, 7, 9, 11, 12)
     Dim buffer() As Variant: ReDim buffer(1 To cnt, 1 To 1)
     Dim c As Long, i As Long
     startrow = 2
@@ -281,11 +293,10 @@ Public Sub inject_RvData(data() As Bomline, Optional ByVal startrow As Long = 2)
                     Case 0: buffer(i, 1) = .partNumber
                     Case 1: buffer(i, 1) = .Nomenclature
                     Case 2: buffer(i, 1) = .Definition
-                    Case 3: buffer(i, 1) = .InstanceName
-                    Case 4: buffer(i, 1) = .Material
-                    Case 5: buffer(i, 1) = .Density
-                    Case 6: buffer(i, 1) = .Mass
-                    Case 7: buffer(i, 1) = .Thickness
+                    Case 3: buffer(i, 1) = .Material
+                    Case 4: buffer(i, 1) = .Density
+                    Case 5: buffer(i, 1) = .Mass
+                    Case 6: buffer(i, 1) = .Thickness
                 End Select
             End With
         Next i
@@ -352,5 +363,3 @@ Public Sub xlhide()
     End With
  xlAPP.Visible = False
 End Sub
- 
-
