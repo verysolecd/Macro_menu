@@ -1,11 +1,11 @@
-ï»¿Attribute VB_Name = "OTH_capture"
+Attribute VB_Name = "OTH_capture"
 'Attribute VB_Name = "mCaptureClipboard"
 '{GP:6}
 '{Ep:CaptureTopath}
-'{Caption:ï¿½ï¿½Í¼ï¿½ï¿½ï¿½Ä¼ï¿½ï¿½ï¿½}
-'{ControlTipText:ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ·ï¿½ï¿½ï¿½ï¿½Í¼ï¿½ï¿½ï¿½Ä¼ï¿½ï¿½ï¿½}
+'{Caption:½ØÍ¼µ½ÎÄ¼þ¼Ð}
+'{ControlTipText:±éÀú²úÆ·²¢½ØÍ¼µ½ÎÄ¼þ¼Ð}
 '{BackColor:16744703}
-' ï¿½ï¿½Òªï¿½ï¿½ï¿½ï¿½Windows APIï¿½ï¿½ï¿½ï¿½
+' ÐèÒªÉùÃ÷Windows APIº¯Êý
 '#If VBA7 Then
 '    Private Declare PtrSafe Function OpenClipboard Lib "user32" (ByVal hwnd As LongPtr) As LongPtr
 '    Private Declare PtrSafe Function EmptyClipboard Lib "user32" () As LongPtr
@@ -54,7 +54,7 @@ Sub CaptureTopath()
     If Not KCL.CanExecute("ProductDocument,PartDocument") Then Exit Sub
     CATIA.StartCommand ("* iso")
     Dim response As VbMsgBoxResult
-    response = MsgBox("ï¿½ï¿½Òªï¿½ï¿½Í¼ï¿½ï¿½ï¿½ï¿½È´ï¿½ISOï¿½Ó½Çµï¿½ï¿½ï¿½ï¿½ï¿½Ïºï¿½ï¿½ï¿½È·ï¿½ï¿½", vbYesNo + vbExclamation, "È·ï¿½Ï½ï¿½Í¼")
+    response = MsgBox("ÈçÒª½ØÍ¼£¬ÇëµÈ´ýISOÊÓ½Çµ÷ÕûÍê±Ïºóµã»÷È·ÈÏ", vbYesNo + vbExclamation, "È·ÈÏ½ØÍ¼")
     If response <> vbYes Then Exit Sub
     CapPrd CATIA.ActiveDocument.Product
     If m_FirstImagePath <> "" Then
@@ -74,8 +74,8 @@ Sub CapPrd(oprd)
     CATIA.RefreshDisplay = False
     oprd.ApplyWorkMode 3 ' DESIGN_MODE
     
-    'ä¸ºäº†ä¸éšè—ç„Šç‚¹ï¼Œéœ€è¦æ³¨é‡ŠæŽ‰ä¸‹ä¸€è¡Œ
-     'HideNonBody CATIA.ActiveDocument
+    'ÎªÁË²»Òþ²Øº¸µã£¬ÐèÒª×¢ÊÍµôÏÂÒ»ÐÐ
+    'HideNonBody CATIA.ActiveDocument
     SetCAPDisplay
     Set m_ProcessedPN = KCL.InitDic
     Dim tempPath As String    ' Prepare Output Folder
@@ -98,12 +98,6 @@ Private Sub CaptureRecursive(targetPrd, ByVal folderPath As String)
     If Not m_ProcessedPN.Exists(partNumber) Then
         Dim imgFile As String
         imgFile = folderPath & "\" & partNumber & ".jpg"
-        ' === Reframe before every capture to fill the image ===
-        viewer.Reframe
-        viewer.Update
-        viewer.Viewpoint3D.FocusDistance = viewer.Viewpoint3D.FocusDistance * m_Settings.FocusFactor
-        viewer.Update
-        ' === End Reframe ===
         ' === Reframe before every capture to fill the image ===
         viewer.Reframe
         viewer.Update
@@ -154,8 +148,6 @@ Private Sub InitializeSettings()
         .RenderingMode = 1 ' Shading with Edges
         .AspectHeightRatio = 0.5625
         .ResolutionWidth = 1920
-        .AspectHeightRatio = 0.5625
-        .ResolutionWidth = 1920
     End With
     m_FirstImagePath = ""
 End Sub
@@ -189,16 +181,16 @@ Private Sub HideNonBody(iDoc)
     searchStr = ".Plane + .AxisSystem + .Point + .2DPoint + .Curve + .2DCurve + .Surface + .MfConstraint,all"
     
 ''    You may have noticed the ,all or ,sel. There are multiple ways to search:'
-'Everywhere: shortcut ??all??
-'InWorkbench: shortcut ??in??
-'FromWorkbench: shortcut ??from??
-'FromSelection: shortcut ??sel??
-'VisibleOnScreen: shortcut ??scr??
+'Everywhere: shortcut "all"
+'InWorkbench: shortcut "in"
+'FromWorkbench: shortcut "from"
+'FromSelection: shortcut "sel"
+'VisibleOnScreen: shortcut "scr"
     
     On Error Resume Next
     sel.Search searchStr
     If sel.count > 0 Then
-        sel.VisProperties.SetShow 1 ' ???? (catVisPropertyNoShow)
+        sel.VisProperties.SetShow 1 ' 1 Òþ²Ø (catVisPropertyNoShow)
         sel.Clear
     End If
     On Error GoTo 0
