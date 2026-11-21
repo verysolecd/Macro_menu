@@ -2,7 +2,7 @@ Attribute VB_Name = "OTH_INSNAME"
 '{GP:6}
 '{Ep:PNMmgr}
 '{Caption:全局实例名管理}
-'{ControlTipText:全局实例名批量修改或替换}
+'{ControlTipText:实例名批量管理}
 '{BackColor:}
 '控件格式为 %UI <ControlType> <ControlName> <Caption/Text>
 ' %UI Label lbL_jpzcs  键盘造车手出品

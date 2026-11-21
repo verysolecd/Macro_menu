@@ -19,6 +19,7 @@ Public Event ProductChanged()
 Private mProduct As Object          ' 存储当前产品
 Private mSelection As Object        ' 存储当前选择集
 Private mRows As Collection         ' 用于递归收集 BOM 行数据的临时集合
+Private m_RvPnMap As Object         ' RW_Revise 去重映射：PN -> 同 PN 第一层子实例集合 (Collection)
 ' 变量及辅助数组 (Updated for Array Storage)
 Private mItems() As Bomline       ' Dynamic array for Bomlines
 Private mItemCount As Long        ' Current count of items
@@ -209,13 +210,15 @@ Public Function attLv2Prd(oprd) As Variant
 End Function
 
 ' 获取用于 RW_Revise 的强类型数据 (替代 attLv2Prd)
+' 第一层子产品按 ReferenceProduct.partNumber 去重，并缓存 PN -> 实例集合 供写入联动
 Public Function GetReviseItems(ByVal oprd As Object) As Bomline()
     mItemCount = 0
     ReDim mItems(1 To CHUNK_SIZE)
-    TraverseTwoLevels oprd
-    
+    Set m_RvPnMap = KCL.InitDic(vbBinaryCompare)
+    TraverseTwoLevelsDedup oprd
+
     If mItemCount = 0 Then Exit Function
-    
+
     Dim result() As Bomline
     ReDim result(1 To mItemCount)
     Dim i As Long
@@ -232,6 +235,40 @@ Private Sub TraverseTwoLevels(ByVal oprd As Object)
     For i = 1 To children.count
         pushBOM getBomLine(children.item(i))    ' 子产品
     Next
+End Sub
+
+' RW_Revise 专用：第一层子产品按 PN 去重，同时缓存 PN -> 全部同 PN 实例集合
+Private Sub TraverseTwoLevelsDedup(ByVal oprd As Object)
+    pushBOM getBomLine(oprd)     ' 根产品（不参与去重）
+    Dim children As Products: Set children = oprd.Products
+    Dim i As Long
+    For i = 1 To children.count
+        Dim child As Object: Set child = children.item(i)
+        Dim pn As String: pn = child.ReferenceProduct.partNumber
+        ' 登记该 PN 对应的全部实例（供写入时联动到所有同 PN 实例）
+        Dim coll As Object
+        If m_RvPnMap.Exists(pn) Then
+            Set coll = m_RvPnMap(pn)
+        Else
+            Set coll = New Collection
+            m_RvPnMap.Add pn, coll
+        End If
+        coll.Add child
+        ' 仅首次出现时推入列表（按 PN 去重展示）
+        If coll.count = 1 Then pushBOM getBomLine(child)
+    Next
+End Sub
+
+' 按原始 PN 查找第一层全部同 PN 子实例，并逐个写入属性（联动同步）
+Public Sub modattByPN(ByVal originalPN As String, ByVal oData As Variant)
+    If m_RvPnMap Is Nothing Then Exit Sub
+    If Not m_RvPnMap.Exists(originalPN) Then Exit Sub
+    Dim coll As Object: Set coll = m_RvPnMap(originalPN)
+    Dim k As Long, inst As Object
+    For k = 1 To coll.count
+        Set inst = coll(k)
+        Call modatt(inst, oData)
+    Next k
 End Sub
 Public Function modatt(ByVal oprd As Object, ByVal oData As Variant)
     Dim refPrd As Object: Set refPrd = oprd.ReferenceProduct
@@ -445,3 +482,5 @@ On Error Resume Next
     Error.Clear
 On Error GoTo 0
 End Sub
+
+

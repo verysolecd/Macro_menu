@@ -1,5 +1,4 @@
 Attribute VB_Name = "RW_write"
-
 '{GP:1}
 '{Ep:btnWrite_click}
 '{Caption:修改属性1}
@@ -15,19 +14,17 @@ Sub btnWrite_click()
 On Error GoTo ErrorHandler
     If xlm Is Nothing Then Err.Description = "excel错误，请检查": Exit Sub
      If pdm.CurrentProduct Is Nothing Then Exit Sub
-         Dim currRow: currRow = 2
 '---------遍历修改产品及子产品------
         Dim prd2rv
         Set prd2rv = pdm.CurrentProduct
             prd2rv.ApplyWorkMode (3)
-        Dim children: Set children = prd2rv.Products
- 
+
         Dim oData As Variant: oData = xlm.extract_ary
 '--------map 修改ary------
     Dim iCols: iCols = Array(0, 2, 4, 6, 8, 10)
     Dim outputArr As Variant, tempArr(1 To 5)
     ReDim outputArr(1 To UBound(oData, 1), 1 To UBound(iCols))
-    Dim i, j
+    Dim i, j, origPN As String
     For i = 1 To UBound(outputArr, 1) '-------遍历行
   '-------遍历获取X行要修改的数据
         For j = 1 To UBound(outputArr, 2) '-------遍历该行数组后输出一个一维数组作为要的修改参数
@@ -38,10 +35,11 @@ On Error GoTo ErrorHandler
     '-------遍历按行区分要修改的产品
         Select Case i
         Case 1
-            Case 2  '第二行修改子总成
+            Case 2  '第二行修改子总成（根产品）
                 Call pdm.modatt(prd2rv, tempArr)
-            Case Else '其他修改子产品
-                Call pdm.modatt(children.item(i - currRow), tempArr)
+            Case Else '其他修改子产品：按原始 PN 联动写入全部同 PN 实例
+                origPN = oData(i, 1)
+                Call pdm.modattByPN(origPN, tempArr)
          End Select
     Next i
           Set prd2rv = Nothing
@@ -50,3 +48,5 @@ ErrorHandler:
     If Err.Number <> 0 Then:  MsgBox Err.Description, vbCritical: Err.Clear
         Exit Sub
 End Sub
+
+

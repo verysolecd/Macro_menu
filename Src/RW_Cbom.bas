@@ -35,7 +35,6 @@ Sub cBom()
         startrow = 5: Colpn = 6: colPic = 9
     End If
     
-    
     If oWD.Results("chk_capture") Then
       Call CapPrd(iprd)
       Call xlm.inject_pic(startrow, Colpn, colPic, g_Picpath)
@@ -111,4 +110,5 @@ Private Function ConvertBOM_GX(data() As Bomline) As Variant
     Next i
     ConvertBOM_GX = arr2D
 End Function
+
 
