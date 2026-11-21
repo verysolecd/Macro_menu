@@ -1,10 +1,11 @@
-Attribute VB_Name = "RW_RvInsName"
-'{GP:1}
+Attribute VB_Name = "ASM_NomOrder"
+
+'{GP:3}
 '{Ep:InsNameorder}
 '{Caption:实例名排序}
 '{ControlTipText: 选择产品后按层级对产品的实例名排序}
 '{BackColor:}
-'  %UI Label  lblInfo  请选择改名范围： #FFFF00
+'  %UI Label  lblInfo  若需新实例名请输入 #FFFF00
 '  %UI TextBox   txt_oName 实例名
 '  %UI Button btn_LV  执行：当前层级
 '  %UI Button btn_full  执行：全局所有该件
@@ -15,18 +16,13 @@ Private mPrd As Object
 Private targetPN
 Private cnt As Long
 Private mName As String
-Private Const mdlname As String = "RW_RvInsName"
+Private Const mdlname As String = "ASM_NomOrder"
 
 Sub InsNameorder()
     If Not KCL.CanExecute("ProductDocument") Then Exit Sub
     If pdm Is Nothing Then Set pdm = New Cls_PDM
-    Set mPrd = KCL.SelPrd("请选择要重命名实例名的产品")
-    If mPrd Is Nothing Then Exit Sub
-    targetPN = mPrd.partNumber
     cnt = 0
-     
-    '==生成UItoolbar-===================
-   Set mWD = New Cls_DynaWD
+    Set mWD = New Cls_DynaWD
     mWD.ShowToolbar mdlname
 End Sub
 
@@ -34,6 +30,20 @@ End Sub
 ' 读取工具栏文本框的实时内容：为空或仍为占位提示时返回空串
 ' (工具栏非模态模式下 Cls_DynaWD 不回填 Results 字典，必须直接读窗体上的实时控件，
 '  否则 Results 会触发 EnsureExecuted 弹出冗余模态框，导致"需点击两次"且读不到输入)
+'=== 辅助：优先读 CATIA 当前 Selection，空才弹选择器 ===
+Private Function getSelPrd() As Object
+    Set getSelPrd = Nothing
+    Dim sel As Selection: Set sel = CATIA.ActiveDocument.Selection
+    If sel.count > 0 Then
+        On Error Resume Next
+            Set getSelPrd = sel.item(1).LeafProduct
+        On Error GoTo 0
+    End If
+    If getSelPrd Is Nothing Then
+        Set getSelPrd = KCL.selPrd("请选择要重命名的产品")
+    End If
+End Function
+
 Private Sub inttext()
     mName = ""
     If mWD Is Nothing Then Exit Sub
@@ -44,20 +54,24 @@ Private Sub inttext()
 End Sub
 
 Sub btn_LV_click()
+    Dim selPrd As Object: Set selPrd = getSelPrd()
+    If selPrd Is Nothing Then Exit Sub
     inttext
-    cnt = RenameInstByPN_Level(mPrd, mName)
-    showcnt
+    cnt = RenameInstByPN_Level(selPrd, mName)
+    showcnt selPrd.partNumber
 End Sub
 
 Sub btn_full_click()
+    Dim selPrd As Object: Set selPrd = getSelPrd()
+    If selPrd Is Nothing Then Exit Sub
     Dim rootPrd As Object: Set rootPrd = CATIA.ActiveDocument.Product
     inttext
-    cnt = RenameInstByPN_Tree(rootPrd, targetPN, mName)
-    showcnt
+    cnt = RenameInstByPN_Tree(rootPrd, selPrd.partNumber, mName)
+    showcnt selPrd.partNumber
 End Sub
 
 
-Private Sub showcnt()
+Private Sub showcnt(ByVal targetPN As String)
     If cnt = 0 Then
                 MsgBox "未找到零件号 [" & targetPN & "] 的可重命名实例，未执行重命名。", vbInformation
             Else
@@ -177,6 +191,8 @@ Private Function NextUniqueInstName(ByVal base As String, ByVal startK As Long, 
     Loop
     NextUniqueInstName = cand
 End Function
+
+
 
 
 

@@ -1,12 +1,12 @@
-Attribute VB_Name = "ASM_CMP"
+Attribute VB_Name = "OTH_CMP"
 'Attribute VB_Name = "ASM_CMP"
-'{GP:3}
+'{GP:6}
 '{Ep:myCMP}
 '{Caption:数据对比}
 '{ControlTipText:对比旧、新数据}
 '{BackColor:}
 
-Private Const mdlname As String = "ASM_CMP"
+Private Const mdlname As String = "OTH_CMP"
 Sub myCMP()
  If Not CanExecute("ProductDocument") Then Exit Sub
 Dim rprd As Product

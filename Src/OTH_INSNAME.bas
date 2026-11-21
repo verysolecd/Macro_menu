@@ -1,15 +1,15 @@
 Attribute VB_Name = "OTH_INSNAME"
-'{GP:6}
+'{GP:3}
 '{Ep:PNMmgr}
-'{Caption:全局实例名管理}
-'{ControlTipText:实例名批量管理}
+'{Caption:件号批量修改}
+'{ControlTipText:全局零件号批量管理}
 '{BackColor:}
 '控件格式为 %UI <ControlType> <ControlName> <Caption/Text>
 ' %UI Label lbL_jpzcs  键盘造车手出品
 ' %UI TextBox  txt_oldstr 输入被替换字符串或留空
 ' %UI TextBox  txt_str 字符串
 ' %UI CheckBox chk_prefix  字符串增加为前缀
-' %UI CheckBox  chk_suffix  字符串增加为后缀
+' %UI CheckBox  chk_suffix  字符串增加为PN+RV+字符串后缀
 ' %UI CheckBox  chk_rep  替换零件名内字符串
 ' %UI CheckBox chk_delete  删除零件名内字符串
 ' %UI Button btnOK  确定
@@ -69,7 +69,7 @@ Private Sub c_pn_Prefix(oprd As Object, istr As String)
         'allPN(pn) = 1
         purePN = KCL.StrAF(pn, "_._")
         newPn = istr & "_._" & purePN
-        oprd.Name = newPn
+        oprd.partNumber = newPn
        ' allPN(newPn) = 1
 '    End If
     If oprd.Products.count > 0 Then
@@ -80,7 +80,7 @@ Private Sub c_pn_Prefix(oprd As Object, istr As String)
 End Sub
 
 Private Sub c_pn_suffix(oprd As Object, istr As String)
-    Dim pn As String, newPn As String
+    Dim purePN, pn, newPn As String
     Dim childProduct As Object
     pn = oprd.Name
 '    If Not allPN.Exists(pn) Then

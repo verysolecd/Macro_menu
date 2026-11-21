@@ -108,18 +108,18 @@ Function checkDocType(ByVal docTypes As Variant)
     End If
     checkDocType = True
 End Function
-Function SelPrd(ByVal msg$, _
+Function selPrd(ByVal msg$, _
                     Optional ByVal filter As Variant = Empty)
     If checkDocType("partdocument") Then
-        Set SelPrd = CATIA.ActiveDocument.Product
+        Set selPrd = CATIA.ActiveDocument.Product
         Exit Function
     End If
     Dim se As SelectedElement
     Set se = SelectElement(msg, filter)
     If IsNothing(se) Then
-        Set SelPrd = se
+        Set selPrd = se
     Else
-        Set SelPrd = se.LeafProduct
+        Set selPrd = se.LeafProduct
     End If
 End Function
 
@@ -198,7 +198,7 @@ Public Function defPrd()
     Set tmp = Nothing
     res = MsgBox("“是”选择，“否”根节点，“取消”退出", vbYesNoCancel + vbDefaultButton2, "选择产品")
     Select Case res
-        Case 6: Set tmp = KCL.SelPrd("请选择目标产品")
+        Case 6: Set tmp = KCL.selPrd("请选择目标产品")
         Case 7: Set tmp = CATIA.ActiveDocument.Product
         Case Else: Set tmp = Nothing
     End Select

@@ -1,6 +1,6 @@
-Attribute VB_Name = "ASM_NewBH"
+Attribute VB_Name = "OTH_NewBH"
 'Attribute VB_Name = "OTH_NewBH"
-'{GP:3}
+'{GP:6}
 '{Ep:NewBH}
 '{Caption:新电池箱体}
 '{ControlTipText:新建一个电池箱体的结构树}
@@ -32,7 +32,7 @@ Attribute VB_Name = "ASM_NewBH"
       ' %info c,_Abandon,Abandoned,废案,Abandoned
       ' %info c,_Patterns,Fasteners,紧固件阵列,Fasteners_Pattern
 Private prj
-Private Const mdlname As String = "ASM_NewBH"
+Private Const mdlname As String = "OTH_NewBH"
 Sub NewBH()
     prj = KCL.getuserInput("请输入项目名称"): If prj = "" Then Exit Sub
     Dim Tree As Object: Set Tree = ParsePn(KCL.getDecCode("ASM_NewBH"))
