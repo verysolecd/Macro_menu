@@ -1,5 +1,6 @@
 Attribute VB_Name = "MDL_BdyDel"
-'Attribute VB_Name = "m20_newgeotree"
+
+'Attribute VB_Name = "MDL_BdyDel"
 '{GP:4}
 '{Ep:delwithBody}
 '{Caption:实体处理}
@@ -24,54 +25,94 @@ Private m_sel        As Selection
 Private m_HSF  As HybridShapeFactory
 Private m_spa
 Private m_Bds
+
+Private mWD As Cls_DynaWD
 Private Const m_defvol = 998877.99
 Private m_coord(2)
 Private Const type_vol = "volume"
 Private Const mdlname As String = "MDL_BdyDel"
 Sub delwithBody()
-If Not initVar Then Exit Sub
-Dim typeFilter, ifilter
-Set mWD = New Cls_DynaWD
-    mWD.getUIcfgfromModDEC mdlname
+    If Not initVar Then Exit Sub
+    Set mWD = New Cls_DynaWD
     mWD.ShowToolbar mdlname
-   typeFilter = ""
-        If mWD.Results("chk_bysel") Then
-            typeFilter = type_vol
-            selitmValue = Round(getSelmeas.Volume * 1000000000, 4)
-        End If
-Select Case mWD.btnClicked
-    Case "btn_COG"
-        Set mlst = getBdyLst
-        Set picklst = getpicklst(mlst, typeFilter, selitmValue)
-        Call CreateCOGby(picklst)
-    Case "btn_copy"
-        Set mlst = getBdyLst
-        Set picklst = getpicklst(mlst, typeFilter, selitmValue)
-        m_sel.Clear
-        For Each itm In picklst
-            m_sel.Add itm
-        Next
-        m_sel.Copy
-    Case "btn_delbysel"
+End Sub
+
+'=== 辅助：实时读勾选框值（非模态下不能用 Results） ===
+Private Function getBysel() As Boolean
+    getBysel = False
+    If mWD Is Nothing Then Exit Function
+    Dim chk As Object: Set chk = mWD.GetCtrlbyname("chk_bysel")
+    If Not chk Is Nothing Then getBysel = CBool(chk.Value)
+End Function
+
+'=== 辅助：统一计算筛选参数 ===
+Private Sub applyFilter(ByRef typeFilter As String, ByRef selitmValue As Double)
+    typeFilter = ""
+    selitmValue = 0
+    If getBysel() Then
         typeFilter = type_vol
         selitmValue = Round(getSelmeas.Volume * 1000000000, 4)
-        Set mlst = getBdyLst
-        Set picklst = getpicklst(mlst, typeFilter, selitmValue)
-        delinlst picklst
-    Case "btn_delrecur"
-            Dim bdysel:  Set bdysel = Nothing
-            If m_sel.Count2 = 1 Then
-                Set bdysel = m_sel.Item2(1).Value
-            Else
-                Set bdysel = KCL.SelectItem("请选择实体", "Body")
-            End If
-            If bdysel Is Nothing Then Exit Sub
-            Dim del_lst: Set del_lst = Nothing
-            Set del_lst = recurBD2lst(bdysel)
-            delinlst del_lst
-End Select
-
+    End If
 End Sub
+
+'=== 独立按钮回调 ===
+Sub btn_COG_click()
+    If Not initVar Then Exit Sub
+    Dim typeFilter As String, selitmValue As Double
+    applyFilter typeFilter, selitmValue
+    Dim mlst As Object, picklst As Object
+    Set mlst = getBdyLst
+    Set picklst = getpicklst(mlst, typeFilter, selitmValue)
+    Call CreateCOGby(picklst)
+End Sub
+
+Sub btn_copy_click()
+    If Not initVar Then Exit Sub
+    Dim typeFilter As String, selitmValue As Double
+    applyFilter typeFilter, selitmValue
+    Dim mlst As Object, picklst As Object, itm As Object
+    Set mlst = getBdyLst
+    Set picklst = getpicklst(mlst, typeFilter, selitmValue)
+    m_sel.Clear
+    For Each itm In picklst
+        m_sel.Add itm
+    Next
+    m_sel.Copy
+End Sub
+
+Sub btn_delbysel_click()
+    If Not initVar Then Exit Sub
+    Dim typeFilter As String, selitmValue As Double
+    ' 同体积删除：强制 type_vol
+    typeFilter = type_vol
+    selitmValue = Round(getSelmeas.Volume * 1000000000, 4)
+    Dim mlst As Object, picklst As Object
+    Set mlst = getBdyLst
+    Set picklst = getpicklst(mlst, typeFilter, selitmValue)
+    If picklst Is Nothing Or picklst.count = 0 Then Exit Sub
+    If MsgBox("将删除 " & picklst.count & " 个同体积实体，确认？", vbYesNo + vbExclamation) <> vbYes Then Exit Sub
+    delinlst picklst
+End Sub
+
+Sub btn_delrecur_click()
+    If Not initVar Then Exit Sub
+    Dim bdysel As Object: Set bdysel = Nothing
+    If m_sel.Count2 = 1 Then
+        Set bdysel = m_sel.Item2(1).Value
+    Else
+        Set bdysel = KCL.SelectItem("请选择实体", "Body")
+    End If
+    If bdysel Is Nothing Then Exit Sub
+    Dim del_lst As Object: Set del_lst = recurBD2lst(bdysel)
+    If del_lst Is Nothing Or del_lst.count = 0 Then Exit Sub
+    If MsgBox("将删除 " & del_lst.count & " 个实体(含子级)，确认？", vbYesNo + vbExclamation) <> vbYes Then Exit Sub
+    delinlst del_lst
+End Sub
+
+Sub btncancel_click()
+    Set mWD = Nothing
+End Sub
+
 Private Function getSelmeas()
       Set getSelmeas = Nothing
       Dim bdysel:  Set bdysel = Nothing
@@ -211,5 +252,6 @@ ErrHandler:
     MsgBox "初始化失败：" & Err.Description, vbExclamation: Error.Clear
     Exit Function
 End Function
+
 
 

@@ -75,7 +75,7 @@ Sub sel_child_show_click()
     CATIA.RefreshDisplay = True
 End Sub
 
-Sub ONLYsel_child_show()
+Sub ONLYsel_child_show_click()
  Dim sel As Object
     Set sel = CATIA.ActiveDocument.Selection
     If sel.count = 0 Then Exit Sub
