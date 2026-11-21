@@ -1,4 +1,5 @@
 Attribute VB_Name = "A0TEST"
+Private Const mdlname As String = "A0TEST"
 Sub Demo_MultiStep_Wizard()
     Set oprt = CATIA.ActiveDocument.part
     

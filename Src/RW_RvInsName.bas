@@ -1,13 +1,11 @@
 Attribute VB_Name = "RW_RvInsName"
-
 '{GP:1}
 '{Ep:InsNameorder}
 '{Caption:实例名排序}
 '{ControlTipText: 选择产品后按层级对产品的实例名排序}
 '{BackColor:}
-
-'  %UI TextBox   txt_Prefix 实例名
 '  %UI Label  lblInfo  请选择改名范围： #FFFF00
+'  %UI TextBox   txt_oName 实例名
 '  %UI Button btn_LV  执行：当前层级
 '  %UI Button btn_full  执行：全局所有该件
 
@@ -16,7 +14,7 @@ Private mWD As Cls_DynaWD
 Private mPrd As Object
 Private targetPN
 Private cnt As Long
-Private userPrefix As String
+Private mName As String
 Private Const mdlname As String = "RW_RvInsName"
 
 Sub InsNameorder()
@@ -33,27 +31,28 @@ Sub InsNameorder()
 End Sub
 
 
+' 读取工具栏文本框的实时内容：为空或仍为占位提示时返回空串
+' (工具栏非模态模式下 Cls_DynaWD 不回填 Results 字典，必须直接读窗体上的实时控件，
+'  否则 Results 会触发 EnsureExecuted 弹出冗余模态框，导致"需点击两次"且读不到输入)
 Private Sub inttext()
-    ' 工具栏(非模态)模式下 Cls_DynaWD 不会把控件值回填到 Results 字典，
-    ' 必须直接从窗体上的实时控件读取；否则 Results 会触发 EnsureExecuted 弹出冗余模态框，
-    ' 导致"需点击两次"且读不到用户输入
-    userPrefix = ""
-    Dim txt As Object: Set txt = mWD.GetCtrlbyname("txt_Prefix")
+    mName = ""
+    If mWD Is Nothing Then Exit Sub
+    Dim txt As Object: Set txt = mWD.GetCtrlbyname("txt_oName")
     If txt Is Nothing Then Exit Sub
     Dim s As String: s = Trim$(CStr(txt.text))
-    If s <> "" And s <> "实例名" Then userPrefix = s
+    If s <> "" And s <> "实例名" Then mName = s
 End Sub
 
 Sub btn_LV_click()
     inttext
-    cnt = RenameInstByPN_Level(mPrd, userPrefix)
+    cnt = RenameInstByPN_Level(mPrd, mName)
     showcnt
 End Sub
 
 Sub btn_full_click()
     Dim rootPrd As Object: Set rootPrd = CATIA.ActiveDocument.Product
     inttext
-    cnt = RenameInstByPN_Tree(rootPrd, targetPN, userPrefix)
+    cnt = RenameInstByPN_Tree(rootPrd, targetPN, mName)
     showcnt
 End Sub
 
@@ -67,25 +66,25 @@ Private Sub showcnt()
 End Sub
 
 
-Public Function RenameInstByPN_Level(ByVal oprd As Object, Optional ByVal userPrefix As String = "") As Long
+Public Function RenameInstByPN_Level(ByVal oprd As Object, Optional ByVal mName As String = "") As Long
     RenameInstByPN_Level = 0
     If oprd Is Nothing Then Exit Function
     ' 当前层级：优先取选中产品的同级集合，仅重命名与选中产品同零件号的实例；
     ' 若选中为顶层根产品（其父级不是 Products），则取根产品的第一层子实例集合，
     ' 取消零件号过滤（RenameChildrenInstByPN 内部会按各自零件号分组重命名）
     If TypeOf oprd.Parent Is Products Then
-        RenameInstByPN_Level = RenameChildrenInstByPN(oprd.Parent, False, oprd.partNumber, userPrefix)
+        RenameInstByPN_Level = RenameChildrenInstByPN(oprd.Parent, False, oprd.partNumber, mName)
     Else
         Dim children As Object
         On Error Resume Next
         Set children = oprd.Products
         On Error GoTo 0
         If children Is Nothing Then Exit Function
-        RenameInstByPN_Level = RenameChildrenInstByPN(children, False, "", userPrefix)
+        RenameInstByPN_Level = RenameChildrenInstByPN(children, False, "", mName)
     End If
 End Function
 
-Public Function RenameInstByPN_Tree(ByVal rootPrd As Object, ByVal targetPN As String, Optional ByVal userPrefix As String = "") As Long
+Public Function RenameInstByPN_Tree(ByVal rootPrd As Object, ByVal targetPN As String, Optional ByVal mName As String = "") As Long
     RenameInstByPN_Tree = 0
     If rootPrd Is Nothing Or targetPN = "" Then Exit Function
     Dim children As Products
@@ -94,17 +93,17 @@ Public Function RenameInstByPN_Tree(ByVal rootPrd As Object, ByVal targetPN As S
     On Error GoTo 0
     If children Is Nothing Then Exit Function
     If children.count < 1 Then Exit Function
-    RenameInstByPN_Tree = RenameChildrenInstByPN(children, False, targetPN, userPrefix)
+    RenameInstByPN_Tree = RenameChildrenInstByPN(children, False, targetPN, mName)
     Dim i As Long
     For i = 1 To children.count
-        RenameInstByPN_Tree = RenameInstByPN_Tree + RenameInstByPN_Tree(children.item(i), targetPN, userPrefix)
+        RenameInstByPN_Tree = RenameInstByPN_Tree + RenameInstByPN_Tree(children.item(i), targetPN, mName)
     Next i
 End Function
 
 Private Function RenameChildrenInstByPN(ByVal children As Object, _
                                         ByVal onlyDup As Boolean, _
                                         ByVal filterPN As String, _
-                                        ByVal userPrefix As String) As Long
+                                        ByVal mName As String) As Long
     RenameChildrenInstByPN = 0
     If children Is Nothing Then Exit Function
     Dim n As Long: n = children.count
@@ -142,8 +141,8 @@ Private Function RenameChildrenInstByPN(ByVal children As Object, _
         For j = 0 To lst.count - 1
             If used.Exists(sibs(lst(j)).Name) Then used.Remove sibs(lst(j)).Name
         Next j
-        If userPrefix <> "" Then
-            base = userPrefix
+        If mName <> "" Then
+            base = mName
         Else
             base = Trim$(sibs(lst(0)).ReferenceProduct.Nomenclature)
             If base = "" Then base = Trim$(sibs(lst(0)).ReferenceProduct.partNumber)
@@ -178,5 +177,9 @@ Private Function NextUniqueInstName(ByVal base As String, ByVal startK As Long, 
     Loop
     NextUniqueInstName = cand
 End Function
+
+
+
+
 
 
