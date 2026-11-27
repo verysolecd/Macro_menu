@@ -1,7 +1,7 @@
 Attribute VB_Name = "RW_write"
 '{GP:1}
 '{Ep:btnWrite_click}
-'{Caption:修改属性1}
+'{Caption:修改属性}
 '{ControlTipText:打开属性管理悬浮工具条}
 '  %UI Label  lblInfo  请选择操作：
 '  %UI Button btnRead  读取属性

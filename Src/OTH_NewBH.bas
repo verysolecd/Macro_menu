@@ -35,7 +35,7 @@ Private prj
 Private Const mdlname As String = "OTH_NewBH"
 Sub NewBH()
     prj = KCL.getuserInput("请输入项目名称"): If prj = "" Then Exit Sub
-    Dim Tree As Object: Set Tree = ParsePn(KCL.getDecCode("ASM_NewBH"))
+    Dim Tree As Object: Set Tree = ParsePn(KCL.getDecCode(mdlname))
     Dim PStack As Object: Set PStack = KCL.InitDic
     Dim k, oprd As Object, ref As Object, fast As Object
     For Each k In Tree.keys

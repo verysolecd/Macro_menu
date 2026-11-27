@@ -363,14 +363,14 @@ Private Sub iniPrt(ByVal oprd As Object)
     ApplyEngineeringLogic oPart, refPrd, infoSet
 End Sub
 Sub nosamebdy_bdylst(oprt)
-    Dim lstPara, lstbdys, colls, odic, keeplst, currobj, objkey, itm, bdy
+    Dim lstPara, lstbdys, colls, odic, keeplst, currObj, objkey, itm, bdy
     Set lstPara = oprt.Parameters.RootParameterSet.ParameterSets.item("Part_info")
     Set lstbdys = lstPara.DirectParameters.item("iBodys")
   Set colls = lstbdys.ValueList
     Set odic = KCL.InitDic
     Set keeplst = KCL.InitDic
-    For Each currobj In colls
-        objkey = KCL.GetInternalName(currobj)
+    For Each currObj In colls
+        objkey = KCL.GetInternalName(currObj)
         If Not odic.Exists(objkey) Then
           odic(objkey) = 1
           keeplst(objkey) = 1
